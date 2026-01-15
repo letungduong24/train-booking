@@ -1,0 +1,12 @@
+{
+  "name": "datn-source",
+  "version": "1.0.0",
+  "description": "Root package to run both API and Web",
+  "scripts": {
+    "dev": "concurrently -n \"API,WEB\" -c \"blue,magenta\" \"npm run start:dev --prefix api\" \"npm run dev --prefix web\"",
+    "start": "concurrently -n \"API,WEB\" -c \"blue,magenta\" \"npm run start:dev --prefix api\" \"npm run dev --prefix web\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

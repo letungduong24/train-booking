@@ -47,3 +47,33 @@ export type User = Prisma.UserModel
  * 
  */
 export type RefreshToken = Prisma.RefreshTokenModel
+/**
+ * Model Station
+ * 
+ */
+export type Station = Prisma.StationModel
+/**
+ * Model Route
+ * 
+ */
+export type Route = Prisma.RouteModel
+/**
+ * Model RouteStation
+ * 
+ */
+export type RouteStation = Prisma.RouteStationModel
+/**
+ * Model Train
+ * 
+ */
+export type Train = Prisma.TrainModel
+/**
+ * Model Coaches
+ * 
+ */
+export type Coaches = Prisma.CoachesModel
+/**
+ * Model Seat
+ * 
+ */
+export type Seat = Prisma.SeatModel

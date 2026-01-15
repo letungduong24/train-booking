@@ -14,6 +14,8 @@ datasource db {
   provider = "postgresql"
 }
 
+// User
+
 model User {
   id            String         @id @default(uuid())
   profilePic    String?
@@ -23,6 +25,7 @@ model User {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   refreshTokens RefreshToken[]
+  role          String @default("user")
 }
 
 model RefreshToken {
@@ -35,4 +38,65 @@ model RefreshToken {
 
   @@index([userId])
   @@index([token])
+}
+
+// Station
+
+model Station {
+  id         String   @id @default(uuid())
+  name       String
+  latitute   Float
+  longtitute Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  routes RouteStation[]
+}
+
+model Route {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  stations  RouteStation[]
+  status    String @default("draft")
+}
+
+model RouteStation {
+  routeId           String
+  stationId         String
+  index             Int
+  distanceFromStart Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@id([routeId, index])
+  route Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  station Station @relation(fields: [stationId], references: [id], onDelete: Cascade)
+}
+
+// Train
+
+model Train {
+  id         String   @id @default(uuid())
+  name       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  coaches Coaches[]
+}
+
+model Coaches {
+  id         String   @id @default(uuid())
+  name       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  trainId    String
+  train Train @relation(fields: [trainId], references: [id], onDelete: Cascade)
+  seats Seat[]
+}
+
+model Seat {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  coachId String
+  coach Coaches @relation(fields: [coachId], references: [id], onDelete: Cascade)
 }

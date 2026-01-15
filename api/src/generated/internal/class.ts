@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.2.0",
   "engineVersion": "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3",
   "activeProvider": "postgresql",
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider     = \"prisma-client\"\n  output       = \"../src/generated/\"\n  moduleFormat = \"cjs\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id            String         @id @default(uuid())\n  email         String         @unique\n  password      String\n  name          String?\n  createdAt     DateTime       @default(now())\n  updatedAt     DateTime       @updatedAt\n  refreshTokens RefreshToken[]\n}\n\nmodel RefreshToken {\n  id        String   @id @default(uuid())\n  token     String   @unique\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  @@index([userId])\n  @@index([token])\n}\n",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider     = \"prisma-client\"\n  output       = \"../src/generated/\"\n  moduleFormat = \"cjs\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\n// User\n\nmodel User {\n  id            String         @id @default(uuid())\n  profilePic    String?\n  email         String         @unique\n  password      String\n  name          String?\n  createdAt     DateTime       @default(now())\n  updatedAt     DateTime       @updatedAt\n  refreshTokens RefreshToken[]\n  role          String         @default(\"user\")\n}\n\nmodel RefreshToken {\n  id        String   @id @default(uuid())\n  token     String   @unique\n  userId    String\n  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  @@index([userId])\n  @@index([token])\n}\n\n// Station\n\nmodel Station {\n  id         String         @id @default(uuid())\n  name       String\n  latitute   Float\n  longtitute Float\n  createdAt  DateTime       @default(now())\n  updatedAt  DateTime       @updatedAt\n  routes     RouteStation[]\n}\n\nmodel Route {\n  id        String         @id @default(uuid())\n  name      String\n  createdAt DateTime       @default(now())\n  updatedAt DateTime       @updatedAt\n  stations  RouteStation[]\n  status    String         @default(\"draft\")\n}\n\nmodel RouteStation {\n  routeId           String\n  stationId         String\n  index             Int\n  distanceFromStart Float\n  createdAt         DateTime @default(now())\n  updatedAt         DateTime @updatedAt\n  route             Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)\n  station           Station  @relation(fields: [stationId], references: [id], onDelete: Cascade)\n\n  @@id([routeId, stationId])\n}\n\n// Train\n\nmodel Train {\n  id        String    @id @default(uuid())\n  name      String\n  createdAt DateTime  @default(now())\n  updatedAt DateTime  @updatedAt\n  coaches   Coaches[]\n}\n\nmodel Coaches {\n  id        String   @id @default(uuid())\n  name      String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  trainId   String\n  train     Train    @relation(fields: [trainId], references: [id], onDelete: Cascade)\n  seats     Seat[]\n}\n\nmodel Seat {\n  id        String   @id @default(uuid())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  coachId   String\n  coach     Coaches  @relation(fields: [coachId], references: [id], onDelete: Cascade)\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -28,7 +28,7 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"refreshTokens\",\"kind\":\"object\",\"type\":\"RefreshToken\",\"relationName\":\"RefreshTokenToUser\"}],\"dbName\":null},\"RefreshToken\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"token\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"RefreshTokenToUser\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"profilePic\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"refreshTokens\",\"kind\":\"object\",\"type\":\"RefreshToken\",\"relationName\":\"RefreshTokenToUser\"},{\"name\":\"role\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"RefreshToken\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"token\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"RefreshTokenToUser\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Station\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"latitute\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"longtitute\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"routes\",\"kind\":\"object\",\"type\":\"RouteStation\",\"relationName\":\"RouteStationToStation\"}],\"dbName\":null},\"Route\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"stations\",\"kind\":\"object\",\"type\":\"RouteStation\",\"relationName\":\"RouteToRouteStation\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null},\"RouteStation\":{\"fields\":[{\"name\":\"routeId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"stationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"index\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"distanceFromStart\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"route\",\"kind\":\"object\",\"type\":\"Route\",\"relationName\":\"RouteToRouteStation\"},{\"name\":\"station\",\"kind\":\"object\",\"type\":\"Station\",\"relationName\":\"RouteStationToStation\"}],\"dbName\":null},\"Train\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"coaches\",\"kind\":\"object\",\"type\":\"Coaches\",\"relationName\":\"CoachesToTrain\"}],\"dbName\":null},\"Coaches\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"trainId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"train\",\"kind\":\"object\",\"type\":\"Train\",\"relationName\":\"CoachesToTrain\"},{\"name\":\"seats\",\"kind\":\"object\",\"type\":\"Seat\",\"relationName\":\"CoachesToSeat\"}],\"dbName\":null},\"Seat\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"coachId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"coach\",\"kind\":\"object\",\"type\":\"Coaches\",\"relationName\":\"CoachesToSeat\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')
@@ -193,6 +193,66 @@ export interface PrismaClient<
     * ```
     */
   get refreshToken(): Prisma.RefreshTokenDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.station`: Exposes CRUD operations for the **Station** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Stations
+    * const stations = await prisma.station.findMany()
+    * ```
+    */
+  get station(): Prisma.StationDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.route`: Exposes CRUD operations for the **Route** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Routes
+    * const routes = await prisma.route.findMany()
+    * ```
+    */
+  get route(): Prisma.RouteDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.routeStation`: Exposes CRUD operations for the **RouteStation** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RouteStations
+    * const routeStations = await prisma.routeStation.findMany()
+    * ```
+    */
+  get routeStation(): Prisma.RouteStationDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.train`: Exposes CRUD operations for the **Train** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Trains
+    * const trains = await prisma.train.findMany()
+    * ```
+    */
+  get train(): Prisma.TrainDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.coaches`: Exposes CRUD operations for the **Coaches** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Coaches
+    * const coaches = await prisma.coaches.findMany()
+    * ```
+    */
+  get coaches(): Prisma.CoachesDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.seat`: Exposes CRUD operations for the **Seat** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Seats
+    * const seats = await prisma.seat.findMany()
+    * ```
+    */
+  get seat(): Prisma.SeatDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {

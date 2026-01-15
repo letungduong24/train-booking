@@ -2,8 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PrismaModule } from './prisma/prisma.module';
-import { AuthModule } from './auth/auth.module';
+import { PrismaModule } from './modules/prisma/prisma.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { TrainModule } from './modules/train/train.module';
+import { StationModule } from './modules/station/station.module';
+import { RouteModule } from './modules/route/route.module';
+import { CoachesModule } from './modules/coaches/coaches.module';
 
 @Module({
   imports: [
@@ -12,6 +16,10 @@ import { AuthModule } from './auth/auth.module';
     }),
     PrismaModule,
     AuthModule,
+    TrainModule,
+    StationModule,
+    RouteModule,
+    CoachesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

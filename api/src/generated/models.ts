@@ -10,4 +10,10 @@
  */
 export type * from './models/User.js'
 export type * from './models/RefreshToken.js'
+export type * from './models/Station.js'
+export type * from './models/Route.js'
+export type * from './models/RouteStation.js'
+export type * from './models/Train.js'
+export type * from './models/Coaches.js'
+export type * from './models/Seat.js'
 export type * from './commonInputTypes.js'
