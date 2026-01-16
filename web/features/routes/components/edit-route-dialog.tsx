@@ -31,9 +31,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { updateRouteSchema, UpdateRouteInput } from "@/lib/schemas/route.schema"
+import { updateRouteSchema, UpdateRouteInput } from "@/features/routes/lib/route.schema"
 import { useUpdateRoute } from "@/features/routes/hooks/use-route-mutations"
-import { Route } from "@/lib/schemas/route.schema"
+import { Route } from "@/features/routes/lib/route.schema"
 
 interface EditRouteDialogProps {
     route: Route;

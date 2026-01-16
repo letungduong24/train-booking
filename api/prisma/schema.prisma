@@ -74,29 +74,77 @@ model RouteStation {
 }
 
 // Train
-
-model Train {
-  id         String   @id @default(uuid())
-  name       String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  coaches Coaches[]
+model CoachTemplate {
+  id          String      @id @default(uuid())
+  code        String      @unique
+  name        String      
+  description String?
+  layout      CoachLayout 
+  totalRows   Int         
+  totalCols   Int         
+  tiers       Int         @default(1)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  coaches     Coach[]
 }
 
-model Coaches {
-  id         String   @id @default(uuid())
-  name       String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+enum CoachLayout {
+  SEAT   
+  BED  
+}
+
+model Train {
+  id        String   @id @default(uuid())
+  code      String   @unique 
+  name      String   
+  status    String   @default("ACTIVE") 
+  coaches   Coach[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Coach {
+  id         String        @id @default(uuid())
+  name       String        
+  order      Int           
+  status     String        @default("ACTIVE")
   trainId    String
-  train Train @relation(fields: [trainId], references: [id], onDelete: Cascade)
-  seats Seat[]
+  train      Train         @relation(fields: [trainId], references: [id], onDelete: Cascade)
+  templateId String
+  template   CoachTemplate @relation(fields: [templateId], references: [id])
+  
+  seats      Seat[]
+  
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@unique([trainId, order]) 
 }
 
 model Seat {
-  id String @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  coachId String
-  coach Coaches @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  id        String     @id @default(uuid())
+  name      String     
+  rowIndex  Int      
+  colIndex  Int      
+  status    SeatStatus @default(AVAILABLE)
+  type      SeatType   @default(STANDARD) 
+  coachId   String
+  coach     Coach      @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  @@unique([coachId, rowIndex, colIndex]) 
+}
+
+enum SeatStatus {
+  AVAILABLE 
+  BOOKED   
+  LOCKED   
+  DISABLED 
+}
+
+enum SeatType {
+  VIP     
+  STANDARD  
+  ECONOMY  
+  OTHER
 }

@@ -389,8 +389,9 @@ export const ModelName = {
   Station: 'Station',
   Route: 'Route',
   RouteStation: 'RouteStation',
+  CoachTemplate: 'CoachTemplate',
   Train: 'Train',
-  Coaches: 'Coaches',
+  Coach: 'Coach',
   Seat: 'Seat'
 } as const
 
@@ -407,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "refreshToken" | "station" | "route" | "routeStation" | "train" | "coaches" | "seat"
+    modelProps: "user" | "refreshToken" | "station" | "route" | "routeStation" | "coachTemplate" | "train" | "coach" | "seat"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -781,6 +782,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CoachTemplate: {
+      payload: Prisma.$CoachTemplatePayload<ExtArgs>
+      fields: Prisma.CoachTemplateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CoachTemplateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachTemplatePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CoachTemplateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachTemplatePayload>
+        }
+        findFirst: {
+          args: Prisma.CoachTemplateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachTemplatePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CoachTemplateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachTemplatePayload>
+        }
+        findMany: {
+          args: Prisma.CoachTemplateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachTemplatePayload>[]
+        }
+        create: {
+          args: Prisma.CoachTemplateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachTemplatePayload>
+        }
+        createMany: {
+          args: Prisma.CoachTemplateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CoachTemplateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachTemplatePayload>[]
+        }
+        delete: {
+          args: Prisma.CoachTemplateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachTemplatePayload>
+        }
+        update: {
+          args: Prisma.CoachTemplateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachTemplatePayload>
+        }
+        deleteMany: {
+          args: Prisma.CoachTemplateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CoachTemplateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CoachTemplateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachTemplatePayload>[]
+        }
+        upsert: {
+          args: Prisma.CoachTemplateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachTemplatePayload>
+        }
+        aggregate: {
+          args: Prisma.CoachTemplateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCoachTemplate>
+        }
+        groupBy: {
+          args: Prisma.CoachTemplateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoachTemplateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CoachTemplateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoachTemplateCountAggregateOutputType> | number
+        }
+      }
+    }
     Train: {
       payload: Prisma.$TrainPayload<ExtArgs>
       fields: Prisma.TrainFieldRefs
@@ -855,77 +930,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Coaches: {
-      payload: Prisma.$CoachesPayload<ExtArgs>
-      fields: Prisma.CoachesFieldRefs
+    Coach: {
+      payload: Prisma.$CoachPayload<ExtArgs>
+      fields: Prisma.CoachFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.CoachesFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachesPayload> | null
+          args: Prisma.CoachFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.CoachesFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachesPayload>
+          args: Prisma.CoachFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>
         }
         findFirst: {
-          args: Prisma.CoachesFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachesPayload> | null
+          args: Prisma.CoachFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.CoachesFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachesPayload>
+          args: Prisma.CoachFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>
         }
         findMany: {
-          args: Prisma.CoachesFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachesPayload>[]
+          args: Prisma.CoachFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>[]
         }
         create: {
-          args: Prisma.CoachesCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachesPayload>
+          args: Prisma.CoachCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>
         }
         createMany: {
-          args: Prisma.CoachesCreateManyArgs<ExtArgs>
+          args: Prisma.CoachCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.CoachesCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachesPayload>[]
+          args: Prisma.CoachCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>[]
         }
         delete: {
-          args: Prisma.CoachesDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachesPayload>
+          args: Prisma.CoachDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>
         }
         update: {
-          args: Prisma.CoachesUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachesPayload>
+          args: Prisma.CoachUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>
         }
         deleteMany: {
-          args: Prisma.CoachesDeleteManyArgs<ExtArgs>
+          args: Prisma.CoachDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.CoachesUpdateManyArgs<ExtArgs>
+          args: Prisma.CoachUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.CoachesUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachesPayload>[]
+          args: Prisma.CoachUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>[]
         }
         upsert: {
-          args: Prisma.CoachesUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachesPayload>
+          args: Prisma.CoachUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>
         }
         aggregate: {
-          args: Prisma.CoachesAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateCoaches>
+          args: Prisma.CoachAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCoach>
         }
         groupBy: {
-          args: Prisma.CoachesGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.CoachesGroupByOutputType>[]
+          args: Prisma.CoachGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoachGroupByOutputType>[]
         }
         count: {
-          args: Prisma.CoachesCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.CoachesCountAggregateOutputType> | number
+          args: Prisma.CoachCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoachCountAggregateOutputType> | number
         }
       }
     }
@@ -1102,9 +1177,27 @@ export const RouteStationScalarFieldEnum = {
 export type RouteStationScalarFieldEnum = (typeof RouteStationScalarFieldEnum)[keyof typeof RouteStationScalarFieldEnum]
 
 
+export const CoachTemplateScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  layout: 'layout',
+  totalRows: 'totalRows',
+  totalCols: 'totalCols',
+  tiers: 'tiers',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CoachTemplateScalarFieldEnum = (typeof CoachTemplateScalarFieldEnum)[keyof typeof CoachTemplateScalarFieldEnum]
+
+
 export const TrainScalarFieldEnum = {
   id: 'id',
+  code: 'code',
   name: 'name',
+  status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1112,22 +1205,30 @@ export const TrainScalarFieldEnum = {
 export type TrainScalarFieldEnum = (typeof TrainScalarFieldEnum)[keyof typeof TrainScalarFieldEnum]
 
 
-export const CoachesScalarFieldEnum = {
+export const CoachScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  order: 'order',
+  status: 'status',
+  trainId: 'trainId',
+  templateId: 'templateId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  trainId: 'trainId'
+  updatedAt: 'updatedAt'
 } as const
 
-export type CoachesScalarFieldEnum = (typeof CoachesScalarFieldEnum)[keyof typeof CoachesScalarFieldEnum]
+export type CoachScalarFieldEnum = (typeof CoachScalarFieldEnum)[keyof typeof CoachScalarFieldEnum]
 
 
 export const SeatScalarFieldEnum = {
   id: 'id',
+  name: 'name',
+  rowIndex: 'rowIndex',
+  colIndex: 'colIndex',
+  status: 'status',
+  type: 'type',
+  coachId: 'coachId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  coachId: 'coachId'
+  updatedAt: 'updatedAt'
 } as const
 
 export type SeatScalarFieldEnum = (typeof SeatScalarFieldEnum)[keyof typeof SeatScalarFieldEnum]
@@ -1216,6 +1317,48 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'CoachLayout'
+ */
+export type EnumCoachLayoutFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CoachLayout'>
+    
+
+
+/**
+ * Reference to a field of type 'CoachLayout[]'
+ */
+export type ListEnumCoachLayoutFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CoachLayout[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SeatStatus'
+ */
+export type EnumSeatStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SeatStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'SeatStatus[]'
+ */
+export type ListEnumSeatStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SeatStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SeatType'
+ */
+export type EnumSeatTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SeatType'>
+    
+
+
+/**
+ * Reference to a field of type 'SeatType[]'
+ */
+export type ListEnumSeatTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SeatType[]'>
     
 
 /**
@@ -1318,8 +1461,9 @@ export type GlobalOmitConfig = {
   station?: Prisma.StationOmit
   route?: Prisma.RouteOmit
   routeStation?: Prisma.RouteStationOmit
+  coachTemplate?: Prisma.CoachTemplateOmit
   train?: Prisma.TrainOmit
-  coaches?: Prisma.CoachesOmit
+  coach?: Prisma.CoachOmit
   seat?: Prisma.SeatOmit
 }
 

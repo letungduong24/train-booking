@@ -36,10 +36,10 @@ import {
 import { Button } from "@/components/ui/button"
 import apiClient from "@/lib/api-client"
 import { useRoute } from "@/features/routes/hooks/use-route"
-import { AddStationDialog } from "../add-station-dialog"
-import { ReorderConfirmDialog } from "../reorder-confirm-dialog"
-import { EditRouteDialog } from "../edit-route-dialog"
-import { DeleteRouteAlert } from "../delete-route-alert"
+import { AddStationDialog } from "@/features/routes/components/add-station-dialog"
+import { ReorderConfirmDialog } from "@/features/routes/components/reorder-confirm-dialog"
+import { EditRouteDialog } from "@/features/routes/components/edit-route-dialog"
+import { DeleteRouteAlert } from "@/features/routes/components/delete-route-alert"
 import { translateRouteStatus, getRouteStatusColor } from "@/lib/utils/route-status"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
@@ -47,7 +47,7 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { useQueryClient } from "@tanstack/react-query"
 import { RouteMap } from "@/features/routes/components/route-map"
 import { RouteDetailSkeleton } from "@/features/routes/components/route-detail-skeleton"
-import { EditRouteStationDialog } from "../edit-route-station-dialog"
+import { EditRouteStationDialog } from "@/features/routes/components/edit-route-station-dialog"
 
 function SortableRow({ id, station, onDelete, routeId, onSuccess }: any) {
     const {

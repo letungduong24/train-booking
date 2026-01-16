@@ -1,25 +1,24 @@
+import { z } from "zod";
+import { stationSchema } from "./station.schema";
 
-import { z } from 'zod';
+export const routeStationSchema = z.object({
+    routeId: z.string(),
+    stationId: z.string(),
+    index: z.number(),
+    distanceFromStart: z.number(),
+    createdAt: z.string().or(z.date()),
+    updatedAt: z.string().or(z.date()),
+    station: stationSchema.optional(),
+});
 
 export const routeSchema = z.object({
-    id: z.string().uuid(),
-    name: z.string().min(1, { message: 'Tên tuyến đường không được để trống' }),
-    status: z.string().default('active'),
-    createdAt: z.date(),
-    updatedAt: z.date(),
-    stations: z.array(z.any()).optional(),
+    id: z.string(),
+    name: z.string().min(1, "Required"),
+    status: z.string(),
+    createdAt: z.string().or(z.date()),
+    updatedAt: z.string().or(z.date()),
+    stations: z.array(routeStationSchema).optional(),
 });
 
 export type Route = z.infer<typeof routeSchema>;
-
-export const createRouteSchema = routeSchema.pick({
-    name: true,
-});
-
-export type CreateRouteInput = z.infer<typeof createRouteSchema>;
-
-export const updateRouteSchema = routeSchema.pick({
-    name: true,
-    status: true,
-}).partial();
-export type UpdateRouteInput = z.infer<typeof updateRouteSchema>;
+export type RouteStation = z.infer<typeof routeStationSchema>;

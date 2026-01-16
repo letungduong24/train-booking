@@ -33,7 +33,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { createRouteSchema, CreateRouteInput } from "@/lib/schemas/route.schema"
+import { createRouteSchema, CreateRouteInput } from "@/features/routes/lib/route.schema"
 import { useCreateRoute } from "@/features/routes/hooks/use-route-mutations"
 
 interface CreateRouteDialogProps {

@@ -56,8 +56,9 @@ export const ModelName = {
   Station: 'Station',
   Route: 'Route',
   RouteStation: 'RouteStation',
+  CoachTemplate: 'CoachTemplate',
   Train: 'Train',
-  Coaches: 'Coaches',
+  Coach: 'Coach',
   Seat: 'Seat'
 } as const
 
@@ -137,9 +138,27 @@ export const RouteStationScalarFieldEnum = {
 export type RouteStationScalarFieldEnum = (typeof RouteStationScalarFieldEnum)[keyof typeof RouteStationScalarFieldEnum]
 
 
+export const CoachTemplateScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  layout: 'layout',
+  totalRows: 'totalRows',
+  totalCols: 'totalCols',
+  tiers: 'tiers',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CoachTemplateScalarFieldEnum = (typeof CoachTemplateScalarFieldEnum)[keyof typeof CoachTemplateScalarFieldEnum]
+
+
 export const TrainScalarFieldEnum = {
   id: 'id',
+  code: 'code',
   name: 'name',
+  status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -147,22 +166,30 @@ export const TrainScalarFieldEnum = {
 export type TrainScalarFieldEnum = (typeof TrainScalarFieldEnum)[keyof typeof TrainScalarFieldEnum]
 
 
-export const CoachesScalarFieldEnum = {
+export const CoachScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  order: 'order',
+  status: 'status',
+  trainId: 'trainId',
+  templateId: 'templateId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  trainId: 'trainId'
+  updatedAt: 'updatedAt'
 } as const
 
-export type CoachesScalarFieldEnum = (typeof CoachesScalarFieldEnum)[keyof typeof CoachesScalarFieldEnum]
+export type CoachScalarFieldEnum = (typeof CoachScalarFieldEnum)[keyof typeof CoachScalarFieldEnum]
 
 
 export const SeatScalarFieldEnum = {
   id: 'id',
+  name: 'name',
+  rowIndex: 'rowIndex',
+  colIndex: 'colIndex',
+  status: 'status',
+  type: 'type',
+  coachId: 'coachId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  coachId: 'coachId'
+  updatedAt: 'updatedAt'
 } as const
 
 export type SeatScalarFieldEnum = (typeof SeatScalarFieldEnum)[keyof typeof SeatScalarFieldEnum]

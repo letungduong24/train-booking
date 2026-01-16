@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
-import { CreateRouteInput, UpdateRouteInput } from '@/lib/schemas/route.schema';
+import { CreateRouteInput, UpdateRouteInput } from '@/features/routes/lib/route.schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
@@ -43,16 +43,21 @@ export const useUpdateRoute = () => {
     });
 };
 
-export const useDeleteRoute = () => {
+export const useDeleteRoute = (options?: {
+    onBeforeDelete?: () => void;
+    onAfterDelete?: () => void;
+}) => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (id: string) => {
+            options?.onBeforeDelete?.();
             await apiClient.delete(`/route/${id}`);
         },
         onSuccess: () => {
             toast.success('Xóa tuyến đường thành công');
             queryClient.invalidateQueries({ queryKey: ['routes'] });
+            options?.onAfterDelete?.();
         },
         onError: (error: any) => {
             toast.error(error.response?.data?.message || 'Xóa tuyến đường thất bại');

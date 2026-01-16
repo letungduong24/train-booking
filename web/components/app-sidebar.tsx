@@ -44,6 +44,11 @@ const data = {
       url: "/admin/stations",
       icon: IconMapPin,
     },
+    {
+      title: "Quản lý tàu",
+      url: "/admin/trains",
+      icon: IconBrandGoogleMaps, // TODO: Use better icon
+    },
   ],
   navSecondary: [
     {

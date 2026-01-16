@@ -26,21 +26,27 @@ export type AggregateTrain = {
 
 export type TrainMinAggregateOutputType = {
   id: string | null
+  code: string | null
   name: string | null
+  status: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type TrainMaxAggregateOutputType = {
   id: string | null
+  code: string | null
   name: string | null
+  status: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type TrainCountAggregateOutputType = {
   id: number
+  code: number
   name: number
+  status: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -49,21 +55,27 @@ export type TrainCountAggregateOutputType = {
 
 export type TrainMinAggregateInputType = {
   id?: true
+  code?: true
   name?: true
+  status?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type TrainMaxAggregateInputType = {
   id?: true
+  code?: true
   name?: true
+  status?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type TrainCountAggregateInputType = {
   id?: true
+  code?: true
   name?: true
+  status?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -143,7 +155,9 @@ export type TrainGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type TrainGroupByOutputType = {
   id: string
+  code: string
   name: string
+  status: string
   createdAt: Date
   updatedAt: Date
   _count: TrainCountAggregateOutputType | null
@@ -171,34 +185,42 @@ export type TrainWhereInput = {
   OR?: Prisma.TrainWhereInput[]
   NOT?: Prisma.TrainWhereInput | Prisma.TrainWhereInput[]
   id?: Prisma.StringFilter<"Train"> | string
+  code?: Prisma.StringFilter<"Train"> | string
   name?: Prisma.StringFilter<"Train"> | string
+  status?: Prisma.StringFilter<"Train"> | string
   createdAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Train"> | Date | string
-  coaches?: Prisma.CoachesListRelationFilter
+  coaches?: Prisma.CoachListRelationFilter
 }
 
 export type TrainOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  coaches?: Prisma.CoachesOrderByRelationAggregateInput
+  coaches?: Prisma.CoachOrderByRelationAggregateInput
 }
 
 export type TrainWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  code?: string
   AND?: Prisma.TrainWhereInput | Prisma.TrainWhereInput[]
   OR?: Prisma.TrainWhereInput[]
   NOT?: Prisma.TrainWhereInput | Prisma.TrainWhereInput[]
   name?: Prisma.StringFilter<"Train"> | string
+  status?: Prisma.StringFilter<"Train"> | string
   createdAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Train"> | Date | string
-  coaches?: Prisma.CoachesListRelationFilter
-}, "id">
+  coaches?: Prisma.CoachListRelationFilter
+}, "id" | "code">
 
 export type TrainOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TrainCountOrderByAggregateInput
@@ -211,81 +233,103 @@ export type TrainScalarWhereWithAggregatesInput = {
   OR?: Prisma.TrainScalarWhereWithAggregatesInput[]
   NOT?: Prisma.TrainScalarWhereWithAggregatesInput | Prisma.TrainScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Train"> | string
+  code?: Prisma.StringWithAggregatesFilter<"Train"> | string
   name?: Prisma.StringWithAggregatesFilter<"Train"> | string
+  status?: Prisma.StringWithAggregatesFilter<"Train"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Train"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Train"> | Date | string
 }
 
 export type TrainCreateInput = {
   id?: string
+  code: string
   name: string
+  status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  coaches?: Prisma.CoachesCreateNestedManyWithoutTrainInput
+  coaches?: Prisma.CoachCreateNestedManyWithoutTrainInput
 }
 
 export type TrainUncheckedCreateInput = {
   id?: string
+  code: string
   name: string
+  status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  coaches?: Prisma.CoachesUncheckedCreateNestedManyWithoutTrainInput
+  coaches?: Prisma.CoachUncheckedCreateNestedManyWithoutTrainInput
 }
 
 export type TrainUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  coaches?: Prisma.CoachesUpdateManyWithoutTrainNestedInput
+  coaches?: Prisma.CoachUpdateManyWithoutTrainNestedInput
 }
 
 export type TrainUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  coaches?: Prisma.CoachesUncheckedUpdateManyWithoutTrainNestedInput
+  coaches?: Prisma.CoachUncheckedUpdateManyWithoutTrainNestedInput
 }
 
 export type TrainCreateManyInput = {
   id?: string
+  code: string
   name: string
+  status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type TrainUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TrainUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TrainCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type TrainMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type TrainMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -311,14 +355,18 @@ export type TrainUpdateOneRequiredWithoutCoachesNestedInput = {
 
 export type TrainCreateWithoutCoachesInput = {
   id?: string
+  code: string
   name: string
+  status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type TrainUncheckedCreateWithoutCoachesInput = {
   id?: string
+  code: string
   name: string
+  status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -341,14 +389,18 @@ export type TrainUpdateToOneWithWhereWithoutCoachesInput = {
 
 export type TrainUpdateWithoutCoachesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type TrainUncheckedUpdateWithoutCoachesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -380,13 +432,15 @@ export type TrainCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extens
  * TrainCountOutputType without action
  */
 export type TrainCountOutputTypeCountCoachesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.CoachesWhereInput
+  where?: Prisma.CoachWhereInput
 }
 
 
 export type TrainSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  code?: boolean
   name?: boolean
+  status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   coaches?: boolean | Prisma.Train$coachesArgs<ExtArgs>
@@ -395,26 +449,32 @@ export type TrainSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 
 export type TrainSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  code?: boolean
   name?: boolean
+  status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["train"]>
 
 export type TrainSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  code?: boolean
   name?: boolean
+  status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["train"]>
 
 export type TrainSelectScalar = {
   id?: boolean
+  code?: boolean
   name?: boolean
+  status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TrainOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt", ExtArgs["result"]["train"]>
+export type TrainOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["train"]>
 export type TrainInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   coaches?: boolean | Prisma.Train$coachesArgs<ExtArgs>
   _count?: boolean | Prisma.TrainCountOutputTypeDefaultArgs<ExtArgs>
@@ -425,11 +485,13 @@ export type TrainIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
 export type $TrainPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Train"
   objects: {
-    coaches: Prisma.$CoachesPayload<ExtArgs>[]
+    coaches: Prisma.$CoachPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    code: string
     name: string
+    status: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["train"]>
@@ -826,7 +888,7 @@ readonly fields: TrainFieldRefs;
  */
 export interface Prisma__TrainClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  coaches<T extends Prisma.Train$coachesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Train$coachesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CoachesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  coaches<T extends Prisma.Train$coachesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Train$coachesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CoachPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -857,7 +919,9 @@ export interface Prisma__TrainClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface TrainFieldRefs {
   readonly id: Prisma.FieldRef<"Train", 'String'>
+  readonly code: Prisma.FieldRef<"Train", 'String'>
   readonly name: Prisma.FieldRef<"Train", 'String'>
+  readonly status: Prisma.FieldRef<"Train", 'String'>
   readonly createdAt: Prisma.FieldRef<"Train", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Train", 'DateTime'>
 }
@@ -1252,23 +1316,23 @@ export type TrainDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
  */
 export type Train$coachesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Coaches
+   * Select specific fields to fetch from the Coach
    */
-  select?: Prisma.CoachesSelect<ExtArgs> | null
+  select?: Prisma.CoachSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Coaches
+   * Omit specific fields from the Coach
    */
-  omit?: Prisma.CoachesOmit<ExtArgs> | null
+  omit?: Prisma.CoachOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.CoachesInclude<ExtArgs> | null
-  where?: Prisma.CoachesWhereInput
-  orderBy?: Prisma.CoachesOrderByWithRelationInput | Prisma.CoachesOrderByWithRelationInput[]
-  cursor?: Prisma.CoachesWhereUniqueInput
+  include?: Prisma.CoachInclude<ExtArgs> | null
+  where?: Prisma.CoachWhereInput
+  orderBy?: Prisma.CoachOrderByWithRelationInput | Prisma.CoachOrderByWithRelationInput[]
+  cursor?: Prisma.CoachWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.CoachesScalarFieldEnum | Prisma.CoachesScalarFieldEnum[]
+  distinct?: Prisma.CoachScalarFieldEnum | Prisma.CoachScalarFieldEnum[]
 }
 
 /**

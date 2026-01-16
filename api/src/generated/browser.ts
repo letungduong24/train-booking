@@ -43,15 +43,20 @@ export type Route = Prisma.RouteModel
  */
 export type RouteStation = Prisma.RouteStationModel
 /**
+ * Model CoachTemplate
+ * 
+ */
+export type CoachTemplate = Prisma.CoachTemplateModel
+/**
  * Model Train
  * 
  */
 export type Train = Prisma.TrainModel
 /**
- * Model Coaches
+ * Model Coach
  * 
  */
-export type Coaches = Prisma.CoachesModel
+export type Coach = Prisma.CoachModel
 /**
  * Model Seat
  * 

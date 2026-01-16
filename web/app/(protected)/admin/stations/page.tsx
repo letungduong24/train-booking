@@ -1,7 +1,7 @@
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
-import { StationsTable } from "./stations-table"
+import { StationsTable } from "@/features/stations/components/stations-table"
 
 export default function StationsPage() {
     return (

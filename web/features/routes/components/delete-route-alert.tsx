@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { useDeleteRoute } from "@/features/routes/hooks/use-route-mutations"
-import { Route } from "@/lib/schemas/route.schema"
+import { Route } from "@/features/routes/lib/route.schema"
 
 interface DeleteRouteAlertProps {
     route: Route;
@@ -41,8 +41,6 @@ export function DeleteRouteAlert({
 
     const deleteRoute = useDeleteRoute({
         onBeforeDelete: () => {
-            // Logic: Nếu đang ở trang > 1 và chỉ còn 1 item trên trang hiện tại
-            // thì chuyển về trang trước
             if (currentPage && itemsOnCurrentPage) {
                 const isNotFirstPage = currentPage > 1;
                 const isLastItemOnPage = itemsOnCurrentPage === 1;
