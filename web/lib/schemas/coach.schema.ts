@@ -36,7 +36,11 @@ export const createCoachSchema = z.object({
     status: z.string().optional(),
 });
 
-export const updateCoachSchema = createCoachSchema.partial();
+export const updateCoachSchema = z.object({
+    name: z.string().optional(),
+    order: z.number().optional(),
+    status: z.string().optional(),
+});
 
 // Inferred Types
 export type CoachTemplate = z.infer<typeof coachTemplateSchema>;

@@ -21,3 +21,10 @@ export const seatSchema = z.object({
 });
 
 export type Seat = z.infer<typeof seatSchema>;
+
+export const updateSeatSchema = z.object({
+    status: SeatStatusEnum.optional(),
+    type: SeatTypeEnum.optional(),
+});
+
+export type UpdateSeatInput = z.infer<typeof updateSeatSchema>;

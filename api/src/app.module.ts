@@ -9,6 +9,7 @@ import { StationModule } from './modules/station/station.module';
 import { RouteModule } from './modules/route/route.module';
 import { CoachesModule } from './modules/coaches/coaches.module';
 import { CoachTemplateModule } from './modules/coach-template/coach-template.module';
+import { SeatsModule } from './modules/seats/seats.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CoachTemplateModule } from './modules/coach-template/coach-template.mod
     RouteModule,
     CoachesModule,
     CoachTemplateModule,
+    SeatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

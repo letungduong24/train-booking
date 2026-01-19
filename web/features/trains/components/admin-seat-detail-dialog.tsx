@@ -23,12 +23,14 @@ import { Seat, SeatStatus, SeatType } from "@/lib/schemas/seat.schema"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { Lock, Unlock, AlertCircle } from "lucide-react"
+import { useUpdateSeat } from "@/features/trains/hooks/use-seat-mutations"
+import { toast } from "sonner"
 
 interface AdminSeatDetailDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     seat: Seat | null
-    onUpdate: (updatedSeat: Seat) => void
+    onUpdate?: (updatedSeat: Seat) => void // Kept for compatibility but might not be needed if relying on cache invalidation
 }
 
 export function AdminSeatDetailDialog({
@@ -39,6 +41,7 @@ export function AdminSeatDetailDialog({
 }: AdminSeatDetailDialogProps) {
     const [selectedType, setSelectedType] = useState<SeatType>('STANDARD')
     const [error, setError] = useState<string | null>(null)
+    const updateSeat = useUpdateSeat()
 
     useEffect(() => {
         if (seat) {
@@ -50,21 +53,26 @@ export function AdminSeatDetailDialog({
     if (!seat) return null
 
     const handleDisableToggle = () => {
-        if (seat.status === 'AVAILABLE') {
-            // Logic to disable (lock) the seat
-            // In a real app, this would call an API
-            const newStatus: SeatStatus = 'DISABLED'
-            onUpdate({ ...seat, status: newStatus })
-            onOpenChange(false)
-        } else if (seat.status === 'DISABLED') {
-            // Logic to unlock
-            const newStatus: SeatStatus = 'AVAILABLE'
-            onUpdate({ ...seat, status: newStatus })
-            onOpenChange(false)
-        } else {
-            // Cannot disable if booked/reserved
+        if (seat.status === 'BOOKED') {
             setError("Hiện không thể disable ghế, vui lòng xử lí các booking của khách trước khi disable ghế.")
+            return
         }
+
+        const newStatus: SeatStatus = seat.status === 'DISABLED' ? 'AVAILABLE' : 'DISABLED'
+
+        updateSeat.mutate(
+            { id: seat.id, data: { status: newStatus } },
+            {
+                onSuccess: () => {
+                    toast.success(newStatus === 'DISABLED' ? "Đã khóa ghế" : "Đã mở khóa ghế");
+                    onOpenChange(false);
+                },
+                onError: (err: any) => {
+                    toast.error("Cập nhật thất bại");
+                    console.error(err);
+                }
+            }
+        )
     }
 
     const handleTypeChange = (value: SeatType) => {
@@ -72,11 +80,23 @@ export function AdminSeatDetailDialog({
     }
 
     const handleSaveType = () => {
-        onUpdate({ ...seat, type: selectedType })
-        onOpenChange(false)
+        updateSeat.mutate(
+            { id: seat.id, data: { type: selectedType } },
+            {
+                onSuccess: () => {
+                    toast.success("Đã thay đổi hạng vé");
+                    onOpenChange(false);
+                },
+                onError: (err: any) => {
+                    toast.error("Cập nhật thất bại");
+                    console.error(err);
+                }
+            }
+        )
     }
 
     const isLocked = seat.status === 'DISABLED'
+    const isBooked = seat.status === 'BOOKED'
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -95,7 +115,8 @@ export function AdminSeatDetailDialog({
                         <Badge variant={seat.status === 'AVAILABLE' ? 'default' : 'secondary'} className={cn(
                             seat.status === 'AVAILABLE' && "bg-green-500 hover:bg-green-600",
                             seat.status === 'BOOKED' && "bg-red-500 hover:bg-red-600",
-                            seat.status === 'LOCKED' && "bg-yellow-500 hover:bg-yellow-600", // Assuming LOCKED exists or is being used
+                            seat.status === 'LOCKED' && "bg-yellow-500 hover:bg-yellow-600",
+                            seat.status === 'DISABLED' && "bg-gray-500 hover:bg-gray-600",
                         )}>
                             {seat.status}
                         </Badge>
@@ -126,6 +147,7 @@ export function AdminSeatDetailDialog({
                                     variant="outline"
                                     className="w-full text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700"
                                     onClick={handleDisableToggle}
+                                    disabled={updateSeat.isPending}
                                 >
                                     <Unlock className="w-4 h-4 mr-2" />
                                     Mở khóa ghế
@@ -135,6 +157,7 @@ export function AdminSeatDetailDialog({
                                     variant="outline"
                                     className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
                                     onClick={handleDisableToggle}
+                                    disabled={isBooked || updateSeat.isPending}
                                 >
                                     <Lock className="w-4 h-4 mr-2" />
                                     Khóa ghế (Disable)
@@ -155,8 +178,8 @@ export function AdminSeatDetailDialog({
                     <Button variant="ghost" onClick={() => onOpenChange(false)}>
                         Đóng
                     </Button>
-                    <Button onClick={handleSaveType}>
-                        Lưu thay đổi
+                    <Button onClick={handleSaveType} disabled={updateSeat.isPending}>
+                        {updateSeat.isPending ? "Đang lưu..." : "Lưu thay đổi"}
                     </Button>
                 </DialogFooter>
             </DialogContent>
