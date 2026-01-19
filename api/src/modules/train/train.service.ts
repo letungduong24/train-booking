@@ -60,6 +60,21 @@ export class TrainService {
   async findOne(id: string) {
     const train = await this.prisma.train.findUnique({
       where: { id },
+      include: {
+        coaches: {
+          include: {
+            template: true,
+            _count: {
+              select: {
+                seats: true
+              }
+            }
+          },
+          orderBy: {
+            order: 'asc'
+          }
+        }
+      }
     });
     if (!train) {
       throw new NotFoundException(`Train #${id} not found`);

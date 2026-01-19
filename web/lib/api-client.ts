@@ -62,8 +62,8 @@ apiClient.interceptors.response.use(
             isRefreshing = true;
 
             try {
-                // Call refresh endpoint - backend will read refreshToken from cookie
-                await apiClient.post('/auth/refresh');
+                // Call refresh endpoint with timeout (5s max)
+                await apiClient.post('/auth/refresh', {}, { timeout: 5000 });
 
                 // Refresh successful, process queued requests
                 processQueue();
@@ -76,13 +76,20 @@ apiClient.interceptors.response.use(
                 processQueue(refreshError);
                 isRefreshing = false;
 
-                // Only redirect if not already on login page
+                // Only redirect if not already on login page or checking profile
                 if (
                     typeof window !== 'undefined' &&
                     !window.location.pathname.includes('/login') &&
                     !originalRequest.url?.includes('/auth/profile')
                 ) {
-                    window.location.href = '/login';
+                    // Use Next.js router instead of window.location.href to prevent full page reload
+                    // Import dynamically to avoid SSR issues
+                    import('next/navigation').then(({ redirect }) => {
+                        redirect('/login');
+                    }).catch(() => {
+                        // Fallback to window.location if redirect fails (shouldn't happen in client components)
+                        window.location.href = '/login';
+                    });
                 }
 
                 return Promise.reject(refreshError);

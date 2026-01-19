@@ -17,6 +17,11 @@ const fetchTrains = async (filters: TrainFilters) => {
     return response.data;
 };
 
+const fetchTrain = async (id: string) => {
+    const response = await apiClient.get<Train>(`/train/${id}`);
+    return response.data;
+};
+
 const createTrain = async (data: CreateTrainInput) => {
     const response = await apiClient.post<Train>('/train', data);
     return response.data;
@@ -38,6 +43,14 @@ export const useTrains = (filters: TrainFilters) => {
         queryKey: ['trains', filters],
         queryFn: () => fetchTrains(filters),
         placeholderData: keepPreviousData,
+    });
+};
+
+export const useTrain = (id: string) => {
+    return useQuery({
+        queryKey: ['trains', id],
+        queryFn: () => fetchTrain(id),
+        enabled: !!id,
     });
 };
 

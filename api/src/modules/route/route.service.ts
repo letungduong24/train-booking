@@ -106,11 +106,36 @@ export class RouteService {
   }
 
   async removeStation(routeId: string, stationId: string) {
-    return this.prisma.routeStation.deleteMany({
-      where: {
-        routeId,
-        stationId
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Get the index of the station being removed
+      const stationToRemove = await tx.routeStation.findFirst({
+        where: { routeId, stationId }
+      });
+
+      if (!stationToRemove) {
+        throw new Error('Station not found in this route');
       }
+
+      const removedIndex = stationToRemove.index;
+
+      // 2. Delete the station
+      await tx.routeStation.deleteMany({
+        where: { routeId, stationId }
+      });
+
+      // 3. Reindex all stations with index > removedIndex
+      // Decrement their index by 1 to fill the gap
+      await tx.routeStation.updateMany({
+        where: {
+          routeId,
+          index: { gt: removedIndex }
+        },
+        data: {
+          index: { decrement: 1 }
+        }
+      });
+
+      return { success: true, removedIndex, reindexedCount: await tx.routeStation.count({ where: { routeId } }) };
     });
   }
 

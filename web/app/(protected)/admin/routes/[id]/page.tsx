@@ -11,6 +11,7 @@ import {
     closestCenter,
     KeyboardSensor,
     PointerSensor,
+    TouchSensor,
     useSensor,
     useSensors,
     DragEndEvent,
@@ -69,7 +70,14 @@ function SortableRow({ id, station, onDelete, routeId, onSuccess }: any) {
     return (
         <TableRow ref={setNodeRef} style={style}>
             <TableCell>
-                <Button variant="ghost" size="icon" className="cursor-grab" {...attributes} {...listeners}>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="cursor-grab touch-none"
+                    style={{ touchAction: 'none' }}
+                    {...attributes}
+                    {...listeners}
+                >
                     <GripVertical className="h-4 w-4" />
                 </Button>
             </TableCell>
@@ -111,7 +119,18 @@ export default function RouteDetailPage() {
     const [hasChanged, setHasChanged] = React.useState(false)
 
     const sensors = useSensors(
-        useSensor(PointerSensor),
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8, // 8px movement before drag starts
+            },
+        }),
+        useSensor(TouchSensor, {
+            // Require movement before activating to allow scrolling
+            activationConstraint: {
+                delay: 200,
+                tolerance: 8,
+            },
+        }),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })

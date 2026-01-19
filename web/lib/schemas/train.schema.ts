@@ -1,14 +1,18 @@
 import { z } from "zod";
+import { coachSchema } from "./coach.schema";
 
+// API Schemas
 export const trainSchema = z.object({
     id: z.string(),
     code: z.string(),
     name: z.string(),
     status: z.string(),
-    createdAt: z.string(),
-    updatedAt: z.string(),
+    coaches: z.array(coachSchema).optional(),
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
 });
 
+// Create/Update Input Schemas
 export const createTrainSchema = z.object({
     code: z.string().min(1, "Mã tàu không được để trống"),
     name: z.string().min(1, "Tên tàu không được để trống"),
@@ -17,9 +21,11 @@ export const createTrainSchema = z.object({
 
 export const updateTrainSchema = createTrainSchema.partial();
 
+// Inferred Types
 export type Train = z.infer<typeof trainSchema>;
 export type CreateTrainInput = z.infer<typeof createTrainSchema>;
 export type UpdateTrainInput = z.infer<typeof updateTrainSchema>;
+
 
 export type TrainFilters = {
     page: number;

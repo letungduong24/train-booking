@@ -79,7 +79,7 @@ export function ReorderConfirmDialog({ routeId, stations, open, onOpenChange, on
                     </DialogDescription>
                 </DialogHeader>
 
-                <ScrollArea className="flex-1 pr-4">
+                <ScrollArea className="flex-1 pr-4 overflow-y-scroll">
                     <div className="space-y-4 py-4">
                         {stations.map((item, index) => (
                             <div key={item.stationId} className="grid grid-cols-4 items-center gap-4 border-b pb-2">

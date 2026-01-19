@@ -4,7 +4,6 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconEdit } from "@tabler/icons-react"
-import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -26,15 +25,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useUpdateRouteStation } from "@/features/routes/hooks/use-route-mutations"
-
-const updateRouteStationSchema = z.object({
-    name: z.string().min(1, "Tên trạm không được để trống"),
-    latitute: z.coerce.number(),
-    longtitute: z.coerce.number(),
-    distanceFromStart: z.coerce.number().min(0, "Khoảng cách phải lớn hơn hoặc bằng 0"),
-})
-
-type UpdateRouteStationInput = z.infer<typeof updateRouteStationSchema>
+import { updateRouteStationSchema, type UpdateRouteStationInput } from "@/lib/schemas/route.schema"
 
 interface EditRouteStationDialogProps {
     routeId: string
@@ -46,27 +37,27 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
     const [open, setOpen] = React.useState(false)
     const updateRouteStation = useUpdateRouteStation()
 
+    // Extract default values to useMemo with primitive dependencies (rerender-dependencies pattern)
+    const defaultValues = React.useMemo(() => ({
+        name: station.station.name,
+        latitute: Number(station.station.latitute),
+        longtitute: Number(station.station.longtitute),
+        distanceFromStart: Number(station.distanceFromStart),
+    }), [station.station.name, station.station.latitute, station.station.longtitute, station.distanceFromStart])
+
+    // Fix type parameters: use UpdateRouteStationInput directly
     const form = useForm<UpdateRouteStationInput>({
         resolver: zodResolver(updateRouteStationSchema),
-        defaultValues: {
-            name: station.station.name,
-            latitute: Number(station.station.latitute),
-            longtitute: Number(station.station.longtitute),
-            distanceFromStart: Number(station.distanceFromStart),
-        },
+        defaultValues,
     })
 
-    // Reset when station changes (in case of re-use or modal re-open with different data if props change)
+    // Reset when station changes - removed form from dependencies to prevent re-renders
     React.useEffect(() => {
         if (open) {
-            form.reset({
-                name: station.station.name,
-                latitute: Number(station.station.latitute),
-                longtitute: Number(station.station.longtitute),
-                distanceFromStart: Number(station.distanceFromStart),
-            })
+            form.reset(defaultValues)
         }
-    }, [open, station, form])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open, defaultValues])
 
     async function onSubmit(values: UpdateRouteStationInput) {
         updateRouteStation.mutate({
@@ -84,8 +75,13 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                    <IconEdit className="h-4 w-4" />
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    aria-label="Sửa thông tin trạm"
+                >
+                    <IconEdit className="h-4 w-4" aria-hidden="true" />
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">

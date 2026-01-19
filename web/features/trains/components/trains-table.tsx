@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 import {
     ColumnDef,
     SortingState,
@@ -25,8 +26,6 @@ import {
 } from "@/components/ui/table"
 import { TableSkeleton } from "@/components/custom/table-skeleton"
 import { CreateTrainDialog } from "./create-train-dialog"
-import { EditTrainDialog } from "./edit-train-dialog"
-import { DeleteTrainAlert } from "./delete-train-alert"
 
 export const columns: ColumnDef<Train>[] = [
     {
@@ -69,21 +68,10 @@ export const columns: ColumnDef<Train>[] = [
             return <div className="text-muted-foreground">{date.toLocaleDateString('vi-VN')}</div>
         },
     },
-    {
-        id: "actions",
-        cell: ({ row }) => {
-            const train = row.original;
-            return (
-                <div className="flex items-center gap-2">
-                    <EditTrainDialog train={train} />
-                    <DeleteTrainAlert train={train} />
-                </div>
-            )
-        },
-    },
 ]
 
 export function TrainsTable() {
+    const router = useRouter()
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [searchValue, setSearchValue] = React.useState("")
     const [filters, setFilters] = React.useState<{
@@ -210,6 +198,8 @@ export function TrainsTable() {
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
+                                    className="cursor-pointer hover:bg-muted/50"
+                                    onClick={() => router.push(`/admin/trains/${row.original.id}`)}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>

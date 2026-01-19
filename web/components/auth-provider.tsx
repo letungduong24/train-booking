@@ -8,13 +8,12 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-    const checkAuth = useAuthStore((state) => state.checkAuth);
-
     useEffect(() => {
-        // Check authentication status only once on mount
-        checkAuth();
+        // Call checkAuth directly without subscribing to state (rerender-defer-reads pattern)
+        // The deduplication in the store ensures this only runs once even if multiple components mount
+        useAuthStore.getState().checkAuth();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // Empty dependency array - only run once
 
-    return <div className="flex flex-col h-screen">{children}</div>;
-}
+    // Use Fragment instead of wrapper div to avoid unnecessary DOM nesting
+    return <div className="flex flex-col h-screen">{children}</div>;}

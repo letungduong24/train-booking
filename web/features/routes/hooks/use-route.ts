@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
-import { Route } from '@/features/routes/lib/route.schema';
+import { Route } from '@/lib/schemas/route.schema';
 
 const fetchRoute = async (id: string) => {
     const response = await apiClient.get<Route>(`/route/${id}`);

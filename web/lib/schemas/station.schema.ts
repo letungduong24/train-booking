@@ -20,3 +20,21 @@ export const updateStationSchema = createStationSchema.partial();
 export type Station = z.infer<typeof stationSchema>;
 export type CreateStationInput = z.infer<typeof createStationSchema>;
 export type UpdateStationInput = z.infer<typeof updateStationSchema>;
+
+export type StationFilters = {
+    page: number;
+    limit: number;
+    search?: string;
+    sort?: string;
+    order?: 'asc' | 'desc';
+}
+
+export type StationsResponse = {
+    data: Station[];
+    meta: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }
+}

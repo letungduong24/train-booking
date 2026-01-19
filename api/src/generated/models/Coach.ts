@@ -261,7 +261,6 @@ export type CoachOrderByWithRelationInput = {
 
 export type CoachWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  trainId_order?: Prisma.CoachTrainIdOrderCompoundUniqueInput
   AND?: Prisma.CoachWhereInput | Prisma.CoachWhereInput[]
   OR?: Prisma.CoachWhereInput[]
   NOT?: Prisma.CoachWhereInput | Prisma.CoachWhereInput[]
@@ -275,7 +274,7 @@ export type CoachWhereUniqueInput = Prisma.AtLeast<{
   train?: Prisma.XOR<Prisma.TrainScalarRelationFilter, Prisma.TrainWhereInput>
   template?: Prisma.XOR<Prisma.CoachTemplateScalarRelationFilter, Prisma.CoachTemplateWhereInput>
   seats?: Prisma.SeatListRelationFilter
-}, "id" | "trainId_order">
+}, "id">
 
 export type CoachOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -394,11 +393,6 @@ export type CoachListRelationFilter = {
 
 export type CoachOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
-}
-
-export type CoachTrainIdOrderCompoundUniqueInput = {
-  trainId: string
-  order: number
 }
 
 export type CoachCountOrderByAggregateInput = {

@@ -1,9 +1,9 @@
 'use client';
 
 import { useAuthStore } from '@/lib/store/auth.store';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { redirect } from 'next/navigation';
 import { Loading } from './loading';
+import { useShallow } from 'zustand/react/shallow';
 
 interface AuthGuardProps {
     children: React.ReactNode;
@@ -17,32 +17,27 @@ interface AuthGuardProps {
  * If requireAdmin is true, redirects non-admin users to /onboard
  */
 export function AuthGuard({ children, fallbackPath = '/login', requireAdmin = false }: AuthGuardProps) {
-    const user = useAuthStore((state) => state.user);
-    const isInitialized = useAuthStore((state) => state.isInitialized);
-    const router = useRouter();
-
-    useEffect(() => {
-        if (isInitialized && !user) {
-            router.push(fallbackPath);
-        } else if (isInitialized && user && requireAdmin && user.role !== 'admin') {
-            // Redirect non-admin users trying to access admin routes
-            router.push('/onboard');
-        }
-    }, [user, isInitialized, router, fallbackPath, requireAdmin]);
+    // Combine selectors to reduce re-renders (rerender-derived-state pattern)
+    // Use useShallow to prevent infinite loop from object selector
+    const { isAuthenticated, isAdmin, isInitialized } = useAuthStore(useShallow((state) => ({
+        isAuthenticated: !!state.user,
+        isAdmin: state.user?.role === 'admin',
+        isInitialized: state.isInitialized,
+    })));
 
     // Show loading while checking auth
     if (!isInitialized) {
         return <Loading />;
     }
 
-    // Don't render children if not authenticated
-    if (!user) {
-        return null;
+    // Redirect if not authenticated (using Next.js redirect instead of router.push to prevent flicker)
+    if (!isAuthenticated) {
+        redirect(fallbackPath);
     }
 
-    // Don't render children if admin is required but user is not admin
-    if (requireAdmin && user.role !== 'admin') {
-        return null;
+    // Redirect non-admin users trying to access admin routes
+    if (requireAdmin && !isAdmin) {
+        redirect('/onboard');
     }
 
     return <>{children}</>;
@@ -53,24 +48,21 @@ export function AuthGuard({ children, fallbackPath = '/login', requireAdmin = fa
  * Redirects to onboard if user is already authenticated
  */
 export function GuestGuard({ children, fallbackPath = '/onboard' }: AuthGuardProps) {
-    const user = useAuthStore((state) => state.user);
-    const isInitialized = useAuthStore((state) => state.isInitialized);
-    const router = useRouter();
-
-    useEffect(() => {
-        if (isInitialized && user) {
-            router.push(fallbackPath);
-        }
-    }, [user, isInitialized, router, fallbackPath]);
+    // Combine selectors to reduce re-renders (rerender-derived-state pattern)
+    // Use useShallow to prevent infinite loop from object selector
+    const { isAuthenticated, isInitialized } = useAuthStore(useShallow((state) => ({
+        isAuthenticated: !!state.user,
+        isInitialized: state.isInitialized,
+    })));
 
     // Show loading while checking auth
     if (!isInitialized) {
         return <Loading />;
     }
 
-    // Don't render children if authenticated
-    if (user) {
-        return null;
+    // Redirect if authenticated (using Next.js redirect instead of router.push to prevent flicker)
+    if (isAuthenticated) {
+        redirect(fallbackPath);
     }
 
     return <>{children}</>;

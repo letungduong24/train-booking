@@ -115,7 +115,16 @@ export const columns: ColumnDef<Route>[] = [
         },
         cell: ({ row }) => {
             const date = new Date(row.getValue("createdAt"));
-            return <div className="text-muted-foreground">{date.toLocaleDateString('vi-VN')}</div>
+            const formatter = new Intl.DateTimeFormat(undefined, {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+            return (
+                <div className="text-muted-foreground" suppressHydrationWarning>
+                    {formatter.format(date)}
+                </div>
+            );
         },
     },
 ]

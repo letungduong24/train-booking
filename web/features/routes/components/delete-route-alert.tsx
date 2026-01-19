@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { useDeleteRoute } from "@/features/routes/hooks/use-route-mutations"
-import { Route } from "@/features/routes/lib/route.schema"
+import { Route } from "@/lib/schemas/route.schema"
 
 interface DeleteRouteAlertProps {
     route: Route;

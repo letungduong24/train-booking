@@ -8,6 +8,7 @@ import { TrainModule } from './modules/train/train.module';
 import { StationModule } from './modules/station/station.module';
 import { RouteModule } from './modules/route/route.module';
 import { CoachesModule } from './modules/coaches/coaches.module';
+import { CoachTemplateModule } from './modules/coach-template/coach-template.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CoachesModule } from './modules/coaches/coaches.module';
     StationModule,
     RouteModule,
     CoachesModule,
+    CoachTemplateModule,
   ],
   controllers: [AppController],
   providers: [AppService],

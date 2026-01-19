@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { IconTrash } from "@tabler/icons-react"
 
@@ -26,12 +27,14 @@ interface DeleteTrainAlertProps {
 export function DeleteTrainAlert({ train }: DeleteTrainAlertProps) {
     const [open, setOpen] = React.useState(false)
     const deleteTrain = useDeleteTrain()
+    const router = useRouter()
 
     const handleDelete = () => {
         deleteTrain.mutate(train.id, {
             onSuccess: () => {
                 toast.success("Xóa tàu thành công")
                 setOpen(false)
+                router.push('/admin/trains')
             },
             onError: () => {
                 toast.error("Xóa tàu thất bại")

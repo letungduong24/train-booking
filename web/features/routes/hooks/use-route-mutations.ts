@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
-import { CreateRouteInput, UpdateRouteInput } from '@/features/routes/lib/route.schema';
+import { CreateRouteInput, UpdateRouteInput } from '@/lib/schemas/route.schema';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 

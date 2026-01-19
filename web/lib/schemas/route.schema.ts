@@ -20,5 +20,45 @@ export const routeSchema = z.object({
     stations: z.array(routeStationSchema).optional(),
 });
 
+export const createRouteSchema = routeSchema.omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    stations: true,
+}).extend({
+    status: z.string().optional(), // Make status optional since backend sets default
+});
+
+export const updateRouteSchema = createRouteSchema.partial();
+
+// Schema for updating route station details
+export const updateRouteStationSchema = z.object({
+    name: z.string().min(1, "Tên trạm không được để trống"),
+    latitute: z.number(),
+    longtitute: z.number(),
+    distanceFromStart: z.number().min(0, "Khoảng cách phải lớn hơn hoặc bằng 0"),
+});
+
 export type Route = z.infer<typeof routeSchema>;
 export type RouteStation = z.infer<typeof routeStationSchema>;
+export type CreateRouteInput = z.infer<typeof createRouteSchema>;
+export type UpdateRouteInput = z.infer<typeof updateRouteSchema>;
+export type UpdateRouteStationInput = z.infer<typeof updateRouteStationSchema>;
+
+export type RouteFilters = {
+    page: number;
+    limit: number;
+    search?: string;
+    sort?: string;
+    order?: 'asc' | 'desc';
+}
+
+export type RoutesResponse = {
+    data: Route[];
+    meta: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }
+}
