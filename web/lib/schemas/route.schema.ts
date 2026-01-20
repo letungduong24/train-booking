@@ -29,6 +29,8 @@ export const createRouteSchema = routeSchema.omit({
     stations: true,
 }).extend({
     status: z.string().optional(), // Make status optional since backend sets default
+    durationMinutes: z.number(),
+    turnaroundMinutes: z.number(),
 });
 
 export const updateRouteSchema = createRouteSchema.partial();

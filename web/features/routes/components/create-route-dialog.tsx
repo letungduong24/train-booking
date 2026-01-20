@@ -50,7 +50,6 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
             name: "",
             durationMinutes: 0,
             turnaroundMinutes: 60,
-            // status default is handled by backend (draft)
         },
     })
 
