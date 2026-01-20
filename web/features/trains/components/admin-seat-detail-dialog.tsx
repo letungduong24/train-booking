@@ -30,7 +30,7 @@ interface AdminSeatDetailDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     seat: Seat | null
-    onUpdate?: (updatedSeat: Seat) => void // Kept for compatibility but might not be needed if relying on cache invalidation
+    onUpdate?: (updatedSeat: Seat) => void 
 }
 
 export function AdminSeatDetailDialog({
@@ -67,7 +67,7 @@ export function AdminSeatDetailDialog({
                     toast.success(newStatus === 'DISABLED' ? "Đã khóa ghế" : "Đã mở khóa ghế");
                     onOpenChange(false);
                 },
-                onError: (err: any) => {
+                onError: (err) => {
                     toast.error("Cập nhật thất bại");
                     console.error(err);
                 }
@@ -87,7 +87,7 @@ export function AdminSeatDetailDialog({
                     toast.success("Đã thay đổi hạng vé");
                     onOpenChange(false);
                 },
-                onError: (err: any) => {
+                onError: (err) => {
                     toast.error("Cập nhật thất bại");
                     console.error(err);
                 }

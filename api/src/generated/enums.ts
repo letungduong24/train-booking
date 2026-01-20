@@ -35,3 +35,12 @@ export const SeatType = {
 } as const
 
 export type SeatType = (typeof SeatType)[keyof typeof SeatType]
+
+
+export const BookingStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus]

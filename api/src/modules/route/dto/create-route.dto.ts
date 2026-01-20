@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateRouteDto {
     @IsNotEmpty()
@@ -8,4 +8,14 @@ export class CreateRouteDto {
     @IsOptional()
     @IsString()
     status?: string;
+
+    @IsOptional()
+    @IsInt()
+    @Min(0)
+    durationMinutes?: number;
+
+    @IsOptional()
+    @IsInt()
+    @Min(0)
+    turnaroundMinutes?: number;
 }

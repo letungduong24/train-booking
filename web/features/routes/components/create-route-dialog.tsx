@@ -48,6 +48,8 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
         resolver: zodResolver(createRouteSchema),
         defaultValues: {
             name: "",
+            durationMinutes: 0,
+            turnaroundMinutes: 60,
             // status default is handled by backend (draft)
         },
     })
@@ -55,9 +57,13 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
     async function onSubmit(values: CreateRouteInput) {
         createRoute.mutate(values, {
             onSuccess: () => {
+                toast.success("Tạo tuyến đường thành công")
                 setOpen(false)
                 form.reset()
                 onSuccess?.()
+            },
+            onError: (error) => {
+                toast.error(error.message || "Tạo tuyến đường thất bại")
             }
         })
     }
@@ -91,6 +97,44 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                                 </FormItem>
                             )}
                         />
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="durationMinutes"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Thời gian chạy (phút)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                placeholder="VD: 1920"
+                                                {...field}
+                                                onChange={(e) => field.onChange(+e.target.value)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="turnaroundMinutes"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Nghỉ quay đầu (phút)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                placeholder="VD: 240"
+                                                {...field}
+                                                onChange={(e) => field.onChange(+e.target.value)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
 
 

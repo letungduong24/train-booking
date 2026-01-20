@@ -258,6 +258,14 @@ export default function RouteDetailPage() {
                                 <span className="font-semibold min-w-[80px]">Ngày tạo:</span>
                                 <span>{format(new Date(route.createdAt), "dd/MM/yyyy HH:mm", { locale: vi })}</span>
                             </div>
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold min-w-[80px]">Thời gian chạy:</span>
+                                <span>{Math.floor(route.durationMinutes / 60)}g{route.durationMinutes % 60 > 0 ? ` ${route.durationMinutes % 60}p` : ''}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold min-w-[80px]">Nghỉ quay đầu:</span>
+                                <span>{Math.floor(route.turnaroundMinutes / 60)}g{route.turnaroundMinutes % 60 > 0 ? ` ${route.turnaroundMinutes % 60}p` : ''} ({route.turnaroundMinutes} phút)</span>
+                            </div>
                         </div>
 
                         {/* Map */}

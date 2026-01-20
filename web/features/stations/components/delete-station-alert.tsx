@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { IconTrash } from "@tabler/icons-react"
+import { toast } from "sonner"
 
 import {
     AlertDialog,
@@ -53,8 +54,12 @@ export function DeleteStationAlert({
     const handleDelete = () => {
         deleteStation.mutate(station.id, {
             onSuccess: () => {
+                toast.success("Xóa trạm thành công")
                 setOpen(false)
                 onSuccess?.()
+            },
+            onError: (error) => {
+                toast.error(error.message || "Xóa trạm thất bại")
             }
         })
     }

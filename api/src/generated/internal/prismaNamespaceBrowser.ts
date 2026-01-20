@@ -59,7 +59,10 @@ export const ModelName = {
   CoachTemplate: 'CoachTemplate',
   Train: 'Train',
   Coach: 'Coach',
-  Seat: 'Seat'
+  Seat: 'Seat',
+  Trip: 'Trip',
+  Booking: 'Booking',
+  Ticket: 'Ticket'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -120,7 +123,9 @@ export const RouteScalarFieldEnum = {
   name: 'name',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  status: 'status'
+  status: 'status',
+  durationMinutes: 'durationMinutes',
+  turnaroundMinutes: 'turnaroundMinutes'
 } as const
 
 export type RouteScalarFieldEnum = (typeof RouteScalarFieldEnum)[keyof typeof RouteScalarFieldEnum]
@@ -193,6 +198,50 @@ export const SeatScalarFieldEnum = {
 } as const
 
 export type SeatScalarFieldEnum = (typeof SeatScalarFieldEnum)[keyof typeof SeatScalarFieldEnum]
+
+
+export const TripScalarFieldEnum = {
+  id: 'id',
+  routeId: 'routeId',
+  trainId: 'trainId',
+  departureTime: 'departureTime',
+  endTime: 'endTime',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TripScalarFieldEnum = (typeof TripScalarFieldEnum)[keyof typeof TripScalarFieldEnum]
+
+
+export const BookingScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  userId: 'userId',
+  status: 'status',
+  totalPrice: 'totalPrice',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BookingScalarFieldEnum = (typeof BookingScalarFieldEnum)[keyof typeof BookingScalarFieldEnum]
+
+
+export const TicketScalarFieldEnum = {
+  id: 'id',
+  bookingId: 'bookingId',
+  tripId: 'tripId',
+  seatId: 'seatId',
+  passengerName: 'passengerName',
+  passengerId: 'passengerId',
+  fromStationIndex: 'fromStationIndex',
+  toStationIndex: 'toStationIndex',
+  price: 'price',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TicketScalarFieldEnum = (typeof TicketScalarFieldEnum)[keyof typeof TicketScalarFieldEnum]
 
 
 export const SortOrder = {

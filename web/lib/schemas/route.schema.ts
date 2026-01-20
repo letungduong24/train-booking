@@ -15,6 +15,8 @@ export const routeSchema = z.object({
     id: z.string(),
     name: z.string().min(1, "Required"),
     status: z.string(),
+    durationMinutes: z.number().default(0),
+    turnaroundMinutes: z.number().default(60),
     createdAt: z.string().or(z.date()),
     updatedAt: z.string().or(z.date()),
     stations: z.array(routeStationSchema).optional(),

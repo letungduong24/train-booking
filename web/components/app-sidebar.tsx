@@ -7,6 +7,7 @@ import {
   IconInnerShadowTop,
   IconSettings,
   IconMapPin,
+  IconCalendar,
 } from "@tabler/icons-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -43,6 +44,11 @@ const data = {
       title: "Trạm dừng",
       url: "/admin/stations",
       icon: IconMapPin,
+    },
+    {
+      title: "Chuyến đi",
+      url: "/admin/trips",
+      icon: IconCalendar,
     },
     {
       title: "Quản lý tàu",

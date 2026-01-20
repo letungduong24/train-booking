@@ -25,6 +25,7 @@ model User {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   refreshTokens RefreshToken[]
+  bookings      Booking[]
   role          String @default("user")
 }
 
@@ -58,7 +59,10 @@ model Route {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   stations  RouteStation[]
-  status    String @default("draft")
+  trips     Trip[]
+  status            String         @default("draft")
+  durationMinutes   Int            @default(0) // Thời gian chạy (phút)
+  turnaroundMinutes Int            @default(60) // Thời gian nghỉ quay đầu (phút)
 }
 
 model RouteStation {
@@ -99,6 +103,7 @@ model Train {
   name      String   
   status    String   @default("ACTIVE") 
   coaches   Coach[]
+  trips     Trip[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -122,16 +127,17 @@ model Coach {
 }
 
 model Seat {
-  id        String     @id @default(uuid())
-  name      String     
-  rowIndex  Int      
-  colIndex  Int      
-  status    SeatStatus @default(AVAILABLE)
-  type      SeatType   @default(STANDARD) 
-  coachId   String
-  coach     Coach      @relation(fields: [coachId], references: [id], onDelete: Cascade)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id             String          @id @default(uuid())
+  name           String     
+  rowIndex       Int      
+  colIndex       Int      
+  status         SeatStatus      @default(AVAILABLE)
+  type           SeatType        @default(STANDARD) 
+  coachId        String
+  coach          Coach           @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  tickets        Ticket[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
   @@unique([coachId, rowIndex, colIndex]) 
 }
 
@@ -147,4 +153,71 @@ enum SeatType {
   STANDARD  
   ECONOMY  
   OTHER
+}
+
+// Trip Management
+
+model Trip {
+  id            String   @id @default(uuid())
+  routeId       String
+  route         Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  trainId       String
+  train         Train    @relation(fields: [trainId], references: [id], onDelete: Cascade)
+  departureTime DateTime // Thời gian khởi hành (bao gồm cả ngày và giờ)
+  endTime       DateTime // Thời gian kết thúc (bao gồm cả thời gian chạy + nghỉ)
+  status        String   @default("SCHEDULED") // SCHEDULED, RUNNING, COMPLETED, CANCELLED
+  tickets       Ticket[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([routeId])
+  @@index([trainId])
+  @@index([departureTime])
+}
+
+// Booking Management
+
+// Booking = Đơn hàng (Giỏ hàng tổng)
+model Booking {
+  id         String        @id @default(uuid())
+  code       String        @unique // Mã đơn hàng (VD: VNR-2026-XYZ) để tra cứu
+  userId     String?       // Có thể null nếu cho khách vãng lai đặt
+  user       User?         @relation(fields: [userId], references: [id])
+  status     BookingStatus @default(PENDING)
+  totalPrice Float         @default(0) // Tổng tiền của tất cả các vé con cộng lại
+  tickets    Ticket[]      // Booking không trỏ vào Trip nữa, mà chứa danh sách vé
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([code])
+  @@index([status])
+}
+
+enum BookingStatus {
+  PENDING   // Chờ thanh toán
+  PAID      // Đã thanh toán
+  CANCELLED // Đã hủy
+}
+
+// Ticket = Vé lẻ (Mỗi vé gắn với 1 hành khách trên 1 ghế của 1 chuyến tàu)
+model Ticket {
+  id               String   @id @default(uuid())
+  bookingId        String
+  booking          Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  tripId           String   // Vì trong 1 đơn hàng, vé 1 có thể đi tàu SE1, vé 2 có thể đi tàu SE3
+  trip             Trip     @relation(fields: [tripId], references: [id])
+  seatId           String
+  seat             Seat     @relation(fields: [seatId], references: [id])
+  passengerName    String   // Tên hành khách
+  passengerId      String   // CCCD/CMND
+  fromStationIndex Int      // Chỉ số ga đi trong route
+  toStationIndex   Int      // Chỉ số ga đến trong route
+  price            Float    // Giá của riêng vé này
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([bookingId])
+  @@index([tripId])
+  @@index([seatId])
 }

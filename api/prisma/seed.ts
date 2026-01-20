@@ -106,6 +106,8 @@ async function main() {
         data: {
             name: 'SE1 - Hà Nội - Sài Gòn (Thống Nhất)',
             status: 'active',
+            durationMinutes: 1920, // 32 hours
+            turnaroundMinutes: 240, // 4 hours
             stations: {
                 create: [
                     { stationId: stations[0].id, index: 0, distanceFromStart: 0 },
@@ -126,6 +128,8 @@ async function main() {
         data: {
             name: 'SE2 - Sài Gòn - Hà Nội',
             status: 'active',
+            durationMinutes: 1920,
+            turnaroundMinutes: 240,
             stations: {
                 create: [
                     { stationId: stations[8].id, index: 0, distanceFromStart: 0 },
@@ -146,6 +150,8 @@ async function main() {
         data: {
             name: 'SE3 - Hà Nội - Đà Nẵng',
             status: 'active',
+            durationMinutes: 780, // 13 hours
+            turnaroundMinutes: 120, // 2 hours
             stations: {
                 create: [
                     { stationId: stations[0].id, index: 0, distanceFromStart: 0 },
@@ -162,6 +168,8 @@ async function main() {
         data: {
             name: 'SNT1 - Sài Gòn - Nha Trang',
             status: 'active',
+            durationMinutes: 480, // 8 hours
+            turnaroundMinutes: 90, // 1.5 hours
             stations: {
                 create: [
                     { stationId: stations[8].id, index: 0, distanceFromStart: 0 },
@@ -177,6 +185,8 @@ async function main() {
         data: {
             name: 'SCT1 - Sài Gòn - Cần Thơ',
             status: 'draft',
+            durationMinutes: 240, // 4 hours
+            turnaroundMinutes: 60, // 1 hour
             stations: {
                 create: [
                     { stationId: stations[8].id, index: 0, distanceFromStart: 0 },

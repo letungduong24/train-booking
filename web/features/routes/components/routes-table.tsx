@@ -95,6 +95,29 @@ export const columns: ColumnDef<Route>[] = [
         },
     },
     {
+        accessorKey: "durationMinutes",
+        header: "Thời gian chạy",
+        cell: ({ row }) => {
+            const minutes = row.getValue("durationMinutes") as number;
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return <div className="font-medium">{hours}g{mins > 0 ? ` ${mins}p` : ''}</div>
+        },
+    },
+    {
+        accessorKey: "turnaroundMinutes",
+        header: "Thời gian nghỉ",
+        cell: ({ row }) => {
+            const minutes = row.getValue("turnaroundMinutes") as number;
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            if (hours > 0) {
+                return <div className="font-medium">{hours}g{mins > 0 ? ` ${mins}p` : ''}</div>
+            }
+            return <div className="font-medium">{minutes} phút</div>
+        },
+    },
+    {
         accessorKey: "createdAt",
         header: ({ column }) => {
             return (

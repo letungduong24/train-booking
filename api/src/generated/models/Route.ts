@@ -20,8 +20,20 @@ export type RouteModel = runtime.Types.Result.DefaultSelection<Prisma.$RoutePayl
 
 export type AggregateRoute = {
   _count: RouteCountAggregateOutputType | null
+  _avg: RouteAvgAggregateOutputType | null
+  _sum: RouteSumAggregateOutputType | null
   _min: RouteMinAggregateOutputType | null
   _max: RouteMaxAggregateOutputType | null
+}
+
+export type RouteAvgAggregateOutputType = {
+  durationMinutes: number | null
+  turnaroundMinutes: number | null
+}
+
+export type RouteSumAggregateOutputType = {
+  durationMinutes: number | null
+  turnaroundMinutes: number | null
 }
 
 export type RouteMinAggregateOutputType = {
@@ -30,6 +42,8 @@ export type RouteMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   status: string | null
+  durationMinutes: number | null
+  turnaroundMinutes: number | null
 }
 
 export type RouteMaxAggregateOutputType = {
@@ -38,6 +52,8 @@ export type RouteMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   status: string | null
+  durationMinutes: number | null
+  turnaroundMinutes: number | null
 }
 
 export type RouteCountAggregateOutputType = {
@@ -46,9 +62,21 @@ export type RouteCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   status: number
+  durationMinutes: number
+  turnaroundMinutes: number
   _all: number
 }
 
+
+export type RouteAvgAggregateInputType = {
+  durationMinutes?: true
+  turnaroundMinutes?: true
+}
+
+export type RouteSumAggregateInputType = {
+  durationMinutes?: true
+  turnaroundMinutes?: true
+}
 
 export type RouteMinAggregateInputType = {
   id?: true
@@ -56,6 +84,8 @@ export type RouteMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   status?: true
+  durationMinutes?: true
+  turnaroundMinutes?: true
 }
 
 export type RouteMaxAggregateInputType = {
@@ -64,6 +94,8 @@ export type RouteMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   status?: true
+  durationMinutes?: true
+  turnaroundMinutes?: true
 }
 
 export type RouteCountAggregateInputType = {
@@ -72,6 +104,8 @@ export type RouteCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   status?: true
+  durationMinutes?: true
+  turnaroundMinutes?: true
   _all?: true
 }
 
@@ -113,6 +147,18 @@ export type RouteAggregateArgs<ExtArgs extends runtime.Types.Extensions.Internal
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: RouteAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: RouteSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: RouteMinAggregateInputType
@@ -143,6 +189,8 @@ export type RouteGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   _count?: RouteCountAggregateInputType | true
+  _avg?: RouteAvgAggregateInputType
+  _sum?: RouteSumAggregateInputType
   _min?: RouteMinAggregateInputType
   _max?: RouteMaxAggregateInputType
 }
@@ -153,7 +201,11 @@ export type RouteGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   status: string
+  durationMinutes: number
+  turnaroundMinutes: number
   _count: RouteCountAggregateOutputType | null
+  _avg: RouteAvgAggregateOutputType | null
+  _sum: RouteSumAggregateOutputType | null
   _min: RouteMinAggregateOutputType | null
   _max: RouteMaxAggregateOutputType | null
 }
@@ -182,7 +234,10 @@ export type RouteWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Route"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Route"> | Date | string
   status?: Prisma.StringFilter<"Route"> | string
+  durationMinutes?: Prisma.IntFilter<"Route"> | number
+  turnaroundMinutes?: Prisma.IntFilter<"Route"> | number
   stations?: Prisma.RouteStationListRelationFilter
+  trips?: Prisma.TripListRelationFilter
 }
 
 export type RouteOrderByWithRelationInput = {
@@ -191,7 +246,10 @@ export type RouteOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  durationMinutes?: Prisma.SortOrder
+  turnaroundMinutes?: Prisma.SortOrder
   stations?: Prisma.RouteStationOrderByRelationAggregateInput
+  trips?: Prisma.TripOrderByRelationAggregateInput
 }
 
 export type RouteWhereUniqueInput = Prisma.AtLeast<{
@@ -203,7 +261,10 @@ export type RouteWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Route"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Route"> | Date | string
   status?: Prisma.StringFilter<"Route"> | string
+  durationMinutes?: Prisma.IntFilter<"Route"> | number
+  turnaroundMinutes?: Prisma.IntFilter<"Route"> | number
   stations?: Prisma.RouteStationListRelationFilter
+  trips?: Prisma.TripListRelationFilter
 }, "id">
 
 export type RouteOrderByWithAggregationInput = {
@@ -212,9 +273,13 @@ export type RouteOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  durationMinutes?: Prisma.SortOrder
+  turnaroundMinutes?: Prisma.SortOrder
   _count?: Prisma.RouteCountOrderByAggregateInput
+  _avg?: Prisma.RouteAvgOrderByAggregateInput
   _max?: Prisma.RouteMaxOrderByAggregateInput
   _min?: Prisma.RouteMinOrderByAggregateInput
+  _sum?: Prisma.RouteSumOrderByAggregateInput
 }
 
 export type RouteScalarWhereWithAggregatesInput = {
@@ -226,6 +291,8 @@ export type RouteScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Route"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Route"> | Date | string
   status?: Prisma.StringWithAggregatesFilter<"Route"> | string
+  durationMinutes?: Prisma.IntWithAggregatesFilter<"Route"> | number
+  turnaroundMinutes?: Prisma.IntWithAggregatesFilter<"Route"> | number
 }
 
 export type RouteCreateInput = {
@@ -234,7 +301,10 @@ export type RouteCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   status?: string
+  durationMinutes?: number
+  turnaroundMinutes?: number
   stations?: Prisma.RouteStationCreateNestedManyWithoutRouteInput
+  trips?: Prisma.TripCreateNestedManyWithoutRouteInput
 }
 
 export type RouteUncheckedCreateInput = {
@@ -243,7 +313,10 @@ export type RouteUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   status?: string
+  durationMinutes?: number
+  turnaroundMinutes?: number
   stations?: Prisma.RouteStationUncheckedCreateNestedManyWithoutRouteInput
+  trips?: Prisma.TripUncheckedCreateNestedManyWithoutRouteInput
 }
 
 export type RouteUpdateInput = {
@@ -252,7 +325,10 @@ export type RouteUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   stations?: Prisma.RouteStationUpdateManyWithoutRouteNestedInput
+  trips?: Prisma.TripUpdateManyWithoutRouteNestedInput
 }
 
 export type RouteUncheckedUpdateInput = {
@@ -261,7 +337,10 @@ export type RouteUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   stations?: Prisma.RouteStationUncheckedUpdateManyWithoutRouteNestedInput
+  trips?: Prisma.TripUncheckedUpdateManyWithoutRouteNestedInput
 }
 
 export type RouteCreateManyInput = {
@@ -270,6 +349,8 @@ export type RouteCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   status?: string
+  durationMinutes?: number
+  turnaroundMinutes?: number
 }
 
 export type RouteUpdateManyMutationInput = {
@@ -278,6 +359,8 @@ export type RouteUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type RouteUncheckedUpdateManyInput = {
@@ -286,6 +369,8 @@ export type RouteUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type RouteCountOrderByAggregateInput = {
@@ -294,6 +379,13 @@ export type RouteCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  durationMinutes?: Prisma.SortOrder
+  turnaroundMinutes?: Prisma.SortOrder
+}
+
+export type RouteAvgOrderByAggregateInput = {
+  durationMinutes?: Prisma.SortOrder
+  turnaroundMinutes?: Prisma.SortOrder
 }
 
 export type RouteMaxOrderByAggregateInput = {
@@ -302,6 +394,8 @@ export type RouteMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  durationMinutes?: Prisma.SortOrder
+  turnaroundMinutes?: Prisma.SortOrder
 }
 
 export type RouteMinOrderByAggregateInput = {
@@ -310,11 +404,26 @@ export type RouteMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  durationMinutes?: Prisma.SortOrder
+  turnaroundMinutes?: Prisma.SortOrder
+}
+
+export type RouteSumOrderByAggregateInput = {
+  durationMinutes?: Prisma.SortOrder
+  turnaroundMinutes?: Prisma.SortOrder
 }
 
 export type RouteScalarRelationFilter = {
   is?: Prisma.RouteWhereInput
   isNot?: Prisma.RouteWhereInput
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type RouteCreateNestedOneWithoutStationsInput = {
@@ -331,12 +440,29 @@ export type RouteUpdateOneRequiredWithoutStationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.RouteUpdateToOneWithWhereWithoutStationsInput, Prisma.RouteUpdateWithoutStationsInput>, Prisma.RouteUncheckedUpdateWithoutStationsInput>
 }
 
+export type RouteCreateNestedOneWithoutTripsInput = {
+  create?: Prisma.XOR<Prisma.RouteCreateWithoutTripsInput, Prisma.RouteUncheckedCreateWithoutTripsInput>
+  connectOrCreate?: Prisma.RouteCreateOrConnectWithoutTripsInput
+  connect?: Prisma.RouteWhereUniqueInput
+}
+
+export type RouteUpdateOneRequiredWithoutTripsNestedInput = {
+  create?: Prisma.XOR<Prisma.RouteCreateWithoutTripsInput, Prisma.RouteUncheckedCreateWithoutTripsInput>
+  connectOrCreate?: Prisma.RouteCreateOrConnectWithoutTripsInput
+  upsert?: Prisma.RouteUpsertWithoutTripsInput
+  connect?: Prisma.RouteWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.RouteUpdateToOneWithWhereWithoutTripsInput, Prisma.RouteUpdateWithoutTripsInput>, Prisma.RouteUncheckedUpdateWithoutTripsInput>
+}
+
 export type RouteCreateWithoutStationsInput = {
   id?: string
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
   status?: string
+  durationMinutes?: number
+  turnaroundMinutes?: number
+  trips?: Prisma.TripCreateNestedManyWithoutRouteInput
 }
 
 export type RouteUncheckedCreateWithoutStationsInput = {
@@ -345,6 +471,9 @@ export type RouteUncheckedCreateWithoutStationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   status?: string
+  durationMinutes?: number
+  turnaroundMinutes?: number
+  trips?: Prisma.TripUncheckedCreateNestedManyWithoutRouteInput
 }
 
 export type RouteCreateOrConnectWithoutStationsInput = {
@@ -369,6 +498,9 @@ export type RouteUpdateWithoutStationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  trips?: Prisma.TripUpdateManyWithoutRouteNestedInput
 }
 
 export type RouteUncheckedUpdateWithoutStationsInput = {
@@ -377,6 +509,69 @@ export type RouteUncheckedUpdateWithoutStationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  trips?: Prisma.TripUncheckedUpdateManyWithoutRouteNestedInput
+}
+
+export type RouteCreateWithoutTripsInput = {
+  id?: string
+  name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  status?: string
+  durationMinutes?: number
+  turnaroundMinutes?: number
+  stations?: Prisma.RouteStationCreateNestedManyWithoutRouteInput
+}
+
+export type RouteUncheckedCreateWithoutTripsInput = {
+  id?: string
+  name: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  status?: string
+  durationMinutes?: number
+  turnaroundMinutes?: number
+  stations?: Prisma.RouteStationUncheckedCreateNestedManyWithoutRouteInput
+}
+
+export type RouteCreateOrConnectWithoutTripsInput = {
+  where: Prisma.RouteWhereUniqueInput
+  create: Prisma.XOR<Prisma.RouteCreateWithoutTripsInput, Prisma.RouteUncheckedCreateWithoutTripsInput>
+}
+
+export type RouteUpsertWithoutTripsInput = {
+  update: Prisma.XOR<Prisma.RouteUpdateWithoutTripsInput, Prisma.RouteUncheckedUpdateWithoutTripsInput>
+  create: Prisma.XOR<Prisma.RouteCreateWithoutTripsInput, Prisma.RouteUncheckedCreateWithoutTripsInput>
+  where?: Prisma.RouteWhereInput
+}
+
+export type RouteUpdateToOneWithWhereWithoutTripsInput = {
+  where?: Prisma.RouteWhereInput
+  data: Prisma.XOR<Prisma.RouteUpdateWithoutTripsInput, Prisma.RouteUncheckedUpdateWithoutTripsInput>
+}
+
+export type RouteUpdateWithoutTripsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  stations?: Prisma.RouteStationUpdateManyWithoutRouteNestedInput
+}
+
+export type RouteUncheckedUpdateWithoutTripsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  stations?: Prisma.RouteStationUncheckedUpdateManyWithoutRouteNestedInput
 }
 
 
@@ -386,10 +581,12 @@ export type RouteUncheckedUpdateWithoutStationsInput = {
 
 export type RouteCountOutputType = {
   stations: number
+  trips: number
 }
 
 export type RouteCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stations?: boolean | RouteCountOutputTypeCountStationsArgs
+  trips?: boolean | RouteCountOutputTypeCountTripsArgs
 }
 
 /**
@@ -409,6 +606,13 @@ export type RouteCountOutputTypeCountStationsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.RouteStationWhereInput
 }
 
+/**
+ * RouteCountOutputType without action
+ */
+export type RouteCountOutputTypeCountTripsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TripWhereInput
+}
+
 
 export type RouteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -416,7 +620,10 @@ export type RouteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdAt?: boolean
   updatedAt?: boolean
   status?: boolean
+  durationMinutes?: boolean
+  turnaroundMinutes?: boolean
   stations?: boolean | Prisma.Route$stationsArgs<ExtArgs>
+  trips?: boolean | Prisma.Route$tripsArgs<ExtArgs>
   _count?: boolean | Prisma.RouteCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["route"]>
 
@@ -426,6 +633,8 @@ export type RouteSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   createdAt?: boolean
   updatedAt?: boolean
   status?: boolean
+  durationMinutes?: boolean
+  turnaroundMinutes?: boolean
 }, ExtArgs["result"]["route"]>
 
 export type RouteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -434,6 +643,8 @@ export type RouteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   createdAt?: boolean
   updatedAt?: boolean
   status?: boolean
+  durationMinutes?: boolean
+  turnaroundMinutes?: boolean
 }, ExtArgs["result"]["route"]>
 
 export type RouteSelectScalar = {
@@ -442,11 +653,14 @@ export type RouteSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   status?: boolean
+  durationMinutes?: boolean
+  turnaroundMinutes?: boolean
 }
 
-export type RouteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "status", ExtArgs["result"]["route"]>
+export type RouteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "status" | "durationMinutes" | "turnaroundMinutes", ExtArgs["result"]["route"]>
 export type RouteInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stations?: boolean | Prisma.Route$stationsArgs<ExtArgs>
+  trips?: boolean | Prisma.Route$tripsArgs<ExtArgs>
   _count?: boolean | Prisma.RouteCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type RouteIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -456,6 +670,7 @@ export type $RoutePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name: "Route"
   objects: {
     stations: Prisma.$RouteStationPayload<ExtArgs>[]
+    trips: Prisma.$TripPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -463,6 +678,8 @@ export type $RoutePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     createdAt: Date
     updatedAt: Date
     status: string
+    durationMinutes: number
+    turnaroundMinutes: number
   }, ExtArgs["result"]["route"]>
   composites: {}
 }
@@ -858,6 +1075,7 @@ readonly fields: RouteFieldRefs;
 export interface Prisma__RouteClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   stations<T extends Prisma.Route$stationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Route$stationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RouteStationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  trips<T extends Prisma.Route$tripsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Route$tripsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TripPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -892,6 +1110,8 @@ export interface RouteFieldRefs {
   readonly createdAt: Prisma.FieldRef<"Route", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Route", 'DateTime'>
   readonly status: Prisma.FieldRef<"Route", 'String'>
+  readonly durationMinutes: Prisma.FieldRef<"Route", 'Int'>
+  readonly turnaroundMinutes: Prisma.FieldRef<"Route", 'Int'>
 }
     
 
@@ -1301,6 +1521,30 @@ export type Route$stationsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.RouteStationScalarFieldEnum | Prisma.RouteStationScalarFieldEnum[]
+}
+
+/**
+ * Route.trips
+ */
+export type Route$tripsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Trip
+   */
+  select?: Prisma.TripSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Trip
+   */
+  omit?: Prisma.TripOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TripInclude<ExtArgs> | null
+  where?: Prisma.TripWhereInput
+  orderBy?: Prisma.TripOrderByWithRelationInput | Prisma.TripOrderByWithRelationInput[]
+  cursor?: Prisma.TripWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TripScalarFieldEnum | Prisma.TripScalarFieldEnum[]
 }
 
 /**

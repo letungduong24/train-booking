@@ -253,6 +253,7 @@ export type SeatWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Seat"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Seat"> | Date | string
   coach?: Prisma.XOR<Prisma.CoachScalarRelationFilter, Prisma.CoachWhereInput>
+  tickets?: Prisma.TicketListRelationFilter
 }
 
 export type SeatOrderByWithRelationInput = {
@@ -266,6 +267,7 @@ export type SeatOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   coach?: Prisma.CoachOrderByWithRelationInput
+  tickets?: Prisma.TicketOrderByRelationAggregateInput
 }
 
 export type SeatWhereUniqueInput = Prisma.AtLeast<{
@@ -283,6 +285,7 @@ export type SeatWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Seat"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Seat"> | Date | string
   coach?: Prisma.XOR<Prisma.CoachScalarRelationFilter, Prisma.CoachWhereInput>
+  tickets?: Prisma.TicketListRelationFilter
 }, "id" | "coachId_rowIndex_colIndex">
 
 export type SeatOrderByWithAggregationInput = {
@@ -327,6 +330,7 @@ export type SeatCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   coach: Prisma.CoachCreateNestedOneWithoutSeatsInput
+  tickets?: Prisma.TicketCreateNestedManyWithoutSeatInput
 }
 
 export type SeatUncheckedCreateInput = {
@@ -339,6 +343,7 @@ export type SeatUncheckedCreateInput = {
   coachId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutSeatInput
 }
 
 export type SeatUpdateInput = {
@@ -351,6 +356,7 @@ export type SeatUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coach?: Prisma.CoachUpdateOneRequiredWithoutSeatsNestedInput
+  tickets?: Prisma.TicketUpdateManyWithoutSeatNestedInput
 }
 
 export type SeatUncheckedUpdateInput = {
@@ -363,6 +369,7 @@ export type SeatUncheckedUpdateInput = {
   coachId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tickets?: Prisma.TicketUncheckedUpdateManyWithoutSeatNestedInput
 }
 
 export type SeatCreateManyInput = {
@@ -462,6 +469,11 @@ export type SeatSumOrderByAggregateInput = {
   colIndex?: Prisma.SortOrder
 }
 
+export type SeatScalarRelationFilter = {
+  is?: Prisma.SeatWhereInput
+  isNot?: Prisma.SeatWhereInput
+}
+
 export type SeatCreateNestedManyWithoutCoachInput = {
   create?: Prisma.XOR<Prisma.SeatCreateWithoutCoachInput, Prisma.SeatUncheckedCreateWithoutCoachInput> | Prisma.SeatCreateWithoutCoachInput[] | Prisma.SeatUncheckedCreateWithoutCoachInput[]
   connectOrCreate?: Prisma.SeatCreateOrConnectWithoutCoachInput | Prisma.SeatCreateOrConnectWithoutCoachInput[]
@@ -512,6 +524,20 @@ export type EnumSeatTypeFieldUpdateOperationsInput = {
   set?: $Enums.SeatType
 }
 
+export type SeatCreateNestedOneWithoutTicketsInput = {
+  create?: Prisma.XOR<Prisma.SeatCreateWithoutTicketsInput, Prisma.SeatUncheckedCreateWithoutTicketsInput>
+  connectOrCreate?: Prisma.SeatCreateOrConnectWithoutTicketsInput
+  connect?: Prisma.SeatWhereUniqueInput
+}
+
+export type SeatUpdateOneRequiredWithoutTicketsNestedInput = {
+  create?: Prisma.XOR<Prisma.SeatCreateWithoutTicketsInput, Prisma.SeatUncheckedCreateWithoutTicketsInput>
+  connectOrCreate?: Prisma.SeatCreateOrConnectWithoutTicketsInput
+  upsert?: Prisma.SeatUpsertWithoutTicketsInput
+  connect?: Prisma.SeatWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SeatUpdateToOneWithWhereWithoutTicketsInput, Prisma.SeatUpdateWithoutTicketsInput>, Prisma.SeatUncheckedUpdateWithoutTicketsInput>
+}
+
 export type SeatCreateWithoutCoachInput = {
   id?: string
   name: string
@@ -521,6 +547,7 @@ export type SeatCreateWithoutCoachInput = {
   type?: $Enums.SeatType
   createdAt?: Date | string
   updatedAt?: Date | string
+  tickets?: Prisma.TicketCreateNestedManyWithoutSeatInput
 }
 
 export type SeatUncheckedCreateWithoutCoachInput = {
@@ -532,6 +559,7 @@ export type SeatUncheckedCreateWithoutCoachInput = {
   type?: $Enums.SeatType
   createdAt?: Date | string
   updatedAt?: Date | string
+  tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutSeatInput
 }
 
 export type SeatCreateOrConnectWithoutCoachInput = {
@@ -575,6 +603,70 @@ export type SeatScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Seat"> | Date | string
 }
 
+export type SeatCreateWithoutTicketsInput = {
+  id?: string
+  name: string
+  rowIndex: number
+  colIndex: number
+  status?: $Enums.SeatStatus
+  type?: $Enums.SeatType
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  coach: Prisma.CoachCreateNestedOneWithoutSeatsInput
+}
+
+export type SeatUncheckedCreateWithoutTicketsInput = {
+  id?: string
+  name: string
+  rowIndex: number
+  colIndex: number
+  status?: $Enums.SeatStatus
+  type?: $Enums.SeatType
+  coachId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SeatCreateOrConnectWithoutTicketsInput = {
+  where: Prisma.SeatWhereUniqueInput
+  create: Prisma.XOR<Prisma.SeatCreateWithoutTicketsInput, Prisma.SeatUncheckedCreateWithoutTicketsInput>
+}
+
+export type SeatUpsertWithoutTicketsInput = {
+  update: Prisma.XOR<Prisma.SeatUpdateWithoutTicketsInput, Prisma.SeatUncheckedUpdateWithoutTicketsInput>
+  create: Prisma.XOR<Prisma.SeatCreateWithoutTicketsInput, Prisma.SeatUncheckedCreateWithoutTicketsInput>
+  where?: Prisma.SeatWhereInput
+}
+
+export type SeatUpdateToOneWithWhereWithoutTicketsInput = {
+  where?: Prisma.SeatWhereInput
+  data: Prisma.XOR<Prisma.SeatUpdateWithoutTicketsInput, Prisma.SeatUncheckedUpdateWithoutTicketsInput>
+}
+
+export type SeatUpdateWithoutTicketsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  rowIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  colIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+  type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  coach?: Prisma.CoachUpdateOneRequiredWithoutSeatsNestedInput
+}
+
+export type SeatUncheckedUpdateWithoutTicketsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  rowIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  colIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+  type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
+  coachId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type SeatCreateManyCoachInput = {
   id?: string
   name: string
@@ -595,6 +687,7 @@ export type SeatUpdateWithoutCoachInput = {
   type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tickets?: Prisma.TicketUpdateManyWithoutSeatNestedInput
 }
 
 export type SeatUncheckedUpdateWithoutCoachInput = {
@@ -606,6 +699,7 @@ export type SeatUncheckedUpdateWithoutCoachInput = {
   type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tickets?: Prisma.TicketUncheckedUpdateManyWithoutSeatNestedInput
 }
 
 export type SeatUncheckedUpdateManyWithoutCoachInput = {
@@ -620,6 +714,35 @@ export type SeatUncheckedUpdateManyWithoutCoachInput = {
 }
 
 
+/**
+ * Count Type SeatCountOutputType
+ */
+
+export type SeatCountOutputType = {
+  tickets: number
+}
+
+export type SeatCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tickets?: boolean | SeatCountOutputTypeCountTicketsArgs
+}
+
+/**
+ * SeatCountOutputType without action
+ */
+export type SeatCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SeatCountOutputType
+   */
+  select?: Prisma.SeatCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * SeatCountOutputType without action
+ */
+export type SeatCountOutputTypeCountTicketsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TicketWhereInput
+}
+
 
 export type SeatSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -632,6 +755,8 @@ export type SeatSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   coach?: boolean | Prisma.CoachDefaultArgs<ExtArgs>
+  tickets?: boolean | Prisma.Seat$ticketsArgs<ExtArgs>
+  _count?: boolean | Prisma.SeatCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["seat"]>
 
 export type SeatSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -675,6 +800,8 @@ export type SeatSelectScalar = {
 export type SeatOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "rowIndex" | "colIndex" | "status" | "type" | "coachId" | "createdAt" | "updatedAt", ExtArgs["result"]["seat"]>
 export type SeatInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   coach?: boolean | Prisma.CoachDefaultArgs<ExtArgs>
+  tickets?: boolean | Prisma.Seat$ticketsArgs<ExtArgs>
+  _count?: boolean | Prisma.SeatCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SeatIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   coach?: boolean | Prisma.CoachDefaultArgs<ExtArgs>
@@ -687,6 +814,7 @@ export type $SeatPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "Seat"
   objects: {
     coach: Prisma.$CoachPayload<ExtArgs>
+    tickets: Prisma.$TicketPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1093,6 +1221,7 @@ readonly fields: SeatFieldRefs;
 export interface Prisma__SeatClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   coach<T extends Prisma.CoachDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CoachDefaultArgs<ExtArgs>>): Prisma.Prisma__CoachClient<runtime.Types.Result.GetResult<Prisma.$CoachPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  tickets<T extends Prisma.Seat$ticketsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seat$ticketsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1524,6 +1653,30 @@ export type SeatDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Seats to delete.
    */
   limit?: number
+}
+
+/**
+ * Seat.tickets
+ */
+export type Seat$ticketsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Ticket
+   */
+  select?: Prisma.TicketSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Ticket
+   */
+  omit?: Prisma.TicketOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TicketInclude<ExtArgs> | null
+  where?: Prisma.TicketWhereInput
+  orderBy?: Prisma.TicketOrderByWithRelationInput | Prisma.TicketOrderByWithRelationInput[]
+  cursor?: Prisma.TicketWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TicketScalarFieldEnum | Prisma.TicketScalarFieldEnum[]
 }
 
 /**

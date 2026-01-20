@@ -4,6 +4,7 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconEdit } from "@tabler/icons-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -49,6 +50,8 @@ export function EditRouteDialog({ route, onSuccess }: EditRouteDialogProps) {
         defaultValues: {
             name: route.name,
             status: route.status,
+            durationMinutes: route.durationMinutes,
+            turnaroundMinutes: route.turnaroundMinutes,
         },
     })
 
@@ -57,14 +60,20 @@ export function EditRouteDialog({ route, onSuccess }: EditRouteDialogProps) {
         form.reset({
             name: route.name,
             status: route.status,
+            durationMinutes: route.durationMinutes,
+            turnaroundMinutes: route.turnaroundMinutes,
         })
     }, [route, form])
 
     async function onSubmit(values: UpdateRouteInput) {
         updateRoute.mutate({ id: route.id, data: values }, {
             onSuccess: () => {
+                toast.success("Cập nhật tuyến đường thành công")
                 setOpen(false)
                 onSuccess?.()
+            },
+            onError: (error) => {
+                toast.error(error.message || "Cập nhật tuyến đường thất bại")
             }
         })
     }
@@ -98,6 +107,45 @@ export function EditRouteDialog({ route, onSuccess }: EditRouteDialogProps) {
                                 </FormItem>
                             )}
                         />
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="durationMinutes"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Thời gian chạy (phút)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                placeholder="VD: 1920"
+                                                {...field}
+                                                onChange={(e) => field.onChange(+e.target.value)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="turnaroundMinutes"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Nghỉ quay đầu (phút)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                placeholder="VD: 240"
+                                                {...field}
+                                                onChange={(e) => field.onChange(+e.target.value)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         <FormField
                             control={form.control}

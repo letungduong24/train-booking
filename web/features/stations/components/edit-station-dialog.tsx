@@ -4,6 +4,7 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconEdit } from "@tabler/icons-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -55,7 +56,11 @@ export function EditStationDialog({ station }: EditStationDialogProps) {
     async function onSubmit(values: UpdateStationInput) {
         updateStation.mutate({ id: station.id, data: values }, {
             onSuccess: () => {
+                toast.success("Cập nhật trạm thành công")
                 setOpen(false)
+            },
+            onError: (error) => {
+                toast.error(error.message || "Cập nhật trạm thất bại")
             }
         })
     }

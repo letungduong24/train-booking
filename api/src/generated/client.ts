@@ -82,3 +82,18 @@ export type Coach = Prisma.CoachModel
  * 
  */
 export type Seat = Prisma.SeatModel
+/**
+ * Model Trip
+ * 
+ */
+export type Trip = Prisma.TripModel
+/**
+ * Model Booking
+ * 
+ */
+export type Booking = Prisma.BookingModel
+/**
+ * Model Ticket
+ * 
+ */
+export type Ticket = Prisma.TicketModel

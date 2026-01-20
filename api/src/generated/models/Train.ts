@@ -191,6 +191,7 @@ export type TrainWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   coaches?: Prisma.CoachListRelationFilter
+  trips?: Prisma.TripListRelationFilter
 }
 
 export type TrainOrderByWithRelationInput = {
@@ -201,6 +202,7 @@ export type TrainOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   coaches?: Prisma.CoachOrderByRelationAggregateInput
+  trips?: Prisma.TripOrderByRelationAggregateInput
 }
 
 export type TrainWhereUniqueInput = Prisma.AtLeast<{
@@ -214,6 +216,7 @@ export type TrainWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   coaches?: Prisma.CoachListRelationFilter
+  trips?: Prisma.TripListRelationFilter
 }, "id" | "code">
 
 export type TrainOrderByWithAggregationInput = {
@@ -248,6 +251,7 @@ export type TrainCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   coaches?: Prisma.CoachCreateNestedManyWithoutTrainInput
+  trips?: Prisma.TripCreateNestedManyWithoutTrainInput
 }
 
 export type TrainUncheckedCreateInput = {
@@ -258,6 +262,7 @@ export type TrainUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   coaches?: Prisma.CoachUncheckedCreateNestedManyWithoutTrainInput
+  trips?: Prisma.TripUncheckedCreateNestedManyWithoutTrainInput
 }
 
 export type TrainUpdateInput = {
@@ -268,6 +273,7 @@ export type TrainUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coaches?: Prisma.CoachUpdateManyWithoutTrainNestedInput
+  trips?: Prisma.TripUpdateManyWithoutTrainNestedInput
 }
 
 export type TrainUncheckedUpdateInput = {
@@ -278,6 +284,7 @@ export type TrainUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coaches?: Prisma.CoachUncheckedUpdateManyWithoutTrainNestedInput
+  trips?: Prisma.TripUncheckedUpdateManyWithoutTrainNestedInput
 }
 
 export type TrainCreateManyInput = {
@@ -353,6 +360,20 @@ export type TrainUpdateOneRequiredWithoutCoachesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TrainUpdateToOneWithWhereWithoutCoachesInput, Prisma.TrainUpdateWithoutCoachesInput>, Prisma.TrainUncheckedUpdateWithoutCoachesInput>
 }
 
+export type TrainCreateNestedOneWithoutTripsInput = {
+  create?: Prisma.XOR<Prisma.TrainCreateWithoutTripsInput, Prisma.TrainUncheckedCreateWithoutTripsInput>
+  connectOrCreate?: Prisma.TrainCreateOrConnectWithoutTripsInput
+  connect?: Prisma.TrainWhereUniqueInput
+}
+
+export type TrainUpdateOneRequiredWithoutTripsNestedInput = {
+  create?: Prisma.XOR<Prisma.TrainCreateWithoutTripsInput, Prisma.TrainUncheckedCreateWithoutTripsInput>
+  connectOrCreate?: Prisma.TrainCreateOrConnectWithoutTripsInput
+  upsert?: Prisma.TrainUpsertWithoutTripsInput
+  connect?: Prisma.TrainWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TrainUpdateToOneWithWhereWithoutTripsInput, Prisma.TrainUpdateWithoutTripsInput>, Prisma.TrainUncheckedUpdateWithoutTripsInput>
+}
+
 export type TrainCreateWithoutCoachesInput = {
   id?: string
   code: string
@@ -360,6 +381,7 @@ export type TrainCreateWithoutCoachesInput = {
   status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  trips?: Prisma.TripCreateNestedManyWithoutTrainInput
 }
 
 export type TrainUncheckedCreateWithoutCoachesInput = {
@@ -369,6 +391,7 @@ export type TrainUncheckedCreateWithoutCoachesInput = {
   status?: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  trips?: Prisma.TripUncheckedCreateNestedManyWithoutTrainInput
 }
 
 export type TrainCreateOrConnectWithoutCoachesInput = {
@@ -394,6 +417,7 @@ export type TrainUpdateWithoutCoachesInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  trips?: Prisma.TripUpdateManyWithoutTrainNestedInput
 }
 
 export type TrainUncheckedUpdateWithoutCoachesInput = {
@@ -403,6 +427,63 @@ export type TrainUncheckedUpdateWithoutCoachesInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  trips?: Prisma.TripUncheckedUpdateManyWithoutTrainNestedInput
+}
+
+export type TrainCreateWithoutTripsInput = {
+  id?: string
+  code: string
+  name: string
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  coaches?: Prisma.CoachCreateNestedManyWithoutTrainInput
+}
+
+export type TrainUncheckedCreateWithoutTripsInput = {
+  id?: string
+  code: string
+  name: string
+  status?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  coaches?: Prisma.CoachUncheckedCreateNestedManyWithoutTrainInput
+}
+
+export type TrainCreateOrConnectWithoutTripsInput = {
+  where: Prisma.TrainWhereUniqueInput
+  create: Prisma.XOR<Prisma.TrainCreateWithoutTripsInput, Prisma.TrainUncheckedCreateWithoutTripsInput>
+}
+
+export type TrainUpsertWithoutTripsInput = {
+  update: Prisma.XOR<Prisma.TrainUpdateWithoutTripsInput, Prisma.TrainUncheckedUpdateWithoutTripsInput>
+  create: Prisma.XOR<Prisma.TrainCreateWithoutTripsInput, Prisma.TrainUncheckedCreateWithoutTripsInput>
+  where?: Prisma.TrainWhereInput
+}
+
+export type TrainUpdateToOneWithWhereWithoutTripsInput = {
+  where?: Prisma.TrainWhereInput
+  data: Prisma.XOR<Prisma.TrainUpdateWithoutTripsInput, Prisma.TrainUncheckedUpdateWithoutTripsInput>
+}
+
+export type TrainUpdateWithoutTripsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  coaches?: Prisma.CoachUpdateManyWithoutTrainNestedInput
+}
+
+export type TrainUncheckedUpdateWithoutTripsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  coaches?: Prisma.CoachUncheckedUpdateManyWithoutTrainNestedInput
 }
 
 
@@ -412,10 +493,12 @@ export type TrainUncheckedUpdateWithoutCoachesInput = {
 
 export type TrainCountOutputType = {
   coaches: number
+  trips: number
 }
 
 export type TrainCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   coaches?: boolean | TrainCountOutputTypeCountCoachesArgs
+  trips?: boolean | TrainCountOutputTypeCountTripsArgs
 }
 
 /**
@@ -435,6 +518,13 @@ export type TrainCountOutputTypeCountCoachesArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.CoachWhereInput
 }
 
+/**
+ * TrainCountOutputType without action
+ */
+export type TrainCountOutputTypeCountTripsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TripWhereInput
+}
+
 
 export type TrainSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -444,6 +534,7 @@ export type TrainSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdAt?: boolean
   updatedAt?: boolean
   coaches?: boolean | Prisma.Train$coachesArgs<ExtArgs>
+  trips?: boolean | Prisma.Train$tripsArgs<ExtArgs>
   _count?: boolean | Prisma.TrainCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["train"]>
 
@@ -477,6 +568,7 @@ export type TrainSelectScalar = {
 export type TrainOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["train"]>
 export type TrainInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   coaches?: boolean | Prisma.Train$coachesArgs<ExtArgs>
+  trips?: boolean | Prisma.Train$tripsArgs<ExtArgs>
   _count?: boolean | Prisma.TrainCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TrainIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -486,6 +578,7 @@ export type $TrainPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name: "Train"
   objects: {
     coaches: Prisma.$CoachPayload<ExtArgs>[]
+    trips: Prisma.$TripPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -889,6 +982,7 @@ readonly fields: TrainFieldRefs;
 export interface Prisma__TrainClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   coaches<T extends Prisma.Train$coachesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Train$coachesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CoachPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  trips<T extends Prisma.Train$tripsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Train$tripsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TripPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1333,6 +1427,30 @@ export type Train$coachesArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.CoachScalarFieldEnum | Prisma.CoachScalarFieldEnum[]
+}
+
+/**
+ * Train.trips
+ */
+export type Train$tripsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Trip
+   */
+  select?: Prisma.TripSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Trip
+   */
+  omit?: Prisma.TripOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TripInclude<ExtArgs> | null
+  where?: Prisma.TripWhereInput
+  orderBy?: Prisma.TripOrderByWithRelationInput | Prisma.TripOrderByWithRelationInput[]
+  cursor?: Prisma.TripWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TripScalarFieldEnum | Prisma.TripScalarFieldEnum[]
 }
 
 /**
