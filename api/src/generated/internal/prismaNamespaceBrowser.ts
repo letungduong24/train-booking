@@ -125,7 +125,9 @@ export const RouteScalarFieldEnum = {
   updatedAt: 'updatedAt',
   status: 'status',
   durationMinutes: 'durationMinutes',
-  turnaroundMinutes: 'turnaroundMinutes'
+  turnaroundMinutes: 'turnaroundMinutes',
+  basePricePerKm: 'basePricePerKm',
+  stationFee: 'stationFee'
 } as const
 
 export type RouteScalarFieldEnum = (typeof RouteScalarFieldEnum)[keyof typeof RouteScalarFieldEnum]
@@ -136,6 +138,7 @@ export const RouteStationScalarFieldEnum = {
   stationId: 'stationId',
   index: 'index',
   distanceFromStart: 'distanceFromStart',
+  durationFromStart: 'durationFromStart',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -153,7 +156,9 @@ export const CoachTemplateScalarFieldEnum = {
   totalCols: 'totalCols',
   tiers: 'tiers',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  coachMultiplier: 'coachMultiplier',
+  tierMultipliers: 'tierMultipliers'
 } as const
 
 export type CoachTemplateScalarFieldEnum = (typeof CoachTemplateScalarFieldEnum)[keyof typeof CoachTemplateScalarFieldEnum]
@@ -192,6 +197,7 @@ export const SeatScalarFieldEnum = {
   colIndex: 'colIndex',
   status: 'status',
   type: 'type',
+  tier: 'tier',
   coachId: 'coachId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -252,6 +258,13 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: 'JsonNull'
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -266,4 +279,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+  AnyNull: 'AnyNull'
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

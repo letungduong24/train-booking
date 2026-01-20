@@ -156,7 +156,11 @@ export class TripService {
                         coaches: {
                             include: {
                                 template: true,
-                                seats: true
+                                _count: {
+                                    select: {
+                                        seats: true
+                                    }
+                                }
                             },
                             orderBy: {
                                 order: 'asc'
@@ -253,6 +257,99 @@ export class TripService {
                 train: true,
             },
         });
+    }
+
+    async searchTrips(fromStationId: string, toStationId: string, date: string) {
+        // Step 1: Find all routes containing both stations
+        const routes = await this.prisma.route.findMany({
+            where: {
+                stations: {
+                    some: {
+                        stationId: fromStationId,
+                    },
+                },
+                AND: {
+                    stations: {
+                        some: {
+                            stationId: toStationId,
+                        },
+                    },
+                },
+            },
+            include: {
+                stations: {
+                    orderBy: {
+                        index: 'asc',
+                    },
+                },
+            },
+        });
+
+        // Step 2: Filter routes where fromStation.index < toStation.index (correct direction)
+        const validRouteIds = routes
+            .filter((route) => {
+                const fromStation = route.stations.find((rs) => rs.stationId === fromStationId);
+                const toStation = route.stations.find((rs) => rs.stationId === toStationId);
+                return fromStation && toStation && fromStation.index < toStation.index;
+            })
+            .map((route) => route.id);
+
+        if (validRouteIds.length === 0) {
+            return [];
+        }
+
+        // Step 3: Find trips on those routes matching the date
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(date);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const trips = await this.prisma.trip.findMany({
+            where: {
+                routeId: {
+                    in: validRouteIds,
+                },
+                departureTime: {
+                    gte: startOfDay,
+                    lte: endOfDay,
+                },
+                status: {
+                    not: 'CANCELLED',
+                },
+            },
+            include: {
+                route: {
+                    include: {
+                        stations: {
+                            include: {
+                                station: true,
+                            },
+                            orderBy: {
+                                index: 'asc',
+                            },
+                        },
+                    },
+                },
+                train: {
+                    include: {
+                        coaches: {
+                            include: {
+                                _count: {
+                                    select: {
+                                        seats: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            orderBy: {
+                departureTime: 'asc',
+            },
+        });
+
+        return trips;
     }
 
     async remove(id: string) {

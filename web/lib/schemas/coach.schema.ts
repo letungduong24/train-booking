@@ -17,6 +17,8 @@ export const coachTemplateSchema = z.object({
     totalRows: z.number(),
     totalCols: z.number(),
     tiers: z.number(),
+    coachMultiplier: z.number().default(1.0),
+    tierMultipliers: z.record(z.string(), z.number()), // {"0": 1.0, "1": 1.2, ...}
 });
 
 export const coachSchema = z.object({

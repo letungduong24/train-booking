@@ -29,11 +29,13 @@ export type AggregateRouteStation = {
 export type RouteStationAvgAggregateOutputType = {
   index: number | null
   distanceFromStart: number | null
+  durationFromStart: number | null
 }
 
 export type RouteStationSumAggregateOutputType = {
   index: number | null
   distanceFromStart: number | null
+  durationFromStart: number | null
 }
 
 export type RouteStationMinAggregateOutputType = {
@@ -41,6 +43,7 @@ export type RouteStationMinAggregateOutputType = {
   stationId: string | null
   index: number | null
   distanceFromStart: number | null
+  durationFromStart: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,6 +53,7 @@ export type RouteStationMaxAggregateOutputType = {
   stationId: string | null
   index: number | null
   distanceFromStart: number | null
+  durationFromStart: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -59,6 +63,7 @@ export type RouteStationCountAggregateOutputType = {
   stationId: number
   index: number
   distanceFromStart: number
+  durationFromStart: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -68,11 +73,13 @@ export type RouteStationCountAggregateOutputType = {
 export type RouteStationAvgAggregateInputType = {
   index?: true
   distanceFromStart?: true
+  durationFromStart?: true
 }
 
 export type RouteStationSumAggregateInputType = {
   index?: true
   distanceFromStart?: true
+  durationFromStart?: true
 }
 
 export type RouteStationMinAggregateInputType = {
@@ -80,6 +87,7 @@ export type RouteStationMinAggregateInputType = {
   stationId?: true
   index?: true
   distanceFromStart?: true
+  durationFromStart?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -89,6 +97,7 @@ export type RouteStationMaxAggregateInputType = {
   stationId?: true
   index?: true
   distanceFromStart?: true
+  durationFromStart?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -98,6 +107,7 @@ export type RouteStationCountAggregateInputType = {
   stationId?: true
   index?: true
   distanceFromStart?: true
+  durationFromStart?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -194,6 +204,7 @@ export type RouteStationGroupByOutputType = {
   stationId: string
   index: number
   distanceFromStart: number
+  durationFromStart: number
   createdAt: Date
   updatedAt: Date
   _count: RouteStationCountAggregateOutputType | null
@@ -226,6 +237,7 @@ export type RouteStationWhereInput = {
   stationId?: Prisma.StringFilter<"RouteStation"> | string
   index?: Prisma.IntFilter<"RouteStation"> | number
   distanceFromStart?: Prisma.FloatFilter<"RouteStation"> | number
+  durationFromStart?: Prisma.IntFilter<"RouteStation"> | number
   createdAt?: Prisma.DateTimeFilter<"RouteStation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RouteStation"> | Date | string
   route?: Prisma.XOR<Prisma.RouteScalarRelationFilter, Prisma.RouteWhereInput>
@@ -237,6 +249,7 @@ export type RouteStationOrderByWithRelationInput = {
   stationId?: Prisma.SortOrder
   index?: Prisma.SortOrder
   distanceFromStart?: Prisma.SortOrder
+  durationFromStart?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   route?: Prisma.RouteOrderByWithRelationInput
@@ -252,6 +265,7 @@ export type RouteStationWhereUniqueInput = Prisma.AtLeast<{
   stationId?: Prisma.StringFilter<"RouteStation"> | string
   index?: Prisma.IntFilter<"RouteStation"> | number
   distanceFromStart?: Prisma.FloatFilter<"RouteStation"> | number
+  durationFromStart?: Prisma.IntFilter<"RouteStation"> | number
   createdAt?: Prisma.DateTimeFilter<"RouteStation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RouteStation"> | Date | string
   route?: Prisma.XOR<Prisma.RouteScalarRelationFilter, Prisma.RouteWhereInput>
@@ -263,6 +277,7 @@ export type RouteStationOrderByWithAggregationInput = {
   stationId?: Prisma.SortOrder
   index?: Prisma.SortOrder
   distanceFromStart?: Prisma.SortOrder
+  durationFromStart?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.RouteStationCountOrderByAggregateInput
@@ -280,6 +295,7 @@ export type RouteStationScalarWhereWithAggregatesInput = {
   stationId?: Prisma.StringWithAggregatesFilter<"RouteStation"> | string
   index?: Prisma.IntWithAggregatesFilter<"RouteStation"> | number
   distanceFromStart?: Prisma.FloatWithAggregatesFilter<"RouteStation"> | number
+  durationFromStart?: Prisma.IntWithAggregatesFilter<"RouteStation"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"RouteStation"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"RouteStation"> | Date | string
 }
@@ -287,6 +303,7 @@ export type RouteStationScalarWhereWithAggregatesInput = {
 export type RouteStationCreateInput = {
   index: number
   distanceFromStart: number
+  durationFromStart?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   route: Prisma.RouteCreateNestedOneWithoutStationsInput
@@ -298,6 +315,7 @@ export type RouteStationUncheckedCreateInput = {
   stationId: string
   index: number
   distanceFromStart: number
+  durationFromStart?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -305,6 +323,7 @@ export type RouteStationUncheckedCreateInput = {
 export type RouteStationUpdateInput = {
   index?: Prisma.IntFieldUpdateOperationsInput | number
   distanceFromStart?: Prisma.FloatFieldUpdateOperationsInput | number
+  durationFromStart?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   route?: Prisma.RouteUpdateOneRequiredWithoutStationsNestedInput
@@ -316,6 +335,7 @@ export type RouteStationUncheckedUpdateInput = {
   stationId?: Prisma.StringFieldUpdateOperationsInput | string
   index?: Prisma.IntFieldUpdateOperationsInput | number
   distanceFromStart?: Prisma.FloatFieldUpdateOperationsInput | number
+  durationFromStart?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -325,6 +345,7 @@ export type RouteStationCreateManyInput = {
   stationId: string
   index: number
   distanceFromStart: number
+  durationFromStart?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -332,6 +353,7 @@ export type RouteStationCreateManyInput = {
 export type RouteStationUpdateManyMutationInput = {
   index?: Prisma.IntFieldUpdateOperationsInput | number
   distanceFromStart?: Prisma.FloatFieldUpdateOperationsInput | number
+  durationFromStart?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -341,6 +363,7 @@ export type RouteStationUncheckedUpdateManyInput = {
   stationId?: Prisma.StringFieldUpdateOperationsInput | string
   index?: Prisma.IntFieldUpdateOperationsInput | number
   distanceFromStart?: Prisma.FloatFieldUpdateOperationsInput | number
+  durationFromStart?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -365,6 +388,7 @@ export type RouteStationCountOrderByAggregateInput = {
   stationId?: Prisma.SortOrder
   index?: Prisma.SortOrder
   distanceFromStart?: Prisma.SortOrder
+  durationFromStart?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -372,6 +396,7 @@ export type RouteStationCountOrderByAggregateInput = {
 export type RouteStationAvgOrderByAggregateInput = {
   index?: Prisma.SortOrder
   distanceFromStart?: Prisma.SortOrder
+  durationFromStart?: Prisma.SortOrder
 }
 
 export type RouteStationMaxOrderByAggregateInput = {
@@ -379,6 +404,7 @@ export type RouteStationMaxOrderByAggregateInput = {
   stationId?: Prisma.SortOrder
   index?: Prisma.SortOrder
   distanceFromStart?: Prisma.SortOrder
+  durationFromStart?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -388,6 +414,7 @@ export type RouteStationMinOrderByAggregateInput = {
   stationId?: Prisma.SortOrder
   index?: Prisma.SortOrder
   distanceFromStart?: Prisma.SortOrder
+  durationFromStart?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -395,6 +422,7 @@ export type RouteStationMinOrderByAggregateInput = {
 export type RouteStationSumOrderByAggregateInput = {
   index?: Prisma.SortOrder
   distanceFromStart?: Prisma.SortOrder
+  durationFromStart?: Prisma.SortOrder
 }
 
 export type RouteStationCreateNestedManyWithoutStationInput = {
@@ -484,6 +512,7 @@ export type RouteStationUncheckedUpdateManyWithoutRouteNestedInput = {
 export type RouteStationCreateWithoutStationInput = {
   index: number
   distanceFromStart: number
+  durationFromStart?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   route: Prisma.RouteCreateNestedOneWithoutStationsInput
@@ -493,6 +522,7 @@ export type RouteStationUncheckedCreateWithoutStationInput = {
   routeId: string
   index: number
   distanceFromStart: number
+  durationFromStart?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -531,6 +561,7 @@ export type RouteStationScalarWhereInput = {
   stationId?: Prisma.StringFilter<"RouteStation"> | string
   index?: Prisma.IntFilter<"RouteStation"> | number
   distanceFromStart?: Prisma.FloatFilter<"RouteStation"> | number
+  durationFromStart?: Prisma.IntFilter<"RouteStation"> | number
   createdAt?: Prisma.DateTimeFilter<"RouteStation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RouteStation"> | Date | string
 }
@@ -538,6 +569,7 @@ export type RouteStationScalarWhereInput = {
 export type RouteStationCreateWithoutRouteInput = {
   index: number
   distanceFromStart: number
+  durationFromStart?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   station: Prisma.StationCreateNestedOneWithoutRoutesInput
@@ -547,6 +579,7 @@ export type RouteStationUncheckedCreateWithoutRouteInput = {
   stationId: string
   index: number
   distanceFromStart: number
+  durationFromStart?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -581,6 +614,7 @@ export type RouteStationCreateManyStationInput = {
   routeId: string
   index: number
   distanceFromStart: number
+  durationFromStart?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -588,6 +622,7 @@ export type RouteStationCreateManyStationInput = {
 export type RouteStationUpdateWithoutStationInput = {
   index?: Prisma.IntFieldUpdateOperationsInput | number
   distanceFromStart?: Prisma.FloatFieldUpdateOperationsInput | number
+  durationFromStart?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   route?: Prisma.RouteUpdateOneRequiredWithoutStationsNestedInput
@@ -597,6 +632,7 @@ export type RouteStationUncheckedUpdateWithoutStationInput = {
   routeId?: Prisma.StringFieldUpdateOperationsInput | string
   index?: Prisma.IntFieldUpdateOperationsInput | number
   distanceFromStart?: Prisma.FloatFieldUpdateOperationsInput | number
+  durationFromStart?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -605,6 +641,7 @@ export type RouteStationUncheckedUpdateManyWithoutStationInput = {
   routeId?: Prisma.StringFieldUpdateOperationsInput | string
   index?: Prisma.IntFieldUpdateOperationsInput | number
   distanceFromStart?: Prisma.FloatFieldUpdateOperationsInput | number
+  durationFromStart?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -613,6 +650,7 @@ export type RouteStationCreateManyRouteInput = {
   stationId: string
   index: number
   distanceFromStart: number
+  durationFromStart?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -620,6 +658,7 @@ export type RouteStationCreateManyRouteInput = {
 export type RouteStationUpdateWithoutRouteInput = {
   index?: Prisma.IntFieldUpdateOperationsInput | number
   distanceFromStart?: Prisma.FloatFieldUpdateOperationsInput | number
+  durationFromStart?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   station?: Prisma.StationUpdateOneRequiredWithoutRoutesNestedInput
@@ -629,6 +668,7 @@ export type RouteStationUncheckedUpdateWithoutRouteInput = {
   stationId?: Prisma.StringFieldUpdateOperationsInput | string
   index?: Prisma.IntFieldUpdateOperationsInput | number
   distanceFromStart?: Prisma.FloatFieldUpdateOperationsInput | number
+  durationFromStart?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -637,6 +677,7 @@ export type RouteStationUncheckedUpdateManyWithoutRouteInput = {
   stationId?: Prisma.StringFieldUpdateOperationsInput | string
   index?: Prisma.IntFieldUpdateOperationsInput | number
   distanceFromStart?: Prisma.FloatFieldUpdateOperationsInput | number
+  durationFromStart?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -648,6 +689,7 @@ export type RouteStationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   stationId?: boolean
   index?: boolean
   distanceFromStart?: boolean
+  durationFromStart?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   route?: boolean | Prisma.RouteDefaultArgs<ExtArgs>
@@ -659,6 +701,7 @@ export type RouteStationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   stationId?: boolean
   index?: boolean
   distanceFromStart?: boolean
+  durationFromStart?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   route?: boolean | Prisma.RouteDefaultArgs<ExtArgs>
@@ -670,6 +713,7 @@ export type RouteStationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   stationId?: boolean
   index?: boolean
   distanceFromStart?: boolean
+  durationFromStart?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   route?: boolean | Prisma.RouteDefaultArgs<ExtArgs>
@@ -681,11 +725,12 @@ export type RouteStationSelectScalar = {
   stationId?: boolean
   index?: boolean
   distanceFromStart?: boolean
+  durationFromStart?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type RouteStationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"routeId" | "stationId" | "index" | "distanceFromStart" | "createdAt" | "updatedAt", ExtArgs["result"]["routeStation"]>
+export type RouteStationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"routeId" | "stationId" | "index" | "distanceFromStart" | "durationFromStart" | "createdAt" | "updatedAt", ExtArgs["result"]["routeStation"]>
 export type RouteStationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   route?: boolean | Prisma.RouteDefaultArgs<ExtArgs>
   station?: boolean | Prisma.StationDefaultArgs<ExtArgs>
@@ -710,6 +755,7 @@ export type $RouteStationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     stationId: string
     index: number
     distanceFromStart: number
+    durationFromStart: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["routeStation"]>
@@ -1141,6 +1187,7 @@ export interface RouteStationFieldRefs {
   readonly stationId: Prisma.FieldRef<"RouteStation", 'String'>
   readonly index: Prisma.FieldRef<"RouteStation", 'Int'>
   readonly distanceFromStart: Prisma.FieldRef<"RouteStation", 'Float'>
+  readonly durationFromStart: Prisma.FieldRef<"RouteStation", 'Int'>
   readonly createdAt: Prisma.FieldRef<"RouteStation", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"RouteStation", 'DateTime'>
 }

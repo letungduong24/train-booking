@@ -52,6 +52,8 @@ export function EditRouteDialog({ route, onSuccess }: EditRouteDialogProps) {
             status: route.status,
             durationMinutes: route.durationMinutes,
             turnaroundMinutes: route.turnaroundMinutes,
+            basePricePerKm: route.basePricePerKm,
+            stationFee: route.stationFee,
         },
     })
 
@@ -62,6 +64,8 @@ export function EditRouteDialog({ route, onSuccess }: EditRouteDialogProps) {
             status: route.status,
             durationMinutes: route.durationMinutes,
             turnaroundMinutes: route.turnaroundMinutes,
+            basePricePerKm: route.basePricePerKm,
+            stationFee: route.stationFee,
         })
     }, [route, form])
 
@@ -137,6 +141,45 @@ export function EditRouteDialog({ route, onSuccess }: EditRouteDialogProps) {
                                             <Input
                                                 type="number"
                                                 placeholder="VD: 240"
+                                                {...field}
+                                                onChange={(e) => field.onChange(+e.target.value)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="basePricePerKm"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Giá cơ bản/km (VND)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                placeholder="VD: 1200"
+                                                {...field}
+                                                onChange={(e) => field.onChange(+e.target.value)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="stationFee"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Phí bến (VND)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                placeholder="VD: 10000"
                                                 {...field}
                                                 onChange={(e) => field.onChange(+e.target.value)}
                                             />

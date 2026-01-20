@@ -3,11 +3,15 @@ import { CreateCoachDto } from './dto/create-coach.dto';
 import { UpdateCoachDto } from './dto/update-coach.dto';
 import { FilterCoachDto } from './dto/filter-coach.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { PricingService } from '../pricing/pricing.service';
 import { Prisma, CoachLayout } from '../../generated/client';
 
 @Injectable()
 export class CoachesService {
-  constructor(private prisma: PrismaService) { }
+  constructor(
+    private prisma: PrismaService,
+    private pricingService: PricingService,
+  ) { }
 
   async create(createCoachDto: CreateCoachDto) {
     // Validate train exists
@@ -52,6 +56,11 @@ export class CoachesService {
       // Generate seats/beds based on template
       const seats = this.generateSeats(coach.id, template);
 
+      // Delete existing seats first (in case of recreation)
+      await tx.seat.deleteMany({
+        where: { coachId: coach.id }
+      });
+
       // Bulk create seats
       await tx.seat.createMany({
         data: seats
@@ -91,7 +100,7 @@ export class CoachesService {
     let seatNumber = 1;
 
     if (template.layout === 'SEAT') {
-      // Generate grid of seats
+      // Generate grid of seats (all tier 0)
       for (let row = 0; row < template.totalRows; row++) {
         for (let col = 0; col < template.totalCols; col++) {
           seats.push({
@@ -100,6 +109,7 @@ export class CoachesService {
             colIndex: col,
             status: 'AVAILABLE',
             type: 'STANDARD',
+            tier: 0, // All seats are tier 0
             coachId,
           });
           seatNumber++;
@@ -117,6 +127,7 @@ export class CoachesService {
               colIndex: side,
               status: 'AVAILABLE',
               type: 'STANDARD',
+              tier: tier, // Assign tier based on bed level (0=bottom, 1=middle, 2=top)
               coachId,
             });
             seatNumber++;
@@ -182,6 +193,85 @@ export class CoachesService {
     }
 
     return coach;
+  }
+
+  async findOneWithSeatPrice(id: string, tripId: string, fromStationId: string, toStationId: string) {
+    // Get coach with template and seats
+    const coach = await this.prisma.coach.findUnique({
+      where: { id },
+      include: {
+        template: true,
+        seats: true,
+      },
+    });
+
+    if (!coach) {
+      throw new NotFoundException(`Coach #${id} not found`);
+    }
+
+    // Get trip to find the route
+    const trip = await this.prisma.trip.findUnique({
+      where: { id: tripId },
+      include: {
+        route: {
+          include: {
+            stations: {
+              orderBy: {
+                index: 'asc',
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!trip || !trip.route) {
+      throw new NotFoundException(`Trip or route not found`);
+    }
+
+    // Find from and to stations
+    const fromStation = trip.route.stations.find(
+      (rs) => rs.stationId === fromStationId,
+    );
+    const toStation = trip.route.stations.find(
+      (rs) => rs.stationId === toStationId,
+    );
+
+    if (!fromStation || !toStation) {
+      throw new BadRequestException('Invalid station IDs');
+    }
+
+    // Calculate price for each seat
+    const seatsWithPrices = coach.seats.map((seat) => {
+      const price = this.pricingService.calculateSeatPrice({
+        route: {
+          basePricePerKm: trip.route.basePricePerKm,
+          stationFee: trip.route.stationFee,
+        },
+        coachTemplate: {
+          coachMultiplier: coach.template.coachMultiplier,
+          tierMultipliers: coach.template.tierMultipliers,
+        },
+        seatTier: seat.tier,
+        fromStationDistance: fromStation.distanceFromStart,
+        toStationDistance: toStation.distanceFromStart,
+      });
+
+      return {
+        ...seat,
+        price,
+      };
+    });
+
+    // Return only coach info with seats and prices (no train info)
+    return {
+      id: coach.id,
+      name: coach.name,
+      order: coach.order,
+      status: coach.status,
+      template: coach.template,
+      seats: seatsWithPrices,
+    };
   }
 
   async update(id: string, updateCoachDto: UpdateCoachDto) {

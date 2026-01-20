@@ -17,6 +17,8 @@ export const routeSchema = z.object({
     status: z.string(),
     durationMinutes: z.number().default(0),
     turnaroundMinutes: z.number().default(60),
+    basePricePerKm: z.number().default(1000),
+    stationFee: z.number().default(0),
     createdAt: z.string().or(z.date()),
     updatedAt: z.string().or(z.date()),
     stations: z.array(routeStationSchema).optional(),
@@ -31,6 +33,8 @@ export const createRouteSchema = routeSchema.omit({
     status: z.string().optional(), // Make status optional since backend sets default
     durationMinutes: z.number(),
     turnaroundMinutes: z.number(),
+    basePricePerKm: z.number().default(1000),
+    stationFee: z.number().default(0),
 });
 
 export const updateRouteSchema = createRouteSchema.partial();

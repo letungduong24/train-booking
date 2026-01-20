@@ -118,6 +118,22 @@ export const columns: ColumnDef<Route>[] = [
         },
     },
     {
+        accessorKey: "basePricePerKm",
+        header: "Giá/km",
+        cell: ({ row }) => {
+            const price = row.getValue("basePricePerKm") as number;
+            return <div className="font-medium">{price.toLocaleString('vi-VN')} đ</div>
+        },
+    },
+    {
+        accessorKey: "stationFee",
+        header: "Phí bến",
+        cell: ({ row }) => {
+            const fee = row.getValue("stationFee") as number;
+            return <div className="font-medium">{fee.toLocaleString('vi-VN')} đ</div>
+        },
+    },
+    {
         accessorKey: "createdAt",
         header: ({ column }) => {
             return (

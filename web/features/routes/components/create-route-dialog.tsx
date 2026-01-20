@@ -50,6 +50,8 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
             name: "",
             durationMinutes: 0,
             turnaroundMinutes: 60,
+            basePricePerKm: 1000,
+            stationFee: 0,
         },
     })
 
@@ -135,7 +137,44 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                             />
                         </div>
 
-
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="basePricePerKm"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Giá cơ bản/km (VND)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                placeholder="VD: 1200"
+                                                {...field}
+                                                onChange={(e) => field.onChange(+e.target.value)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="stationFee"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Phí bến (VND)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                placeholder="VD: 10000"
+                                                {...field}
+                                                onChange={(e) => field.onChange(+e.target.value)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         <DialogFooter>
                             <Button type="submit" disabled={createRoute.isPending}>

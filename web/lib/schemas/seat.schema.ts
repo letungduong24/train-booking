@@ -16,6 +16,7 @@ export const seatSchema = z.object({
     colIndex: z.number(),
     status: SeatStatusEnum,
     type: SeatTypeEnum,
+    tier: z.number().int().min(0).default(0),
     coachId: z.string(),
     price: z.number(),
 });

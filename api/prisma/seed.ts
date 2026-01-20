@@ -108,16 +108,18 @@ async function main() {
             status: 'active',
             durationMinutes: 1920, // 32 hours
             turnaroundMinutes: 240, // 4 hours
+            basePricePerKm: 1200, // VND per km
+            stationFee: 10000, // VND
             stations: {
                 create: [
-                    { stationId: stations[0].id, index: 0, distanceFromStart: 0 },
-                    { stationId: stations[1].id, index: 1, distanceFromStart: 319 },
-                    { stationId: stations[2].id, index: 2, distanceFromStart: 688 },
-                    { stationId: stations[3].id, index: 3, distanceFromStart: 791 },
-                    { stationId: stations[4].id, index: 4, distanceFromStart: 900 },
-                    { stationId: stations[5].id, index: 5, distanceFromStart: 1315 },
-                    { stationId: stations[7].id, index: 6, distanceFromStart: 1650 },
-                    { stationId: stations[8].id, index: 7, distanceFromStart: 1726 },
+                    { stationId: stations[0].id, index: 0, distanceFromStart: 0, durationFromStart: 0 },
+                    { stationId: stations[1].id, index: 1, distanceFromStart: 319, durationFromStart: 240 },
+                    { stationId: stations[2].id, index: 2, distanceFromStart: 688, durationFromStart: 510 },
+                    { stationId: stations[3].id, index: 3, distanceFromStart: 791, durationFromStart: 590 },
+                    { stationId: stations[4].id, index: 4, distanceFromStart: 900, durationFromStart: 670 },
+                    { stationId: stations[5].id, index: 5, distanceFromStart: 1315, durationFromStart: 850 },
+                    { stationId: stations[7].id, index: 6, distanceFromStart: 1650, durationFromStart: 970 },
+                    { stationId: stations[8].id, index: 7, distanceFromStart: 1726, durationFromStart: 1020 },
                 ],
             },
         },
@@ -130,16 +132,18 @@ async function main() {
             status: 'active',
             durationMinutes: 1920,
             turnaroundMinutes: 240,
+            basePricePerKm: 1200,
+            stationFee: 10000,
             stations: {
                 create: [
-                    { stationId: stations[8].id, index: 0, distanceFromStart: 0 },
-                    { stationId: stations[7].id, index: 1, distanceFromStart: 76 },
-                    { stationId: stations[5].id, index: 2, distanceFromStart: 411 },
-                    { stationId: stations[4].id, index: 3, distanceFromStart: 826 },
-                    { stationId: stations[3].id, index: 4, distanceFromStart: 935 },
-                    { stationId: stations[2].id, index: 5, distanceFromStart: 1038 },
-                    { stationId: stations[1].id, index: 6, distanceFromStart: 1407 },
-                    { stationId: stations[0].id, index: 7, distanceFromStart: 1726 },
+                    { stationId: stations[8].id, index: 0, distanceFromStart: 0, durationFromStart: 0 },
+                    { stationId: stations[7].id, index: 1, distanceFromStart: 76, durationFromStart: 60 },
+                    { stationId: stations[5].id, index: 2, distanceFromStart: 411, durationFromStart: 320 },
+                    { stationId: stations[4].id, index: 3, distanceFromStart: 826, durationFromStart: 640 },
+                    { stationId: stations[3].id, index: 4, distanceFromStart: 935, durationFromStart: 720 },
+                    { stationId: stations[2].id, index: 5, distanceFromStart: 1038, durationFromStart: 800 },
+                    { stationId: stations[1].id, index: 6, distanceFromStart: 1407, durationFromStart: 960 },
+                    { stationId: stations[0].id, index: 7, distanceFromStart: 1726, durationFromStart: 1020 },
                 ],
             },
         },
@@ -152,12 +156,14 @@ async function main() {
             status: 'active',
             durationMinutes: 780, // 13 hours
             turnaroundMinutes: 120, // 2 hours
+            basePricePerKm: 1100,
+            stationFee: 8000,
             stations: {
                 create: [
-                    { stationId: stations[0].id, index: 0, distanceFromStart: 0 },
-                    { stationId: stations[1].id, index: 1, distanceFromStart: 319 },
-                    { stationId: stations[2].id, index: 2, distanceFromStart: 688 },
-                    { stationId: stations[3].id, index: 3, distanceFromStart: 791 },
+                    { stationId: stations[0].id, index: 0, distanceFromStart: 0, durationFromStart: 0 },
+                    { stationId: stations[1].id, index: 1, distanceFromStart: 319, durationFromStart: 315 },
+                    { stationId: stations[2].id, index: 2, distanceFromStart: 688, durationFromStart: 620 },
+                    { stationId: stations[3].id, index: 3, distanceFromStart: 791, durationFromStart: 780 },
                 ],
             },
         },
@@ -170,11 +176,13 @@ async function main() {
             status: 'active',
             durationMinutes: 480, // 8 hours
             turnaroundMinutes: 90, // 1.5 hours
+            basePricePerKm: 1300,
+            stationFee: 5000,
             stations: {
                 create: [
-                    { stationId: stations[8].id, index: 0, distanceFromStart: 0 },
-                    { stationId: stations[6].id, index: 1, distanceFromStart: 231 },
-                    { stationId: stations[5].id, index: 2, distanceFromStart: 411 },
+                    { stationId: stations[8].id, index: 0, distanceFromStart: 0, durationFromStart: 0 },
+                    { stationId: stations[6].id, index: 1, distanceFromStart: 231, durationFromStart: 270 },
+                    { stationId: stations[5].id, index: 2, distanceFromStart: 411, durationFromStart: 480 },
                 ],
             },
         },
@@ -187,10 +195,12 @@ async function main() {
             status: 'draft',
             durationMinutes: 240, // 4 hours
             turnaroundMinutes: 60, // 1 hour
+            basePricePerKm: 1000,
+            stationFee: 5000,
             stations: {
                 create: [
-                    { stationId: stations[8].id, index: 0, distanceFromStart: 0 },
-                    { stationId: stations[9].id, index: 1, distanceFromStart: 169 },
+                    { stationId: stations[8].id, index: 0, distanceFromStart: 0, durationFromStart: 0 },
+                    { stationId: stations[9].id, index: 1, distanceFromStart: 169, durationFromStart: 240 },
                 ],
             },
         },
@@ -212,6 +222,8 @@ async function main() {
                 totalRows: 16,
                 totalCols: 4,
                 tiers: 1,
+                coachMultiplier: 1.0,
+                tierMultipliers: { "0": 1.0 },
             },
         }),
 
@@ -225,6 +237,8 @@ async function main() {
                 totalRows: 16,
                 totalCols: 4,
                 tiers: 1,
+                coachMultiplier: 1.2,
+                tierMultipliers: { "0": 1.0 },
             },
         }),
 
@@ -238,6 +252,8 @@ async function main() {
                 totalRows: 20,
                 totalCols: 4,
                 tiers: 1,
+                coachMultiplier: 0.8,
+                tierMultipliers: { "0": 1.0 },
             },
         }),
 
@@ -251,6 +267,8 @@ async function main() {
                 totalRows: 20,
                 totalCols: 4,
                 tiers: 1,
+                coachMultiplier: 0.9,
+                tierMultipliers: { "0": 1.0 },
             },
         }),
 
@@ -264,6 +282,8 @@ async function main() {
                 totalRows: 7,
                 totalCols: 1,
                 tiers: 1,
+                coachMultiplier: 2.0,
+                tierMultipliers: { "0": 1.0 },
             },
         }),
 
@@ -277,6 +297,8 @@ async function main() {
                 totalRows: 7,
                 totalCols: 1,
                 tiers: 2,
+                coachMultiplier: 1.5,
+                tierMultipliers: { "0": 1.2, "1": 1.0 },
             },
         }),
 
@@ -290,6 +312,8 @@ async function main() {
                 totalRows: 7,
                 totalCols: 1,
                 tiers: 3,
+                coachMultiplier: 1.3,
+                tierMultipliers: { "0": 1.3, "1": 1.1, "2": 0.9 },
             },
         }),
     ]);

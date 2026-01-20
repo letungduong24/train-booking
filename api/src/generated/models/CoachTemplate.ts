@@ -30,12 +30,14 @@ export type CoachTemplateAvgAggregateOutputType = {
   totalRows: number | null
   totalCols: number | null
   tiers: number | null
+  coachMultiplier: number | null
 }
 
 export type CoachTemplateSumAggregateOutputType = {
   totalRows: number | null
   totalCols: number | null
   tiers: number | null
+  coachMultiplier: number | null
 }
 
 export type CoachTemplateMinAggregateOutputType = {
@@ -49,6 +51,7 @@ export type CoachTemplateMinAggregateOutputType = {
   tiers: number | null
   createdAt: Date | null
   updatedAt: Date | null
+  coachMultiplier: number | null
 }
 
 export type CoachTemplateMaxAggregateOutputType = {
@@ -62,6 +65,7 @@ export type CoachTemplateMaxAggregateOutputType = {
   tiers: number | null
   createdAt: Date | null
   updatedAt: Date | null
+  coachMultiplier: number | null
 }
 
 export type CoachTemplateCountAggregateOutputType = {
@@ -75,6 +79,8 @@ export type CoachTemplateCountAggregateOutputType = {
   tiers: number
   createdAt: number
   updatedAt: number
+  coachMultiplier: number
+  tierMultipliers: number
   _all: number
 }
 
@@ -83,12 +89,14 @@ export type CoachTemplateAvgAggregateInputType = {
   totalRows?: true
   totalCols?: true
   tiers?: true
+  coachMultiplier?: true
 }
 
 export type CoachTemplateSumAggregateInputType = {
   totalRows?: true
   totalCols?: true
   tiers?: true
+  coachMultiplier?: true
 }
 
 export type CoachTemplateMinAggregateInputType = {
@@ -102,6 +110,7 @@ export type CoachTemplateMinAggregateInputType = {
   tiers?: true
   createdAt?: true
   updatedAt?: true
+  coachMultiplier?: true
 }
 
 export type CoachTemplateMaxAggregateInputType = {
@@ -115,6 +124,7 @@ export type CoachTemplateMaxAggregateInputType = {
   tiers?: true
   createdAt?: true
   updatedAt?: true
+  coachMultiplier?: true
 }
 
 export type CoachTemplateCountAggregateInputType = {
@@ -128,6 +138,8 @@ export type CoachTemplateCountAggregateInputType = {
   tiers?: true
   createdAt?: true
   updatedAt?: true
+  coachMultiplier?: true
+  tierMultipliers?: true
   _all?: true
 }
 
@@ -228,6 +240,8 @@ export type CoachTemplateGroupByOutputType = {
   tiers: number
   createdAt: Date
   updatedAt: Date
+  coachMultiplier: number
+  tierMultipliers: runtime.JsonValue
   _count: CoachTemplateCountAggregateOutputType | null
   _avg: CoachTemplateAvgAggregateOutputType | null
   _sum: CoachTemplateSumAggregateOutputType | null
@@ -264,6 +278,8 @@ export type CoachTemplateWhereInput = {
   tiers?: Prisma.IntFilter<"CoachTemplate"> | number
   createdAt?: Prisma.DateTimeFilter<"CoachTemplate"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CoachTemplate"> | Date | string
+  coachMultiplier?: Prisma.FloatFilter<"CoachTemplate"> | number
+  tierMultipliers?: Prisma.JsonFilter<"CoachTemplate">
   coaches?: Prisma.CoachListRelationFilter
 }
 
@@ -278,6 +294,8 @@ export type CoachTemplateOrderByWithRelationInput = {
   tiers?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  coachMultiplier?: Prisma.SortOrder
+  tierMultipliers?: Prisma.SortOrder
   coaches?: Prisma.CoachOrderByRelationAggregateInput
 }
 
@@ -295,6 +313,8 @@ export type CoachTemplateWhereUniqueInput = Prisma.AtLeast<{
   tiers?: Prisma.IntFilter<"CoachTemplate"> | number
   createdAt?: Prisma.DateTimeFilter<"CoachTemplate"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CoachTemplate"> | Date | string
+  coachMultiplier?: Prisma.FloatFilter<"CoachTemplate"> | number
+  tierMultipliers?: Prisma.JsonFilter<"CoachTemplate">
   coaches?: Prisma.CoachListRelationFilter
 }, "id" | "code">
 
@@ -309,6 +329,8 @@ export type CoachTemplateOrderByWithAggregationInput = {
   tiers?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  coachMultiplier?: Prisma.SortOrder
+  tierMultipliers?: Prisma.SortOrder
   _count?: Prisma.CoachTemplateCountOrderByAggregateInput
   _avg?: Prisma.CoachTemplateAvgOrderByAggregateInput
   _max?: Prisma.CoachTemplateMaxOrderByAggregateInput
@@ -330,6 +352,8 @@ export type CoachTemplateScalarWhereWithAggregatesInput = {
   tiers?: Prisma.IntWithAggregatesFilter<"CoachTemplate"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CoachTemplate"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CoachTemplate"> | Date | string
+  coachMultiplier?: Prisma.FloatWithAggregatesFilter<"CoachTemplate"> | number
+  tierMultipliers?: Prisma.JsonWithAggregatesFilter<"CoachTemplate">
 }
 
 export type CoachTemplateCreateInput = {
@@ -343,6 +367,8 @@ export type CoachTemplateCreateInput = {
   tiers?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  coachMultiplier?: number
+  tierMultipliers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   coaches?: Prisma.CoachCreateNestedManyWithoutTemplateInput
 }
 
@@ -357,6 +383,8 @@ export type CoachTemplateUncheckedCreateInput = {
   tiers?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  coachMultiplier?: number
+  tierMultipliers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   coaches?: Prisma.CoachUncheckedCreateNestedManyWithoutTemplateInput
 }
 
@@ -371,6 +399,8 @@ export type CoachTemplateUpdateInput = {
   tiers?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  coachMultiplier?: Prisma.FloatFieldUpdateOperationsInput | number
+  tierMultipliers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   coaches?: Prisma.CoachUpdateManyWithoutTemplateNestedInput
 }
 
@@ -385,6 +415,8 @@ export type CoachTemplateUncheckedUpdateInput = {
   tiers?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  coachMultiplier?: Prisma.FloatFieldUpdateOperationsInput | number
+  tierMultipliers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   coaches?: Prisma.CoachUncheckedUpdateManyWithoutTemplateNestedInput
 }
 
@@ -399,6 +431,8 @@ export type CoachTemplateCreateManyInput = {
   tiers?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  coachMultiplier?: number
+  tierMultipliers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
 }
 
 export type CoachTemplateUpdateManyMutationInput = {
@@ -412,6 +446,8 @@ export type CoachTemplateUpdateManyMutationInput = {
   tiers?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  coachMultiplier?: Prisma.FloatFieldUpdateOperationsInput | number
+  tierMultipliers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
 }
 
 export type CoachTemplateUncheckedUpdateManyInput = {
@@ -425,6 +461,8 @@ export type CoachTemplateUncheckedUpdateManyInput = {
   tiers?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  coachMultiplier?: Prisma.FloatFieldUpdateOperationsInput | number
+  tierMultipliers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
 }
 
 export type CoachTemplateCountOrderByAggregateInput = {
@@ -438,12 +476,15 @@ export type CoachTemplateCountOrderByAggregateInput = {
   tiers?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  coachMultiplier?: Prisma.SortOrder
+  tierMultipliers?: Prisma.SortOrder
 }
 
 export type CoachTemplateAvgOrderByAggregateInput = {
   totalRows?: Prisma.SortOrder
   totalCols?: Prisma.SortOrder
   tiers?: Prisma.SortOrder
+  coachMultiplier?: Prisma.SortOrder
 }
 
 export type CoachTemplateMaxOrderByAggregateInput = {
@@ -457,6 +498,7 @@ export type CoachTemplateMaxOrderByAggregateInput = {
   tiers?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  coachMultiplier?: Prisma.SortOrder
 }
 
 export type CoachTemplateMinOrderByAggregateInput = {
@@ -470,12 +512,14 @@ export type CoachTemplateMinOrderByAggregateInput = {
   tiers?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  coachMultiplier?: Prisma.SortOrder
 }
 
 export type CoachTemplateSumOrderByAggregateInput = {
   totalRows?: Prisma.SortOrder
   totalCols?: Prisma.SortOrder
   tiers?: Prisma.SortOrder
+  coachMultiplier?: Prisma.SortOrder
 }
 
 export type CoachTemplateScalarRelationFilter = {
@@ -512,6 +556,8 @@ export type CoachTemplateCreateWithoutCoachesInput = {
   tiers?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  coachMultiplier?: number
+  tierMultipliers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
 }
 
 export type CoachTemplateUncheckedCreateWithoutCoachesInput = {
@@ -525,6 +571,8 @@ export type CoachTemplateUncheckedCreateWithoutCoachesInput = {
   tiers?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  coachMultiplier?: number
+  tierMultipliers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
 }
 
 export type CoachTemplateCreateOrConnectWithoutCoachesInput = {
@@ -554,6 +602,8 @@ export type CoachTemplateUpdateWithoutCoachesInput = {
   tiers?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  coachMultiplier?: Prisma.FloatFieldUpdateOperationsInput | number
+  tierMultipliers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
 }
 
 export type CoachTemplateUncheckedUpdateWithoutCoachesInput = {
@@ -567,6 +617,8 @@ export type CoachTemplateUncheckedUpdateWithoutCoachesInput = {
   tiers?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  coachMultiplier?: Prisma.FloatFieldUpdateOperationsInput | number
+  tierMultipliers?: Prisma.JsonNullValueInput | runtime.InputJsonValue
 }
 
 
@@ -611,6 +663,8 @@ export type CoachTemplateSelect<ExtArgs extends runtime.Types.Extensions.Interna
   tiers?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  coachMultiplier?: boolean
+  tierMultipliers?: boolean
   coaches?: boolean | Prisma.CoachTemplate$coachesArgs<ExtArgs>
   _count?: boolean | Prisma.CoachTemplateCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["coachTemplate"]>
@@ -626,6 +680,8 @@ export type CoachTemplateSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   tiers?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  coachMultiplier?: boolean
+  tierMultipliers?: boolean
 }, ExtArgs["result"]["coachTemplate"]>
 
 export type CoachTemplateSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -639,6 +695,8 @@ export type CoachTemplateSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   tiers?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  coachMultiplier?: boolean
+  tierMultipliers?: boolean
 }, ExtArgs["result"]["coachTemplate"]>
 
 export type CoachTemplateSelectScalar = {
@@ -652,9 +710,11 @@ export type CoachTemplateSelectScalar = {
   tiers?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  coachMultiplier?: boolean
+  tierMultipliers?: boolean
 }
 
-export type CoachTemplateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "description" | "layout" | "totalRows" | "totalCols" | "tiers" | "createdAt" | "updatedAt", ExtArgs["result"]["coachTemplate"]>
+export type CoachTemplateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "description" | "layout" | "totalRows" | "totalCols" | "tiers" | "createdAt" | "updatedAt" | "coachMultiplier" | "tierMultipliers", ExtArgs["result"]["coachTemplate"]>
 export type CoachTemplateInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   coaches?: boolean | Prisma.CoachTemplate$coachesArgs<ExtArgs>
   _count?: boolean | Prisma.CoachTemplateCountOutputTypeDefaultArgs<ExtArgs>
@@ -678,6 +738,8 @@ export type $CoachTemplatePayload<ExtArgs extends runtime.Types.Extensions.Inter
     tiers: number
     createdAt: Date
     updatedAt: Date
+    coachMultiplier: number
+    tierMultipliers: runtime.JsonValue
   }, ExtArgs["result"]["coachTemplate"]>
   composites: {}
 }
@@ -1112,6 +1174,8 @@ export interface CoachTemplateFieldRefs {
   readonly tiers: Prisma.FieldRef<"CoachTemplate", 'Int'>
   readonly createdAt: Prisma.FieldRef<"CoachTemplate", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"CoachTemplate", 'DateTime'>
+  readonly coachMultiplier: Prisma.FieldRef<"CoachTemplate", 'Float'>
+  readonly tierMultipliers: Prisma.FieldRef<"CoachTemplate", 'Json'>
 }
     
 

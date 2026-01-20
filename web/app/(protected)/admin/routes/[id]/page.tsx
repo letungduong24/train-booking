@@ -249,22 +249,30 @@ export default function RouteDetailPage() {
                         </div>
 
                         {/* Route Info */}
-                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-8 border p-4 rounded-md bg-muted/20">
+                        <div className="flex flex-wrap justify-between gap-4 border p-4 rounded-md bg-muted/20">
                             <div className="flex items-center gap-2">
-                                <span className="font-semibold min-w-[80px]">Trạng thái:</span>
+                                <span className="font-semibold">Trạng thái:</span>
                                 <Badge variant={getRouteStatusColor(route.status)}>{translateRouteStatus(route.status)}</Badge>
                             </div>
                             <div className="flex items-center gap-2">
-                                <span className="font-semibold min-w-[80px]">Ngày tạo:</span>
+                                <span className="font-semibold">Ngày tạo:</span>
                                 <span>{format(new Date(route.createdAt), "dd/MM/yyyy HH:mm", { locale: vi })}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <span className="font-semibold min-w-[80px]">Thời gian chạy:</span>
+                                <span className="font-semibold">Thời gian chạy:</span>
                                 <span>{Math.floor(route.durationMinutes / 60)}g{route.durationMinutes % 60 > 0 ? ` ${route.durationMinutes % 60}p` : ''}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <span className="font-semibold min-w-[80px]">Nghỉ quay đầu:</span>
-                                <span>{Math.floor(route.turnaroundMinutes / 60)}g{route.turnaroundMinutes % 60 > 0 ? ` ${route.turnaroundMinutes % 60}p` : ''} ({route.turnaroundMinutes} phút)</span>
+                                <span className="font-semibold">Nghỉ quay đầu:</span>
+                                <span>{Math.floor(route.turnaroundMinutes / 60)}g{route.turnaroundMinutes % 60 > 0 ? ` ${route.turnaroundMinutes % 60}p` : ''}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold">Giá/km:</span>
+                                <span className="font-medium">{route.basePricePerKm.toLocaleString('vi-VN')} đ</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold">Phí bến:</span>
+                                <span className="font-medium">{route.stationFee.toLocaleString('vi-VN')} đ</span>
                             </div>
                         </div>
 

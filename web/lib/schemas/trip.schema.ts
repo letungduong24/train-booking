@@ -38,6 +38,41 @@ export type Trip = z.infer<typeof tripSchema>;
 export type CreateTripInput = z.infer<typeof createTripSchema>;
 export type UpdateTripInput = z.infer<typeof updateTripSchema>;
 
+// Detailed Schema for Booking
+export const tripDetailSchema = tripSchema.extend({
+    route: z.object({
+        id: z.string(),
+        name: z.string(),
+        stations: z.array(z.object({
+            id: z.string(),
+            stationId: z.string(),
+            station: z.object({
+                id: z.string(),
+                name: z.string(),
+            }),
+            distanceFromStart: z.number(),
+        })),
+    }),
+    train: z.object({
+        id: z.string(),
+        code: z.string(),
+        name: z.string(),
+        coaches: z.array(z.object({
+            id: z.string(),
+            name: z.string(),
+            order: z.number(),
+            template: z.object({
+                name: z.string(),
+            }),
+            _count: z.object({
+                seats: z.number(),
+            }).optional(),
+        })),
+    }),
+});
+
+export type TripDetail = z.infer<typeof tripDetailSchema>;
+
 export type TripFilters = {
     page: number;
     limit: number;

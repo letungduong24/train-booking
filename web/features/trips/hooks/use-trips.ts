@@ -53,7 +53,10 @@ export const useTrips = (filters: TripFilters) => {
 export const useTrip = (id: string) => {
     return useQuery({
         queryKey: ['trips', id],
-        queryFn: () => fetchTrip(id),
+        queryFn: async () => {
+            const response = await apiClient.get(`/trip/${id}`);
+            return response.data as import('@/lib/schemas/trip.schema').TripDetail;
+        },
         enabled: !!id,
     });
 };

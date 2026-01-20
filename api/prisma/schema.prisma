@@ -63,6 +63,10 @@ model Route {
   status            String         @default("draft")
   durationMinutes   Int            @default(0) // Thời gian chạy (phút)
   turnaroundMinutes Int            @default(60) // Thời gian nghỉ quay đầu (phút)
+  
+  // Pricing configuration
+  basePricePerKm    Float          @default(1000) // Giá cơ bản mỗi km (VND)
+  stationFee        Float          @default(0)    // Phí ra vào bến (VND)
 }
 
 model RouteStation {
@@ -70,6 +74,7 @@ model RouteStation {
   stationId         String
   index             Int
   distanceFromStart Float
+  durationFromStart Int     @default(0) // Duration in minutes from the first station to this station
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@id([routeId, index])
@@ -90,6 +95,10 @@ model CoachTemplate {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   coaches     Coach[]
+  
+  // Pricing configuration
+  coachMultiplier Float       @default(1.0)  // Hệ số nhân giá theo loại toa
+  tierMultipliers Json        @default("{\"0\": 1.0}")  // Hệ số nhân theo tầng: {"0": 1.0, "1": 1.2, "2": 1.1, "3": 0.8}
 }
 
 enum CoachLayout {
@@ -133,12 +142,13 @@ model Seat {
   colIndex       Int      
   status         SeatStatus      @default(AVAILABLE)
   type           SeatType        @default(STANDARD) 
+  tier           Int             @default(0) // Tầng ghế cho tính giá (0-3)
   coachId        String
   coach          Coach           @relation(fields: [coachId], references: [id], onDelete: Cascade)
   tickets        Ticket[]
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
-  @@unique([coachId, rowIndex, colIndex]) 
+  @@unique([coachId, rowIndex, colIndex, tier]) 
 }
 
 enum SeatStatus {

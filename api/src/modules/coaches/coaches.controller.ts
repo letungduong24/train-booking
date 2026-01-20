@@ -29,6 +29,16 @@ export class CoachesController {
     return this.coachesService.findOne(id);
   }
 
+  @Get(':id/seats-with-prices')
+  findOneWithSeatPrice(
+    @Param('id') id: string,
+    @Query('tripId') tripId: string,
+    @Query('fromStationId') fromStationId: string,
+    @Query('toStationId') toStationId: string,
+  ) {
+    return this.coachesService.findOneWithSeatPrice(id, tripId, fromStationId, toStationId);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCoachDto: UpdateCoachDto) {
     return this.coachesService.update(id, updateCoachDto);

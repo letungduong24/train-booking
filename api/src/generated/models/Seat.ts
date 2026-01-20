@@ -29,11 +29,13 @@ export type AggregateSeat = {
 export type SeatAvgAggregateOutputType = {
   rowIndex: number | null
   colIndex: number | null
+  tier: number | null
 }
 
 export type SeatSumAggregateOutputType = {
   rowIndex: number | null
   colIndex: number | null
+  tier: number | null
 }
 
 export type SeatMinAggregateOutputType = {
@@ -43,6 +45,7 @@ export type SeatMinAggregateOutputType = {
   colIndex: number | null
   status: $Enums.SeatStatus | null
   type: $Enums.SeatType | null
+  tier: number | null
   coachId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -55,6 +58,7 @@ export type SeatMaxAggregateOutputType = {
   colIndex: number | null
   status: $Enums.SeatStatus | null
   type: $Enums.SeatType | null
+  tier: number | null
   coachId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -67,6 +71,7 @@ export type SeatCountAggregateOutputType = {
   colIndex: number
   status: number
   type: number
+  tier: number
   coachId: number
   createdAt: number
   updatedAt: number
@@ -77,11 +82,13 @@ export type SeatCountAggregateOutputType = {
 export type SeatAvgAggregateInputType = {
   rowIndex?: true
   colIndex?: true
+  tier?: true
 }
 
 export type SeatSumAggregateInputType = {
   rowIndex?: true
   colIndex?: true
+  tier?: true
 }
 
 export type SeatMinAggregateInputType = {
@@ -91,6 +98,7 @@ export type SeatMinAggregateInputType = {
   colIndex?: true
   status?: true
   type?: true
+  tier?: true
   coachId?: true
   createdAt?: true
   updatedAt?: true
@@ -103,6 +111,7 @@ export type SeatMaxAggregateInputType = {
   colIndex?: true
   status?: true
   type?: true
+  tier?: true
   coachId?: true
   createdAt?: true
   updatedAt?: true
@@ -115,6 +124,7 @@ export type SeatCountAggregateInputType = {
   colIndex?: true
   status?: true
   type?: true
+  tier?: true
   coachId?: true
   createdAt?: true
   updatedAt?: true
@@ -214,6 +224,7 @@ export type SeatGroupByOutputType = {
   colIndex: number
   status: $Enums.SeatStatus
   type: $Enums.SeatType
+  tier: number
   coachId: string
   createdAt: Date
   updatedAt: Date
@@ -249,6 +260,7 @@ export type SeatWhereInput = {
   colIndex?: Prisma.IntFilter<"Seat"> | number
   status?: Prisma.EnumSeatStatusFilter<"Seat"> | $Enums.SeatStatus
   type?: Prisma.EnumSeatTypeFilter<"Seat"> | $Enums.SeatType
+  tier?: Prisma.IntFilter<"Seat"> | number
   coachId?: Prisma.StringFilter<"Seat"> | string
   createdAt?: Prisma.DateTimeFilter<"Seat"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Seat"> | Date | string
@@ -263,6 +275,7 @@ export type SeatOrderByWithRelationInput = {
   colIndex?: Prisma.SortOrder
   status?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
   coachId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -281,6 +294,7 @@ export type SeatWhereUniqueInput = Prisma.AtLeast<{
   colIndex?: Prisma.IntFilter<"Seat"> | number
   status?: Prisma.EnumSeatStatusFilter<"Seat"> | $Enums.SeatStatus
   type?: Prisma.EnumSeatTypeFilter<"Seat"> | $Enums.SeatType
+  tier?: Prisma.IntFilter<"Seat"> | number
   coachId?: Prisma.StringFilter<"Seat"> | string
   createdAt?: Prisma.DateTimeFilter<"Seat"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Seat"> | Date | string
@@ -295,6 +309,7 @@ export type SeatOrderByWithAggregationInput = {
   colIndex?: Prisma.SortOrder
   status?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
   coachId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -315,6 +330,7 @@ export type SeatScalarWhereWithAggregatesInput = {
   colIndex?: Prisma.IntWithAggregatesFilter<"Seat"> | number
   status?: Prisma.EnumSeatStatusWithAggregatesFilter<"Seat"> | $Enums.SeatStatus
   type?: Prisma.EnumSeatTypeWithAggregatesFilter<"Seat"> | $Enums.SeatType
+  tier?: Prisma.IntWithAggregatesFilter<"Seat"> | number
   coachId?: Prisma.StringWithAggregatesFilter<"Seat"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Seat"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Seat"> | Date | string
@@ -327,6 +343,7 @@ export type SeatCreateInput = {
   colIndex: number
   status?: $Enums.SeatStatus
   type?: $Enums.SeatType
+  tier?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   coach: Prisma.CoachCreateNestedOneWithoutSeatsInput
@@ -340,6 +357,7 @@ export type SeatUncheckedCreateInput = {
   colIndex: number
   status?: $Enums.SeatStatus
   type?: $Enums.SeatType
+  tier?: number
   coachId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -353,6 +371,7 @@ export type SeatUpdateInput = {
   colIndex?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
   type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
+  tier?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coach?: Prisma.CoachUpdateOneRequiredWithoutSeatsNestedInput
@@ -366,6 +385,7 @@ export type SeatUncheckedUpdateInput = {
   colIndex?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
   type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
+  tier?: Prisma.IntFieldUpdateOperationsInput | number
   coachId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -379,6 +399,7 @@ export type SeatCreateManyInput = {
   colIndex: number
   status?: $Enums.SeatStatus
   type?: $Enums.SeatType
+  tier?: number
   coachId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -391,6 +412,7 @@ export type SeatUpdateManyMutationInput = {
   colIndex?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
   type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
+  tier?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -402,6 +424,7 @@ export type SeatUncheckedUpdateManyInput = {
   colIndex?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
   type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
+  tier?: Prisma.IntFieldUpdateOperationsInput | number
   coachId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -430,6 +453,7 @@ export type SeatCountOrderByAggregateInput = {
   colIndex?: Prisma.SortOrder
   status?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
   coachId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -438,6 +462,7 @@ export type SeatCountOrderByAggregateInput = {
 export type SeatAvgOrderByAggregateInput = {
   rowIndex?: Prisma.SortOrder
   colIndex?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
 }
 
 export type SeatMaxOrderByAggregateInput = {
@@ -447,6 +472,7 @@ export type SeatMaxOrderByAggregateInput = {
   colIndex?: Prisma.SortOrder
   status?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
   coachId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -459,6 +485,7 @@ export type SeatMinOrderByAggregateInput = {
   colIndex?: Prisma.SortOrder
   status?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
   coachId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -467,6 +494,7 @@ export type SeatMinOrderByAggregateInput = {
 export type SeatSumOrderByAggregateInput = {
   rowIndex?: Prisma.SortOrder
   colIndex?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
 }
 
 export type SeatScalarRelationFilter = {
@@ -545,6 +573,7 @@ export type SeatCreateWithoutCoachInput = {
   colIndex: number
   status?: $Enums.SeatStatus
   type?: $Enums.SeatType
+  tier?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   tickets?: Prisma.TicketCreateNestedManyWithoutSeatInput
@@ -557,6 +586,7 @@ export type SeatUncheckedCreateWithoutCoachInput = {
   colIndex: number
   status?: $Enums.SeatStatus
   type?: $Enums.SeatType
+  tier?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutSeatInput
@@ -598,6 +628,7 @@ export type SeatScalarWhereInput = {
   colIndex?: Prisma.IntFilter<"Seat"> | number
   status?: Prisma.EnumSeatStatusFilter<"Seat"> | $Enums.SeatStatus
   type?: Prisma.EnumSeatTypeFilter<"Seat"> | $Enums.SeatType
+  tier?: Prisma.IntFilter<"Seat"> | number
   coachId?: Prisma.StringFilter<"Seat"> | string
   createdAt?: Prisma.DateTimeFilter<"Seat"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Seat"> | Date | string
@@ -610,6 +641,7 @@ export type SeatCreateWithoutTicketsInput = {
   colIndex: number
   status?: $Enums.SeatStatus
   type?: $Enums.SeatType
+  tier?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   coach: Prisma.CoachCreateNestedOneWithoutSeatsInput
@@ -622,6 +654,7 @@ export type SeatUncheckedCreateWithoutTicketsInput = {
   colIndex: number
   status?: $Enums.SeatStatus
   type?: $Enums.SeatType
+  tier?: number
   coachId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -650,6 +683,7 @@ export type SeatUpdateWithoutTicketsInput = {
   colIndex?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
   type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
+  tier?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coach?: Prisma.CoachUpdateOneRequiredWithoutSeatsNestedInput
@@ -662,6 +696,7 @@ export type SeatUncheckedUpdateWithoutTicketsInput = {
   colIndex?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
   type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
+  tier?: Prisma.IntFieldUpdateOperationsInput | number
   coachId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -674,6 +709,7 @@ export type SeatCreateManyCoachInput = {
   colIndex: number
   status?: $Enums.SeatStatus
   type?: $Enums.SeatType
+  tier?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -685,6 +721,7 @@ export type SeatUpdateWithoutCoachInput = {
   colIndex?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
   type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
+  tier?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tickets?: Prisma.TicketUpdateManyWithoutSeatNestedInput
@@ -697,6 +734,7 @@ export type SeatUncheckedUpdateWithoutCoachInput = {
   colIndex?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
   type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
+  tier?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tickets?: Prisma.TicketUncheckedUpdateManyWithoutSeatNestedInput
@@ -709,6 +747,7 @@ export type SeatUncheckedUpdateManyWithoutCoachInput = {
   colIndex?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
   type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
+  tier?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -751,6 +790,7 @@ export type SeatSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   colIndex?: boolean
   status?: boolean
   type?: boolean
+  tier?: boolean
   coachId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -766,6 +806,7 @@ export type SeatSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   colIndex?: boolean
   status?: boolean
   type?: boolean
+  tier?: boolean
   coachId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -779,6 +820,7 @@ export type SeatSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   colIndex?: boolean
   status?: boolean
   type?: boolean
+  tier?: boolean
   coachId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -792,12 +834,13 @@ export type SeatSelectScalar = {
   colIndex?: boolean
   status?: boolean
   type?: boolean
+  tier?: boolean
   coachId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SeatOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "rowIndex" | "colIndex" | "status" | "type" | "coachId" | "createdAt" | "updatedAt", ExtArgs["result"]["seat"]>
+export type SeatOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "rowIndex" | "colIndex" | "status" | "type" | "tier" | "coachId" | "createdAt" | "updatedAt", ExtArgs["result"]["seat"]>
 export type SeatInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   coach?: boolean | Prisma.CoachDefaultArgs<ExtArgs>
   tickets?: boolean | Prisma.Seat$ticketsArgs<ExtArgs>
@@ -823,6 +866,7 @@ export type $SeatPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     colIndex: number
     status: $Enums.SeatStatus
     type: $Enums.SeatType
+    tier: number
     coachId: string
     createdAt: Date
     updatedAt: Date
@@ -1257,6 +1301,7 @@ export interface SeatFieldRefs {
   readonly colIndex: Prisma.FieldRef<"Seat", 'Int'>
   readonly status: Prisma.FieldRef<"Seat", 'SeatStatus'>
   readonly type: Prisma.FieldRef<"Seat", 'SeatType'>
+  readonly tier: Prisma.FieldRef<"Seat", 'Int'>
   readonly coachId: Prisma.FieldRef<"Seat", 'String'>
   readonly createdAt: Prisma.FieldRef<"Seat", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Seat", 'DateTime'>

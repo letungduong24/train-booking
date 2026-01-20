@@ -3,6 +3,7 @@ import { TripService } from './trip.service';
 import { CreateTripDto } from './dto/create-trip.dto';
 import { UpdateTripDto } from './dto/update-trip.dto';
 import { FilterTripDto } from './dto/filter-trip.dto';
+import { SearchTripDto } from './dto/search-trip.dto';
 
 @Controller('trip')
 export class TripController {
@@ -11,6 +12,11 @@ export class TripController {
     @Post()
     create(@Body() createTripDto: CreateTripDto) {
         return this.tripService.create(createTripDto);
+    }
+
+    @Get('search')
+    search(@Query() query: SearchTripDto) {
+        return this.tripService.searchTrips(query.fromStationId, query.toStationId, query.date);
     }
 
     @Get()
