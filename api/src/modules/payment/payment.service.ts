@@ -18,8 +18,8 @@ export class PaymentService {
         const returnUrl = this.configService.get<string>('VNP_RETURN_URL') ?? '';
 
         if (!tmnCode || !secretKey || !vnpUrl || !returnUrl) {
-            this.logger.error('Missing VNPAY configuration');
-            throw new Error('Payment configuration missing');
+            this.logger.error('Thiếu cấu hình VNPAY');
+            throw new Error('Cấu hình thanh toán bị thiếu');
         }
 
         const date = new Date();
@@ -72,8 +72,8 @@ export class PaymentService {
         const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
 
         if (secureHash === signed) {
-            // Check database if needed? 
-            // For now just return valid signature status
+            // Kiểm tra trạng thái đơn hàng trong DB nếu cần
+            // Tạm thời trả về trạng thái hợp lệ
             return {
                 isSuccess: rspCode === '00',
                 orderId,
@@ -104,14 +104,14 @@ export class PaymentService {
         const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
 
         if (secureHash === signed) {
-            // TODO: Update order status in database
-            // This requires access to BookingService/Repository
-            // For now, returning success response structure expected by VNPAY
+            // TODO: Cập nhật trạng thái đơn hàng trong database
+            // Việc này yêu cầu inject BookingService hoặc Repository
+            // Tạm thời trả về response thành công theo format VNPAY
             if (rspCode === '00') {
-                this.logger.log(`Payment confirmed for Order ${orderId}`);
+                this.logger.log(`Thanh toán thành công cho đơn hàng ${orderId}`);
                 return { RspCode: '00', Message: 'Success' };
             } else {
-                this.logger.warn(`Payment failed for Order ${orderId} with code ${rspCode}`);
+                this.logger.warn(`Thanh toán thất bại cho đơn hàng ${orderId} với mã lỗi ${rspCode}`);
                 return { RspCode: '00', Message: 'Success' }; // VNPAY expects 00 if process ran correctly, even if payment failed
             }
         } else {

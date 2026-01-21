@@ -7,39 +7,39 @@ export interface PriceCalculationParams {
     };
     coachTemplate: {
         coachMultiplier: number;
-        tierMultipliers: any; // JSON object like {"0": 1.0, "1": 1.2, "2": 0.9}
+        tierMultipliers: any; // Object JSON dạng {"0": 1.0, "1": 1.2, "2": 0.9}
     };
     seatTier: number;
-    fromStationDistance: number; // distanceFromStart of from station
-    toStationDistance: number; // distanceFromStart of to station
-    discountRate?: number; // Passenger group discount (0.1 = 10% off, 0.15 = 15% off)
+    fromStationDistance: number; // Khoảng cách từ ga đi
+    toStationDistance: number; // Khoảng cách từ ga đến
+    discountRate?: number; // Tỉ lệ giảm giá theo đối tượng (0.1 = giảm 10%, 0.15 = giảm 15%)
 }
 
 @Injectable()
 export class PricingService {
     /**
-     * Calculate ticket price based on route, coach, seat tier, distance, and passenger group discount
-     * Formula: ticketPrice = (stationFee + (distance * basePricePerKm * coachMultiplier * tierMultiplier)) * (1 - discountRate)
+     * Tính giá vé dựa trên tuyến đường, toa tàu, tầng ghế, khoảng cách và giảm giá đối tượng
+     * Công thức: giá vé = (phí ga + (khoảng cách * đơn giá mỗi km * hệ số toa * hệ số tầng)) * (1 - tỉ lệ giảm giá)
      */
     calculateSeatPrice(params: PriceCalculationParams): number {
         const { route, coachTemplate, seatTier, fromStationDistance, toStationDistance, discountRate = 0 } = params;
 
-        // Calculate distance between stations (absolute difference)
+        // Tính khoảng cách giữa 2 ga (giá trị tuyệt đối)
         const distance = Math.abs(toStationDistance - fromStationDistance);
 
-        // Get tier multiplier from JSON (default to 1.0 if not found)
+        // Lấy hệ số tầng từ JSON (mặc định là 1.0 nếu không tìm thấy)
         const tierMultipliers = coachTemplate.tierMultipliers || {};
         const tierMultiplier = tierMultipliers[seatTier.toString()] || 1.0;
 
-        // Calculate base price using the formula
+        // Tính giá cơ bản theo công thức
         const basePrice =
             distance * route.basePricePerKm * coachTemplate.coachMultiplier * tierMultiplier;
         const priceBeforeDiscount = route.stationFee + basePrice;
 
-        // Apply passenger group discount
+        // Áp dụng giảm giá theo đối tượng
         const finalPrice = priceBeforeDiscount * (1 - discountRate);
 
-        // Round to nearest integer
+        // Làm tròn số
         return Math.round(finalPrice);
     }
 }

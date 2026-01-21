@@ -20,7 +20,7 @@ export class BookingService {
     async createBooking(userId: string | null, dto: CreateBookingDto, ipAddr: string) {
         const { tripId, passengers, fromStationId, toStationId } = dto;
 
-        // 1. Validate Trip & Route
+        // 1. Kiểm tra thông tin Chuyến tàu & Tuyến đường
         const trip = await this.prisma.trip.findUnique({
             where: { id: tripId },
             include: {
@@ -42,17 +42,17 @@ export class BookingService {
         });
 
         if (!trip) {
-            throw new BadRequestException('Trip not found');
+            throw new BadRequestException('Không tìm thấy chuyến tàu');
         }
 
         const fromStation = trip.route.stations.find(s => s.stationId === fromStationId);
         const toStation = trip.route.stations.find(s => s.stationId === toStationId);
 
         if (!fromStation || !toStation) {
-            throw new BadRequestException('Invalid stations for this route');
+            throw new BadRequestException('Ga đến hoặc ga đi không hợp lệ');
         }
 
-        // 2. Validate Passengers & Calculate Prices with Discounts
+        // 2. Kiểm tra Hành khách & Tính giá vé (áp dụng giảm giá)
         const seatIds = passengers.map(p => p.seatId);
         const seats = await this.prisma.seat.findMany({
             where: {
@@ -68,10 +68,10 @@ export class BookingService {
         });
 
         if (seats.length !== seatIds.length) {
-            throw new BadRequestException('Some seats not found');
+            throw new BadRequestException('Một số ghế ngồi không tìm thấy');
         }
 
-        // Get all passenger groups
+        // Lấy danh sách đối tượng hành khách
         const passengerGroupIds = passengers.map(p => p.passengerGroupId);
         const passengerGroups = await this.prisma.passengerGroup.findMany({
             where: {
@@ -80,28 +80,28 @@ export class BookingService {
         });
 
         if (passengerGroups.length !== passengerGroupIds.length) {
-            throw new BadRequestException('Some passenger groups not found');
+            throw new BadRequestException('Một số đối tượng hành khách không hợp lệ');
         }
 
-        // Validate CCCD for non-children and check age
+        // Kiểm tra CCCD và độ tuổi hành khách
         for (const passenger of passengers) {
             const group = passengerGroups.find(g => g.id === passenger.passengerGroupId);
             if (!group) continue;
 
-            // CCCD required for non-children
+            // Yêu cầu CCCD với hành khách không phải trẻ em
             if (group.code !== 'CHILD' && (!passenger.passengerId || passenger.passengerId === 'N/A')) {
-                throw new BadRequestException(`CCCD is required for ${group.name}`);
+                throw new BadRequestException(`Yêu cầu CCCD đối với ${group.name}`);
             }
 
-            // Validate CCCD format and age (skip for children with N/A)
+            // Kiểm tra định dạng CCCD và độ tuổi (bỏ qua nếu là trẻ em)
             if (passenger.passengerId && passenger.passengerId !== 'N/A') {
-                // Validate CCCD format
+                // Kiểm tra định dạng CCCD
                 const cccdInfo = validateCCCD(passenger.passengerId);
                 if (!cccdInfo.isValid) {
-                    throw new BadRequestException(`Invalid CCCD for ${passenger.passengerName}: ${cccdInfo.error}`);
+                    throw new BadRequestException(`CCCD không hợp lệ cho hành khách ${passenger.passengerName}: ${cccdInfo.error}`);
                 }
 
-                // Validate age matches passenger group
+                // Kiểm tra độ tuổi phù hợp với đối tượng
                 const ageValidation = validateCCCDAgeForGroup(
                     passenger.passengerId,
                     group.minAge,
@@ -110,12 +110,12 @@ export class BookingService {
 
                 if (!ageValidation.isValid) {
                     throw new BadRequestException(
-                        `CCCD age mismatch for ${passenger.passengerName}: ${ageValidation.error}. ` +
-                        `Detected age: ${ageValidation.age}, Group: ${group.name} (${group.minAge ?? 'no min'}-${group.maxAge ?? 'no max'})`
+                        `Tuổi không phù hợp với loại vé ${passenger.passengerName}: ${ageValidation.error}. ` +
+                        `Tuổi thực: ${ageValidation.age}, Loại vé: ${group.name} (${group.minAge ?? 'không min'}-${group.maxAge ?? 'không max'})`
                     );
                 }
 
-                this.logger.log(`Validated CCCD for ${passenger.passengerName}: Age ${ageValidation.age}, Group: ${group.name}`);
+                this.logger.log(`Đã xác thực CCCD cho ${passenger.passengerName}: Tuổi ${ageValidation.age}, Loại: ${group.name}`);
             }
         }
 
@@ -125,12 +125,12 @@ export class BookingService {
         for (const passenger of passengers) {
             const seat = seats.find(s => s.id === passenger.seatId);
             if (!seat) {
-                throw new BadRequestException(`Seat ${passenger.seatId} not found`);
+                throw new BadRequestException(`Ghế ${passenger.seatId} không tìm thấy`);
             }
 
             const group = passengerGroups.find(g => g.id === passenger.passengerGroupId);
             if (!group) {
-                throw new BadRequestException(`Passenger group ${passenger.passengerGroupId} not found`);
+                throw new BadRequestException(`Loại hành khách ${passenger.passengerGroupId} không tìm thấy`);
             }
 
             const price = this.pricingService.calculateSeatPrice({
@@ -161,7 +161,7 @@ export class BookingService {
             });
         }
 
-        // 3. Create Booking with metadata (no tickets yet)
+        // 3. Tạo Đơn đặt chỗ (lưu metadata, chưa tạo vé chi tiết)
         const bookingCode = `VNR-${dayjs().format('YYYYMMDD')}-${Math.floor(Math.random() * 10000)}`;
 
         const booking = await this.prisma.booking.create({
@@ -187,7 +187,7 @@ export class BookingService {
             }
         });
 
-        // 4. Generate Payment URL
+        // 4. Tạo URL thanh toán
         const paymentUrl = this.paymentService.createPaymentUrl({
             amount: totalPrice,
             orderId: booking.code,
@@ -203,27 +203,27 @@ export class BookingService {
     }
 
     async confirmBooking(bookingCode: string) {
-        // Find booking
+        // Tìm đơn đặt chỗ
         const booking = await this.prisma.booking.findUnique({
             where: { code: bookingCode },
         });
 
         if (!booking) {
-            throw new BadRequestException('Booking not found');
+            throw new BadRequestException('Không tìm thấy đơn đặt chỗ');
         }
 
         if (booking.status === 'PAID') {
-            this.logger.warn(`Booking ${bookingCode} already confirmed`);
+            this.logger.warn(`Đơn đặt chỗ ${bookingCode} đã được thanh toán`);
             return booking;
         }
 
         if (!booking.metadata) {
-            throw new BadRequestException('Booking metadata missing');
+            throw new BadRequestException('Thông tin metadata của đơn hàng bị thiếu');
         }
 
         const metadata = booking.metadata as any;
 
-        // Create tickets from metadata
+        // Tạo danh sách vé từ metadata
         const tickets = metadata.passengers.map((p: any) => ({
             seatId: p.seatId,
             tripId: metadata.tripId,
@@ -235,7 +235,7 @@ export class BookingService {
             toStationIndex: p.toStationIndex,
         }));
 
-        // Update booking: create tickets + update status + clear metadata
+        // Cập nhật đơn hàng: tạo vé + chuyển trạng thái + xóa metadata
         const updatedBooking = await this.prisma.booking.update({
             where: { code: bookingCode },
             data: {
@@ -250,11 +250,11 @@ export class BookingService {
             },
         });
 
-        this.logger.log(`Booking ${bookingCode} confirmed with ${tickets.length} tickets`);
+        this.logger.log(`Đã xác nhận đơn hàng ${bookingCode} với ${tickets.length} vé`);
         return updatedBooking;
     }
 
     async updateBookingStatus(code: string, status: string) {
-        // Implementation for status update
+        // Triển khai logic cập nhật trạng thái
     }
 }

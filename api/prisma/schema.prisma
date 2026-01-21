@@ -26,7 +26,7 @@ model User {
   updatedAt     DateTime       @updatedAt
   refreshTokens RefreshToken[]
   bookings      Booking[]
-  role          String @default("user")
+  role          String         @default("user")
 }
 
 model RefreshToken {
@@ -44,29 +44,29 @@ model RefreshToken {
 // Station
 
 model Station {
-  id         String   @id @default(uuid())
+  id         String         @id @default(uuid())
   name       String
   latitute   Float
   longtitute Float
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  routes RouteStation[]
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  routes     RouteStation[]
 }
 
 model Route {
-  id        String   @id @default(uuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  stations  RouteStation[]
-  trips     Trip[]
+  id                String         @id @default(uuid())
+  name              String
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  stations          RouteStation[]
+  trips             Trip[]
   status            String         @default("draft")
   durationMinutes   Int            @default(0) // Thời gian chạy (phút)
   turnaroundMinutes Int            @default(60) // Thời gian nghỉ quay đầu (phút)
-  
+
   // Pricing configuration
-  basePricePerKm    Float          @default(1000) // Giá cơ bản mỗi km (VND)
-  stationFee        Float          @default(0)    // Phí ra vào bến (VND)
+  basePricePerKm Float @default(1000) // Giá cơ bản mỗi km (VND)
+  stationFee     Float @default(0) // Phí ra vào bến (VND)
 }
 
 model RouteStation {
@@ -74,43 +74,44 @@ model RouteStation {
   stationId         String
   index             Int
   distanceFromStart Float
-  durationFromStart Int     @default(0) // Duration in minutes from the first station to this station
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  durationFromStart Int      @default(0) // Duration in minutes from the first station to this station
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  route             Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  station           Station  @relation(fields: [stationId], references: [id], onDelete: Cascade)
+
   @@id([routeId, index])
-  route Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
-  station Station @relation(fields: [stationId], references: [id], onDelete: Cascade)
 }
 
 // Train
 model CoachTemplate {
   id          String      @id @default(uuid())
   code        String      @unique
-  name        String      
+  name        String
   description String?
-  layout      CoachLayout 
-  totalRows   Int         
-  totalCols   Int         
+  layout      CoachLayout
+  totalRows   Int
+  totalCols   Int
   tiers       Int         @default(1)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   coaches     Coach[]
-  
+
   // Pricing configuration
-  coachMultiplier Float       @default(1.0)  // Hệ số nhân giá theo loại toa
-  tierMultipliers Json        @default("{\"0\": 1.0}")  // Hệ số nhân theo tầng: {"0": 1.0, "1": 1.2, "2": 1.1, "3": 0.8}
+  coachMultiplier Float @default(1.0) // Hệ số nhân giá theo loại toa
+  tierMultipliers Json  @default("{\"0\": 1.0}") // Hệ số nhân theo tầng: {"0": 1.0, "1": 1.2, "2": 1.1, "3": 0.8}
 }
 
 enum CoachLayout {
-  SEAT   
-  BED  
+  SEAT
+  BED
 }
 
 model Train {
   id        String   @id @default(uuid())
-  code      String   @unique 
-  name      String   
-  status    String   @default("ACTIVE") 
+  code      String   @unique
+  name      String
+  status    String   @default("ACTIVE")
   coaches   Coach[]
   trips     Trip[]
   createdAt DateTime @default(now())
@@ -119,64 +120,66 @@ model Train {
 
 model Coach {
   id         String        @id @default(uuid())
-  name       String        
-  order      Int           
+  name       String
+  order      Int
   status     String        @default("ACTIVE")
   trainId    String
   train      Train         @relation(fields: [trainId], references: [id], onDelete: Cascade)
   templateId String
   template   CoachTemplate @relation(fields: [templateId], references: [id])
-  
-  seats      Seat[]
-  
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+
+  seats Seat[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([trainId])
 }
 
 model Seat {
-  id             String          @id @default(uuid())
-  name           String     
-  rowIndex       Int      
-  colIndex       Int      
-  status         SeatStatus      @default(AVAILABLE)
-  type           SeatType        @default(STANDARD) 
-  tier           Int             @default(0) // Tầng ghế cho tính giá (0-3)
-  coachId        String
-  coach          Coach           @relation(fields: [coachId], references: [id], onDelete: Cascade)
-  tickets        Ticket[]
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  @@unique([coachId, rowIndex, colIndex, tier]) 
+  id        String     @id @default(uuid())
+  name      String
+  rowIndex  Int
+  colIndex  Int
+  status    SeatStatus @default(AVAILABLE)
+  type      SeatType   @default(STANDARD)
+  tier      Int        @default(0) // Tầng ghế cho tính giá (0-3)
+  coachId   String
+  coach     Coach      @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  tickets   Ticket[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@unique([coachId, rowIndex, colIndex, tier])
 }
 
 enum SeatStatus {
-  AVAILABLE 
-  LOCKED   
+  AVAILABLE
+  LOCKED
 }
 
 enum SeatType {
-  VIP     
-  STANDARD  
-  ECONOMY  
+  VIP
+  STANDARD
+  ECONOMY
   OTHER
 }
 
 // Trip Management
 
 model Trip {
-  id            String   @id @default(uuid())
+  id            String    @id @default(uuid())
   routeId       String
-  route         Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  route         Route     @relation(fields: [routeId], references: [id], onDelete: Cascade)
   trainId       String
-  train         Train    @relation(fields: [trainId], references: [id], onDelete: Cascade)
+  train         Train     @relation(fields: [trainId], references: [id], onDelete: Cascade)
   departureTime DateTime // Thời gian khởi hành (bao gồm cả ngày và giờ)
   endTime       DateTime // Thời gian kết thúc (bao gồm cả thời gian chạy + nghỉ)
-  status        String   @default("SCHEDULED") // SCHEDULED, RUNNING, COMPLETED, CANCELLED
+  status        String    @default("SCHEDULED") // SCHEDULED, RUNNING, COMPLETED, CANCELLED
   tickets       Ticket[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  bookings      Booking[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@index([routeId])
   @@index([trainId])
@@ -186,38 +189,40 @@ model Trip {
 // Booking Management
 
 // Booking = Đơn hàng (Giỏ hàng tổng)
+enum BookingStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
 model Booking {
   id         String        @id @default(uuid())
-  code       String        @unique // Mã đơn hàng (VD: VNR-2026-XYZ) để tra cứu
-  userId     String?       // Có thể null nếu cho khách vãng lai đặt
+  code       String        @unique // Mã đặt chỗ (VNR-YYYYMMDD-XXXX)
+  tripId     String
+  trip       Trip          @relation(fields: [tripId], references: [id])
+  userId     String? // Có thể null nếu user chưa đăng nhập (nhưng ở đây mình làm required login)
   user       User?         @relation(fields: [userId], references: [id])
-  status     BookingStatus @default(PENDING)
-  totalPrice Float         @default(0) // Tổng tiền của tất cả các vé con cộng lại
-  metadata   Json?         // Temporary storage for booking details until payment confirmed
-  tickets    Ticket[]      // Booking không trỏ vào Trip nữa, mà chứa danh sách vé
+  status     BookingStatus @default(PENDING) // Thay vì String
+  totalPrice Float
+  metadata   Json? // Lưu thông tin tạm: passenger details, seatIds, etc. trước khi thanh toán thành công
+  tickets    Ticket[]
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
 
+  @@index([tripId])
   @@index([userId])
   @@index([code])
-  @@index([status])
-}
-
-enum BookingStatus {
-  PENDING   // Chờ thanh toán
-  PAID      // Đã thanh toán
-  CANCELLED // Đã hủy
 }
 
 // PassengerGroup = Phân loại hành khách (Người lớn, Sinh viên, Người cao tuổi, Trẻ em)
 model PassengerGroup {
   id           String   @id @default(uuid())
   code         String   @unique // ADULT, STUDENT, ELDERLY, CHILD
-  name         String   // "Người lớn", "Sinh viên", "Người cao tuổi", "Trẻ em"
+  name         String // "Người lớn", "Sinh viên", "Người cao tuổi", "Trẻ em"
   discountRate Float    @default(0) // 0.1 = giảm 10%, 0.15 = giảm 15%
   description  String?
-  minAge       Int?     // Tuổi tối thiểu (VD: ELDERLY >= 60)
-  maxAge       Int?     // Tuổi tối đa (VD: CHILD < 12)
+  minAge       Int? // Tuổi tối thiểu (VD: ELDERLY >= 60)
+  maxAge       Int? // Tuổi tối đa (VD: CHILD < 12)
   tickets      Ticket[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -228,17 +233,17 @@ model Ticket {
   id               String         @id @default(uuid())
   bookingId        String
   booking          Booking        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  tripId           String         // Vì trong 1 đơn hàng, vé 1 có thể đi tàu SE1, vé 2 có thể đi tàu SE3
+  tripId           String // Vì trong 1 đơn hàng, vé 1 có thể đi tàu SE1, vé 2 có thể đi tàu SE3
   trip             Trip           @relation(fields: [tripId], references: [id])
   seatId           String
   seat             Seat           @relation(fields: [seatId], references: [id])
-  passengerName    String         // Tên hành khách
-  passengerId      String         // CCCD/CMND (hoặc "N/A" cho trẻ em)
-  passengerGroupId String         // Phân loại hành khách
+  passengerName    String // Tên hành khách
+  passengerId      String // CCCD/CMND (hoặc "N/A" cho trẻ em)
+  passengerGroupId String // Phân loại hành khách
   passengerGroup   PassengerGroup @relation(fields: [passengerGroupId], references: [id])
-  fromStationIndex Int            // Chỉ số ga đi trong route
-  toStationIndex   Int            // Chỉ số ga đến trong route
-  price            Float          // Giá của riêng vé này (đã áp dụng giảm giá)
+  fromStationIndex Int // Chỉ số ga đi trong route
+  toStationIndex   Int // Chỉ số ga đến trong route
+  price            Float // Giá của riêng vé này (đã áp dụng giảm giá)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 
