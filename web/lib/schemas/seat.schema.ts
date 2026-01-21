@@ -1,12 +1,14 @@
 import { z } from "zod";
 
 // Enums
-export const SeatStatusEnum = z.enum(['AVAILABLE', 'BOOKED', 'LOCKED', 'DISABLED', 'SELECTED']);
+export const SeatStatusEnum = z.enum(['AVAILABLE', 'LOCKED']);
 export const SeatTypeEnum = z.enum(['VIP', 'STANDARD', 'ECONOMY', 'OTHER']);
+export const BookingStatusEnum = z.enum(['AVAILABLE', 'BOOKED', 'LOCKED']);
 
 // Inferred Types
 export type SeatStatus = z.infer<typeof SeatStatusEnum>;
 export type SeatType = z.infer<typeof SeatTypeEnum>;
+export type BookingStatus = z.infer<typeof BookingStatusEnum>;
 
 // Schemas
 export const seatSchema = z.object({
@@ -19,6 +21,7 @@ export const seatSchema = z.object({
     tier: z.number().int().min(0).default(0),
     coachId: z.string(),
     price: z.number(),
+    bookingStatus: BookingStatusEnum.optional(), // Booking status for specific trip and route segment
 });
 
 export type Seat = z.infer<typeof seatSchema>;
@@ -29,3 +32,4 @@ export const updateSeatSchema = z.object({
 });
 
 export type UpdateSeatInput = z.infer<typeof updateSeatSchema>;
+

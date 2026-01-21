@@ -285,7 +285,7 @@ export type SeatOrderByWithRelationInput = {
 
 export type SeatWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  coachId_rowIndex_colIndex?: Prisma.SeatCoachIdRowIndexColIndexCompoundUniqueInput
+  coachId_rowIndex_colIndex_tier?: Prisma.SeatCoachIdRowIndexColIndexTierCompoundUniqueInput
   AND?: Prisma.SeatWhereInput | Prisma.SeatWhereInput[]
   OR?: Prisma.SeatWhereInput[]
   NOT?: Prisma.SeatWhereInput | Prisma.SeatWhereInput[]
@@ -300,7 +300,7 @@ export type SeatWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Seat"> | Date | string
   coach?: Prisma.XOR<Prisma.CoachScalarRelationFilter, Prisma.CoachWhereInput>
   tickets?: Prisma.TicketListRelationFilter
-}, "id" | "coachId_rowIndex_colIndex">
+}, "id" | "coachId_rowIndex_colIndex_tier">
 
 export type SeatOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -440,10 +440,11 @@ export type SeatOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type SeatCoachIdRowIndexColIndexCompoundUniqueInput = {
+export type SeatCoachIdRowIndexColIndexTierCompoundUniqueInput = {
   coachId: string
   rowIndex: number
   colIndex: number
+  tier: number
 }
 
 export type SeatCountOrderByAggregateInput = {

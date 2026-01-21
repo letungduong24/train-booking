@@ -46,13 +46,13 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                         <div>
                             <span className="text-muted-foreground">Còn trống:</span>{' '}
                             <span className="font-semibold text-green-600">
-                                {seats.filter(s => s.status === 'AVAILABLE').length}
+                                {seats.filter(s => s.bookingStatus === 'AVAILABLE').length}
                             </span>
                         </div>
                         <div>
                             <span className="text-muted-foreground">Đã đặt:</span>{' '}
                             <span className="font-semibold text-red-600">
-                                {seats.filter(s => s.status === 'BOOKED').length}
+                                {seats.filter(s => s.bookingStatus === 'BOOKED').length}
                             </span>
                         </div>
                     </div>
@@ -132,12 +132,12 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                                             {leftBed && (
                                                 <button
                                                     onClick={() => onSeatClick(leftBed)}
-                                                    disabled={!isAdmin && (leftBed.status !== 'AVAILABLE' && !selectedSeats.includes(leftBed.id))}
+                                                    disabled={!isAdmin && ((leftBed.bookingStatus || leftBed.status) !== 'AVAILABLE' && !selectedSeats.includes(leftBed.id))}
                                                     className={cn(
                                                         "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
                                                         selectedSeats.includes(leftBed.id)
                                                             ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
-                                                            : getSeatStatusColor(isAdmin && ['BOOKED', 'SELECTED'].includes(leftBed.status) ? 'AVAILABLE' : leftBed.status, isAdmin)
+                                                            : getSeatStatusColor(isAdmin ? leftBed.status : (leftBed.bookingStatus || leftBed.status), isAdmin)
                                                     )}
                                                     title={`Giường ${leftBed.name} - ${getSeatStatusLabel(leftBed.status, isAdmin)}`}
                                                 >
@@ -145,7 +145,7 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                                                         <span className={cn("text-xs font-bold", selectedSeats.includes(leftBed.id) ? "text-white" : "text-foreground")}>
                                                             Giường {leftBed.name}
                                                         </span>
-                                                        {!isAdmin && (leftBed.status === 'AVAILABLE' || selectedSeats.includes(leftBed.id)) && (
+                                                        {!isAdmin && ((leftBed.bookingStatus || leftBed.status) === 'AVAILABLE' || selectedSeats.includes(leftBed.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
                                                                 selectedSeats.includes(leftBed.id) ? "text-blue-100" : "text-black"
@@ -166,12 +166,12 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                                             {rightBed && (
                                                 <button
                                                     onClick={() => onSeatClick(rightBed)}
-                                                    disabled={!isAdmin && (rightBed.status !== 'AVAILABLE' && !selectedSeats.includes(rightBed.id))}
+                                                    disabled={!isAdmin && ((rightBed.bookingStatus || rightBed.status) !== 'AVAILABLE' && !selectedSeats.includes(rightBed.id))}
                                                     className={cn(
                                                         "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
                                                         selectedSeats.includes(rightBed.id)
                                                             ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
-                                                            : getSeatStatusColor(isAdmin && ['BOOKED', 'SELECTED'].includes(rightBed.status) ? 'AVAILABLE' : rightBed.status, isAdmin)
+                                                            : getSeatStatusColor(isAdmin ? rightBed.status : (rightBed.bookingStatus || rightBed.status), isAdmin)
                                                     )}
                                                     title={`Giường ${rightBed.name} - ${getSeatStatusLabel(rightBed.status, isAdmin)}`}
                                                 >
@@ -179,7 +179,7 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                                                         <span className={cn("text-xs font-bold", selectedSeats.includes(rightBed.id) ? "text-white" : "text-foreground")}>
                                                             Giường {rightBed.name}
                                                         </span>
-                                                        {!isAdmin && (rightBed.status === 'AVAILABLE' || selectedSeats.includes(rightBed.id)) && (
+                                                        {!isAdmin && ((rightBed.bookingStatus || rightBed.status) === 'AVAILABLE' || selectedSeats.includes(rightBed.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
                                                                 selectedSeats.includes(rightBed.id) ? "text-blue-100" : "text-black"

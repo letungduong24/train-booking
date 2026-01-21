@@ -62,6 +62,7 @@ export const ModelName = {
   Seat: 'Seat',
   Trip: 'Trip',
   Booking: 'Booking',
+  PassengerGroup: 'PassengerGroup',
   Ticket: 'Ticket'
 } as const
 
@@ -226,11 +227,27 @@ export const BookingScalarFieldEnum = {
   userId: 'userId',
   status: 'status',
   totalPrice: 'totalPrice',
+  metadata: 'metadata',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type BookingScalarFieldEnum = (typeof BookingScalarFieldEnum)[keyof typeof BookingScalarFieldEnum]
+
+
+export const PassengerGroupScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  discountRate: 'discountRate',
+  description: 'description',
+  minAge: 'minAge',
+  maxAge: 'maxAge',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PassengerGroupScalarFieldEnum = (typeof PassengerGroupScalarFieldEnum)[keyof typeof PassengerGroupScalarFieldEnum]
 
 
 export const TicketScalarFieldEnum = {
@@ -240,6 +257,7 @@ export const TicketScalarFieldEnum = {
   seatId: 'seatId',
   passengerName: 'passengerName',
   passengerId: 'passengerId',
+  passengerGroupId: 'passengerGroupId',
   fromStationIndex: 'fromStationIndex',
   toStationIndex: 'toStationIndex',
   price: 'price',
@@ -263,6 +281,14 @@ export const JsonNullValueInput = {
 } as const
 
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull'
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {

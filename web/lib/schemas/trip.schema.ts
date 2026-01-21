@@ -51,6 +51,7 @@ export const tripDetailSchema = tripSchema.extend({
                 name: z.string(),
             }),
             distanceFromStart: z.number(),
+            durationFromStart: z.number(),
         })),
     }),
     train: z.object({

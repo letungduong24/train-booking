@@ -46,13 +46,13 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                         <div>
                             <span className="text-muted-foreground">Còn trống:</span>{' '}
                             <span className="font-semibold text-green-600">
-                                {seats.filter(s => s.status === 'AVAILABLE').length}
+                                {seats.filter(s => s.bookingStatus === 'AVAILABLE').length}
                             </span>
                         </div>
                         <div>
                             <span className="text-muted-foreground">Đã đặt:</span>{' '}
                             <span className="font-semibold text-red-600">
-                                {seats.filter(s => s.status === 'BOOKED').length}
+                                {seats.filter(s => s.bookingStatus === 'BOOKED').length}
                             </span>
                         </div>
                     </div>
@@ -133,17 +133,17 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                             style={{ gridRow: rowIndex + 1, gridColumn: 2 }}
                                         >
                                             {rowSeats.slice(0, 2).map((seat) => {
-                                                // For Admin: Treat BOOKED/SELECTED as AVAILABLE (Active)
-                                                // Only LOCKED/DISABLED count as 'unavailable'
+                                                // For Admin: Use physical status
+                                                // For User: Use booking status
                                                 const displayStatus = isAdmin
-                                                    ? (['LOCKED', 'DISABLED'].includes(seat.status) ? seat.status : 'AVAILABLE')
-                                                    : seat.status;
+                                                    ? seat.status
+                                                    : (seat.bookingStatus || seat.status);
 
                                                 return (
                                                     <button
                                                         key={seat.id}
                                                         onClick={() => onSeatClick(seat)}
-                                                        disabled={!isAdmin && (seat.status !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
+                                                        disabled={!isAdmin && (displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
                                                         className={cn(
                                                             "flex-1 aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 min-w-0 border",
                                                             selectedSeats.includes(seat.id)
@@ -155,7 +155,7 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         <span className={cn("text-xs font-bold truncate", selectedSeats.includes(seat.id) ? "text-white" : "")}>
                                                             {seat.name}
                                                         </span>
-                                                        {!isAdmin && (seat.status === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
+                                                        {!isAdmin && (displayStatus === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
                                                                 selectedSeats.includes(seat.id) ? "text-blue-100" : "text-black"
@@ -183,13 +183,13 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                         >
                                             {rowSeats.slice(2, 4).map((seat) => {
                                                 const displayStatus = isAdmin
-                                                    ? (['LOCKED', 'DISABLED'].includes(seat.status) ? seat.status : 'AVAILABLE')
-                                                    : seat.status;
+                                                    ? seat.status
+                                                    : (seat.bookingStatus || seat.status);
                                                 return (
                                                     <button
                                                         key={seat.id}
                                                         onClick={() => onSeatClick(seat)}
-                                                        disabled={!isAdmin && (seat.status !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
+                                                        disabled={!isAdmin && (displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
                                                         className={cn(
                                                             "flex-1 aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 min-w-0 border",
                                                             selectedSeats.includes(seat.id)
@@ -250,13 +250,13 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                         >
                                             {rowSeats.slice(0, 2).map((seat) => {
                                                 const displayStatus = isAdmin
-                                                    ? (['LOCKED', 'DISABLED'].includes(seat.status) ? seat.status : 'AVAILABLE')
-                                                    : seat.status;
+                                                    ? seat.status
+                                                    : (seat.bookingStatus || seat.status);
                                                 return (
                                                     <button
                                                         key={seat.id}
                                                         onClick={() => onSeatClick(seat)}
-                                                        disabled={!isAdmin && (seat.status !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
+                                                        disabled={!isAdmin && (displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
                                                         className={cn(
                                                             "aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 border",
                                                             selectedSeats.includes(seat.id)
@@ -296,13 +296,13 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                         >
                                             {rowSeats.slice(2, 4).map((seat) => {
                                                 const displayStatus = isAdmin
-                                                    ? (['LOCKED', 'DISABLED'].includes(seat.status) ? seat.status : 'AVAILABLE')
-                                                    : seat.status;
+                                                    ? seat.status
+                                                    : (seat.bookingStatus || seat.status);
                                                 return (
                                                     <button
                                                         key={seat.id}
                                                         onClick={() => onSeatClick(seat)}
-                                                        disabled={!isAdmin && (seat.status !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
+                                                        disabled={!isAdmin && (displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
                                                         className={cn(
                                                             "aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 border",
                                                             selectedSeats.includes(seat.id)

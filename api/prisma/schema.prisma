@@ -153,9 +153,7 @@ model Seat {
 
 enum SeatStatus {
   AVAILABLE 
-  BOOKED   
   LOCKED   
-  DISABLED 
 }
 
 enum SeatType {
@@ -195,6 +193,7 @@ model Booking {
   user       User?         @relation(fields: [userId], references: [id])
   status     BookingStatus @default(PENDING)
   totalPrice Float         @default(0) // Tổng tiền của tất cả các vé con cộng lại
+  metadata   Json?         // Temporary storage for booking details until payment confirmed
   tickets    Ticket[]      // Booking không trỏ vào Trip nữa, mà chứa danh sách vé
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
@@ -210,24 +209,41 @@ enum BookingStatus {
   CANCELLED // Đã hủy
 }
 
+// PassengerGroup = Phân loại hành khách (Người lớn, Sinh viên, Người cao tuổi, Trẻ em)
+model PassengerGroup {
+  id           String   @id @default(uuid())
+  code         String   @unique // ADULT, STUDENT, ELDERLY, CHILD
+  name         String   // "Người lớn", "Sinh viên", "Người cao tuổi", "Trẻ em"
+  discountRate Float    @default(0) // 0.1 = giảm 10%, 0.15 = giảm 15%
+  description  String?
+  minAge       Int?     // Tuổi tối thiểu (VD: ELDERLY >= 60)
+  maxAge       Int?     // Tuổi tối đa (VD: CHILD < 12)
+  tickets      Ticket[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 // Ticket = Vé lẻ (Mỗi vé gắn với 1 hành khách trên 1 ghế của 1 chuyến tàu)
 model Ticket {
-  id               String   @id @default(uuid())
+  id               String         @id @default(uuid())
   bookingId        String
-  booking          Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  tripId           String   // Vì trong 1 đơn hàng, vé 1 có thể đi tàu SE1, vé 2 có thể đi tàu SE3
-  trip             Trip     @relation(fields: [tripId], references: [id])
+  booking          Booking        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  tripId           String         // Vì trong 1 đơn hàng, vé 1 có thể đi tàu SE1, vé 2 có thể đi tàu SE3
+  trip             Trip           @relation(fields: [tripId], references: [id])
   seatId           String
-  seat             Seat     @relation(fields: [seatId], references: [id])
-  passengerName    String   // Tên hành khách
-  passengerId      String   // CCCD/CMND
-  fromStationIndex Int      // Chỉ số ga đi trong route
-  toStationIndex   Int      // Chỉ số ga đến trong route
-  price            Float    // Giá của riêng vé này
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  seat             Seat           @relation(fields: [seatId], references: [id])
+  passengerName    String         // Tên hành khách
+  passengerId      String         // CCCD/CMND (hoặc "N/A" cho trẻ em)
+  passengerGroupId String         // Phân loại hành khách
+  passengerGroup   PassengerGroup @relation(fields: [passengerGroupId], references: [id])
+  fromStationIndex Int            // Chỉ số ga đi trong route
+  toStationIndex   Int            // Chỉ số ga đến trong route
+  price            Float          // Giá của riêng vé này (đã áp dụng giảm giá)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
 
   @@index([bookingId])
   @@index([tripId])
   @@index([seatId])
+  @@index([passengerGroupId])
 }

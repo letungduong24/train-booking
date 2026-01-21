@@ -19,9 +19,7 @@ export type CoachLayout = (typeof CoachLayout)[keyof typeof CoachLayout]
 
 export const SeatStatus = {
   AVAILABLE: 'AVAILABLE',
-  BOOKED: 'BOOKED',
-  LOCKED: 'LOCKED',
-  DISABLED: 'DISABLED'
+  LOCKED: 'LOCKED'
 } as const
 
 export type SeatStatus = (typeof SeatStatus)[keyof typeof SeatStatus]

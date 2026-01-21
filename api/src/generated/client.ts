@@ -93,6 +93,11 @@ export type Trip = Prisma.TripModel
  */
 export type Booking = Prisma.BookingModel
 /**
+ * Model PassengerGroup
+ * 
+ */
+export type PassengerGroup = Prisma.PassengerGroupModel
+/**
  * Model Ticket
  * 
  */

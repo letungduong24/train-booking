@@ -395,6 +395,7 @@ export const ModelName = {
   Seat: 'Seat',
   Trip: 'Trip',
   Booking: 'Booking',
+  PassengerGroup: 'PassengerGroup',
   Ticket: 'Ticket'
 } as const
 
@@ -411,7 +412,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "refreshToken" | "station" | "route" | "routeStation" | "coachTemplate" | "train" | "coach" | "seat" | "trip" | "booking" | "ticket"
+    modelProps: "user" | "refreshToken" | "station" | "route" | "routeStation" | "coachTemplate" | "train" | "coach" | "seat" | "trip" | "booking" | "passengerGroup" | "ticket"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1229,6 +1230,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PassengerGroup: {
+      payload: Prisma.$PassengerGroupPayload<ExtArgs>
+      fields: Prisma.PassengerGroupFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PassengerGroupFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PassengerGroupPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PassengerGroupFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PassengerGroupPayload>
+        }
+        findFirst: {
+          args: Prisma.PassengerGroupFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PassengerGroupPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PassengerGroupFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PassengerGroupPayload>
+        }
+        findMany: {
+          args: Prisma.PassengerGroupFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PassengerGroupPayload>[]
+        }
+        create: {
+          args: Prisma.PassengerGroupCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PassengerGroupPayload>
+        }
+        createMany: {
+          args: Prisma.PassengerGroupCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PassengerGroupCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PassengerGroupPayload>[]
+        }
+        delete: {
+          args: Prisma.PassengerGroupDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PassengerGroupPayload>
+        }
+        update: {
+          args: Prisma.PassengerGroupUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PassengerGroupPayload>
+        }
+        deleteMany: {
+          args: Prisma.PassengerGroupDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PassengerGroupUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PassengerGroupUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PassengerGroupPayload>[]
+        }
+        upsert: {
+          args: Prisma.PassengerGroupUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PassengerGroupPayload>
+        }
+        aggregate: {
+          args: Prisma.PassengerGroupAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePassengerGroup>
+        }
+        groupBy: {
+          args: Prisma.PassengerGroupGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PassengerGroupGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PassengerGroupCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PassengerGroupCountAggregateOutputType> | number
+        }
+      }
+    }
     Ticket: {
       payload: Prisma.$TicketPayload<ExtArgs>
       fields: Prisma.TicketFieldRefs
@@ -1487,11 +1562,27 @@ export const BookingScalarFieldEnum = {
   userId: 'userId',
   status: 'status',
   totalPrice: 'totalPrice',
+  metadata: 'metadata',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type BookingScalarFieldEnum = (typeof BookingScalarFieldEnum)[keyof typeof BookingScalarFieldEnum]
+
+
+export const PassengerGroupScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  discountRate: 'discountRate',
+  description: 'description',
+  minAge: 'minAge',
+  maxAge: 'maxAge',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PassengerGroupScalarFieldEnum = (typeof PassengerGroupScalarFieldEnum)[keyof typeof PassengerGroupScalarFieldEnum]
 
 
 export const TicketScalarFieldEnum = {
@@ -1501,6 +1592,7 @@ export const TicketScalarFieldEnum = {
   seatId: 'seatId',
   passengerName: 'passengerName',
   passengerId: 'passengerId',
+  passengerGroupId: 'passengerGroupId',
   fromStationIndex: 'fromStationIndex',
   toStationIndex: 'toStationIndex',
   price: 'price',
@@ -1524,6 +1616,14 @@ export const JsonNullValueInput = {
 } as const
 
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -1788,6 +1888,7 @@ export type GlobalOmitConfig = {
   seat?: Prisma.SeatOmit
   trip?: Prisma.TripOmit
   booking?: Prisma.BookingOmit
+  passengerGroup?: Prisma.PassengerGroupOmit
   ticket?: Prisma.TicketOmit
 }
 

@@ -11,6 +11,9 @@ import { CoachesModule } from './modules/coaches/coaches.module';
 import { CoachTemplateModule } from './modules/coach-template/coach-template.module';
 import { SeatsModule } from './modules/seats/seats.module';
 import { TripModule } from './modules/trip/trip.module';
+import { PaymentModule } from './modules/payment/payment.module';
+import { BookingModule } from './modules/booking/booking.module';
+import { PassengerGroupModule } from './modules/passenger-group/passenger-group.module';
 
 @Module({
   imports: [
@@ -26,6 +29,9 @@ import { TripModule } from './modules/trip/trip.module';
     CoachTemplateModule,
     SeatsModule,
     TripModule,
+    PaymentModule,
+    BookingModule,
+    PassengerGroupModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -241,7 +241,25 @@ export class CoachesService {
       throw new BadRequestException('Invalid station IDs');
     }
 
-    // Calculate price for each seat
+    // Query all booked tickets for this trip that overlap with the requested segment
+    const bookedTickets = await this.prisma.ticket.findMany({
+      where: {
+        tripId: tripId,
+        // Check overlap: new segment overlaps with already booked segment
+        AND: [
+          { fromStationIndex: { lte: toStation.index } },
+          { toStationIndex: { gte: fromStation.index } }
+        ]
+      },
+      select: {
+        seatId: true,
+      }
+    });
+
+    // Create a Set for fast lookup
+    const bookedSeatIds = new Set(bookedTickets.map(t => t.seatId));
+
+    // Calculate price for each seat and add bookingStatus
     const seatsWithPrices = coach.seats.map((seat) => {
       const price = this.pricingService.calculateSeatPrice({
         route: {
@@ -257,9 +275,20 @@ export class CoachesService {
         toStationDistance: toStation.distanceFromStart,
       });
 
+      // Determine booking status
+      let bookingStatus: string;
+      if (seat.status === 'LOCKED') {
+        bookingStatus = 'LOCKED';
+      } else if (bookedSeatIds.has(seat.id)) {
+        bookingStatus = 'BOOKED';
+      } else {
+        bookingStatus = 'AVAILABLE';
+      }
+
       return {
         ...seat,
         price,
+        bookingStatus,
       };
     });
 

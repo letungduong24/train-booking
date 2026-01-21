@@ -13,6 +13,9 @@ async function main() {
 
     // Clear existing data (in correct order due to foreign keys)
     console.log('Clearing existing data...');
+    await prisma.ticket.deleteMany();
+    await prisma.booking.deleteMany();
+    await prisma.passengerGroup.deleteMany();
     await prisma.seat.deleteMany();
     await prisma.coach.deleteMany();
     await prisma.train.deleteMany();
@@ -20,6 +23,53 @@ async function main() {
     await prisma.routeStation.deleteMany();
     await prisma.route.deleteMany();
     await prisma.station.deleteMany();
+
+    // 0. Create Passenger Groups
+    console.log('Creating passenger groups...');
+    const passengerGroups = await Promise.all([
+        prisma.passengerGroup.create({
+            data: {
+                code: 'ADULT',
+                name: 'Người lớn',
+                discountRate: 0,
+                description: 'Hành khách từ 18-59 tuổi',
+                minAge: 18,
+                maxAge: 59,
+            },
+        }),
+        prisma.passengerGroup.create({
+            data: {
+                code: 'STUDENT',
+                name: 'Sinh viên',
+                discountRate: 0.1, // Giảm 10%
+                description: 'Sinh viên từ 18-25 tuổi (yêu cầu thẻ sinh viên)',
+                minAge: 18,
+                maxAge: 25,
+            },
+        }),
+        prisma.passengerGroup.create({
+            data: {
+                code: 'ELDERLY',
+                name: 'Người cao tuổi',
+                discountRate: 0.15, // Giảm 15%
+                description: 'Hành khách từ 60 tuổi trở lên',
+                minAge: 60,
+                maxAge: null,
+            },
+        }),
+        prisma.passengerGroup.create({
+            data: {
+                code: 'CHILD',
+                name: 'Trẻ em',
+                discountRate: 0.25, // Giảm 25%
+                description: 'Trẻ em dưới 12 tuổi (không yêu cầu CCCD)',
+                minAge: null,
+                maxAge: 11,
+            },
+        }),
+    ]);
+
+    console.log(`Created ${passengerGroups.length} passenger groups`);
 
     // 1. Create 10 Stations (Real Vietnam Railway Stations)
     console.log('Creating stations...');
@@ -321,12 +371,13 @@ async function main() {
     console.log(` Created ${templates.length} coach templates`);
 
     console.log('');
-    console.log(' Seed Summary:');
+    console.log('✅ Seed Summary:');
+    console.log(`   - Passenger Groups: ${passengerGroups.length}`);
     console.log(`   - Stations: ${stations.length}`);
     console.log(`   - Routes: 5`);
     console.log(`   - Coach Templates: ${templates.length}`);
     console.log('');
-    console.log(' Seed completed successfully!');
+    console.log('✅ Seed completed successfully!');
 }
 
 main()
