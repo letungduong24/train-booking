@@ -13,6 +13,7 @@ import type { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
@@ -58,5 +59,11 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     async getProfile(@Req() req: any) {
         return req.user;
+    }
+
+    @Post('profile')
+    @UseGuards(JwtAuthGuard)
+    async updateProfile(@Req() req: any, @Body() dto: UpdateProfileDto) {
+        return this.authService.updateProfile(req.user.id, dto);
     }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -25,24 +25,75 @@ interface PassengerInfoFormProps {
     seats: Array<{ id: string; name: string; price: number }>;
     onSubmit: (passengers: PassengerFormData[]) => void;
     onCancel: () => void;
+    initialPassengers?: PassengerFormData[];
+    submitLabel?: string;
 }
 
-export function PassengerInfoForm({ seats, onSubmit, onCancel }: PassengerInfoFormProps) {
+export function PassengerInfoForm({ seats, onSubmit, onCancel, initialPassengers, submitLabel = 'Tiếp tục thanh toán' }: PassengerInfoFormProps) {
     const { data: passengerGroups, isLoading: isLoadingGroups } = usePassengerGroups();
 
-    const [passengers, setPassengers] = useState<PassengerFormData[]>(
-        seats.map((seat) => ({
-            seatId: seat.id,
-            seatName: seat.name,
-            passengerName: '',
-            passengerId: '',
-            passengerGroupId: '',
-            ageCategory: 'adult',
-        }))
-    );
-
+    const [passengers, setPassengers] = useState<PassengerFormData[]>([]);
     const [errors, setErrors] = useState<Record<number, string>>({});
     const [cccdInfo, setCccdInfo] = useState<Record<number, { age: number; groupName: string } | null>>({});
+
+    // Initialize/Sync passengers with seats and initialPassengers
+    useEffect(() => {
+        if (seats.length === 0) return;
+
+        setPassengers(prev => {
+            // Only update if length differs or it's the first load (empty), 
+            // to avoid overwriting user input on minor re-renders (though seats shouldn't change)
+            if (prev.length === seats.length && prev[0]?.seatId === seats[0]?.id) return prev;
+
+            return seats.map((seat, index) => {
+                const init = initialPassengers?.[index];
+                if (init) {
+                    return {
+                        seatId: seat.id,
+                        seatName: seat.name,
+                        passengerName: init.passengerName || '',
+                        passengerId: init.passengerId || '',
+                        passengerGroupId: init.passengerGroupId || '',
+                        ageCategory: init.ageCategory || ((!init.passengerId || init.passengerId === 'N/A') ? 'child' : 'adult'),
+                    };
+                }
+                return {
+                    seatId: seat.id,
+                    seatName: seat.name,
+                    passengerName: '',
+                    passengerId: '',
+                    passengerGroupId: '',
+                    ageCategory: 'adult',
+                };
+            });
+        });
+    }, [seats, initialPassengers]);
+
+    // Validate CCCD for pre-filled data or when groups load
+    useEffect(() => {
+        if (passengers.length > 0 && passengerGroups && !isLoadingGroups) {
+            const newCccdInfo = { ...cccdInfo };
+            let hasUpdates = false;
+
+            passengers.forEach((p, index) => {
+                // If we have a valid adult passenger with ID but no info calculated yet
+                if (p.ageCategory === 'adult' && p.passengerId && p.passengerId.length === 12 && !newCccdInfo[index]) {
+                    const validation = validateCCCD(p.passengerId);
+                    if (validation.isValid && validation.age !== undefined) {
+                        const group = getPassengerGroupByAge(validation.age, passengerGroups);
+                        if (group) {
+                            newCccdInfo[index] = { age: validation.age, groupName: group.name };
+                            hasUpdates = true;
+                        }
+                    }
+                }
+            });
+
+            if (hasUpdates) {
+                setCccdInfo(newCccdInfo);
+            }
+        }
+    }, [passengerGroups, isLoadingGroups, passengers]); // Added passengers to dependency to run after init
 
     const updatePassenger = (index: number, field: keyof PassengerFormData, value: string) => {
         const newPassengers = [...passengers];

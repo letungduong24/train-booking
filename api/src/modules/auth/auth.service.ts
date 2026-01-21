@@ -285,4 +285,22 @@ export class AuthService {
         return rest
     }
 
+    async updateProfile(userId: string, dto: { name?: string; password?: string }) {
+        const data: any = {};
+        if (dto.name) {
+            data.name = dto.name;
+        }
+        if (dto.password) {
+            data.password = await bcrypt.hash(dto.password, 10);
+        }
+
+        const user = await this.prisma.user.update({
+            where: { id: userId },
+            data,
+        });
+
+        const { password: _password, ...rest } = user;
+        return rest;
+    }
+
 }

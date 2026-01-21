@@ -1,8 +1,10 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards, Get, Param } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
+import { InitBookingDto } from './dto/init-booking.dto';
+import { UpdateBookingPassengersDto } from './dto/update-booking-passengers.dto';
 import type { Request } from 'express';
-// import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'; // Có thể bỏ comment nếu muốn route này public hoặc yêu cầu login
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 // import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @Controller('bookings')
@@ -20,5 +22,31 @@ export class BookingController {
         const result = await this.bookingService.createBooking(userId, dto, ipAddr);
 
         return result;
+    }
+
+    @Post('init')
+    @UseGuards(JwtAuthGuard)
+    async initBooking(@Body() dto: InitBookingDto, @Req() req: any) {
+        const userId = req.user.id;
+        const ipAddr = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '127.0.0.1';
+        return this.bookingService.initBooking(userId, dto, ipAddr);
+    }
+
+    @Post(':code/passengers') // Using POST or PUT
+    async updatePassengers(@Param('code') code: string, @Body() dto: UpdateBookingPassengersDto, @Req() req: Request) {
+        const ipAddr = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '127.0.0.1';
+        return this.bookingService.updateBookingPassengers(code, dto, ipAddr);
+    }
+
+    @Get('my-bookings')
+    @UseGuards(JwtAuthGuard)
+    async getMyBookings(@Req() req: any) {
+        return this.bookingService.getMyBookings(req.user.id);
+    }
+
+    @Get(':code')
+    // @UseGuards(JwtAuthGuard) // Có thể public hoặc protected tùy logic
+    async getBooking(@Param('code') code: string) {
+        return this.bookingService.getBookingByCode(code);
     }
 }

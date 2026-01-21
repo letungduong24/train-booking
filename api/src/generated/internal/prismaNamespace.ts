@@ -1559,6 +1559,7 @@ export type TripScalarFieldEnum = (typeof TripScalarFieldEnum)[keyof typeof Trip
 export const BookingScalarFieldEnum = {
   id: 'id',
   code: 'code',
+  tripId: 'tripId',
   userId: 'userId',
   status: 'status',
   totalPrice: 'totalPrice',

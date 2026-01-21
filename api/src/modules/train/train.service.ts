@@ -10,15 +10,18 @@ export class TrainService {
   constructor(private prisma: PrismaService) { }
 
   async create(createTrainDto: CreateTrainDto) {
-    const existing = await this.prisma.train.findUnique({
-      where: { code: createTrainDto.code }
-    });
-    if (existing) {
-      throw new ConflictException('Mã tàu đã tồn tại');
+    try {
+      return await this.prisma.train.create({
+        data: createTrainDto,
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new ConflictException('Mã tàu đã tồn tại');
+        }
+      }
+      throw error;
     }
-    return this.prisma.train.create({
-      data: createTrainDto,
-    });
   }
 
   async findAll(query: FilterTrainDto = {}) {
