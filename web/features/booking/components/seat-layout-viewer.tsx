@@ -1,29 +1,79 @@
-"use client"
-
 import * as React from "react"
-import { cn } from "@/lib/utils"
-import { Seat, SeatStatus } from "@/lib/schemas/seat.schema"
-import { Coach } from "@/lib/schemas/coach.schema"
-import { getSeatStatusColor, getSeatTypeIcon, getSeatStatusLabel } from "@/lib/mock-data/train"
+import { useEffect, useState } from "react"
+import { cn, formatPrice } from "@/lib/utils"
+import { Seat } from "@/lib/schemas/seat.schema"
+import { CoachTemplate } from "@/lib/schemas/coach.schema"
+import { getSeatStatusColor, getSeatStatusLabel, getComputedSeatStatus } from "@/lib/utils/seat-helper"
+import { useSocketStore } from "@/lib/store/socket.store"
+import { useLockedSeats } from "../hooks/use-locked-seats"
 
 interface SeatLayoutViewerProps {
-    seats: any[] // TODO: Define proper type with price
-    template: any // TODO: Define proper type
-    onSeatClick: (seat: any) => void
+    seats: Seat[]
+    template: CoachTemplate
+    onSeatClick: (seat: Seat) => void
     selectedSeats?: string[]
     isAdmin?: boolean
+    tripId?: string
+    onSeatsForceDeselected?: (seatIds: string[]) => void
+    isSubmitting?: boolean
 }
 
-// Helper to format price
-const formatPrice = (price: number) => {
-    if (price >= 1000000) {
-        return `${(price / 1000000).toFixed(1)}tr`.replace('.0', '')
-    }
-    return `${Math.floor(price / 1000)}k`
-}
 
-export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats = [], isAdmin = false }: SeatLayoutViewerProps) {
-    const { totalRows, totalCols } = template
+
+export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats = [], isAdmin = false, tripId, onSeatsForceDeselected, isSubmitting = false }: SeatLayoutViewerProps) {
+    const { totalRows } = template
+    const [lockedSeatIds, setLockedSeatIds] = useState<string[]>([])
+
+    // Fetch initial locked seats using custom hook
+    const { socket } = useSocketStore();
+
+    // Fetch initial locked seats using custom hook
+    const { data: initialLockedSeats } = useLockedSeats(tripId);
+
+    // Sync initial data to local state
+    useEffect(() => {
+        if (initialLockedSeats) {
+            setLockedSeatIds(initialLockedSeats)
+        }
+    }, [initialLockedSeats])
+
+    // Real-time updates
+    useEffect(() => {
+        if (!tripId || !socket) return
+
+        function onSeatsLocked(data: { tripId: string, seatIds: string[] }) {
+            if (data.tripId === tripId) {
+                setLockedSeatIds(prev => {
+                    const newIds = data.seatIds.filter(id => !prev.includes(id))
+                    return [...prev, ...newIds]
+                })
+            }
+        }
+
+        function onSeatsReleased(data: { tripId: string, seatIds: string[] }) {
+            if (data.tripId === tripId) {
+                setLockedSeatIds(prev => prev.filter(id => !data.seatIds.includes(id)))
+            }
+        }
+
+        socket.on("seats.locked", onSeatsLocked)
+        socket.on("seats.released", onSeatsReleased)
+
+        return () => {
+            socket.off("seats.locked", onSeatsLocked)
+            socket.off("seats.released", onSeatsReleased)
+        }
+    }, [tripId, socket])
+
+    // Handle conflicts
+    useEffect(() => {
+        if (selectedSeats.length > 0 && onSeatsForceDeselected && !isSubmitting) {
+            const conflicts = selectedSeats.filter(id => lockedSeatIds.includes(id));
+            if (conflicts.length > 0) {
+                onSeatsForceDeselected(conflicts);
+            }
+        }
+    }, [lockedSeatIds, selectedSeats, onSeatsForceDeselected, isSubmitting]);
 
     return (
         <div className="space-y-4">
@@ -46,7 +96,7 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                         <div>
                             <span className="text-muted-foreground">Còn trống:</span>{' '}
                             <span className="font-semibold text-green-600">
-                                {seats.filter(s => s.bookingStatus === 'AVAILABLE').length}
+                                {seats.filter(s => s.bookingStatus === 'AVAILABLE' && !lockedSeatIds.includes(s.id)).length}
                             </span>
                         </div>
                         <div>
@@ -133,22 +183,18 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                             style={{ gridRow: rowIndex + 1, gridColumn: 2 }}
                                         >
                                             {rowSeats.slice(0, 2).map((seat) => {
-                                                // For Admin: Use physical status
-                                                // For User: Use booking status
-                                                const displayStatus = isAdmin
-                                                    ? seat.status
-                                                    : (seat.bookingStatus || seat.status);
+                                                const displayStatus = getComputedSeatStatus(seat, lockedSeatIds, isAdmin);
 
                                                 return (
                                                     <button
                                                         key={seat.id}
                                                         onClick={() => onSeatClick(seat)}
-                                                        disabled={!isAdmin && (displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
+                                                        disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
                                                             "flex-1 aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 min-w-0 border",
                                                             selectedSeats.includes(seat.id)
                                                                 ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
-                                                                : getSeatStatusColor(displayStatus)
+                                                                : getSeatStatusColor(displayStatus, isAdmin)
                                                         )}
                                                         title={`Ghế ${seat.name}`}
                                                     >
@@ -182,26 +228,26 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                             style={{ gridRow: rowIndex + 1, gridColumn: 4 }}
                                         >
                                             {rowSeats.slice(2, 4).map((seat) => {
-                                                const displayStatus = isAdmin
-                                                    ? seat.status
-                                                    : (seat.bookingStatus || seat.status);
+                                                const isLocked = lockedSeatIds.includes(seat.id)
+                                                const displayStatus = getComputedSeatStatus(seat, lockedSeatIds, isAdmin);
+
                                                 return (
                                                     <button
                                                         key={seat.id}
                                                         onClick={() => onSeatClick(seat)}
-                                                        disabled={!isAdmin && (displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
+                                                        disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
                                                             "flex-1 aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 min-w-0 border",
                                                             selectedSeats.includes(seat.id)
                                                                 ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
-                                                                : getSeatStatusColor(displayStatus)
+                                                                : getSeatStatusColor(displayStatus, isAdmin)
                                                         )}
                                                         title={`Ghế ${seat.name}`}
                                                     >
                                                         <span className={cn("text-xs font-bold truncate", selectedSeats.includes(seat.id) ? "text-white" : "")}>
                                                             {seat.name}
                                                         </span>
-                                                        {!isAdmin && (seat.status === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
+                                                        {!isAdmin && (displayStatus === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
                                                                 selectedSeats.includes(seat.id) ? "text-blue-100" : "text-black"
@@ -249,14 +295,13 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                             style={{ gridColumn: rowIndex + 1, gridRow: 2 }}
                                         >
                                             {rowSeats.slice(0, 2).map((seat) => {
-                                                const displayStatus = isAdmin
-                                                    ? seat.status
-                                                    : (seat.bookingStatus || seat.status);
+                                                const displayStatus = getComputedSeatStatus(seat, lockedSeatIds, isAdmin);
+
                                                 return (
                                                     <button
                                                         key={seat.id}
                                                         onClick={() => onSeatClick(seat)}
-                                                        disabled={!isAdmin && (displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
+                                                        disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
                                                             "aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 border",
                                                             selectedSeats.includes(seat.id)
@@ -268,7 +313,7 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         <span className={cn("text-xs font-bold truncate", selectedSeats.includes(seat.id) ? "text-white" : "")}>
                                                             {seat.name}
                                                         </span>
-                                                        {!isAdmin && (seat.status === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
+                                                        {!isAdmin && (displayStatus === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
                                                                 selectedSeats.includes(seat.id) ? "text-blue-100" : "text-black"
@@ -295,14 +340,13 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                             style={{ gridColumn: rowIndex + 1, gridRow: 4 }}
                                         >
                                             {rowSeats.slice(2, 4).map((seat) => {
-                                                const displayStatus = isAdmin
-                                                    ? seat.status
-                                                    : (seat.bookingStatus || seat.status);
+                                                const displayStatus = getComputedSeatStatus(seat, lockedSeatIds, isAdmin);
+
                                                 return (
                                                     <button
                                                         key={seat.id}
                                                         onClick={() => onSeatClick(seat)}
-                                                        disabled={!isAdmin && (displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
+                                                        disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
                                                             "aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 border",
                                                             selectedSeats.includes(seat.id)
@@ -314,7 +358,7 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         <span className={cn("text-xs font-bold truncate", selectedSeats.includes(seat.id) ? "text-white" : "")}>
                                                             {seat.name}
                                                         </span>
-                                                        {!isAdmin && (seat.status === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
+                                                        {!isAdmin && (displayStatus === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
                                                                 selectedSeats.includes(seat.id) ? "text-blue-100" : "text-black"

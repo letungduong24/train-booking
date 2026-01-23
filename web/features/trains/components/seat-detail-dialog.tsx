@@ -19,7 +19,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import type { Seat } from "@/lib/schemas/seat.schema"
-import { getSeatStatusLabel, getSeatTypeIcon, getSeatTypeLabel } from "@/lib/mock-data/train"
+import { getSeatStatusLabel, getSeatTypeIcon, getSeatTypeLabel } from "@/lib/utils/seat-helper"
 
 interface SeatDetailDialogProps {
     seat: Seat | null

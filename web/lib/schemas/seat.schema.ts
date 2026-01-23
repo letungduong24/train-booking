@@ -3,7 +3,7 @@ import { z } from "zod";
 // Enums
 export const SeatStatusEnum = z.enum(['AVAILABLE', 'LOCKED']);
 export const SeatTypeEnum = z.enum(['VIP', 'STANDARD', 'ECONOMY', 'OTHER']);
-export const BookingStatusEnum = z.enum(['AVAILABLE', 'BOOKED', 'LOCKED']);
+export const BookingStatusEnum = z.enum(['AVAILABLE', 'BOOKED', 'LOCKED', 'HOLDING']);
 
 // Inferred Types
 export type SeatStatus = z.infer<typeof SeatStatusEnum>;

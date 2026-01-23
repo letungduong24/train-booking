@@ -1,29 +1,86 @@
-"use client"
-
-import * as React from "react"
-import { cn } from "@/lib/utils"
-import { Seat, SeatStatus } from "@/lib/schemas/seat.schema"
-import { Coach } from "@/lib/schemas/coach.schema"
-import { getSeatStatusColor, getSeatStatusLabel } from "@/lib/mock-data/train"
+import { useEffect, useState } from "react"
+import { cn, formatPrice } from "@/lib/utils"
+import { getSeatStatusColor, getSeatStatusLabel } from "@/lib/utils/seat-helper"
+import { Seat } from "@/lib/schemas/seat.schema"
+import { CoachTemplate } from "@/lib/schemas/coach.schema"
+import { useSocketStore } from "@/lib/store/socket.store"
+import { useLockedSeats } from "../hooks/use-locked-seats"
 
 interface BedLayoutViewerProps {
-    seats: any[] // TODO: Define proper type
-    template: any // TODO: Define proper type
-    onSeatClick: (seat: any) => void
+    seats: Seat[]
+    template: CoachTemplate
+    onSeatClick: (seat: Seat) => void
     selectedSeats?: string[]
     isAdmin?: boolean
+    tripId?: string
+    onSeatsForceDeselected?: (seatIds: string[]) => void
+    isSubmitting?: boolean
 }
 
-// Helper to format price
-const formatPrice = (price: number) => {
-    if (price >= 1000000) {
-        return `${(price / 1000000).toFixed(1)}tr`.replace('.0', '')
-    }
-    return `${Math.floor(price / 1000)}k`
-}
 
-export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = [], isAdmin = false }: BedLayoutViewerProps) {
+
+export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = [], isAdmin = false, tripId, onSeatsForceDeselected, isSubmitting = false }: BedLayoutViewerProps) {
     const { totalRows, tiers } = template
+    const [lockedSeatIds, setLockedSeatIds] = useState<string[]>([])
+
+    const { socket } = useSocketStore();
+
+    // Fetch initial locked seats using custom hook
+    const { data: initialLockedSeats } = useLockedSeats(tripId);
+
+    // Sync initial data to local state
+    useEffect(() => {
+        if (initialLockedSeats) {
+            setLockedSeatIds(initialLockedSeats)
+        }
+    }, [initialLockedSeats])
+
+    // Real-time updates
+    useEffect(() => {
+        if (!tripId || !socket) return
+
+        function onSeatsLocked(data: { tripId: string, seatIds: string[] }) {
+            if (data.tripId === tripId) {
+                setLockedSeatIds(prev => {
+                    const newIds = data.seatIds.filter(id => !prev.includes(id))
+
+                    // Check for conflicts with selected seats
+                    if (onSeatsForceDeselected && selectedSeats.length > 0 && !isSubmitting) {
+                        const conflicts = data.seatIds.filter(id => selectedSeats.includes(id));
+                        if (conflicts.length > 0) {
+                            onSeatsForceDeselected(conflicts);
+                        }
+                    }
+
+                    return [...prev, ...newIds]
+                })
+            }
+        }
+
+        function onSeatsReleased(data: { tripId: string, seatIds: string[] }) {
+            if (data.tripId === tripId) {
+                setLockedSeatIds(prev => prev.filter(id => !data.seatIds.includes(id)))
+            }
+        }
+
+        socket.on("seats.locked", onSeatsLocked)
+        socket.on("seats.released", onSeatsReleased)
+
+        return () => {
+            socket.off("seats.locked", onSeatsLocked)
+            socket.off("seats.released", onSeatsReleased)
+        }
+    }, [tripId, socket, selectedSeats, onSeatsForceDeselected, isSubmitting])
+
+    // Handle conflicts
+    useEffect(() => {
+        if (selectedSeats.length > 0 && onSeatsForceDeselected && !isSubmitting) {
+            const conflicts = selectedSeats.filter(id => lockedSeatIds.includes(id));
+            if (conflicts.length > 0) {
+                onSeatsForceDeselected(conflicts);
+            }
+        }
+    }, [lockedSeatIds, selectedSeats, onSeatsForceDeselected, isSubmitting]);
 
     return (
         <div className="space-y-4">
@@ -46,7 +103,7 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                         <div>
                             <span className="text-muted-foreground">Còn trống:</span>{' '}
                             <span className="font-semibold text-green-600">
-                                {seats.filter(s => s.bookingStatus === 'AVAILABLE').length}
+                                {seats.filter(s => s.bookingStatus === 'AVAILABLE' && !lockedSeatIds.includes(s.id)).length}
                             </span>
                         </div>
                         <div>
@@ -132,12 +189,12 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                                             {leftBed && (
                                                 <button
                                                     onClick={() => onSeatClick(leftBed)}
-                                                    disabled={!isAdmin && ((leftBed.bookingStatus || leftBed.status) !== 'AVAILABLE' && !selectedSeats.includes(leftBed.id))}
+                                                    disabled={!isAdmin && ((leftBed.bookingStatus || leftBed.status) !== 'AVAILABLE' || lockedSeatIds.includes(leftBed.id)) && !selectedSeats.includes(leftBed.id)}
                                                     className={cn(
                                                         "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
                                                         selectedSeats.includes(leftBed.id)
                                                             ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
-                                                            : getSeatStatusColor(isAdmin ? leftBed.status : (leftBed.bookingStatus || leftBed.status), isAdmin)
+                                                            : (lockedSeatIds.includes(leftBed.id) && !isAdmin) ? "bg-yellow-100 border-yellow-500 cursor-not-allowed" : getSeatStatusColor(isAdmin ? leftBed.status : (leftBed.bookingStatus || leftBed.status), isAdmin)
                                                     )}
                                                     title={`Giường ${leftBed.name} - ${getSeatStatusLabel(leftBed.status, isAdmin)}`}
                                                 >
@@ -145,7 +202,7 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                                                         <span className={cn("text-xs font-bold", selectedSeats.includes(leftBed.id) ? "text-white" : "text-foreground")}>
                                                             Giường {leftBed.name}
                                                         </span>
-                                                        {!isAdmin && ((leftBed.bookingStatus || leftBed.status) === 'AVAILABLE' || selectedSeats.includes(leftBed.id)) && (
+                                                        {!isAdmin && ((leftBed.bookingStatus || leftBed.status) === 'AVAILABLE' && !lockedSeatIds.includes(leftBed.id) || selectedSeats.includes(leftBed.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
                                                                 selectedSeats.includes(leftBed.id) ? "text-blue-100" : "text-black"
@@ -166,12 +223,12 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                                             {rightBed && (
                                                 <button
                                                     onClick={() => onSeatClick(rightBed)}
-                                                    disabled={!isAdmin && ((rightBed.bookingStatus || rightBed.status) !== 'AVAILABLE' && !selectedSeats.includes(rightBed.id))}
+                                                    disabled={!isAdmin && ((rightBed.bookingStatus || rightBed.status) !== 'AVAILABLE' || lockedSeatIds.includes(rightBed.id)) && !selectedSeats.includes(rightBed.id)}
                                                     className={cn(
                                                         "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
                                                         selectedSeats.includes(rightBed.id)
                                                             ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
-                                                            : getSeatStatusColor(isAdmin ? rightBed.status : (rightBed.bookingStatus || rightBed.status), isAdmin)
+                                                            : (lockedSeatIds.includes(rightBed.id) && !isAdmin) ? "bg-yellow-100 border-yellow-500 cursor-not-allowed" : getSeatStatusColor(isAdmin ? rightBed.status : (rightBed.bookingStatus || rightBed.status), isAdmin)
                                                     )}
                                                     title={`Giường ${rightBed.name} - ${getSeatStatusLabel(rightBed.status, isAdmin)}`}
                                                 >
@@ -179,7 +236,7 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                                                         <span className={cn("text-xs font-bold", selectedSeats.includes(rightBed.id) ? "text-white" : "text-foreground")}>
                                                             Giường {rightBed.name}
                                                         </span>
-                                                        {!isAdmin && ((rightBed.bookingStatus || rightBed.status) === 'AVAILABLE' || selectedSeats.includes(rightBed.id)) && (
+                                                        {!isAdmin && ((rightBed.bookingStatus || rightBed.status) === 'AVAILABLE' && !lockedSeatIds.includes(rightBed.id) || selectedSeats.includes(rightBed.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
                                                                 selectedSeats.includes(rightBed.id) ? "text-blue-100" : "text-black"
@@ -198,8 +255,6 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                     )
                 })}
             </div >
-
-
         </div >
     )
 }

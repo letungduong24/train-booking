@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { BullModule } from '@nestjs/bullmq';
+import { RedisModule } from './modules/redis/redis.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './modules/prisma/prisma.module';
@@ -32,6 +34,15 @@ import { PassengerGroupModule } from './modules/passenger-group/passenger-group.
     PaymentModule,
     BookingModule,
     PassengerGroupModule,
+    RedisModule,
+    BullModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        connection: {
+          url: configService.get('REDIS_URL'),
+        },
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

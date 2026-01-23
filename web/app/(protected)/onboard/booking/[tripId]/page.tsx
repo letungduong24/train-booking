@@ -18,6 +18,7 @@ import { useBooking } from '@/features/booking/hooks/use-booking';
 import { SeatLayoutViewer } from '@/features/booking/components/seat-layout-viewer';
 import { BedLayoutViewer } from '@/features/booking/components/bed-layout-viewer';
 import { BookingCoachNavigationBar } from '@/features/booking/components/booking-coach-navigation-bar';
+import { ConflictDialog } from '@/features/booking/components/conflict-dialog';
 
 export default function TripDetailPage() {
     const router = useRouter();
@@ -29,8 +30,12 @@ export default function TripDetailPage() {
     const toStationId = searchParams.get('to') || '';
     const bookingCodeParam = searchParams.get('bookingCode');
 
+
     const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
     const [selectedSeats, setSelectedSeats] = useState<Array<{ id: string; name: string; price: number }>>([]);
+    const [isConflictDialogOpen, setIsConflictDialogOpen] = useState(false);
+    const [conflictMessage, setConflictMessage] = useState("");
+    const [isProcessing, setIsProcessing] = useState(false);
 
     // Fetch booking if bookingCode exists in URL to restore seat selection
     const { data: existingBooking, isLoading: isLoadingBooking } = useBooking(bookingCodeParam, !!bookingCodeParam);
@@ -48,8 +53,6 @@ export default function TripDetailPage() {
         } else if (metadata.seats && metadata.seats.length > 0) {
             // Restore seats
             setSelectedSeats(metadata.seats);
-            // Optionally try to find the coach of the first seat to select it?
-            // For now just restoring selectedSeats is enough, user can navigate to see them
         }
     }, [existingBooking, isLoadingBooking, router]);
 
@@ -66,8 +69,6 @@ export default function TripDetailPage() {
     );
 
     const { mutate: initBooking, isPending: isInitializing } = useInitBooking();
-
-    // Auto-redirect or restore state based on booking data
 
     if (isTripLoading) {
         return (
@@ -106,6 +107,8 @@ export default function TripDetailPage() {
 
     const totalPrice = selectedSeats.reduce((sum, seat) => sum + seat.price, 0);
 
+
+
     const handleSeatToggle = (seat: any) => {
         setSelectedSeats((prev) => {
             const exists = prev.find((s) => s.id === seat.id);
@@ -116,8 +119,16 @@ export default function TripDetailPage() {
         });
     };
 
+    const handleSeatsForceDeselected = (seatIds: string[]) => {
+        // Remove conflicted seats from selection
+        setSelectedSeats(prev => prev.filter(s => !seatIds.includes(s.id)));
+        setConflictMessage(`Các ghế sau vừa được người khác giữ chỗ: ${seatIds.map(id => selectedSeats.find(s => s.id === id)?.name || 'Ghế').join(', ')}`);
+        setIsConflictDialogOpen(true);
+    };
+
     const handleProceedToPassengerInfo = () => {
         if (selectedSeats.length > 0) {
+            setIsProcessing(true);
             initBooking({
                 tripId,
                 seatIds: selectedSeats.map(s => s.id),
@@ -128,10 +139,15 @@ export default function TripDetailPage() {
                     console.log('Booking initialized:', data);
                     // Navigate to passengers page instead of showing form
                     router.push(`/onboard/booking/passengers?bookingCode=${data.bookingCode}`);
+                    // NOTE: Do NOT set isProcessing to false here. 
+                    // We want it to remain true while the redirect happens to prevent 
+                    // the socket event from triggering a false conflict with our own locks.
                 },
-                onError: (error) => {
+                onError: (error: any) => {
                     console.error('Init booking failed:', error);
-                    toast.error('Không thể tạo đơn hàng. Vui lòng thử lại.');
+                    const message = error.response?.data?.message || 'Không thể tạo đơn hàng. Vui lòng thử lại.';
+                    toast.error(message);
+                    setIsProcessing(false);
                 }
             });
         }
@@ -139,10 +155,15 @@ export default function TripDetailPage() {
 
     // Remove old form handler and cancellation
 
-
-
     return (
         <div className="container mx-auto py-8 px-4">
+            <ConflictDialog
+                open={isConflictDialogOpen}
+                onOpenChange={setIsConflictDialogOpen}
+                onConfirm={() => setIsConflictDialogOpen(false)}
+                description={conflictMessage}
+            />
+
             <Button variant="ghost" onClick={() => router.back()} className="mb-4">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Quay lại
@@ -233,6 +254,9 @@ export default function TripDetailPage() {
                                         template={coachWithPrices.template}
                                         selectedSeats={selectedSeats.map((s) => s.id)}
                                         onSeatClick={handleSeatToggle}
+                                        tripId={tripId}
+                                        onSeatsForceDeselected={handleSeatsForceDeselected}
+                                        isSubmitting={isProcessing || isInitializing}
                                     />
                                 ) : (
                                     <BedLayoutViewer
@@ -240,6 +264,9 @@ export default function TripDetailPage() {
                                         template={coachWithPrices.template}
                                         selectedSeats={selectedSeats.map((s) => s.id)}
                                         onSeatClick={handleSeatToggle}
+                                        tripId={tripId}
+                                        onSeatsForceDeselected={handleSeatsForceDeselected}
+                                        isSubmitting={isProcessing || isInitializing}
                                     />
                                 )}
 
@@ -258,9 +285,9 @@ export default function TripDetailPage() {
                             <Button
                                 size="lg"
                                 onClick={handleProceedToPassengerInfo}
-                                disabled={isInitializing}
+                                disabled={isInitializing || isProcessing}
                             >
-                                {isInitializing ? 'Đang xử lý...' : 'Tiếp tục'}
+                                {isInitializing || isProcessing ? 'Đang xử lý...' : 'Tiếp tục'}
                             </Button>
                         </CardFooter>
                     )}

@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { getSeatTypeLabel } from "@/lib/mock-data/train"
+import { getSeatTypeLabel } from "@/lib/utils/seat-helper"
 import { Seat, SeatStatus, SeatType } from "@/lib/schemas/seat.schema"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
@@ -30,7 +30,7 @@ interface AdminSeatDetailDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     seat: Seat | null
-    onUpdate?: (updatedSeat: Seat) => void 
+    onUpdate?: (updatedSeat: Seat) => void
 }
 
 export function AdminSeatDetailDialog({
@@ -53,18 +53,13 @@ export function AdminSeatDetailDialog({
     if (!seat) return null
 
     const handleDisableToggle = () => {
-        if (seat.status === 'BOOKED') {
-            setError("Hiện không thể disable ghế, vui lòng xử lí các booking của khách trước khi disable ghế.")
-            return
-        }
-
-        const newStatus: SeatStatus = seat.status === 'DISABLED' ? 'AVAILABLE' : 'DISABLED'
+        const newStatus: SeatStatus = seat.status === 'LOCKED' ? 'AVAILABLE' : 'LOCKED'
 
         updateSeat.mutate(
             { id: seat.id, data: { status: newStatus } },
             {
                 onSuccess: () => {
-                    toast.success(newStatus === 'DISABLED' ? "Đã khóa ghế" : "Đã mở khóa ghế");
+                    toast.success(newStatus === 'LOCKED' ? "Đã khóa ghế" : "Đã mở khóa ghế");
                     onOpenChange(false);
                 },
                 onError: (err) => {
@@ -95,8 +90,8 @@ export function AdminSeatDetailDialog({
         )
     }
 
-    const isLocked = seat.status === 'DISABLED'
-    const isBooked = seat.status === 'BOOKED'
+    const isLocked = seat.status === 'LOCKED'
+    const isBooked = false // Physical seats are never 'BOOKED'
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -114,11 +109,9 @@ export function AdminSeatDetailDialog({
                         <Label>Trạng thái hiện tại</Label>
                         <Badge variant={seat.status === 'AVAILABLE' ? 'default' : 'secondary'} className={cn(
                             seat.status === 'AVAILABLE' && "bg-green-500 hover:bg-green-600",
-                            seat.status === 'BOOKED' && "bg-red-500 hover:bg-red-600",
                             seat.status === 'LOCKED' && "bg-yellow-500 hover:bg-yellow-600",
-                            seat.status === 'DISABLED' && "bg-gray-500 hover:bg-gray-600",
                         )}>
-                            {seat.status}
+                            {seat.status === 'LOCKED' ? 'Đã khóa' : 'Hoạt động'}
                         </Badge>
                     </div>
 

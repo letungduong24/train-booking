@@ -44,6 +44,11 @@ export class BookingController {
         return this.bookingService.getMyBookings(req.user.id);
     }
 
+    @Get('locked-seats/:tripId')
+    async getLockedSeats(@Param('tripId') tripId: string) {
+        return this.bookingService.getLockedSeats(tripId);
+    }
+
     @Get(':code')
     // @UseGuards(JwtAuthGuard) // Có thể public hoặc protected tùy logic
     async getBooking(@Param('code') code: string) {

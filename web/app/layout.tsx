@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/auth-provider";
 import TanStackProvider from "@/components/providers/tanstack-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { SocketInitializer } from "@/components/providers/socket-initializer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({
       >
         <TanStackProvider>
           <AuthProvider>
+            <SocketInitializer />
             {children}
             <Toaster />
           </AuthProvider>

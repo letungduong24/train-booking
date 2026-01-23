@@ -4,7 +4,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Seat, SeatStatus } from "@/lib/schemas/seat.schema"
 import { Coach } from "@/lib/schemas/coach.schema"
-import { getSeatStatusColor, getSeatStatusLabel } from "@/lib/mock-data/train"
+import { getSeatStatusColor, getSeatStatusLabel } from "@/lib/utils/seat-helper"
 
 interface BedLayoutViewerProps {
     coach: Coach
@@ -49,12 +49,7 @@ export function BedLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdmi
                                 {seats.filter(s => s.status === 'AVAILABLE').length}
                             </span>
                         </div>
-                        <div>
-                            <span className="text-muted-foreground">Đã đặt:</span>{' '}
-                            <span className="font-semibold text-red-600">
-                                {seats.filter(s => s.status === 'BOOKED').length}
-                            </span>
-                        </div>
+                        {/* Booked stats removed as physical seats don't have BOOKED status */}
                     </div>
                 )}
             </div>
@@ -137,7 +132,7 @@ export function BedLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdmi
                                                         "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
                                                         selectedSeats.includes(leftBed.id)
                                                             ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
-                                                            : getSeatStatusColor(isAdmin && ['BOOKED', 'SELECTED'].includes(leftBed.status) ? 'AVAILABLE' : leftBed.status, isAdmin)
+                                                            : getSeatStatusColor(isAdmin ? (leftBed.status === 'LOCKED' ? 'LOCKED' : 'AVAILABLE') : leftBed.status, isAdmin)
                                                     )}
                                                     title={`Giường ${leftBed.name} - ${getSeatStatusLabel(leftBed.status, isAdmin)}`}
                                                 >
@@ -171,7 +166,7 @@ export function BedLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdmi
                                                         "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
                                                         selectedSeats.includes(rightBed.id)
                                                             ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
-                                                            : getSeatStatusColor(isAdmin && ['BOOKED', 'SELECTED'].includes(rightBed.status) ? 'AVAILABLE' : rightBed.status, isAdmin)
+                                                            : getSeatStatusColor(isAdmin ? (rightBed.status === 'LOCKED' ? 'LOCKED' : 'AVAILABLE') : rightBed.status, isAdmin)
                                                     )}
                                                     title={`Giường ${rightBed.name} - ${getSeatStatusLabel(rightBed.status, isAdmin)}`}
                                                 >

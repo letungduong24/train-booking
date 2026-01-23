@@ -4,7 +4,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Seat, SeatStatus } from "@/lib/schemas/seat.schema"
 import { Coach } from "@/lib/schemas/coach.schema"
-import { getSeatStatusColor, getSeatTypeIcon, getSeatStatusLabel } from "@/lib/mock-data/train"
+import { getSeatStatusColor, getSeatTypeIcon, getSeatStatusLabel } from "@/lib/utils/seat-helper"
 
 interface SeatLayoutViewerProps {
     coach: Coach
@@ -49,12 +49,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                 {seats.filter(s => s.status === 'AVAILABLE').length}
                             </span>
                         </div>
-                        <div>
-                            <span className="text-muted-foreground">Đã đặt:</span>{' '}
-                            <span className="font-semibold text-red-600">
-                                {seats.filter(s => s.status === 'BOOKED').length}
-                            </span>
-                        </div>
+                        {/* Booked stats removed as physical seats don't have BOOKED status */}
                     </div>
                 )}
             </div>
@@ -133,10 +128,9 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                             style={{ gridRow: rowIndex + 1, gridColumn: 2 }}
                                         >
                                             {rowSeats.slice(0, 2).map((seat) => {
-                                                // For Admin: Treat BOOKED/SELECTED as AVAILABLE (Active)
-                                                // Only LOCKED/DISABLED count as 'unavailable'
+                                                // For Admin: Only LOCKED counts as 'unavailable'
                                                 const displayStatus = isAdmin
-                                                    ? (['LOCKED', 'DISABLED'].includes(seat.status) ? seat.status : 'AVAILABLE')
+                                                    ? (seat.status === 'LOCKED' ? 'LOCKED' : 'AVAILABLE')
                                                     : seat.status;
 
                                                 return (
@@ -183,7 +177,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                         >
                                             {rowSeats.slice(2, 4).map((seat) => {
                                                 const displayStatus = isAdmin
-                                                    ? (['LOCKED', 'DISABLED'].includes(seat.status) ? seat.status : 'AVAILABLE')
+                                                    ? (seat.status === 'LOCKED' ? 'LOCKED' : 'AVAILABLE')
                                                     : seat.status;
                                                 return (
                                                     <button
@@ -250,7 +244,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                         >
                                             {rowSeats.slice(0, 2).map((seat) => {
                                                 const displayStatus = isAdmin
-                                                    ? (['LOCKED', 'DISABLED'].includes(seat.status) ? seat.status : 'AVAILABLE')
+                                                    ? (seat.status === 'LOCKED' ? 'LOCKED' : 'AVAILABLE')
                                                     : seat.status;
                                                 return (
                                                     <button
@@ -296,7 +290,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                         >
                                             {rowSeats.slice(2, 4).map((seat) => {
                                                 const displayStatus = isAdmin
-                                                    ? (['LOCKED', 'DISABLED'].includes(seat.status) ? seat.status : 'AVAILABLE')
+                                                    ? (seat.status === 'LOCKED' ? 'LOCKED' : 'AVAILABLE')
                                                     : seat.status;
                                                 return (
                                                     <button
