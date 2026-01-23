@@ -9,6 +9,7 @@ import { PricingService } from '../pricing/pricing.service';
 import { InitBookingDto } from './dto/init-booking.dto';
 import { UpdateBookingPassengersDto } from './dto/update-booking-passengers.dto';
 import { CreateBookingDto } from './dto/create-booking.dto';
+import { FilterBookingDto } from './dto/filter-booking.dto';
 import dayjs from 'dayjs';
 import { validateCCCD, validateCCCDAgeForGroup } from '../../common/utils/cccd.util';
 
@@ -230,6 +231,23 @@ export class BookingService {
             },
         });
 
+        // Xóa lock Redis và thông báo release
+        if (metadata.tripId && metadata.passengers) {
+            const tripId = metadata.tripId;
+            const seatIds = metadata.passengers.map((p: any) => p.seatId);
+
+            // Xóa key trong Redis
+            const locks = seatIds.map((id: string) => `lock:seat:${tripId}:${id}`);
+            if (locks.length > 0) {
+                await Promise.all(locks.map((key: string) => this.redis.del(key)));
+            }
+
+            // Emit sự kiện để các client khác bỏ màu vàng (chuyển sang đỏ nếu logic FE/BE đã sync status BOOKED, hoặc xanh tạm thời)
+            // Tốt nhất là các client nên trigger fetch lại seats khi nhận event này hoặc một event `seats.booked` riêng.
+            // Nhưng hiện tại để fix lỗi "bị ghi đè locked" thì ta release lock là được.
+            this.bookingGateway.emitSeatsReleased(tripId, seatIds);
+        }
+
         this.logger.log(`Đã xác nhận đơn hàng ${bookingCode} với ${tickets.length} vé`);
         return updatedBooking;
     }
@@ -238,24 +256,56 @@ export class BookingService {
         // Triển khai logic cập nhật trạng thái
     }
 
-    async getMyBookings(userId: string) {
-        return this.prisma.booking.findMany({
-            where: { userId },
-            include: {
-                trip: {
-                    include: {
-                        route: true,
-                        train: true,
+    async getMyBookings(userId: string, query: FilterBookingDto) {
+        const { page = 1, limit = 10, skip, take, search, status, sort, order } = query;
+
+        const where: Prisma.BookingWhereInput = {
+            userId,
+            ...(status && { status }),
+            ...(search && {
+                code: { contains: search, mode: 'insensitive' },
+            }),
+        };
+
+        const [data, total] = await Promise.all([
+            this.prisma.booking.findMany({
+                where,
+                skip,
+                take,
+                include: {
+                    trip: {
+                        include: {
+                            route: true,
+                            train: true,
+                        },
                     },
+                    tickets: true,
                 },
-                tickets: true,
+                orderBy: {
+                    [sort || 'createdAt']: order || 'desc',
+                },
+            }),
+            this.prisma.booking.count({ where }),
+        ]);
+
+        return {
+            data,
+            meta: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
             },
-            orderBy: { createdAt: 'desc' },
-        });
+        };
     }
 
     async initBooking(userId: string | null, dto: InitBookingDto, ipAddr: string) {
         const { tripId, seatIds, fromStationId, toStationId } = dto;
+
+        // 0. Policy Guard
+        if (userId) {
+            await this.validateBookingPolicy(userId, tripId, seatIds.length);
+        }
 
         // 1. Kiểm tra thông tin Chuyến tàu & Tuyến đường
         const trip = await this.prisma.trip.findUnique({
@@ -521,6 +571,9 @@ export class BookingService {
                         train: true,
                     },
                 },
+                tickets: {
+                    include: { seat: true }
+                }
             },
         });
 
@@ -528,9 +581,47 @@ export class BookingService {
             throw new BadRequestException('Không tìm thấy đơn hàng');
         }
 
-        // Enrich with seat details if PENDING
-        if (booking.status === 'PENDING' && booking.metadata) {
+        // Enrich for PENDING or CANCELLED state if tickets are empty 
+        if ((booking.status === 'PENDING' || booking.status === 'CANCELLED') && booking.tickets.length === 0 && booking.metadata) {
             const metadata = booking.metadata as any;
+
+            // Case 1: Has Passengers info in metadata (User filled details but didn't pay)
+            if (metadata.passengers && metadata.passengers.length > 0) {
+                // Fetch seat info for these passengers to display seat name
+                const seatIds = metadata.passengers.map((p: any) => p.seatId);
+                const seats = await this.prisma.seat.findMany({
+                    where: { id: { in: seatIds } },
+                    include: { coach: true }
+                });
+
+                const enrichedSeats = seats.map(s => ({
+                    id: s.id,
+                    name: `${s.coach.name}-${s.name}`,
+                    price: metadata.passengers.find((p: any) => p.seatId === s.id)?.price || 0
+                }));
+
+                const simulatedTickets = metadata.passengers.map((p: any, index: number) => {
+                    const seat = seats.find(s => s.id === p.seatId);
+                    return {
+                        id: `temp-${index}`,
+                        passengerName: p.passengerName,
+                        passengerId: p.passengerId,
+                        price: p.price,
+                        seat: seat ? { name: `${seat.coach.name}-${seat.name}` } : { name: 'Giữ chỗ' }
+                    };
+                });
+
+                return {
+                    ...booking,
+                    tickets: simulatedTickets,
+                    metadata: {
+                        ...metadata,
+                        seats: enrichedSeats
+                    }
+                };
+            }
+
+            // Case 2: Only Seat selection
             const seatIds = metadata.seatIds as string[] || [];
             if (seatIds.length > 0) {
                 const seats = await this.prisma.seat.findMany({
@@ -538,16 +629,18 @@ export class BookingService {
                     include: { coach: { include: { template: true } } }
                 });
 
-                const enrichedSeats: { id: string; name: string; price: number }[] = [];
-
                 // Need station info for pricing
                 const fromStationId = metadata.fromStationId;
                 const toStationId = metadata.toStationId;
                 const trip = booking.trip;
 
+                // Fetch station info if needed
                 const fromStation = (trip.route as any).stations.find((s: any) => s.stationId === fromStationId) ||
                     await this.prisma.routeStation.findFirst({ where: { routeId: trip.routeId, stationId: fromStationId } });
                 const toStation = await this.prisma.routeStation.findFirst({ where: { routeId: trip.routeId, stationId: toStationId } });
+
+                const enrichedSeats: { id: string; name: string; price: number }[] = [];
+                const simulatedTickets: any[] = [];
 
                 if (fromStation && toStation) {
                     for (const seat of seats) {
@@ -563,19 +656,29 @@ export class BookingService {
                             seatTier: seat.tier,
                             fromStationDistance: fromStation.distanceFromStart,
                             toStationDistance: toStation.distanceFromStart,
-                            discountRate: 0, // Base price
+                            discountRate: 0,
                         });
+
+                        const seatName = `${seat.coach.name}-${seat.name}`;
                         enrichedSeats.push({
                             id: seat.id,
-                            name: `${seat.coach.name}-${seat.name}`, // Standardized name
+                            name: seatName,
                             price: price,
-                            // Add coachId if needed for navigation?
+                        });
+
+                        simulatedTickets.push({
+                            id: `temp-seat-${seat.id}`,
+                            passengerName: 'Chưa nhập tên',
+                            passengerId: '',
+                            price: price,
+                            seat: { name: seatName }
                         });
                     }
                 }
 
                 return {
                     ...booking,
+                    tickets: simulatedTickets,
                     metadata: {
                         ...metadata,
                         seats: enrichedSeats
@@ -630,6 +733,47 @@ export class BookingService {
 
                 // Logging handled by caller or removed to reduce noise
             }
+        }
+    }
+
+
+    private async validateBookingPolicy(userId: string, tripId: string, numberOfSeats: number) {
+        // 1. CHẶN SỐ LƯỢNG GHẾ (Logic đơn giản check input)
+        if (numberOfSeats > 6) {
+            throw new BadRequestException("Mỗi đơn hàng chỉ được đặt tối đa 6 vé.");
+        }
+
+        // Lấy danh sách các đơn đang PENDING của user này (chưa hết hạn - within 10 mins)
+        // Since we have a job that runs every 10 mins to cancel, PENDING usually means active.
+        // But to be precise as user requested "chưa hết hạn", let's be safe.
+        const tenMinutesAgo = dayjs().subtract(10, 'minute').toDate();
+
+        const activePendingBookings = await this.prisma.booking.findMany({
+            where: {
+                userId: userId,
+                status: 'PENDING',
+                createdAt: { gt: tenMinutesAgo } // Chỉ tính đơn còn hiệu lực trong 10p, tránh đơn bị kẹt job chưa chạy
+            },
+            select: { id: true, tripId: true }
+        });
+
+        // 2. CHẶN GLOBAL PENDING (Tối đa 3)
+        if (activePendingBookings.length >= 3) {
+            throw new BadRequestException(
+                "Bạn đang giữ quá nhiều đơn chưa thanh toán (Tối đa 3 đơn). Vui lòng xử lý đơn cũ trước."
+            );
+        }
+
+        // 3. CHẶN PENDING TRÊN CÙNG CHUYẾN (Tối đa 1)
+        // Check xem trong list pending, có đơn nào thuộc tripId hiện tại không?
+        const isAlreadyBookingThisTrip = activePendingBookings.some(
+            b => b.tripId === tripId
+        );
+
+        if (isAlreadyBookingThisTrip) {
+            throw new BadRequestException(
+                "Bạn đã có một đơn hàng đang chờ thanh toán cho chuyến này. Vui lòng thanh toán đơn cũ hoặc hủy bỏ để đặt mới."
+            );
         }
     }
 }

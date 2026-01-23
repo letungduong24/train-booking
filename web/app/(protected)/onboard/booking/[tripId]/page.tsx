@@ -19,6 +19,7 @@ import { SeatLayoutViewer } from '@/features/booking/components/seat-layout-view
 import { BedLayoutViewer } from '@/features/booking/components/bed-layout-viewer';
 import { BookingCoachNavigationBar } from '@/features/booking/components/booking-coach-navigation-bar';
 import { ConflictDialog } from '@/features/booking/components/conflict-dialog';
+import { MaxPendingDialog } from '@/features/booking/components/max-pending-dialog';
 
 export default function TripDetailPage() {
     const router = useRouter();
@@ -35,6 +36,8 @@ export default function TripDetailPage() {
     const [selectedSeats, setSelectedSeats] = useState<Array<{ id: string; name: string; price: number }>>([]);
     const [isConflictDialogOpen, setIsConflictDialogOpen] = useState(false);
     const [conflictMessage, setConflictMessage] = useState("");
+    const [isMaxPendingDialogOpen, setIsMaxPendingDialogOpen] = useState(false);
+    const [pendingError, setPendingError] = useState("");
     const [isProcessing, setIsProcessing] = useState(false);
 
     // Fetch booking if bookingCode exists in URL to restore seat selection
@@ -110,13 +113,19 @@ export default function TripDetailPage() {
 
 
     const handleSeatToggle = (seat: any) => {
-        setSelectedSeats((prev) => {
-            const exists = prev.find((s) => s.id === seat.id);
-            if (exists) {
-                return prev.filter((s) => s.id !== seat.id);
-            }
-            return [...prev, { id: seat.id, name: seat.name, price: seat.price }];
-        });
+        const isSelected = selectedSeats.some((s) => s.id === seat.id);
+
+        if (isSelected) {
+            setSelectedSeats((prev) => prev.filter((s) => s.id !== seat.id));
+            return;
+        }
+
+        if (selectedSeats.length >= 6) {
+            toast.warning("Mỗi đơn hàng chỉ được chọn tối đa 6 ghế");
+            return;
+        }
+
+        setSelectedSeats((prev) => [...prev, { id: seat.id, name: seat.name, price: seat.price }]);
     };
 
     const handleSeatsForceDeselected = (seatIds: string[]) => {
@@ -146,7 +155,16 @@ export default function TripDetailPage() {
                 onError: (error: any) => {
                     console.error('Init booking failed:', error);
                     const message = error.response?.data?.message || 'Không thể tạo đơn hàng. Vui lòng thử lại.';
-                    toast.error(message);
+
+                    // Check keywords for both: 
+                    // 1. "Bạn đang giữ quá nhiều đơn chưa thanh toán (Tối đa 3 đơn)..."
+                    // 2. "Bạn đã có một đơn hàng đang chờ thanh toán cho chuyến này..."
+                    if (message.includes("Tối đa 3") || message.includes("chờ thanh toán") || message.includes("chưa thanh toán")) {
+                        setPendingError(message);
+                        setIsMaxPendingDialogOpen(true);
+                    } else {
+                        toast.error(message);
+                    }
                     setIsProcessing(false);
                 }
             });
@@ -162,6 +180,12 @@ export default function TripDetailPage() {
                 onOpenChange={setIsConflictDialogOpen}
                 onConfirm={() => setIsConflictDialogOpen(false)}
                 description={conflictMessage}
+            />
+
+            <MaxPendingDialog
+                open={isMaxPendingDialogOpen}
+                onOpenChange={setIsMaxPendingDialogOpen}
+                message={pendingError}
             />
 
             <Button variant="ghost" onClick={() => router.back()} className="mb-4">

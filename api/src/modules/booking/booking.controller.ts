@@ -1,8 +1,9 @@
-import { Body, Controller, Post, Req, UseGuards, Get, Param } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards, Get, Param, Query } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { InitBookingDto } from './dto/init-booking.dto';
 import { UpdateBookingPassengersDto } from './dto/update-booking-passengers.dto';
+import { FilterBookingDto } from './dto/filter-booking.dto';
 import type { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 // import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -40,8 +41,8 @@ export class BookingController {
 
     @Get('my-bookings')
     @UseGuards(JwtAuthGuard)
-    async getMyBookings(@Req() req: any) {
-        return this.bookingService.getMyBookings(req.user.id);
+    async getMyBookings(@Req() req: any, @Query() query: FilterBookingDto) {
+        return this.bookingService.getMyBookings(req.user.id, query);
     }
 
     @Get('locked-seats/:tripId')

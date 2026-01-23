@@ -23,6 +23,7 @@ export interface BookingResponse {
         }>;
     };
     trip: any;
+    tickets: any[];
 }
 
 const fetchBooking = async (code: string): Promise<BookingResponse> => {

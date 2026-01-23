@@ -16,16 +16,17 @@ interface RouteMapProps {
         index: number;
         station?: Station;
     }[]
+    className?: string;
 }
 
-export function RouteMap({ stations }: RouteMapProps) {
+export function RouteMap({ stations, className }: RouteMapProps) {
     // Filter valid stations first
     const validStations = stations.filter(s => s.station && s.station.longtitute && s.station.latitute);
 
     // If no data, show placeholder
     if (validStations.length === 0) {
         return (
-            <div className="h-[400px] w-full bg-muted/20 flex items-center justify-center rounded-md border">
+            <div className={`w-full bg-muted/20 flex items-center justify-center rounded-md border ${className || 'h-[400px]'}`}>
                 <p className="text-muted-foreground">Chưa có dữ liệu bản đồ</p>
             </div>
         )
@@ -38,7 +39,7 @@ export function RouteMap({ stations }: RouteMapProps) {
     const center = [validStations[0].station!.longtitute, validStations[0].station!.latitute] as [number, number];
 
     return (
-        <div className="h-[500px] w-full rounded-md border overflow-hidden">
+        <div className={`w-full rounded-md border overflow-hidden ${className || 'h-[500px]'}`}>
             <Map
                 center={center}
                 zoom={8}

@@ -78,6 +78,18 @@ function PassengersPageContent() {
         );
     }
 
+    if (booking.status !== 'PENDING') {
+        return (
+            <div className="container mx-auto py-8">
+                <Card>
+                    <CardContent className="py-8 text-center text-muted-foreground">
+                        Đơn hàng đã kết thúc
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
     const trip = booking.trip;
     const fromStationId = booking.metadata?.fromStationId;
     const toStationId = booking.metadata?.toStationId;
