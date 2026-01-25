@@ -4,7 +4,7 @@ import { SeatStatus, SeatType } from '../../../generated/client';
 export class UpdateSeatDto {
     @IsOptional()
     @IsEnum(SeatStatus)
-    status?: SeatStatus;
+    status?: SeatStatus; // Updated to include DISABLED
 
     @IsOptional()
     @IsEnum(SeatType)

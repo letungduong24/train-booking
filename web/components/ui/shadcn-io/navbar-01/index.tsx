@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
+import { ModeToggle } from '@/components/mode-toggle';
 import { useEffect, useState, useRef } from 'react';
 import {
   NavigationMenu,
@@ -59,7 +60,7 @@ const HamburgerIcon = ({ className, ...props }: React.SVGAttributes<SVGElement>)
   >
     <path
       d="M4 12L20 12"
-      className="origin-center -translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[315deg]"
+      className="origin-center -translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-315"
     />
     <path
       d="M4 12H20"
@@ -67,7 +68,7 @@ const HamburgerIcon = ({ className, ...props }: React.SVGAttributes<SVGElement>)
     />
     <path
       d="M4 12H20"
-      className="origin-center translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[135deg]"
+      className="origin-center translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-y-0 group-aria-expanded:rotate-135"
     />
   </svg>
 );
@@ -93,10 +94,10 @@ export interface Navbar01Props extends React.HTMLAttributes<HTMLElement> {
 
 // Default navigation links
 const defaultNavigationLinks: Navbar01NavLink[] = [
-  { href: '#', label: 'Home', active: true },
-  { href: '#features', label: 'Features' },
-  { href: '#pricing', label: 'Pricing' },
-  { href: '#about', label: 'About' },
+  { href: '#', label: 'Trang chủ', active: true },
+  { href: '#features', label: 'Tính năng' },
+  { href: '#pricing', label: 'Giá vé' },
+  { href: '#about', label: 'Về chúng tôi' },
 ];
 
 export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
@@ -104,9 +105,9 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
     {
       className,
       navigationLinks = defaultNavigationLinks,
-      signInText = 'Sign In',
+      signInText = 'Đăng nhập',
       signInHref = '#signin',
-      ctaText = 'Get Started',
+      ctaText = 'Bắt đầu',
       ctaHref = '#get-started',
       onSignInClick,
       onCtaClick,
@@ -151,7 +152,7 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
       <header
         ref={combinedRef}
         className={cn(
-          'sticky top-0 z-50 w-full bg-background backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6 [&_*]:no-underline shadow-sm',
+          'sticky top-0 z-50 w-full bg-background backdrop-blur supports-backdrop-filter:bg-background/60 px-4 md:px-6 **:no-underline shadow-sm',
           className
         )}
         {...(props as any)}
@@ -200,7 +201,7 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
                 onClick={(e) => e.preventDefault()}
                 className="flex items-center space-x-2 text-primary hover:text-primary/90 transition-colors cursor-pointer"
               >
-                <span className="hidden font-bold text-xl sm:inline-block">shadcn.io</span>
+                <span className="hidden font-bold text-xl sm:inline-block">Railflow</span>
               </button>
               {/* Navigation menu */}
               {!isMobile && (
@@ -228,6 +229,7 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
           </div>
           {/* Right side */}
           <div className="flex items-center gap-3">
+            <ModeToggle />
             <Button
               variant="ghost"
               size="sm"

@@ -6,6 +6,7 @@ import { ForbiddenExceptionFilter } from './lib/filters/forbidden.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // Force rebuild for SeatStatus enum update
 
   // Enable CORS with credentials
   app.enableCors({

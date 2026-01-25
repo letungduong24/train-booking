@@ -1,51 +1,51 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { format } from 'date-fns';
-import { CalendarIcon, Search, Train } from 'lucide-react';
+import { Train } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
-import { tripSearchSchema, type TripSearchInput } from '@/lib/schemas/booking.schema';
-import { useStations } from '@/features/stations/hooks/use-stations';
+import { Card, CardContent } from '@/components/ui/card';
+import { type TripSearchInput } from '@/lib/schemas/booking.schema';
 import { useSearchTrips } from '@/features/booking/hooks/use-search-trips';
+import { TripSearchForm } from '@/features/home/components/trip-search-form';
+import { timeSync } from '@/lib/time-sync';
 
 export default function BookingPage() {
     const router = useRouter();
-    const [searchParams, setSearchParams] = useState<TripSearchInput | null>(null);
+    const urlSearchParams = useSearchParams();
 
-    const { data: stationsData } = useStations({ page: 1, limit: 100 });
-    const stations = stationsData?.data || [];
+    // Get initial values from URL params
+    const initialFrom = urlSearchParams.get('from') || '';
+    const initialTo = urlSearchParams.get('to') || '';
+    const initialDate = urlSearchParams.get('date') || format(timeSync.now(), 'yyyy-MM-dd');
 
-    const form = useForm<TripSearchInput>({
-        resolver: zodResolver(tripSearchSchema),
-        defaultValues: {
-            fromStationId: '',
-            toStationId: '',
-            date: format(new Date(), 'yyyy-MM-dd'),
-        },
-    });
+    // Initialize state with URL params if they exist
+    const [searchParams, setSearchParams] = useState<TripSearchInput | null>(
+        (urlSearchParams.get('from') && urlSearchParams.get('to'))
+            ? {
+                fromStationId: initialFrom,
+                toStationId: initialTo,
+                date: initialDate
+            }
+            : null
+    );
+
+    // Sync state with URL params when they change (handle browser back/forward)
+    useEffect(() => {
+        const from = urlSearchParams.get('from');
+        const to = urlSearchParams.get('to');
+        const date = urlSearchParams.get('date');
+
+        if (from && to && date) {
+            setSearchParams({
+                fromStationId: from,
+                toStationId: to,
+                date: date
+            });
+        }
+    }, [urlSearchParams]);
 
     const { data: trips, isLoading: isSearching } = useSearchTrips(
         searchParams || { fromStationId: '', toStationId: '', date: '' },
@@ -54,6 +54,14 @@ export default function BookingPage() {
 
     const onSubmit = (values: TripSearchInput) => {
         setSearchParams(values);
+
+        // Update URL to reflect search
+        const params = new URLSearchParams();
+        params.append('from', values.fromStationId);
+        params.append('to', values.toStationId);
+        params.append('date', values.date);
+
+        router.push(`/onboard/booking?${params.toString()}`);
     };
 
     return (
@@ -63,110 +71,16 @@ export default function BookingPage() {
                 <p className="text-muted-foreground">Tìm kiếm chuyến tàu phù hợp với hành trình của bạn</p>
             </div>
 
-            <Card className="mb-8">
-                <CardHeader>
-                    <CardTitle>Tìm kiếm chuyến tàu</CardTitle>
-                    <CardDescription>Nhập thông tin hành trình để tìm chuyến tàu</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="fromStationId"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Ga đi</FormLabel>
-                                            <Select onValueChange={field.onChange} value={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Chọn ga đi" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {stations.map((station) => (
-                                                        <SelectItem key={station.id} value={station.id}>
-                                                            {station.name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="toStationId"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Ga đến</FormLabel>
-                                            <Select onValueChange={field.onChange} value={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Chọn ga đến" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {stations.map((station) => (
-                                                        <SelectItem key={station.id} value={station.id}>
-                                                            {station.name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="date"
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-col">
-                                            <FormLabel>Ngày đi</FormLabel>
-                                            <Popover>
-                                                <PopoverTrigger asChild>
-                                                    <FormControl>
-                                                        <Button
-                                                            variant="outline"
-                                                            className={cn(
-                                                                'w-full pl-3 text-left font-normal',
-                                                                !field.value && 'text-muted-foreground'
-                                                            )}
-                                                        >
-                                                            {field.value ? format(new Date(field.value), 'dd/MM/yyyy') : <span>Chọn ngày</span>}
-                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                        </Button>
-                                                    </FormControl>
-                                                </PopoverTrigger>
-                                                <PopoverContent className="w-auto p-0" align="start">
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={field.value ? new Date(field.value) : undefined}
-                                                        onSelect={(date) => field.onChange(date ? format(date, 'yyyy-MM-dd') : '')}
-                                                        disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                                                        initialFocus
-                                                    />
-                                                </PopoverContent>
-                                            </Popover>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            <Button type="submit" className="w-full md:w-auto" disabled={isSearching}>
-                                <Search className="mr-2 h-4 w-4" />
-                                {isSearching ? 'Đang tìm kiếm...' : 'Tìm chuyến tàu'}
-                            </Button>
-                        </form>
-                    </Form>
-                </CardContent>
-            </Card>
+            <div className="mb-8 w-full">
+                <TripSearchForm
+                    defaultValues={{
+                        fromStationId: initialFrom,
+                        toStationId: initialTo,
+                        date: initialDate
+                    }}
+                    onSubmit={onSubmit}
+                />
+            </div>
 
             {/* Search Results */}
             {searchParams && (
@@ -179,29 +93,46 @@ export default function BookingPage() {
                             </CardContent>
                         </Card>
                     ) : trips && trips.length > 0 ? (
-                        trips.map((trip: any) => (
-                            <Card key={trip.id} className="hover:shadow-md transition-shadow cursor-pointer"
-                                onClick={() => router.push(`/onboard/booking/${trip.id}?from=${searchParams.fromStationId}&to=${searchParams.toStationId}`)}>
-                                <CardContent className="p-6">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-3 bg-primary/10 rounded-lg">
-                                                <Train className="h-6 w-6 text-primary" />
+                        <>
+                            {/* Check if the first trip matches the search date */}
+                            {format(new Date(trips[0].departureTime), 'yyyy-MM-dd') !== searchParams.date && (
+                                <div className="mb-4 text-muted-foreground">
+                                    <p>
+                                        Không tìm thấy chuyến tàu phù hợp vào ngày {format(new Date(searchParams.date), 'dd/MM/yyyy')}.
+                                    </p>
+                                    <p className="mt-1">
+                                        Dưới đây là các chuyến tàu gần nhất mà bạn có thể tham khảo:
+                                    </p>
+                                </div>
+                            )}
+
+                            {trips.map((trip: any) => (
+                                <Card key={trip.id} className="hover:shadow-md transition-shadow cursor-pointer"
+                                    onClick={() => router.push(`/onboard/booking/${trip.id}?from=${searchParams.fromStationId}&to=${searchParams.toStationId}`)}>
+                                    <CardContent className="p-6">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-4">
+                                                <div className="p-3 bg-primary/10 rounded-lg">
+                                                    <Train className="h-6 w-6 text-primary" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="font-semibold text-lg">{trip.route.name}</h3>
+                                                    <p className="text-sm text-muted-foreground">Tàu {trip.train.code}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h3 className="font-semibold text-lg">{trip.route.name}</h3>
-                                                <p className="text-sm text-muted-foreground">Tàu {trip.train.code}</p>
+                                            <div className="text-right">
+                                                <p className="text-sm text-muted-foreground">Khởi hành</p>
+                                                <div className="flex flex-col items-end">
+                                                    <span className="font-semibold text-lg">{format(new Date(trip.departureTime), 'HH:mm')}</span>
+                                                    <span className="text-sm text-muted-foreground">{format(new Date(trip.departureTime), 'dd/MM/yyyy')}</span>
+                                                </div>
                                             </div>
+                                            <Button>Chọn chuyến</Button>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-sm text-muted-foreground">Khởi hành</p>
-                                            <p className="font-semibold">{format(new Date(trip.departureTime), 'HH:mm dd/MM/yyyy')}</p>
-                                        </div>
-                                        <Button>Chọn chuyến</Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </>
                     ) : (
                         <Card>
                             <CardContent className="py-8 text-center text-muted-foreground">

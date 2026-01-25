@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
+import { BookingMetadata } from '../types';
 
 export interface Booking {
     id: string;
@@ -7,6 +8,7 @@ export interface Booking {
     status: 'PENDING' | 'PAID' | 'CANCELLED';
     totalPrice: number;
     createdAt: string;
+    expiresAt: string;
     trip: {
         id: string;
         departureTime: string;
@@ -19,6 +21,7 @@ export interface Booking {
         };
     };
     tickets: any[];
+    metadata?: BookingMetadata;
 }
 
 interface UseMyBookingsParams {

@@ -9,15 +9,17 @@ import apiClient from '@/lib/api-client';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useTrip } from '@/features/trips/hooks/use-trips';
 import { useCoachWithPrices } from '@/features/booking/hooks/use-coach-with-prices';
 import { useInitBooking } from '@/features/booking/hooks/use-init-booking';
-import { useBooking } from '@/features/booking/hooks/use-booking';
+
 import { SeatLayoutViewer } from '@/features/booking/components/seat-layout-viewer';
 import { BedLayoutViewer } from '@/features/booking/components/bed-layout-viewer';
 import { BookingCoachNavigationBar } from '@/features/booking/components/booking-coach-navigation-bar';
+import { BookingSummary } from '@/features/booking/components/booking-summary';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
+import { ChevronUp } from 'lucide-react';
 import { ConflictDialog } from '@/features/booking/components/conflict-dialog';
 import { MaxPendingDialog } from '@/features/booking/components/max-pending-dialog';
 
@@ -29,35 +31,16 @@ export default function TripDetailPage() {
     const tripId = params.tripId as string;
     const fromStationId = searchParams.get('from') || '';
     const toStationId = searchParams.get('to') || '';
-    const bookingCodeParam = searchParams.get('bookingCode');
 
 
     const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
-    const [selectedSeats, setSelectedSeats] = useState<Array<{ id: string; name: string; price: number }>>([]);
+    const [selectedSeats, setSelectedSeats] = useState<Array<{ id: string; name: string; price: number; type: string }>>([]);
     const [isConflictDialogOpen, setIsConflictDialogOpen] = useState(false);
     const [conflictMessage, setConflictMessage] = useState("");
     const [isMaxPendingDialogOpen, setIsMaxPendingDialogOpen] = useState(false);
     const [pendingError, setPendingError] = useState("");
     const [isProcessing, setIsProcessing] = useState(false);
-
-    // Fetch booking if bookingCode exists in URL to restore seat selection
-    const { data: existingBooking, isLoading: isLoadingBooking } = useBooking(bookingCodeParam, !!bookingCodeParam);
-
-    // Restore seat selection from existing booking or redirect if ready
-    useEffect(() => {
-        if (!existingBooking || isLoadingBooking) return;
-
-        const metadata = existingBooking.metadata;
-        if (!metadata) return;
-
-        // If passengers already filled, redirect to passengers page (which handles next steps)
-        if (metadata.passengers && metadata.passengers.length > 0) {
-            router.push(`/onboard/booking/passengers?bookingCode=${existingBooking.code}`);
-        } else if (metadata.seats && metadata.seats.length > 0) {
-            // Restore seats
-            setSelectedSeats(metadata.seats);
-        }
-    }, [existingBooking, isLoadingBooking, router]);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
     const { data: trip, isLoading: isTripLoading } = useTrip(tripId);
 
@@ -125,7 +108,12 @@ export default function TripDetailPage() {
             return;
         }
 
-        setSelectedSeats((prev) => [...prev, { id: seat.id, name: seat.name, price: seat.price }]);
+        const type = coachWithPrices?.template.layout ?? 'SEAT';
+        setSelectedSeats((prev) => [...prev, { id: seat.id, name: seat.name, price: seat.price, type }]);
+    };
+
+    const handleRemoveSeat = (seatId: string) => {
+        setSelectedSeats((prev) => prev.filter((s) => s.id !== seatId));
     };
 
     const handleSeatsForceDeselected = (seatIds: string[]) => {
@@ -201,9 +189,6 @@ export default function TripDetailPage() {
                             <CardTitle className="text-2xl">{trip.route.name}</CardTitle>
                             <CardDescription>Tàu {trip.train.code}</CardDescription>
                         </div>
-                        <Badge variant={trip.status === 'SCHEDULED' ? 'default' : 'secondary'}>
-                            {trip.status}
-                        </Badge>
                     </div>
                 </CardHeader>
                 <CardContent>
@@ -243,80 +228,125 @@ export default function TripDetailPage() {
             </Card>
 
             {/* Seat Selection */}
-            <div className="space-y-6">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Chọn chỗ</CardTitle>
-                        <CardDescription>
-                            Chọn toa và chỗ ngồi/giường của bạn
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        {/* Coach Navigation */}
-                        <div className="mb-8">
-                            <BookingCoachNavigationBar
-                                coaches={trip.train.coaches}
-                                selectedCoachId={selectedCoachId}
-                                onCoachSelect={setSelectedCoachId}
-                                trainCode={trip.train.code}
-                            />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-24 lg:pb-0">
+                <div className="lg:col-span-2 space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Chọn chỗ</CardTitle>
+                            <CardDescription>
+                                Chọn toa và chỗ ngồi/giường của bạn
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {/* Coach Navigation */}
+                            <div className="mb-8">
+                                <BookingCoachNavigationBar
+                                    coaches={trip.train.coaches}
+                                    selectedCoachId={selectedCoachId}
+                                    onCoachSelect={setSelectedCoachId}
+                                    trainCode={trip.train.code}
+                                />
+                            </div>
+
+                            {!selectedCoachId ? (
+                                <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
+                                    Vui lòng chọn toa để xem sơ đồ chỗ ngồi
+                                </div>
+                            ) : isCoachLoading ? (
+                                <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
+                                    Đang tải sơ đồ chỗ ngồi...
+                                </div>
+                            ) : coachWithPrices ? (
+                                <div>
+                                    {coachWithPrices.template.layout === 'SEAT' ? (
+                                        <SeatLayoutViewer
+                                            seats={coachWithPrices.seats}
+                                            template={coachWithPrices.template}
+                                            selectedSeats={selectedSeats.map((s) => s.id)}
+                                            onSeatClick={handleSeatToggle}
+                                            tripId={tripId}
+                                            onSeatsForceDeselected={handleSeatsForceDeselected}
+                                            isSubmitting={isProcessing || isInitializing}
+                                        />
+                                    ) : (
+                                        <BedLayoutViewer
+                                            seats={coachWithPrices.seats}
+                                            template={coachWithPrices.template}
+                                            selectedSeats={selectedSeats.map((s) => s.id)}
+                                            onSeatClick={handleSeatToggle}
+                                            tripId={tripId}
+                                            onSeatsForceDeselected={handleSeatsForceDeselected}
+                                            isSubmitting={isProcessing || isInitializing}
+                                        />
+                                    )}
+
+                                </div>
+                            ) : null}
+
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Right Column - Desktop */}
+                <div className="hidden lg:block lg:col-span-1">
+                    <div className="sticky top-6">
+                        <BookingSummary
+                            selectedSeats={selectedSeats}
+                            onRemoveSeat={handleRemoveSeat}
+                            onProceed={handleProceedToPassengerInfo}
+                            isProcessing={isProcessing || isInitializing}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile Sticky Footer */}
+            {selectedSeats.length > 0 && (
+                <div className="fixed bottom-0 left-0 right-0 bg-background border-t p-4 z-50 lg:hidden shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+                    <div className="flex items-center justify-between gap-4">
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1" onClick={() => setIsDetailsOpen(true)}>
+                                <span className="text-sm font-medium">Đã chọn {selectedSeats.length} chỗ</span>
+                                <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                            <p className="text-xl font-bold text-primary">
+                                {totalPrice.toLocaleString('vi-VN')} ₫
+                            </p>
                         </div>
 
-                        {!selectedCoachId ? (
-                            <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
-                                Vui lòng chọn toa để xem sơ đồ chỗ ngồi
-                            </div>
-                        ) : isCoachLoading ? (
-                            <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
-                                Đang tải sơ đồ chỗ ngồi...
-                            </div>
-                        ) : coachWithPrices ? (
-                            <div>
-                                {coachWithPrices.template.layout === 'SEAT' ? (
-                                    <SeatLayoutViewer
-                                        seats={coachWithPrices.seats}
-                                        template={coachWithPrices.template}
-                                        selectedSeats={selectedSeats.map((s) => s.id)}
-                                        onSeatClick={handleSeatToggle}
-                                        tripId={tripId}
-                                        onSeatsForceDeselected={handleSeatsForceDeselected}
-                                        isSubmitting={isProcessing || isInitializing}
+                        <div className="flex gap-2">
+                            <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline" size="icon">
+                                        <ChevronUp className="h-4 w-4" />
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-h-[80vh] overflow-y-auto p-0 gap-0">
+                                    <DialogTitle className="sr-only">Chi tiết đặt chỗ</DialogTitle>
+                                    <BookingSummary
+                                        selectedSeats={selectedSeats}
+                                        onRemoveSeat={handleRemoveSeat}
+                                        onProceed={() => {
+                                            setIsDetailsOpen(false);
+                                            handleProceedToPassengerInfo();
+                                        }}
+                                        isProcessing={isProcessing || isInitializing}
+                                        className="border-0 shadow-none"
                                     />
-                                ) : (
-                                    <BedLayoutViewer
-                                        seats={coachWithPrices.seats}
-                                        template={coachWithPrices.template}
-                                        selectedSeats={selectedSeats.map((s) => s.id)}
-                                        onSeatClick={handleSeatToggle}
-                                        tripId={tripId}
-                                        onSeatsForceDeselected={handleSeatsForceDeselected}
-                                        isSubmitting={isProcessing || isInitializing}
-                                    />
-                                )}
+                                </DialogContent>
+                            </Dialog>
 
-                            </div>
-                        ) : null}
-
-                    </CardContent>
-                    {selectedSeats.length > 0 && (
-                        <CardFooter className="sticky bottom-0 bg-background z-10 border-t pt-6 justify-between shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-                            <div>
-                                <p className="text-sm text-muted-foreground">Đã chọn {selectedSeats.length} chỗ</p>
-                                <p className="text-2xl font-bold">
-                                    {totalPrice.toLocaleString('vi-VN')} ₫
-                                </p>
-                            </div>
                             <Button
                                 size="lg"
                                 onClick={handleProceedToPassengerInfo}
                                 disabled={isInitializing || isProcessing}
                             >
-                                {isInitializing || isProcessing ? 'Đang xử lý...' : 'Tiếp tục'}
+                                {isInitializing || isProcessing ? '...' : 'Tiếp tục'}
                             </Button>
-                        </CardFooter>
-                    )}
-                </Card>
-            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

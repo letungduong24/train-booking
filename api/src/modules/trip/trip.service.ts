@@ -304,7 +304,7 @@ export class TripService {
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
 
-        const trips = await this.prisma.trip.findMany({
+        let trips = await this.prisma.trip.findMany({
             where: {
                 routeId: {
                     in: validRouteIds,
@@ -348,6 +348,60 @@ export class TripService {
                 departureTime: 'asc',
             },
         });
+
+        // Step 4: If no trips found, search nearby (+/- 3 days)
+        if (trips.length === 0) {
+            const startOfRange = new Date(startOfDay);
+            startOfRange.setDate(startOfRange.getDate() - 3);
+
+            const endOfRange = new Date(endOfDay);
+            endOfRange.setDate(endOfRange.getDate() + 3);
+
+            trips = await this.prisma.trip.findMany({
+                where: {
+                    routeId: {
+                        in: validRouteIds,
+                    },
+                    departureTime: {
+                        gte: startOfRange,
+                        lte: endOfRange,
+                    },
+                    status: {
+                        not: 'CANCELLED',
+                    },
+                },
+                include: {
+                    route: {
+                        include: {
+                            stations: {
+                                include: {
+                                    station: true,
+                                },
+                                orderBy: {
+                                    index: 'asc',
+                                },
+                            },
+                        },
+                    },
+                    train: {
+                        include: {
+                            coaches: {
+                                include: {
+                                    _count: {
+                                        select: {
+                                            seats: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                orderBy: {
+                    departureTime: 'asc',
+                },
+            });
+        }
 
         return trips;
     }

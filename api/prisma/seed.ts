@@ -23,6 +23,7 @@ async function main() {
     await prisma.routeStation.deleteMany();
     await prisma.route.deleteMany();
     await prisma.station.deleteMany();
+    await prisma.user.deleteMany();
 
     // 0. Create Passenger Groups
     console.log('Creating passenger groups...');
@@ -370,12 +371,38 @@ async function main() {
 
     console.log(` Created ${templates.length} coach templates`);
 
+    // 4. Create Users
+    console.log('Creating users...');
+    const passwordHash = await import('bcrypt').then(m => m.hash('Password@123', 10));
+
+    const users = await Promise.all([
+        prisma.user.create({
+            data: {
+                email: 'admin@gmail.com',
+                password: passwordHash,
+                name: 'Admin User',
+                role: 'admin',
+            },
+        }),
+        prisma.user.create({
+            data: {
+                email: 'user@gmail.com',
+                password: passwordHash,
+                name: 'Normal User',
+                role: 'user',
+            },
+        }),
+    ]);
+    console.log(`Created ${users.length} users`);
+
+
     console.log('');
     console.log('✅ Seed Summary:');
     console.log(`   - Passenger Groups: ${passengerGroups.length}`);
     console.log(`   - Stations: ${stations.length}`);
     console.log(`   - Routes: 5`);
     console.log(`   - Coach Templates: ${templates.length}`);
+    console.log(`   - Users: ${users.length}`);
     console.log('');
     console.log('✅ Seed completed successfully!');
 }

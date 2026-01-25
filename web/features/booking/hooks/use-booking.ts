@@ -6,6 +6,8 @@ export interface BookingResponse {
     code: string;
     status: 'PENDING' | 'PAID' | 'CANCELLED';
     totalPrice: number;
+    createdAt: string;
+    expiresAt: string;
     metadata?: {
         tripId: string;
         fromStationId: string;

@@ -1,4 +1,5 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { timeSync } from './time-sync';
 
 const apiClient = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
@@ -29,7 +30,13 @@ const processQueue = (error: any = null) => {
 
 // Response interceptor to handle 401 errors and refresh token
 apiClient.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        const date = response.headers['date'] || response.headers['Date'];
+        if (date) {
+            timeSync.setServerTime(date as string);
+        }
+        return response;
+    },
     async (error: AxiosError) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & {
             _retry?: boolean;

@@ -12,6 +12,9 @@ import { validateCCCD, getAgeFromCCCD } from '@/lib/utils/cccd';
 import { usePassengerGroups, getPassengerGroupByAge, getChildGroup } from '../hooks/use-passenger-groups';
 import { AlertCircle, Check } from 'lucide-react';
 
+import { BookingTimer } from './booking-timer';
+import { CancelBookingButton } from './cancel-booking-button';
+
 export interface PassengerFormData {
     seatId: string;
     seatName: string;
@@ -27,14 +30,47 @@ interface PassengerInfoFormProps {
     onCancel: () => void;
     initialPassengers?: PassengerFormData[];
     submitLabel?: string;
+    bookingCode?: string;
+    bookingExpiresAt?: string;
 }
 
-export function PassengerInfoForm({ seats, onSubmit, onCancel, initialPassengers, submitLabel = 'Tiếp tục thanh toán' }: PassengerInfoFormProps) {
+export function PassengerInfoForm({
+    seats,
+    onSubmit,
+    onCancel,
+    initialPassengers,
+    submitLabel = 'Tiếp tục thanh toán',
+    bookingCode,
+    bookingExpiresAt
+}: PassengerInfoFormProps) {
     const { data: passengerGroups, isLoading: isLoadingGroups } = usePassengerGroups();
 
     const [passengers, setPassengers] = useState<PassengerFormData[]>([]);
     const [errors, setErrors] = useState<Record<number, string>>({});
     const [cccdInfo, setCccdInfo] = useState<Record<number, { age: number; groupName: string } | null>>({});
+
+    // ... (rest of state/effects)
+
+    // Skip to return
+    // I need to be careful with replace_file_content range. 
+    // I will target the `CardHeader` part only, assuming function signature is handled.
+    // Wait, I need to update function destructuring too.
+    // I'll assume I can just target the signature line and then the header later? 
+    // No, I should do signature in one chunk (which is passed as args).
+    // The previous edit handled the "interface" part.
+    // This edit handles the component logic.
+    // I'll use multi-replace or just one big one? 
+    // The function is long. I will split.
+    // 1. Function signature update.
+    // 2. CardHeader update.
+    // 3. Footer update.
+
+    // Step 1: Signature
+    // return ...
+    //   <Card>
+    //     <CardHeader> ...
+
+
 
     // Initialize/Sync passengers with seats and initialPassengers
     useEffect(() => {
@@ -216,10 +252,17 @@ export function PassengerInfoForm({ seats, onSubmit, onCancel, initialPassengers
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Thông tin hành khách</CardTitle>
-                <CardDescription>
-                    Vui lòng nhập thông tin cho {seats.length} hành khách
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <CardTitle>Thông tin hành khách</CardTitle>
+                        <CardDescription>
+                            Vui lòng nhập thông tin cho {seats.length} hành khách
+                        </CardDescription>
+                    </div>
+                    {bookingExpiresAt && (
+                        <BookingTimer expiresAt={bookingExpiresAt} />
+                    )}
+                </div>
             </CardHeader>
             <CardContent className="space-y-6">
                 {passengers.map((passenger, index) => (
@@ -301,11 +344,28 @@ export function PassengerInfoForm({ seats, onSubmit, onCancel, initialPassengers
 
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-4">
-                    <Button variant="outline" onClick={onCancel} className="flex-1">
-                        Quay lại
-                    </Button>
+                    {bookingCode ? (
+                        <div className="flex-1 flex gap-2">
+                            <Button variant="outline" onClick={onCancel} className="flex-1">
+                                Quay lại
+                            </Button>
+                            <CancelBookingButton
+                                bookingCode={bookingCode}
+                                className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                                onCancelSuccess={onCancel}
+                                variant="outline"
+                            >
+                                Hủy đơn
+                            </CancelBookingButton>
+                        </div>
+                    ) : (
+                        <Button variant="outline" onClick={onCancel} className="flex-1">
+                            Quay lại
+                        </Button>
+                    )}
+
                     <Button onClick={handleSubmit} className="flex-1">
-                        Tiếp tục thanh toán
+                        {submitLabel}
                     </Button>
                 </div>
             </CardContent>

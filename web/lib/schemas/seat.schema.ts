@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 // Enums
-export const SeatStatusEnum = z.enum(['AVAILABLE', 'LOCKED']);
+export const SeatStatusEnum = z.enum(['AVAILABLE', 'DISABLED']);
+export const BookingStatusEnum = z.enum(['AVAILABLE', 'BOOKED', 'LOCKED', 'HOLDING', 'DISABLED']);
 export const SeatTypeEnum = z.enum(['VIP', 'STANDARD', 'ECONOMY', 'OTHER']);
-export const BookingStatusEnum = z.enum(['AVAILABLE', 'BOOKED', 'LOCKED', 'HOLDING']);
 
 // Inferred Types
 export type SeatStatus = z.infer<typeof SeatStatusEnum>;
-export type SeatType = z.infer<typeof SeatTypeEnum>;
 export type BookingStatus = z.infer<typeof BookingStatusEnum>;
+export type SeatType = z.infer<typeof SeatTypeEnum>;
 
 // Schemas
 export const seatSchema = z.object({
@@ -28,7 +28,6 @@ export type Seat = z.infer<typeof seatSchema>;
 
 export const updateSeatSchema = z.object({
     status: SeatStatusEnum.optional(),
-    type: SeatTypeEnum.optional(),
 });
 
 export type UpdateSeatInput = z.infer<typeof updateSeatSchema>;

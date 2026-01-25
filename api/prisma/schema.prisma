@@ -155,7 +155,7 @@ model Seat {
 
 enum SeatStatus {
   AVAILABLE
-  LOCKED
+  DISABLED
 }
 
 enum SeatType {

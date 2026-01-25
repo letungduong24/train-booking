@@ -5,6 +5,7 @@ import { AuthProvider } from "@/components/auth-provider";
 import TanStackProvider from "@/components/providers/tanstack-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { SocketInitializer } from "@/components/providers/socket-initializer";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,15 +28,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <TanStackProvider>
           <AuthProvider>
             <SocketInitializer />
-            {children}
-            <Toaster />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+              <Toaster />
+            </ThemeProvider>
           </AuthProvider>
         </TanStackProvider>
       </body>

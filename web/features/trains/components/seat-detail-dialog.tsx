@@ -19,7 +19,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import type { Seat } from "@/lib/schemas/seat.schema"
-import { getSeatStatusLabel, getSeatTypeIcon, getSeatTypeLabel } from "@/lib/utils/seat-helper"
+import { getSeatStatusLabel } from "@/lib/utils/seat-helper"
 
 interface SeatDetailDialogProps {
     seat: Seat | null
@@ -112,44 +112,8 @@ export function SeatDetailDialog({
                                 </SelectItem>
                                 <SelectItem value="DISABLED">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-gray-400 rounded-full" />
+                                        <div className="w-3 h-3 bg-muted rounded-full" />
                                         <span>Vô hiệu hóa</span>
-                                    </div>
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    {/* Type */}
-                    <div className="space-y-2">
-                        <Label htmlFor="type">Loại ghế</Label>
-                        <Select value={type} onValueChange={(value: any) => setType(value)}>
-                            <SelectTrigger id="type">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="VIP">
-                                    <div className="flex items-center gap-2">
-                                        <span>⭐</span>
-                                        <span>{getSeatTypeLabel('VIP')}</span>
-                                    </div>
-                                </SelectItem>
-                                <SelectItem value="STANDARD">
-                                    <div className="flex items-center gap-2">
-                                        <span>🪑</span>
-                                        <span>{getSeatTypeLabel('STANDARD')}</span>
-                                    </div>
-                                </SelectItem>
-                                <SelectItem value="ECONOMY">
-                                    <div className="flex items-center gap-2">
-                                        <span>💺</span>
-                                        <span>{getSeatTypeLabel('ECONOMY')}</span>
-                                    </div>
-                                </SelectItem>
-                                <SelectItem value="OTHER">
-                                    <div className="flex items-center gap-2">
-                                        <span>📍</span>
-                                        <span>{getSeatTypeLabel('OTHER')}</span>
                                     </div>
                                 </SelectItem>
                             </SelectContent>
@@ -160,7 +124,6 @@ export function SeatDetailDialog({
                     <div className="p-3 bg-muted rounded-lg">
                         <div className="text-sm text-muted-foreground mb-1">Trạng thái hiện tại</div>
                         <div className="flex items-center gap-2">
-                            <span className="text-lg">{getSeatTypeIcon(seat.type)}</span>
                             <span className="font-medium">{getSeatStatusLabel(seat.status)}</span>
                         </div>
                     </div>

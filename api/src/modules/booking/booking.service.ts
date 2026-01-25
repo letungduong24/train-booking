@@ -1,4 +1,5 @@
 import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import Redis from 'ioredis';
@@ -10,6 +11,7 @@ import { InitBookingDto } from './dto/init-booking.dto';
 import { UpdateBookingPassengersDto } from './dto/update-booking-passengers.dto';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { FilterBookingDto } from './dto/filter-booking.dto';
+import { BookingMetadata } from './interfaces/booking-metadata.interface';
 import dayjs from 'dayjs';
 import { validateCCCD, validateCCCDAgeForGroup } from '../../common/utils/cccd.util';
 
@@ -23,6 +25,7 @@ export class BookingService {
         private readonly prisma: PrismaService,
         private readonly paymentService: PaymentService,
         private readonly pricingService: PricingService,
+        private readonly configService: ConfigService,
         @Inject('REDIS_CLIENT') private readonly redis: Redis,
         @InjectQueue('booking') private readonly bookingQueue: Queue,
         private readonly bookingGateway: BookingGateway,
@@ -252,9 +255,7 @@ export class BookingService {
         return updatedBooking;
     }
 
-    async updateBookingStatus(code: string, status: string) {
-        // Triển khai logic cập nhật trạng thái
-    }
+
 
     async getMyBookings(userId: string, query: FilterBookingDto) {
         const { page = 1, limit = 10, skip, take, search, status, sort, order } = query;
@@ -288,8 +289,15 @@ export class BookingService {
             this.prisma.booking.count({ where }),
         ]);
 
+        const lockTimeMin = this.configService.get<number>('BOOKING_LOCK_TIME_MINUTES') || 10;
+
+        const enrichedData = data.map(booking => ({
+            ...booking,
+            expiresAt: dayjs(booking.createdAt).add(lockTimeMin, 'minute').toDate()
+        }));
+
         return {
-            data,
+            data: enrichedData,
             meta: {
                 total,
                 page,
@@ -347,11 +355,15 @@ export class BookingService {
         const bookingCode = `VNR-${dayjs().format('YYYYMMDD')}-${Math.floor(Math.random() * 10000)}`;
         const acquiredLocks: string[] = [];
 
+        const lockTimeMin = this.configService.get<number>('BOOKING_LOCK_TIME_MINUTES') || 10;
+        const lockTimeSec = lockTimeMin * 60;
+        const lockTimeMs = lockTimeMin * 60 * 1000;
+
         try {
             for (const seatId of seatIds) {
                 const key = `lock:seat:${tripId}:${seatId}`;
                 // NX: Set if Not Exists, EX: Expire in seconds (600s = 10m)
-                const result = await this.redis.set(key, bookingCode, 'EX', 600, 'NX');
+                const result = await this.redis.set(key, bookingCode, 'EX', lockTimeSec, 'NX');
 
                 if (result !== 'OK') {
                     // Lock failed, meaning seat is taken
@@ -385,7 +397,7 @@ export class BookingService {
             });
 
             // 5. Add to Expiration Queue
-            await this.bookingQueue.add('expire', { bookingCode }, { delay: 600000 }); // 10 minutes
+            await this.bookingQueue.add('expire', { bookingCode }, { delay: lockTimeMs }); // Dynamic delay
 
             // 6. Emit Socket Event
             this.bookingGateway.emitSeatsLocked(tripId, seatIds);
@@ -404,6 +416,59 @@ export class BookingService {
         }
     }
 
+    async updateBookingStatus(code: string, status: string) {
+        // Triển khai logic cập nhật trạng thái
+    }
+
+    async cancelBooking(code: string, userId?: string) {
+        const booking = await this.prisma.booking.findUnique({
+            where: { code },
+        });
+
+        if (!booking) {
+            throw new BadRequestException('Không tìm thấy đơn đặt chỗ');
+        }
+
+        // Validate Ownership if userId is provided
+        if (userId && booking.userId && booking.userId !== userId) {
+            throw new BadRequestException('Bạn không có quyền hủy đơn hàng này');
+        }
+
+        if (booking.status !== 'PENDING') {
+            throw new BadRequestException('Chỉ có thể hủy đơn hàng đang chờ thanh toán');
+        }
+
+        // Proceed to cancel
+        await this.prisma.booking.update({
+            where: { code },
+            data: { status: 'CANCELLED' }
+        });
+
+        this.bookingGateway.emitBookingStatusUpdate(code, 'CANCELLED');
+
+        // Release locks
+        if (booking.metadata) {
+            const metadata = booking.metadata as unknown as BookingMetadata;
+            if (metadata.tripId && metadata.seatIds) { // For initBooking style
+                this.bookingGateway.emitSeatsReleased(metadata.tripId, metadata.seatIds);
+                // Also delete from Redis
+                const locks = metadata.seatIds.map((id: string) => `lock:seat:${metadata.tripId}:${id}`);
+                if (locks.length > 0) {
+                    await Promise.all(locks.map((key: string) => this.redis.del(key)));
+                }
+            } else if (metadata.tripId && metadata.passengers) { // For createBooking style (legacy/mixed)
+                const seatIds = metadata.passengers.map((p) => p.seatId);
+                this.bookingGateway.emitSeatsReleased(metadata.tripId, seatIds);
+                const locks = seatIds.map((id: string) => `lock:seat:${metadata.tripId}:${id}`);
+                if (locks.length > 0) {
+                    await Promise.all(locks.map((key: string) => this.redis.del(key)));
+                }
+            }
+        }
+
+        return { message: 'Hủy đơn hàng thành công' };
+    }
+
     async handleBookingExpiration(bookingCode: string) {
         const booking = await this.prisma.booking.findUnique({
             where: { code: bookingCode },
@@ -418,11 +483,22 @@ export class BookingService {
                 }
             });
 
+            this.bookingGateway.emitBookingStatusUpdate(bookingCode, 'CANCELLED');
+
             // Locks will expire automatically by Redis TTL, but we emit event for clearer UI update
             if (booking.metadata) {
-                const metadata = booking.metadata as any;
-                if (metadata.seatIds && metadata.tripId) {
-                    this.bookingGateway.emitSeatsReleased(metadata.tripId, metadata.seatIds);
+                const metadata = booking.metadata as unknown as BookingMetadata;
+                if (metadata.tripId) {
+                    let seatIds: string[] = [];
+                    if (metadata.seatIds) {
+                        seatIds = metadata.seatIds;
+                    } else if (metadata.passengers) {
+                        seatIds = metadata.passengers.map((p) => p.seatId);
+                    }
+
+                    if (seatIds.length > 0) {
+                        this.bookingGateway.emitSeatsReleased(metadata.tripId, seatIds);
+                    }
                 }
             }
         }
@@ -581,6 +657,9 @@ export class BookingService {
             throw new BadRequestException('Không tìm thấy đơn hàng');
         }
 
+        const lockTimeMin = this.configService.get<number>('BOOKING_LOCK_TIME_MINUTES') || 10;
+        const expiresAt = dayjs(booking.createdAt).add(lockTimeMin, 'minute').toDate();
+
         // Enrich for PENDING or CANCELLED state if tickets are empty 
         if ((booking.status === 'PENDING' || booking.status === 'CANCELLED') && booking.tickets.length === 0 && booking.metadata) {
             const metadata = booking.metadata as any;
@@ -613,6 +692,7 @@ export class BookingService {
 
                 return {
                     ...booking,
+                    expiresAt,
                     tickets: simulatedTickets,
                     metadata: {
                         ...metadata,
@@ -678,6 +758,7 @@ export class BookingService {
 
                 return {
                     ...booking,
+                    expiresAt,
                     tickets: simulatedTickets,
                     metadata: {
                         ...metadata,
@@ -687,7 +768,7 @@ export class BookingService {
             }
         }
 
-        return booking;
+        return { ...booking, expiresAt };
     }
     async getLockedSeats(tripId: string) {
         // Scan for keys: lock:seat:{tripId}:*
@@ -746,13 +827,14 @@ export class BookingService {
         // Lấy danh sách các đơn đang PENDING của user này (chưa hết hạn - within 10 mins)
         // Since we have a job that runs every 10 mins to cancel, PENDING usually means active.
         // But to be precise as user requested "chưa hết hạn", let's be safe.
-        const tenMinutesAgo = dayjs().subtract(10, 'minute').toDate();
+        const lockTimeMin = this.configService.get<number>('BOOKING_LOCK_TIME_MINUTES') || 10;
+        const cutoffTime = dayjs().subtract(lockTimeMin, 'minute').toDate();
 
         const activePendingBookings = await this.prisma.booking.findMany({
             where: {
                 userId: userId,
                 status: 'PENDING',
-                createdAt: { gt: tenMinutesAgo } // Chỉ tính đơn còn hiệu lực trong 10p, tránh đơn bị kẹt job chưa chạy
+                createdAt: { gt: cutoffTime } // Chỉ tính đơn còn hiệu lực trong khoảng lock, tránh đơn bị kẹt job chưa chạy
             },
             select: { id: true, tripId: true }
         });

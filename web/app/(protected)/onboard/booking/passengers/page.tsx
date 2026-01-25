@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { useBooking } from '@/features/booking/hooks/use-booking';
 import { useUpdateBookingPassengers } from '@/features/booking/hooks/use-update-booking-passengers';
 import { PassengerFormData, PassengerInfoForm } from '@/features/booking/components/passenger-info-form';
@@ -11,17 +12,43 @@ import { ArrowLeft, MapPin, Calendar, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { format, addMinutes } from 'date-fns';
 import { useTrip } from '@/features/trips/hooks/use-trips';
+import { socket } from '@/lib/socket';
 
 function PassengersPageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const bookingCode = searchParams.get('bookingCode');
+    const queryClient = useQueryClient();
 
     const { data: booking, isLoading: isBookingLoading } = useBooking(bookingCode, !!bookingCode);
     const { mutate: updatePassengers, isPending: isUpdating } = useUpdateBookingPassengers();
 
     const [seats, setSeats] = useState<Array<{ id: string; name: string; price: number }>>([]);
     const [initialPassengers, setInitialPassengers] = useState<PassengerFormData[]>([]);
+
+    useEffect(() => {
+        if (!bookingCode) return;
+
+        function onConnect() {
+            console.log("Connected to booking namespace");
+        }
+
+        function onStatusUpdate(data: { bookingCode: string; status: string }) {
+            if (data.bookingCode === bookingCode) {
+                queryClient.invalidateQueries({ queryKey: ['booking', bookingCode] });
+                router.refresh();
+            }
+        }
+
+        socket.connect();
+        socket.on("connect", onConnect);
+        socket.on("booking.status_update", onStatusUpdate);
+
+        return () => {
+            socket.off("connect", onConnect);
+            socket.off("booking.status_update", onStatusUpdate);
+        };
+    }, [bookingCode, router, queryClient]);
 
     useEffect(() => {
         if (booking?.metadata?.seats) {
@@ -41,6 +68,14 @@ function PassengersPageContent() {
             setInitialPassengers(existingPassengers as PassengerFormData[]);
         }
     }, [booking]);
+
+    // Redirect if not PENDING
+    useEffect(() => {
+        if (booking && booking.status !== 'PENDING') {
+            toast.warning('Đơn hàng đã hết hạn chờ thanh toán hoặc bị hủy.');
+            router.push(`/onboard/history/${bookingCode}`);
+        }
+    }, [booking, bookingCode, router]);
 
     if (!bookingCode) {
         return (
@@ -78,12 +113,14 @@ function PassengersPageContent() {
         );
     }
 
-    if (booking.status !== 'PENDING') {
+
+
+    if (booking && booking.status !== 'PENDING') {
         return (
             <div className="container mx-auto py-8">
                 <Card>
                     <CardContent className="py-8 text-center text-muted-foreground">
-                        Đơn hàng đã kết thúc
+                        Đang chuyển hướng...
                     </CardContent>
                 </Card>
             </div>
@@ -179,6 +216,8 @@ function PassengersPageContent() {
                 onSubmit={handleSubmit}
                 onCancel={() => router.back()}
                 submitLabel={isUpdating ? "Đang xử lý..." : "Thanh toán"}
+                bookingCode={bookingCode || undefined}
+                bookingExpiresAt={booking.expiresAt}
             />
         </div>
     );

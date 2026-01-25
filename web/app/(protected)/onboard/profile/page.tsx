@@ -77,12 +77,12 @@ export default function ProfilePage() {
         <div className="container mx-auto py-8 px-4 max-w-2xl">
             <h1 className="text-2xl font-bold mb-6">Thông tin cá nhân</h1>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="bg-card p-6 rounded-lg shadow-sm border">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <div className="space-y-2">
                             <label className="text-sm font-medium">Email</label>
-                            <Input value={user?.email || ''} disabled className="bg-gray-100" />
+                            <Input value={user?.email || ''} disabled className="bg-muted" />
                         </div>
 
                         <FormField

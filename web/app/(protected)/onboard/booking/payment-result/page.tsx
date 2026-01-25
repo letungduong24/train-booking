@@ -17,13 +17,6 @@ export default function PaymentResultPage() {
         <div className="container mx-auto py-16 px-4">
             <Card className="max-w-md mx-auto text-center">
                 <CardHeader>
-                    <div className="flex justify-center mb-4">
-                        {success ? (
-                            <CheckCircle2 className="h-16 w-16 text-green-500" />
-                        ) : (
-                            <XCircle className="h-16 w-16 text-red-500" />
-                        )}
-                    </div>
                     <CardTitle className="text-2xl">
                         {success ? 'Thanh toán thành công' : 'Thanh toán thất bại'}
                     </CardTitle>

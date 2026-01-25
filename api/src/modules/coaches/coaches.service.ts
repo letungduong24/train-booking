@@ -277,8 +277,8 @@ export class CoachesService {
 
       // Determine booking status
       let bookingStatus: string;
-      if (seat.status === 'LOCKED') {
-        bookingStatus = 'LOCKED';
+      if (seat.status === 'DISABLED') {
+        bookingStatus = 'DISABLED';
       } else if (bookedSeatIds.has(seat.id)) {
         bookingStatus = 'BOOKED';
       } else {

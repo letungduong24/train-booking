@@ -64,15 +64,15 @@ export function BedLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdmi
                             <span>Hoạt động</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full border border-yellow-500 bg-yellow-50" />
-                            <span>Đã khóa/Bảo trì</span>
+                            <div className="w-4 h-4 rounded-full bg-muted border border-muted-foreground/30 opacity-40" />
+                            <span>Đã vô hiệu hóa</span>
                         </div>
                     </>
                 ) : (
                     // User Booking Legend
                     <>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-green-100 border border-green-500" />
+                            <div className="w-4 h-4 rounded-full bg-green-500/10 border border-green-500" />
                             <span>Còn trống</span>
                         </div>
                         <div className="flex items-center gap-1">
@@ -80,15 +80,15 @@ export function BedLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdmi
                             <span>Đã chọn</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-red-100 border border-red-500" />
+                            <div className="w-4 h-4 rounded-full bg-destructive/10 border border-destructive" />
                             <span>Đã đặt</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-yellow-100 border border-yellow-500" />
+                            <div className="w-4 h-4 rounded-full bg-yellow-500/10 border border-yellow-500" />
                             <span>Đang giữ chỗ</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-gray-100 border border-gray-400 opacity-40" />
+                            <div className="w-4 h-4 rounded-full bg-muted border border-muted-foreground/30 opacity-40" />
                             <span>Không thể mua</span>
                         </div>
                     </>
@@ -132,7 +132,7 @@ export function BedLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdmi
                                                         "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
                                                         selectedSeats.includes(leftBed.id)
                                                             ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
-                                                            : getSeatStatusColor(isAdmin ? (leftBed.status === 'LOCKED' ? 'LOCKED' : 'AVAILABLE') : leftBed.status, isAdmin)
+                                                            : getSeatStatusColor(isAdmin ? (leftBed.status === 'DISABLED' ? 'DISABLED' : 'AVAILABLE') : leftBed.status, isAdmin)
                                                     )}
                                                     title={`Giường ${leftBed.name} - ${getSeatStatusLabel(leftBed.status, isAdmin)}`}
                                                 >
@@ -143,7 +143,7 @@ export function BedLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdmi
                                                         {!isAdmin && (leftBed.status === 'AVAILABLE' || selectedSeats.includes(leftBed.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(leftBed.id) ? "text-blue-100" : "text-black"
+                                                                selectedSeats.includes(leftBed.id) ? "text-blue-100" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(leftBed.price)}
                                                             </span>
@@ -166,7 +166,7 @@ export function BedLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdmi
                                                         "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
                                                         selectedSeats.includes(rightBed.id)
                                                             ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
-                                                            : getSeatStatusColor(isAdmin ? (rightBed.status === 'LOCKED' ? 'LOCKED' : 'AVAILABLE') : rightBed.status, isAdmin)
+                                                            : getSeatStatusColor(isAdmin ? (rightBed.status === 'DISABLED' ? 'DISABLED' : 'AVAILABLE') : rightBed.status, isAdmin)
                                                     )}
                                                     title={`Giường ${rightBed.name} - ${getSeatStatusLabel(rightBed.status, isAdmin)}`}
                                                 >
@@ -177,7 +177,7 @@ export function BedLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdmi
                                                         {!isAdmin && (rightBed.status === 'AVAILABLE' || selectedSeats.includes(rightBed.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(rightBed.id) ? "text-blue-100" : "text-black"
+                                                                selectedSeats.includes(rightBed.id) ? "text-blue-100" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(rightBed.price)}
                                                             </span>

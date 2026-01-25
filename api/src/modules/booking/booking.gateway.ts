@@ -36,4 +36,9 @@ export class BookingGateway implements OnGatewayConnection, OnGatewayDisconnect 
         this.server.emit('seats.released', { tripId, seatIds });
         this.logger.debug(`Emitted seats.released for trip ${tripId}: ${seatIds.join(', ')}`);
     }
+
+    emitBookingStatusUpdate(bookingCode: string, status: string) {
+        this.server.emit(`booking.status_update`, { bookingCode, status });
+        this.logger.debug(`Emitted booking.status_update for ${bookingCode}: ${status}`);
+    }
 }

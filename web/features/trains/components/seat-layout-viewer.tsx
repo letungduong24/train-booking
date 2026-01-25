@@ -4,7 +4,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Seat, SeatStatus } from "@/lib/schemas/seat.schema"
 import { Coach } from "@/lib/schemas/coach.schema"
-import { getSeatStatusColor, getSeatTypeIcon, getSeatStatusLabel } from "@/lib/utils/seat-helper"
+import { getSeatStatusColor, getSeatStatusLabel } from "@/lib/utils/seat-helper"
 
 interface SeatLayoutViewerProps {
     coach: Coach
@@ -64,15 +64,15 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                             <span>Hoạt động</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full border border-yellow-500 bg-yellow-50" />
-                            <span>Đã khóa/Bảo trì</span>
+                            <div className="w-4 h-4 rounded-full bg-muted border border-muted-foreground/30 opacity-40" />
+                            <span>Đã vô hiệu hóa</span>
                         </div>
                     </>
                 ) : (
                     // User Booking Legend
                     <>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-green-100 border border-green-500" />
+                            <div className="w-4 h-4 rounded-full bg-green-500/10 border border-green-500" />
                             <span>Còn trống</span>
                         </div>
                         <div className="flex items-center gap-1">
@@ -80,15 +80,15 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                             <span>Đã chọn</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-red-100 border border-red-500" />
+                            <div className="w-4 h-4 rounded-full bg-destructive/10 border border-destructive" />
                             <span>Đã đặt</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-yellow-100 border border-yellow-500" />
+                            <div className="w-4 h-4 rounded-full bg-yellow-500/10 border border-yellow-500" />
                             <span>Đang giữ chỗ</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-gray-100 border border-gray-400 opacity-40" />
+                            <div className="w-4 h-4 rounded-full bg-muted border border-muted-foreground/30 opacity-40" />
                             <span>Không thể mua</span>
                         </div>
                     </>
@@ -128,9 +128,9 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                             style={{ gridRow: rowIndex + 1, gridColumn: 2 }}
                                         >
                                             {rowSeats.slice(0, 2).map((seat) => {
-                                                // For Admin: Only LOCKED counts as 'unavailable'
+                                                // For Admin: Only DISABLED counts as 'unavailable'
                                                 const displayStatus = isAdmin
-                                                    ? (seat.status === 'LOCKED' ? 'LOCKED' : 'AVAILABLE')
+                                                    ? (seat.status === 'DISABLED' ? 'DISABLED' : 'AVAILABLE')
                                                     : seat.status;
 
                                                 return (
@@ -142,9 +142,9 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                             "flex-1 aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 min-w-0 border",
                                                             selectedSeats.includes(seat.id)
                                                                 ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
-                                                                : getSeatStatusColor(displayStatus)
+                                                                : getSeatStatusColor(displayStatus, isAdmin)
                                                         )}
-                                                        title={`Ghế ${seat.name}`}
+                                                        title={`Ghế ${seat.name} - ${getSeatStatusLabel(seat.status, isAdmin)}`}
                                                     >
                                                         <span className={cn("text-xs font-bold truncate", selectedSeats.includes(seat.id) ? "text-white" : "")}>
                                                             {seat.name}
@@ -152,7 +152,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                         {!isAdmin && (seat.status === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-black"
+                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(seat.price)}
                                                             </span>
@@ -177,7 +177,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                         >
                                             {rowSeats.slice(2, 4).map((seat) => {
                                                 const displayStatus = isAdmin
-                                                    ? (seat.status === 'LOCKED' ? 'LOCKED' : 'AVAILABLE')
+                                                    ? (seat.status === 'DISABLED' ? 'DISABLED' : 'AVAILABLE')
                                                     : seat.status;
                                                 return (
                                                     <button
@@ -188,9 +188,9 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                             "flex-1 aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 min-w-0 border",
                                                             selectedSeats.includes(seat.id)
                                                                 ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
-                                                                : getSeatStatusColor(displayStatus)
+                                                                : getSeatStatusColor(displayStatus, isAdmin)
                                                         )}
-                                                        title={`Ghế ${seat.name}`}
+                                                        title={`Ghế ${seat.name} - ${getSeatStatusLabel(seat.status, isAdmin)}`}
                                                     >
                                                         <span className={cn("text-xs font-bold truncate", selectedSeats.includes(seat.id) ? "text-white" : "")}>
                                                             {seat.name}
@@ -198,7 +198,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                         {!isAdmin && (seat.status === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-black"
+                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(seat.price)}
                                                             </span>
@@ -244,7 +244,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                         >
                                             {rowSeats.slice(0, 2).map((seat) => {
                                                 const displayStatus = isAdmin
-                                                    ? (seat.status === 'LOCKED' ? 'LOCKED' : 'AVAILABLE')
+                                                    ? (seat.status === 'DISABLED' ? 'DISABLED' : 'AVAILABLE')
                                                     : seat.status;
                                                 return (
                                                     <button
@@ -265,7 +265,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                         {!isAdmin && (seat.status === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-black"
+                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(seat.price)}
                                                             </span>
@@ -290,7 +290,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                         >
                                             {rowSeats.slice(2, 4).map((seat) => {
                                                 const displayStatus = isAdmin
-                                                    ? (seat.status === 'LOCKED' ? 'LOCKED' : 'AVAILABLE')
+                                                    ? (seat.status === 'DISABLED' ? 'DISABLED' : 'AVAILABLE')
                                                     : seat.status;
                                                 return (
                                                     <button
@@ -311,7 +311,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                         {!isAdmin && (seat.status === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-black"
+                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(seat.price)}
                                                             </span>

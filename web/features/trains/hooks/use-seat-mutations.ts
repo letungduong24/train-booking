@@ -12,6 +12,7 @@ export function useUpdateSeat() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["coaches"] })
+            queryClient.invalidateQueries({ queryKey: ["coach"] })
             queryClient.invalidateQueries({ queryKey: ["seats"] })
         },
     })

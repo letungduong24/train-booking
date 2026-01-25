@@ -18,8 +18,7 @@ import {
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { getSeatTypeLabel } from "@/lib/utils/seat-helper"
-import { Seat, SeatStatus, SeatType } from "@/lib/schemas/seat.schema"
+import { Seat, SeatStatus } from "@/lib/schemas/seat.schema"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { Lock, Unlock, AlertCircle } from "lucide-react"
@@ -39,13 +38,11 @@ export function AdminSeatDetailDialog({
     seat,
     onUpdate
 }: AdminSeatDetailDialogProps) {
-    const [selectedType, setSelectedType] = useState<SeatType>('STANDARD')
     const [error, setError] = useState<string | null>(null)
     const updateSeat = useUpdateSeat()
 
     useEffect(() => {
         if (seat) {
-            setSelectedType(seat.type)
             setError(null)
         }
     }, [seat])
@@ -53,13 +50,13 @@ export function AdminSeatDetailDialog({
     if (!seat) return null
 
     const handleDisableToggle = () => {
-        const newStatus: SeatStatus = seat.status === 'LOCKED' ? 'AVAILABLE' : 'LOCKED'
+        const newStatus: SeatStatus = seat.status === 'DISABLED' ? 'AVAILABLE' : 'DISABLED'
 
         updateSeat.mutate(
             { id: seat.id, data: { status: newStatus } },
             {
                 onSuccess: () => {
-                    toast.success(newStatus === 'LOCKED' ? "Đã khóa ghế" : "Đã mở khóa ghế");
+                    toast.success(newStatus === 'DISABLED' ? "Đã khóa ghế" : "Đã mở khóa ghế");
                     onOpenChange(false);
                 },
                 onError: (err) => {
@@ -70,27 +67,7 @@ export function AdminSeatDetailDialog({
         )
     }
 
-    const handleTypeChange = (value: SeatType) => {
-        setSelectedType(value)
-    }
-
-    const handleSaveType = () => {
-        updateSeat.mutate(
-            { id: seat.id, data: { type: selectedType } },
-            {
-                onSuccess: () => {
-                    toast.success("Đã thay đổi hạng vé");
-                    onOpenChange(false);
-                },
-                onError: (err) => {
-                    toast.error("Cập nhật thất bại");
-                    console.error(err);
-                }
-            }
-        )
-    }
-
-    const isLocked = seat.status === 'LOCKED'
+    const isDisabled = seat.status === 'DISABLED'
     const isBooked = false // Physical seats are never 'BOOKED'
 
     return (
@@ -109,36 +86,20 @@ export function AdminSeatDetailDialog({
                         <Label>Trạng thái hiện tại</Label>
                         <Badge variant={seat.status === 'AVAILABLE' ? 'default' : 'secondary'} className={cn(
                             seat.status === 'AVAILABLE' && "bg-green-500 hover:bg-green-600",
-                            seat.status === 'LOCKED' && "bg-yellow-500 hover:bg-yellow-600",
+                            seat.status === 'DISABLED' && "bg-muted hover:bg-muted/80 text-muted-foreground",
                         )}>
-                            {seat.status === 'LOCKED' ? 'Đã khóa' : 'Hoạt động'}
+                            {seat.status === 'DISABLED' ? 'Đã vô hiệu hóa' : 'Hoạt động'}
                         </Badge>
-                    </div>
-
-                    {/* Seat Type Selector */}
-                    <div className="grid gap-2">
-                        <Label htmlFor="seat-type">Hạng/Loại vé</Label>
-                        <Select value={selectedType} onValueChange={(val) => handleTypeChange(val as SeatType)}>
-                            <SelectTrigger id="seat-type">
-                                <SelectValue placeholder="Chọn loại ghế" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="STANDARD">{getSeatTypeLabel('STANDARD')}</SelectItem>
-                                <SelectItem value="VIP">{getSeatTypeLabel('VIP')}</SelectItem>
-                                <SelectItem value="ECONOMY">{getSeatTypeLabel('ECONOMY')}</SelectItem>
-                                <SelectItem value="OTHER">{getSeatTypeLabel('OTHER')}</SelectItem>
-                            </SelectContent>
-                        </Select>
                     </div>
 
                     {/* Lock/Unlock Action */}
                     <div className="grid gap-2 border-t pt-4 mt-2">
                         <Label className="mb-2">Thao tác nhanh</Label>
                         <div className="flex flex-col gap-2">
-                            {isLocked ? (
+                            {isDisabled ? (
                                 <Button
                                     variant="outline"
-                                    className="w-full text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700"
+                                    className="w-full text-green-600 border-green-200 dark:border-green-800 hover:bg-green-500/10 hover:text-green-700 dark:hover:text-green-400"
                                     onClick={handleDisableToggle}
                                     disabled={updateSeat.isPending}
                                 >
@@ -148,7 +109,7 @@ export function AdminSeatDetailDialog({
                             ) : (
                                 <Button
                                     variant="outline"
-                                    className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+                                    className="w-full text-red-600 border-red-200 dark:border-destructive/50 hover:bg-destructive/10 hover:text-red-700 dark:hover:text-red-400"
                                     onClick={handleDisableToggle}
                                     disabled={isBooked || updateSeat.isPending}
                                 >
@@ -158,7 +119,7 @@ export function AdminSeatDetailDialog({
                             )}
 
                             {error && (
-                                <div className="flex items-start gap-2 text-sm text-red-600 bg-red-50 p-2 rounded border border-red-100 mt-2">
+                                <div className="flex items-start gap-2 text-sm text-destructive bg-destructive/10 p-2 rounded border border-destructive/20 mt-2">
                                     <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
                                     <span>{error}</span>
                                 </div>
@@ -167,12 +128,9 @@ export function AdminSeatDetailDialog({
                     </div>
                 </div>
 
-                <DialogFooter className="flex-col sm:flex-row gap-2">
+                <DialogFooter>
                     <Button variant="ghost" onClick={() => onOpenChange(false)}>
                         Đóng
-                    </Button>
-                    <Button onClick={handleSaveType} disabled={updateSeat.isPending}>
-                        {updateSeat.isPending ? "Đang lưu..." : "Lưu thay đổi"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

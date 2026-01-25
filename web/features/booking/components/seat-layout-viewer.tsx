@@ -119,31 +119,31 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                             <span>Hoạt động</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full border border-yellow-500 bg-yellow-50" />
-                            <span>Đã khóa/Bảo trì</span>
+                            <div className="w-4 h-4 rounded-full bg-gray-300 dark:bg-muted" />
+                            <span>Đã vô hiệu hóa</span>
                         </div>
                     </>
                 ) : (
                     // User Booking Legend
                     <>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-green-100 border border-green-500" />
+                            <div className="w-4 h-4 rounded-full border border-secondary" />
                             <span>Còn trống</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center" />
+                            <div className="w-4 h-4 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center" />
                             <span>Đã chọn</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-red-100 border border-red-500" />
+                            <div className="w-4 h-4 rounded-full bg-primary/50 border border-primary" />
                             <span>Đã đặt</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-yellow-100 border border-yellow-500" />
+                            <div className="w-4 h-4 rounded-full bg-[#E5BA41] border border-[#E5BA41]" />
                             <span>Đang giữ chỗ</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-gray-100 border border-gray-400 opacity-40" />
+                            <div className="w-4 h-4 rounded-full bg-gray-300 dark:bg-muted" />
                             <span>Không thể mua</span>
                         </div>
                     </>
@@ -191,9 +191,9 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
-                                                            "flex-1 aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 min-w-0 border",
+                                                            "flex-1 flex flex-col items-center justify-center rounded-md transition-all py-2 min-w-0 border",
                                                             selectedSeats.includes(seat.id)
-                                                                ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
+                                                                ? "bg-blue-400 text-white hover:bg-blue-500 border-transparent shadow-sm"
                                                                 : getSeatStatusColor(displayStatus, isAdmin)
                                                         )}
                                                         title={`Ghế ${seat.name}`}
@@ -204,7 +204,7 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         {!isAdmin && (displayStatus === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-black"
+                                                                selectedSeats.includes(seat.id) ? "text-secondary-foreground/80" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(seat.price)}
                                                             </span>
@@ -237,9 +237,9 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
-                                                            "flex-1 aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 min-w-0 border",
+                                                            "flex-1 flex flex-col items-center justify-center rounded-md transition-all py-2 min-w-0 border",
                                                             selectedSeats.includes(seat.id)
-                                                                ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
+                                                                ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-sm"
                                                                 : getSeatStatusColor(displayStatus, isAdmin)
                                                         )}
                                                         title={`Ghế ${seat.name}`}
@@ -250,7 +250,7 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         {!isAdmin && (displayStatus === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-black"
+                                                                selectedSeats.includes(seat.id) ? "text-secondary-foreground/80" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(seat.price)}
                                                             </span>
@@ -271,7 +271,7 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                             className="grid gap-2 min-w-max"
                             style={{
                                 gridTemplateRows: 'auto 1fr auto 1fr',
-                                gridTemplateColumns: `repeat(${totalRows}, minmax(60px, 80px))`
+                                gridTemplateColumns: `repeat(${totalRows}, minmax(48px, 64px))`
                             }}
                         >
                             {Array.from({ length: totalRows }).map((_, rowIndex) => {
@@ -303,9 +303,9 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
-                                                            "aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 border",
+                                                            "h-14 flex flex-col items-center justify-center rounded-md transition-all p-0.5 border",
                                                             selectedSeats.includes(seat.id)
-                                                                ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
+                                                                ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-sm"
                                                                 : getSeatStatusColor(displayStatus, isAdmin)
                                                         )}
                                                         title={`Ghế ${seat.name} - ${getSeatStatusLabel(seat.status, isAdmin)}`}
@@ -316,7 +316,7 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         {!isAdmin && (displayStatus === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-black"
+                                                                selectedSeats.includes(seat.id) ? "text-secondary-foreground/80" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(seat.price)}
                                                             </span>
@@ -348,9 +348,9 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
-                                                            "aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 border",
+                                                            "h-14 flex flex-col items-center justify-center rounded-md transition-all p-0.5 border",
                                                             selectedSeats.includes(seat.id)
-                                                                ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
+                                                                ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-sm"
                                                                 : getSeatStatusColor(displayStatus, isAdmin)
                                                         )}
                                                         title={`Ghế ${seat.name} - ${getSeatStatusLabel(seat.status, isAdmin)}`}
@@ -361,7 +361,7 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         {!isAdmin && (displayStatus === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-black"
+                                                                selectedSeats.includes(seat.id) ? "text-secondary-foreground/80" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(seat.price)}
                                                             </span>

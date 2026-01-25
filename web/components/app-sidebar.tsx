@@ -9,6 +9,7 @@ import {
   IconMapPin,
   IconCalendar,
 } from "@tabler/icons-react"
+import { ModeToggle } from "@/components/mode-toggle"
 
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
@@ -31,7 +32,7 @@ const data = {
   },
   navMain: [
     {
-      title: "Dashboard",
+      title: "Bảng điều khiển",
       url: "/admin",
       icon: IconDashboard,
     },
@@ -58,7 +59,7 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Settings",
+      title: "Cài đặt",
       url: "#",
       icon: IconSettings,
     },
@@ -77,7 +78,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="#">
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Admin Dashboard</span>
+                <span className="text-base font-semibold">Quản trị viên</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -88,6 +89,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
+        <div className="p-2">
+          <ModeToggle />
+        </div>
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>

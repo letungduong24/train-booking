@@ -1,6 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { useBooking } from '@/features/booking/hooks/use-booking';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -12,11 +13,40 @@ import { format } from 'date-fns';
 import { formatCurrency } from '@/lib/utils';
 import dayjs from 'dayjs';
 import { RouteMap } from '@/features/routes/components/route-map';
+import { BookingTimer } from '@/features/booking/components/booking-timer';
+import { CancelBookingButton } from '@/features/booking/components/cancel-booking-button';
+import { socket } from '@/lib/socket';
+import { useEffect } from 'react';
 
 export default function BookingDetailPage() {
     const params = useParams();
     const router = useRouter();
+    const queryClient = useQueryClient();
     const code = params.code as string;
+
+    useEffect(() => {
+        if (!code) return;
+
+        function onConnect() {
+            console.log("Connected to booking namespace");
+        }
+
+        function onStatusUpdate(data: { bookingCode: string; status: string }) {
+            if (data.bookingCode === code) {
+                queryClient.invalidateQueries({ queryKey: ['booking', code] });
+                router.refresh();
+            }
+        }
+
+        socket.connect();
+        socket.on("connect", onConnect);
+        socket.on("booking.status_update", onStatusUpdate);
+
+        return () => {
+            socket.off("connect", onConnect);
+            socket.off("booking.status_update", onStatusUpdate);
+        };
+    }, [code, router, queryClient]);
 
     const { data: booking, isLoading, error } = useBooking(code);
 
@@ -54,12 +84,12 @@ export default function BookingDetailPage() {
     // Calculate arrival date based on duration (if available in route stations... simplified here)
     // For now we just show departure.
 
-    const getStatusColor = (status: string) => {
+    const getStatusClasses = (status: string) => {
         switch (status) {
-            case 'PENDING': return 'bg-yellow-500 hover:bg-yellow-600';
-            case 'PAID': return 'bg-green-500 hover:bg-green-600';
-            case 'CANCELLED': return 'bg-red-500 hover:bg-red-600';
-            default: return 'bg-gray-500';
+            case 'PENDING': return 'bg-yellow-500 hover:bg-yellow-600 text-white';
+            case 'PAID': return 'bg-green-500 hover:bg-green-600 text-white';
+            case 'CANCELLED': return 'bg-destructive hover:bg-destructive/90 text-destructive-foreground';
+            default: return 'bg-muted text-muted-foreground';
         }
     };
 
@@ -83,22 +113,29 @@ export default function BookingDetailPage() {
                     <h1 className="text-3xl font-bold">Chi tiết vé tàu</h1>
                     <p className="text-muted-foreground mt-1">Mã đơn hàng: <span className="font-mono font-bold text-foreground">{booking.code}</span></p>
                 </div>
-                <Badge className={`${getStatusColor(status)} text-white px-4 py-1.5 text-sm`}>
-                    {getStatusLabel(status)}
-                </Badge>
+                <div className="flex flex-col items-end gap-2">
+                    <Badge className={`${getStatusClasses(status)} px-4 py-1.5 text-sm`}>
+                        {getStatusLabel(status)}
+                    </Badge>
+                    {status === 'PENDING' && (
+                        <div className="text-lg">
+                            <BookingTimer expiresAt={booking.expiresAt} onExpire={() => router.refresh()} />
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Trip Info & Route Map */}
                 <div className="lg:col-span-2 space-y-6">
                     <Card>
-                        <CardHeader className="bg-muted/30 pb-4">
+                        <CardHeader className="bg-muted/30 p-4">
                             <CardTitle className="text-lg flex items-center gap-2">
                                 <Train className="h-5 w-5 text-primary" />
                                 Thông tin chuyến đi
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="pt-6 grid gap-6">
+                        <CardContent className="grid gap-6">
                             <div className="flex justify-between items-center">
                                 <div>
                                     <p className="text-sm text-muted-foreground">Tàu</p>
@@ -156,13 +193,13 @@ export default function BookingDetailPage() {
                 <div className="space-y-6">
                     {/* Tickets */}
                     <Card>
-                        <CardHeader className="bg-muted/30 pb-4">
+                        <CardHeader className="bg-muted/30 p-4">
                             <CardTitle className="text-lg flex items-center gap-2">
                                 <Ticket className="h-5 w-5 text-primary" />
                                 Danh sách vé ({tickets.length})
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="pt-6">
+                        <CardContent className="">
                             <div className="space-y-4">
                                 {tickets.map((ticket: any, index: number) => (
                                     <div key={ticket.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 rounded-lg border bg-card/50 gap-3">
@@ -191,23 +228,14 @@ export default function BookingDetailPage() {
 
                     {/* Payment */}
                     <Card>
-                        <CardHeader className="bg-muted/30 pb-4">
+                        <CardHeader className="bg-muted/30 p-4">
                             <CardTitle className="text-lg">Thanh toán</CardTitle>
                         </CardHeader>
-                        <CardContent className="pt-6 space-y-4">
-                            <div className="flex justify-between items-center text-sm">
-                                <span className="text-muted-foreground">Tạm tính</span>
-                                <span>{formatCurrency(totalPrice)}</span>
-                            </div>
-                            <div className="flex justify-between items-center text-sm">
-                                <span className="text-muted-foreground">Giảm giá</span>
-                                <span>0 ₫</span>
-                            </div>
-                            <Separator />
+                        <CardContent className="space-y-4">
                             <div className="flex justify-between items-center">
                                 <span className="font-bold">Tổng cộng</span>
                                 <span className="font-bold text-xl text-primary">
-                                    {totalPrice === 0 && status === 'PENDING'
+                                    {totalPrice === 0
                                         ? <span className="text-sm font-normal italic text-muted-foreground">Chưa định giá</span>
                                         : formatCurrency(totalPrice)
                                     }
@@ -216,12 +244,21 @@ export default function BookingDetailPage() {
 
                             {status === 'PENDING' ? (
                                 <div className="pt-4">
-                                    <Button
-                                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold h-12 text-md"
-                                        onClick={() => router.push(`/onboard/booking/passengers?bookingCode=${code}`)}
-                                    >
-                                        Thanh toán ngay
-                                    </Button>
+                                    <div className="flex flex-col gap-2">
+                                        <CancelBookingButton
+                                            bookingCode={code}
+                                            className="w-full"
+                                            onCancelSuccess={() => router.refresh()}
+                                        >
+                                            Hủy đơn hàng
+                                        </CancelBookingButton>
+                                        <Button
+                                            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold h-12 text-md"
+                                            onClick={() => router.push(`/onboard/booking/passengers?bookingCode=${code}`)}
+                                        >
+                                            Thanh toán ngay
+                                        </Button>
+                                    </div>
                                     <p className="text-xs text-center text-muted-foreground mt-2">
                                         Vui lòng thanh toán trước khi vé hết hạn giữ chỗ.
                                     </p>
