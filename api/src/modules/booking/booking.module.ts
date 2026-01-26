@@ -8,10 +8,13 @@ import { BullModule } from '@nestjs/bullmq';
 import { BookingProcessor } from './booking.processor';
 import { BookingGateway } from './booking.gateway';
 
+import { WalletModule } from '../wallet/wallet.module';
+
 @Module({
     imports: [
         PrismaModule,
         forwardRef(() => PaymentModule),
+        forwardRef(() => WalletModule),
         PricingModule,
         BullModule.registerQueue({
             name: 'booking',

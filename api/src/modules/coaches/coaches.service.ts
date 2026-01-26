@@ -253,11 +253,13 @@ export class CoachesService {
       },
       select: {
         seatId: true,
+        passengerName: true,
+        passengerId: true,
       }
     });
 
-    // Create a Set for fast lookup
-    const bookedSeatIds = new Set(bookedTickets.map(t => t.seatId));
+    // Create a Map for fast lookup
+    const bookedSeatInfo = new Map(bookedTickets.map(t => [t.seatId, t]));
 
     // Calculate price for each seat and add bookingStatus
     const seatsWithPrices = coach.seats.map((seat) => {
@@ -277,10 +279,19 @@ export class CoachesService {
 
       // Determine booking status
       let bookingStatus: string;
+      let passenger: { name: string; id: string } | undefined = undefined;
+
       if (seat.status === 'DISABLED') {
         bookingStatus = 'DISABLED';
-      } else if (bookedSeatIds.has(seat.id)) {
+      } else if (bookedSeatInfo.has(seat.id)) {
         bookingStatus = 'BOOKED';
+        const ticket = bookedSeatInfo.get(seat.id);
+        if (ticket) {
+          passenger = {
+            name: ticket.passengerName,
+            id: ticket.passengerId
+          };
+        }
       } else {
         bookingStatus = 'AVAILABLE';
       }
@@ -289,6 +300,7 @@ export class CoachesService {
         ...seat,
         price,
         bookingStatus,
+        passenger,
       };
     });
 

@@ -1,4 +1,5 @@
-import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
+import { WalletService } from '../wallet/wallet.service';
 import { ConfigService } from '@nestjs/config';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
@@ -29,6 +30,8 @@ export class BookingService {
         @Inject('REDIS_CLIENT') private readonly redis: Redis,
         @InjectQueue('booking') private readonly bookingQueue: Queue,
         private readonly bookingGateway: BookingGateway,
+        @Inject(forwardRef(() => WalletService))
+        private readonly walletService: WalletService,
     ) { }
 
     async createBooking(userId: string | null, dto: CreateBookingDto, ipAddr: string) {
@@ -219,6 +222,48 @@ export class BookingService {
             toStationIndex: p.toStationIndex,
         }));
 
+        // [CRITICAL] Race Condition Check
+        // Trước khi chốt đơn, kiểm tra xem ghế đã bị ai mua mất chưa?
+        // (Trường hợp: Hết hạn lock -> Người khác mua -> User cũ thanh toán muộn)
+        const tripId = metadata.tripId;
+        const seatIds = tickets.map(t => t.seatId);
+
+        const existingTickets = await this.prisma.ticket.findMany({
+            where: {
+                tripId: tripId,
+                seatId: { in: seatIds }
+            }
+        });
+
+        if (existingTickets.length > 0) {
+            this.logger.error(`Race condition detected for Booking ${bookingCode}. Seats already taken.`);
+
+            // Refund to Wallet if User exists
+            if (booking.userId) {
+                try {
+                    await this.walletService.refundToWallet(
+                        booking.userId,
+                        booking.totalPrice,
+                        bookingCode,
+                        'Hoàn tiền tự động do hết ghế (Lỗi đồng bộ)'
+                    );
+                    this.logger.log(`Refunded ${booking.totalPrice} to wallet for user ${booking.userId}`);
+                } catch (refundError) {
+                    this.logger.error(`Failed to refund to wallet for booking ${bookingCode}`, refundError);
+                }
+            }
+
+            // Cập nhật trạng thái để Admin biết
+            await this.prisma.booking.update({
+                where: { code: bookingCode },
+                data: {
+                    status: 'PAYMENT_FAILED',
+                }
+            });
+
+            throw new BadRequestException('Ghế đã được đặt bởi người khác. Tiền đã được hoàn về ví của bạn.');
+        }
+
         // Cập nhật đơn hàng: tạo vé + chuyển trạng thái + xóa metadata
         const updatedBooking = await this.prisma.booking.update({
             where: { code: bookingCode },
@@ -249,6 +294,7 @@ export class BookingService {
             // Tốt nhất là các client nên trigger fetch lại seats khi nhận event này hoặc một event `seats.booked` riêng.
             // Nhưng hiện tại để fix lỗi "bị ghi đè locked" thì ta release lock là được.
             this.bookingGateway.emitSeatsReleased(tripId, seatIds);
+            this.bookingGateway.emitSeatsBooked(tripId, seatIds);
         }
 
         this.logger.log(`Đã xác nhận đơn hàng ${bookingCode} với ${tickets.length} vé`);

@@ -9,6 +9,26 @@
 * 🟢 You can import this file directly.
 */
 
+export const TransactionType = {
+  DEPOSIT: 'DEPOSIT',
+  WITHDRAW: 'WITHDRAW',
+  PAYMENT: 'PAYMENT',
+  REFUND: 'REFUND'
+} as const
+
+export type TransactionType = (typeof TransactionType)[keyof typeof TransactionType]
+
+
+export const TransactionStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type TransactionStatus = (typeof TransactionStatus)[keyof typeof TransactionStatus]
+
+
 export const CoachLayout = {
   SEAT: 'SEAT',
   BED: 'BED'
@@ -38,7 +58,8 @@ export type SeatType = (typeof SeatType)[keyof typeof SeatType]
 export const BookingStatus = {
   PENDING: 'PENDING',
   PAID: 'PAID',
-  CANCELLED: 'CANCELLED'
+  CANCELLED: 'CANCELLED',
+  PAYMENT_FAILED: 'PAYMENT_FAILED'
 } as const
 
 export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus]

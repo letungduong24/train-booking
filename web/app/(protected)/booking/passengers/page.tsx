@@ -6,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useBooking } from '@/features/booking/hooks/use-booking';
 import { useUpdateBookingPassengers } from '@/features/booking/hooks/use-update-booking-passengers';
 import { PassengerInfoForm } from '@/features/booking/components/passenger-info-form';
+import { PaymentMethodDialog } from '@/features/booking/components/payment-method-dialog';
 import { PassengerFormData } from '@/lib/schemas/booking.schema';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,7 @@ function PassengersPageContent() {
 
     const [seats, setSeats] = useState<Array<{ id: string; name: string; price: number }>>([]);
     const [initialPassengers, setInitialPassengers] = useState<PassengerFormData[]>([]);
+    const [paymentDialog, setPaymentDialog] = useState({ open: false, amount: 0, paymentUrl: '', bookingCode: '' });
 
     useEffect(() => {
         if (!bookingCode) return;
@@ -156,8 +158,13 @@ function PassengersPageContent() {
                 }))
             },
             {
-                onSuccess: (data) => {
-                    window.location.href = data.paymentUrl;
+                onSuccess: (data: any) => {
+                    setPaymentDialog({
+                        open: true,
+                        amount: data.totalPrice,
+                        paymentUrl: data.paymentUrl,
+                        bookingCode: data.bookingCode
+                    });
                 },
                 onError: (error) => {
                     console.error('Booking failed:', error);
@@ -219,6 +226,14 @@ function PassengersPageContent() {
                 submitLabel={isUpdating ? "Đang xử lý..." : "Thanh toán"}
                 bookingCode={bookingCode || undefined}
                 bookingExpiresAt={booking.expiresAt}
+            />
+
+            <PaymentMethodDialog
+                open={paymentDialog.open}
+                onOpenChange={(open) => setPaymentDialog(prev => ({ ...prev, open }))}
+                amount={paymentDialog.amount}
+                paymentUrl={paymentDialog.paymentUrl}
+                bookingCode={bookingCode || ""}
             />
         </div>
     );

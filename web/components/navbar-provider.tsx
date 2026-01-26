@@ -19,10 +19,6 @@ export function NavbarProvider({ children }: NavbarProviderProps) {
     })));
     const logout = useAuthStore((state) => state.logout);
 
-    // Hide navbar on admin routes
-    if (pathname?.startsWith('/admin')) {
-        return <div className="flex-1 flex flex-col">{children}</div>;
-    }
 
     const [isMounted, setIsMounted] = useState(false);
 
@@ -43,6 +39,7 @@ export function NavbarProvider({ children }: NavbarProviderProps) {
         { href: '/dashboard', label: 'Quản lý', active: pathname === '/dashboard' },
         { href: '/booking', label: 'Đặt vé', active: pathname === '/booking' },
         { href: '/dashboard/history', label: 'Lịch sử', active: pathname?.startsWith('/dashboard/history') },
+        { href: '/user/wallet', label: 'Ví của tôi', active: pathname?.startsWith('/user/wallet') },
         { href: '/contact', label: 'Liên hệ', active: pathname === '/contact' },
     ];
 
@@ -77,6 +74,10 @@ export function NavbarProvider({ children }: NavbarProviderProps) {
             router.push('/register');
         }
     };
+
+    if (pathname?.startsWith('/admin')) {
+        return <div className="flex-1 flex flex-col">{children}</div>;
+    }
 
     return (
         <div className="flex-1 flex flex-col">

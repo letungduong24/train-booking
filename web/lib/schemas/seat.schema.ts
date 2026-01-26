@@ -22,6 +22,10 @@ export const seatSchema = z.object({
     coachId: z.string(),
     price: z.number(),
     bookingStatus: BookingStatusEnum.optional(), // Booking status for specific trip and route segment
+    passenger: z.object({
+        name: z.string(),
+        id: z.string(),
+    }).optional(),
 });
 
 export type Seat = z.infer<typeof seatSchema>;

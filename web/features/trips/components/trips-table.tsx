@@ -13,6 +13,7 @@ import {
 import { IconArrowDown, IconArrowsSort, IconArrowUp, IconSearch, IconTrash, IconEdit } from "@tabler/icons-react"
 import { useTrips, useDeleteTrip } from "@/features/trips/hooks/use-trips"
 import { Trip } from "@/lib/schemas/trip.schema"
+import { getTripStatusInfo } from "@/lib/trip-status"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -38,12 +39,6 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 
-const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-    SCHEDULED: { label: "Đã lên lịch", variant: "default" },
-    RUNNING: { label: "Đang chạy", variant: "secondary" },
-    COMPLETED: { label: "Hoàn thành", variant: "outline" },
-    CANCELLED: { label: "Đã hủy", variant: "destructive" },
-}
 
 export function TripsTable() {
     const router = useRouter()
@@ -174,8 +169,13 @@ export function TripsTable() {
             header: "Trạng thái",
             cell: ({ row }) => {
                 const status = row.getValue("status") as string;
-                const statusInfo = statusMap[status] || { label: status, variant: "outline" as const };
-                return <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+                const { label, variant, colorClass } = getTripStatusInfo(status);
+                // Badge variant only supports specific keys, so we might override with className if needed
+                // But shadcn Badge variants are tied to background colors usually.
+                // Let's use outline variant and apply colorClass for custom colors if needed, 
+                // OR map our variant to BadgeProps['variant']
+
+                return <Badge variant={variant} className={colorClass}>{label}</Badge>
             },
         },
         {
@@ -185,21 +185,6 @@ export function TripsTable() {
                 const count = row.original._count?.tickets || 0;
                 return <div className="text-center">{count}</div>
             },
-        },
-        {
-            id: "actions",
-            header: "Thao tác",
-            cell: ({ row }) => (
-                <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => handleDelete(row.original.id, e)}
-                    >
-                        <IconTrash className="h-4 w-4" />
-                    </Button>
-                </div>
-            ),
         },
     ]
 
@@ -312,6 +297,7 @@ export function TripsTable() {
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
                                     className="cursor-pointer hover:bg-muted/50"
+                                    onClick={() => router.push(`/admin/trips/${row.original.id}`)}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>

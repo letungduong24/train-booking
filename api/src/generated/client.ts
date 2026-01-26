@@ -48,6 +48,11 @@ export type User = Prisma.UserModel
  */
 export type RefreshToken = Prisma.RefreshTokenModel
 /**
+ * Model Transaction
+ * 
+ */
+export type Transaction = Prisma.TransactionModel
+/**
  * Model Station
  * 
  */

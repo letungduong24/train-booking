@@ -10,11 +10,19 @@ export function getComputedSeatStatus(
     isAdmin: boolean = false
 ): SeatStatus | BookingStatus {
     const isLocked = lockedSeatIds.includes(seat.id);
-    let displayStatus = isAdmin ? seat.status : (seat.bookingStatus || seat.status);
+    // Admin also wants to see booking status (Booked, Holding, etc)
+    let displayStatus = (seat.bookingStatus || seat.status);
 
-    if (!isAdmin && isLocked && displayStatus === 'AVAILABLE') {
+    // If physically disabled, show as disabled regardless of booking status
+    if (seat.status === 'DISABLED') {
+        return 'DISABLED';
+    }
+
+    // Show locking for both User and Admin (Admin wants to see what users see)
+    if (isLocked && displayStatus === 'AVAILABLE') {
         return 'HOLDING';
     }
+
     return displayStatus;
 }
 
@@ -29,9 +37,9 @@ export function getSeatStatusColor(status: SeatStatus | BookingStatus, isAdmin: 
         case 'AVAILABLE':
             return 'border-secondary hover:bg-secondary/10 cursor-pointer';
         case 'BOOKED':
-            return `bg-primary text-primary-foreground ${cursorClass} opacity-50 border-primary`;
+            return `bg-primary text-white font-bold ${cursorClass} border-primary`;
         case 'DISABLED':
-            return `bg-gray-300 dark:bg-muted text-muted-foreground border-transparent cursor-not-allowed`; // Distinct gray in light, muted in dark
+            return `bg-gray-300 dark:bg-muted text-muted-foreground border-transparent ${isAdmin ? 'cursor-pointer' : 'cursor-not-allowed'}`; // Distinct gray in light, muted in dark
         case 'HOLDING':
             return `bg-[#E5BA41] text-white border-[#E5BA41] ${cursorClass}`;
         default:
@@ -41,13 +49,14 @@ export function getSeatStatusColor(status: SeatStatus | BookingStatus, isAdmin: 
 
 // Get seat status label
 export function getSeatStatusLabel(status: SeatStatus | BookingStatus, isAdmin: boolean = false): string {
-    if (isAdmin) {
-        return status === 'DISABLED' ? 'Đã vô hiệu hóa' : 'Hoạt động';
+    // If admin, we still want to show detailed status if it's Booked/Holding
+    if (isAdmin && status === 'DISABLED') {
+        return 'Đã vô hiệu hóa';
     }
 
     switch (status) {
-        case 'AVAILABLE':
-            return 'Còn trống';
+        case 'AVAILABLE': // Admin sees "Hoạt động" if pure available? Or "Còn trống"? User said "exactly like user" so "Còn trống" is better.
+            return isAdmin ? 'Hoạt động (Trống)' : 'Còn trống';
         case 'BOOKED':
             return 'Đã đặt';
         case 'DISABLED':

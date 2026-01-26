@@ -16,6 +16,7 @@ import { TripModule } from './modules/trip/trip.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { BookingModule } from './modules/booking/booking.module';
 import { PassengerGroupModule } from './modules/passenger-group/passenger-group.module';
+import { WalletModule } from './modules/wallet/wallet.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { PassengerGroupModule } from './modules/passenger-group/passenger-group.
     BookingModule,
     PassengerGroupModule,
     RedisModule,
+    WalletModule,
     BullModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({

@@ -4,13 +4,18 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 import type { Response, Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { BookingService } from '../booking/booking.service';
+import { WalletService } from '../wallet/wallet.service';
+import { Inject, forwardRef } from '@nestjs/common';
 
 @Controller('payment')
 export class PaymentController {
     constructor(
         private readonly paymentService: PaymentService,
         private readonly configService: ConfigService,
+        @Inject(forwardRef(() => BookingService))
         private readonly bookingService: BookingService,
+        @Inject(forwardRef(() => WalletService))
+        private readonly walletService: WalletService,
     ) { }
 
     @Post('create_payment_url')
@@ -35,12 +40,18 @@ export class PaymentController {
     async vnpayReturn(@Query() query: any, @Res() res: Response) {
         const result = this.paymentService.verifyReturnUrl(query);
 
-        // If payment successful, confirm booking
+        // Logic to determine Booking vs Deposit
+        const isDeposit = result.orderId.length > 10; // UUID is 36 chars, Booking Code is 8
+
         if (result.isSuccess) {
             try {
-                await this.bookingService.confirmBooking(result.orderId);
+                if (isDeposit) {
+                    await this.walletService.processDeposit(result.orderId);
+                } else {
+                    await this.bookingService.confirmBooking(result.orderId);
+                }
             } catch (error) {
-                console.error('Failed to confirm booking:', error);
+                console.error('Failed to process payment:', error);
             }
         }
 
@@ -48,10 +59,14 @@ export class PaymentController {
         const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
         let redirectUrl = '';
 
-        if (result.isSuccess) {
-            redirectUrl = `${frontendUrl}/booking/payment-result?success=true&orderId=${result.orderId}&code=${result.responseCode}`;
+        if (isDeposit) {
+            redirectUrl = `${frontendUrl}/user/wallet?deposit=${result.isSuccess ? 'success' : 'failed'}&amount=${query.vnp_Amount ? parseInt(query.vnp_Amount) / 100 : 0}`;
         } else {
-            redirectUrl = `${frontendUrl}/booking/payment-result?success=false&orderId=${result.orderId}&code=${result.responseCode}`;
+            if (result.isSuccess) {
+                redirectUrl = `${frontendUrl}/booking/payment-result?success=true&orderId=${result.orderId}&code=${result.responseCode}`;
+            } else {
+                redirectUrl = `${frontendUrl}/booking/payment-result?success=false&orderId=${result.orderId}&code=${result.responseCode}`;
+            }
         }
 
         return res.redirect(redirectUrl);
@@ -60,14 +75,20 @@ export class PaymentController {
     @Get('vnpay_ipn')
     async vnpayIpn(@Query() query: any) {
         const result = this.paymentService.verifyReturnUrl(query);
+        const isDeposit = result.orderId.length > 10;
 
         // Update booking if payment successful
         if (result.isSuccess) {
             try {
-                await this.bookingService.confirmBooking(result.orderId);
-                console.log(`IPN: Booking ${result.orderId} confirmed`);
+                if (isDeposit) {
+                    await this.walletService.processDeposit(result.orderId);
+                    console.log(`IPN: Deposit ${result.orderId} confirmed`);
+                } else {
+                    await this.bookingService.confirmBooking(result.orderId);
+                    console.log(`IPN: Booking ${result.orderId} confirmed`);
+                }
             } catch (error) {
-                console.error(`IPN: Failed to confirm booking ${result.orderId}`, error);
+                console.error(`IPN: Failed to process ${result.orderId}`, error);
             }
         }
 

@@ -6,7 +6,11 @@ import {
   IconLogout,
   IconNotification,
   IconUserCircle,
+  IconHome,
 } from "@tabler/icons-react"
+import { useAuth } from "@/hooks/use-auth"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 import {
   Avatar,
@@ -38,7 +42,21 @@ export function NavUser({
     avatar: string
   }
 }) {
-  const { isMobile } = useSidebar()
+  const { isMobile, state } = useSidebar()
+  const { logout } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await logout()
+    router.push("/auth/login")
+  }
+
+  // If collapsed, we can't easily show two buttons. 
+  // Standard UX: The icon (Avatar) opens the menu.
+  // User request: Click item -> Profile.
+  // Compromise: In collapsed mode, click -> Profile? Then how to Logout?
+  // Let's assume in Collapsed mode, it behaves as a Dropdown Trigger (default).
+  // In Expanded mode, we split it.
 
   return (
     <SidebarMenu>
@@ -84,23 +102,29 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconUserCircle />
-                Account
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/profile">
+                  <IconUserCircle className="mr-2 h-4 w-4" />
+                  <span>Tài khoản</span>
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard />
-                Billing
+              <DropdownMenuItem asChild>
+                <Link href="/user/wallet">
+                  <IconCreditCard className="mr-2 h-4 w-4" />
+                  <span>Ví của tôi</span>
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification />
-                Notifications
+              <DropdownMenuItem asChild>
+                <Link href="/">
+                  <IconHome className="mr-2 h-4 w-4" />
+                  <span>Trang chủ</span>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <IconLogout />
-              Log out
+            <DropdownMenuItem onClick={handleLogout}>
+              <IconLogout className="mr-2 h-4 w-4" />
+              <span>Đăng xuất</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

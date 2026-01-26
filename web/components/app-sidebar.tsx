@@ -8,8 +8,10 @@ import {
   IconSettings,
   IconMapPin,
   IconCalendar,
+  IconHome,
+  IconCreditCard,
+  type Icon,
 } from "@tabler/icons-react"
-import { ModeToggle } from "@/components/mode-toggle"
 
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
@@ -24,49 +26,63 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+import { useAuth } from "@/hooks/use-auth"
+
+// Menu items
+const navMain = [
+  {
+    title: "Bảng điều khiển",
+    url: "/admin",
+    icon: IconDashboard,
   },
-  navMain: [
-    {
-      title: "Bảng điều khiển",
-      url: "/admin",
-      icon: IconDashboard,
-    },
-    {
-      title: "Tuyến đường",
-      url: "/admin/routes",
-      icon: IconBrandGoogleMaps,
-    },
-    {
-      title: "Trạm dừng",
-      url: "/admin/stations",
-      icon: IconMapPin,
-    },
-    {
-      title: "Chuyến đi",
-      url: "/admin/trips",
-      icon: IconCalendar,
-    },
-    {
-      title: "Quản lý tàu",
-      url: "/admin/trains",
-      icon: IconBrandGoogleMaps, // TODO: Use better icon
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Cài đặt",
-      url: "#",
-      icon: IconSettings,
-    },
-  ],
-}
+  {
+    title: "Tuyến đường",
+    url: "/admin/routes",
+    icon: IconBrandGoogleMaps,
+  },
+  {
+    title: "Trạm dừng",
+    url: "/admin/stations",
+    icon: IconMapPin,
+  },
+  {
+    title: "Chuyến đi",
+    url: "/admin/trips",
+    icon: IconCalendar,
+  },
+  {
+    title: "Quản lý tàu",
+    url: "/admin/trains",
+    icon: IconBrandGoogleMaps,
+  },
+  {
+    title: "Quản lý tài chính",
+    url: "/admin/finance/withdrawals",
+    icon: IconCreditCard,
+  },
+]
+
+const navSecondary: {
+  title: string
+  url: string
+  icon: Icon
+}[] = []
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuth();
+
+  const userData = {
+    name: user?.name || "Admin",
+    email: user?.email || "admin@example.com",
+    avatar: "/avatars/shadcn.jpg", // TODO: Real avatar if available
+  }
+
+  const data = {
+    navMain,
+    navSecondary,
+    user: userData
+  }
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -89,9 +105,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <div className="p-2">
-          <ModeToggle />
-        </div>
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>

@@ -31,7 +31,9 @@ export const createTripSchema = z.object({
     departureTime: z.string().min(1, "Thời gian khởi hành không được để trống"),
 });
 
-export const updateTripSchema = createTripSchema.partial();
+export const updateTripSchema = createTripSchema.partial().extend({
+    status: z.string().optional(),
+});
 
 // Inferred Types
 export type Trip = z.infer<typeof tripSchema>;

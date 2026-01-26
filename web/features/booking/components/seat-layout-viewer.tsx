@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { cn, formatPrice } from "@/lib/utils"
 import { Seat } from "@/lib/schemas/seat.schema"
 import { CoachTemplate } from "@/lib/schemas/coach.schema"
@@ -16,11 +16,26 @@ interface SeatLayoutViewerProps {
     tripId?: string
     onSeatsForceDeselected?: (seatIds: string[]) => void
     isSubmitting?: boolean
+    highlightedSeatIds?: string[]
+    focusedSeatId?: string | null
 }
 
 
 
-export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats = [], isAdmin = false, tripId, onSeatsForceDeselected, isSubmitting = false }: SeatLayoutViewerProps) {
+export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats = [], isAdmin = false, tripId, onSeatsForceDeselected, isSubmitting = false, highlightedSeatIds = [], focusedSeatId = null }: SeatLayoutViewerProps) {
+    const lastScrolledSeatId = useRef<string | null>(null)
+
+    // Scroll to focused seat
+    useEffect(() => {
+        if (focusedSeatId && focusedSeatId !== lastScrolledSeatId.current) {
+            const element = document.getElementById(`seat-${focusedSeatId}`)
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                lastScrolledSeatId.current = focusedSeatId
+            }
+        }
+    }, [focusedSeatId])
+
     const { totalRows } = template
     const [lockedSeatIds, setLockedSeatIds] = useState<string[]>([])
 
@@ -111,43 +126,27 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
 
             {/* Legend */}
             <div className="flex flex-wrap gap-4 text-xs">
-                {isAdmin ? (
-                    // Admin Legend
-                    <>
-                        <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full border border-green-500" />
-                            <span>Hoạt động</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-gray-300 dark:bg-muted" />
-                            <span>Đã vô hiệu hóa</span>
-                        </div>
-                    </>
-                ) : (
-                    // User Booking Legend
-                    <>
-                        <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full border border-secondary" />
-                            <span>Còn trống</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center" />
-                            <span>Đã chọn</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-primary/50 border border-primary" />
-                            <span>Đã đặt</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-[#E5BA41] border border-[#E5BA41]" />
-                            <span>Đang giữ chỗ</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <div className="w-4 h-4 rounded-full bg-gray-300 dark:bg-muted" />
-                            <span>Không thể mua</span>
-                        </div>
-                    </>
-                )}
+                {/* User Booking Legend - Show for Admin too for consistency */}
+                <div className="flex items-center gap-1">
+                    <div className="w-4 h-4 rounded-full border border-secondary" />
+                    <span>{isAdmin ? 'Hoạt động (Trống)' : 'Còn trống'}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                    <div className="w-4 h-4 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center" />
+                    <span>Đã chọn</span>
+                </div>
+                <div className="flex items-center gap-1">
+                    <div className="w-4 h-4 rounded-full bg-primary/50 border border-primary" />
+                    <span>Đã đặt</span>
+                </div>
+                <div className="flex items-center gap-1">
+                    <div className="w-4 h-4 rounded-full bg-[#E5BA41] border border-[#E5BA41]" />
+                    <span>Đang giữ chỗ</span>
+                </div>
+                <div className="flex items-center gap-1">
+                    <div className="w-4 h-4 rounded-full bg-gray-300 dark:bg-muted" />
+                    <span>{isAdmin ? 'Đã vô hiệu hóa' : 'Không thể mua'}</span>
+                </div>
             </div>
 
             {/* Seat Grid */}
@@ -188,13 +187,16 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                 return (
                                                     <button
                                                         key={seat.id}
+                                                        id={`seat-${seat.id}`}
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
                                                             "flex-1 flex flex-col items-center justify-center rounded-md transition-all py-2 min-w-0 border",
                                                             selectedSeats.includes(seat.id)
-                                                                ? "bg-blue-400 text-white hover:bg-blue-500 border-transparent shadow-sm"
-                                                                : getSeatStatusColor(displayStatus, isAdmin)
+                                                                ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-sm"
+                                                                : getSeatStatusColor(displayStatus, isAdmin),
+                                                            focusedSeatId === seat.id && "ring-4 ring-primary ring-offset-2 animate-pulse",
+                                                            highlightedSeatIds.includes(seat.id) && "ring-2 ring-primary/50"
                                                         )}
                                                         title={`Ghế ${seat.name}`}
                                                     >
@@ -234,13 +236,16 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                 return (
                                                     <button
                                                         key={seat.id}
+                                                        id={`seat-${seat.id}`}
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
                                                             "flex-1 flex flex-col items-center justify-center rounded-md transition-all py-2 min-w-0 border",
                                                             selectedSeats.includes(seat.id)
                                                                 ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-sm"
-                                                                : getSeatStatusColor(displayStatus, isAdmin)
+                                                                : getSeatStatusColor(displayStatus, isAdmin),
+                                                            focusedSeatId === seat.id && "ring-4 ring-primary ring-offset-2 animate-pulse",
+                                                            highlightedSeatIds.includes(seat.id) && "ring-2 ring-primary/50"
                                                         )}
                                                         title={`Ghế ${seat.name}`}
                                                     >
@@ -300,13 +305,16 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                 return (
                                                     <button
                                                         key={seat.id}
+                                                        id={`seat-${seat.id}`}
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
                                                             "h-14 flex flex-col items-center justify-center rounded-md transition-all p-0.5 border",
                                                             selectedSeats.includes(seat.id)
                                                                 ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-sm"
-                                                                : getSeatStatusColor(displayStatus, isAdmin)
+                                                                : getSeatStatusColor(displayStatus, isAdmin),
+                                                            focusedSeatId === seat.id && "ring-4 ring-primary ring-offset-2 animate-pulse",
+                                                            highlightedSeatIds.includes(seat.id) && "ring-2 ring-primary/50"
                                                         )}
                                                         title={`Ghế ${seat.name} - ${getSeatStatusLabel(seat.status, isAdmin)}`}
                                                     >
@@ -345,13 +353,16 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                 return (
                                                     <button
                                                         key={seat.id}
+                                                        id={`seat-${seat.id}`}
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
                                                             "h-14 flex flex-col items-center justify-center rounded-md transition-all p-0.5 border",
                                                             selectedSeats.includes(seat.id)
                                                                 ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-sm"
-                                                                : getSeatStatusColor(displayStatus, isAdmin)
+                                                                : getSeatStatusColor(displayStatus, isAdmin),
+                                                            focusedSeatId === seat.id && "ring-4 ring-primary ring-offset-2 animate-pulse",
+                                                            highlightedSeatIds.includes(seat.id) && "ring-2 ring-primary/50"
                                                         )}
                                                         title={`Ghế ${seat.name} - ${getSeatStatusLabel(seat.status, isAdmin)}`}
                                                     >
