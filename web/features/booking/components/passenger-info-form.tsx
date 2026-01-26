@@ -15,14 +15,7 @@ import { AlertCircle, Check } from 'lucide-react';
 import { BookingTimer } from './booking-timer';
 import { CancelBookingButton } from './cancel-booking-button';
 
-export interface PassengerFormData {
-    seatId: string;
-    seatName: string;
-    passengerName: string;
-    passengerId: string;
-    passengerGroupId: string;
-    ageCategory: 'child' | 'adult'; // < 14 or ≥ 14
-}
+import { PassengerFormData } from '@/lib/schemas/booking.schema';
 
 interface PassengerInfoFormProps {
     seats: Array<{ id: string; name: string; price: number }>;
@@ -351,9 +344,9 @@ export function PassengerInfoForm({
                             </Button>
                             <CancelBookingButton
                                 bookingCode={bookingCode}
-                                className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                                className="flex-1"
                                 onCancelSuccess={onCancel}
-                                variant="outline"
+                                variant="destructive"
                             >
                                 Hủy đơn
                             </CancelBookingButton>

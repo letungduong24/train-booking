@@ -66,11 +66,11 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
     };
 
     const handlePay = () => {
-        router.push(`/onboard/booking/passengers?bookingCode=${booking.code}`);
+        router.push(`/booking/passengers?bookingCode=${booking.code}`);
     };
 
     const handleViewDetails = () => {
-        router.push(`/onboard/history/${booking.code}`);
+        router.push(`/dashboard/history/${booking.code}`);
     };
 
     const metadata = booking.metadata;

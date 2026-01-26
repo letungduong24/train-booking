@@ -62,7 +62,7 @@ export default function BookingDetailPage() {
         return (
             <div className="container mx-auto py-20 text-center">
                 <h2 className="text-xl font-semibold mb-2">Không tìm thấy đơn hàng</h2>
-                <Button onClick={() => router.push('/onboard/history')}>Quay lại danh sách</Button>
+                <Button onClick={() => router.push('/dashboard/history')}>Quay lại danh sách</Button>
             </div>
         );
     }
@@ -70,15 +70,16 @@ export default function BookingDetailPage() {
     const { trip, tickets, status, totalPrice, metadata } = booking;
     const departureDate = new Date(trip.departureTime);
 
-    let fromStation = trip.route.stations.find((s: any) => s.stationId === metadata?.fromStationId);
-    let toStation = trip.route.stations.find((s: any) => s.stationId === metadata?.toStationId);
+    const stations = trip.route.stations || [];
+    let fromStation = stations.find((s: any) => s.stationId === metadata?.fromStationId);
+    let toStation = stations.find((s: any) => s.stationId === metadata?.toStationId);
 
     // Fallback for PAID bookings where metadata might be cleared/irrelevant if tickets exist
     if (!fromStation && tickets.length > 0) {
-        fromStation = trip.route.stations.find((s: any) => s.index === tickets[0].fromStationIndex);
+        fromStation = stations.find((s: any) => s.index === tickets[0].fromStationIndex);
     }
     if (!toStation && tickets.length > 0) {
-        toStation = trip.route.stations.find((s: any) => s.index === tickets[0].toStationIndex);
+        toStation = stations.find((s: any) => s.index === tickets[0].toStationIndex);
     }
 
     // Calculate arrival date based on duration (if available in route stations... simplified here)
@@ -104,7 +105,7 @@ export default function BookingDetailPage() {
 
     return (
         <div className="container mx-auto py-8 px-4 max-w-6xl">
-            <Button variant="ghost" onClick={() => router.push('/onboard/history')} className="mb-6">
+            <Button variant="ghost" onClick={() => router.push('/dashboard/history')} className="mb-6">
                 <ArrowLeft className="mr-2 h-4 w-4" /> Quay lại lịch sử
             </Button>
 
@@ -254,7 +255,7 @@ export default function BookingDetailPage() {
                                         </CancelBookingButton>
                                         <Button
                                             className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold h-12 text-md"
-                                            onClick={() => router.push(`/onboard/booking/passengers?bookingCode=${code}`)}
+                                            onClick={() => router.push(`/booking/passengers?bookingCode=${booking.code}`)}
                                         >
                                             Thanh toán ngay
                                         </Button>

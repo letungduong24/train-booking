@@ -32,7 +32,7 @@ export default function PaymentResultPage() {
                         }
                     </p>
                     <div className="flex flex-col gap-2">
-                        <Button onClick={() => router.push('/onboard/booking')}>
+                        <Button onClick={() => router.push('/dashboard/booking')}>
                             Đặt vé mới
                         </Button>
                         <Button variant="outline" onClick={() => router.push('/')}>

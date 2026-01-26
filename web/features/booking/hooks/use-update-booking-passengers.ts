@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
-import { PassengerInfo } from './use-create-booking';
+import { PassengerFormData } from '@/lib/schemas/booking.schema';
 
 export interface UpdateBookingPassengersInput {
     code: string;
-    passengers: PassengerInfo[];
+    passengers: Pick<PassengerFormData, 'seatId' | 'passengerName' | 'passengerId' | 'passengerGroupId'>[];
 }
 
 export interface UpdateBookingResponse {

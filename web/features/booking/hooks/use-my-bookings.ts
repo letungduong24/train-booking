@@ -1,28 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
-import { BookingMetadata } from '../types';
+import { z } from 'zod';
+import { BookingSchema } from '@/lib/schemas/booking.schema';
 
-export interface Booking {
-    id: string;
-    code: string;
-    status: 'PENDING' | 'PAID' | 'CANCELLED';
-    totalPrice: number;
-    createdAt: string;
-    expiresAt: string;
-    trip: {
-        id: string;
-        departureTime: string;
-        endTime: string;
-        route: {
-            name: string;
-        };
-        train: {
-            code: string;
-        };
-    };
-    tickets: any[];
-    metadata?: BookingMetadata;
-}
+export type Booking = z.infer<typeof BookingSchema>;
 
 interface UseMyBookingsParams {
     page?: number;

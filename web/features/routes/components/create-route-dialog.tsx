@@ -44,7 +44,7 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
     const [open, setOpen] = React.useState(false)
     const createRoute = useCreateRoute()
 
-    const form = useForm<CreateRouteInput>({
+    const form = useForm({
         resolver: zodResolver(createRouteSchema),
         defaultValues: {
             name: "",

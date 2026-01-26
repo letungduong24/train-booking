@@ -49,9 +49,9 @@ export class PaymentController {
         let redirectUrl = '';
 
         if (result.isSuccess) {
-            redirectUrl = `${frontendUrl}/onboard/booking/payment-result?success=true&orderId=${result.orderId}&code=${result.responseCode}`;
+            redirectUrl = `${frontendUrl}/booking/payment-result?success=true&orderId=${result.orderId}&code=${result.responseCode}`;
         } else {
-            redirectUrl = `${frontendUrl}/onboard/booking/payment-result?success=false&orderId=${result.orderId}&code=${result.responseCode}`;
+            redirectUrl = `${frontendUrl}/booking/payment-result?success=false&orderId=${result.orderId}&code=${result.responseCode}`;
         }
 
         return res.redirect(redirectUrl);

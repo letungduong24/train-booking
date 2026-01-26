@@ -49,7 +49,8 @@ export function LoginForm({
       await login(data.email, data.password);
 
       // Redirect to onboard page after successful login
-      router.push('/onboard');
+      const callbackUrl = new URLSearchParams(window.location.search).get('callbackUrl');
+      router.push(callbackUrl || '/dashboard');
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu của bạn.';
       setApiError(errorMessage);

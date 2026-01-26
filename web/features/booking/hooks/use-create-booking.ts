@@ -1,25 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
+import { z } from 'zod';
+import { CreateBookingInputSchema, CreateBookingResponseSchema } from '@/lib/schemas/booking.schema';
 
-export interface PassengerInfo {
-    seatId: string;
-    passengerName: string;
-    passengerId: string;
-    passengerGroupId: string;
-}
-
-export interface CreateBookingInput {
-    tripId: string;
-    passengers: PassengerInfo[];
-    fromStationId: string;
-    toStationId: string;
-}
-
-export interface BookingResponse {
-    bookingId: string;
-    bookingCode: string;
-    paymentUrl: string;
-}
+export type CreateBookingInput = z.infer<typeof CreateBookingInputSchema>;
+export type BookingResponse = z.infer<typeof CreateBookingResponseSchema>;
 
 const createBooking = async (data: CreateBookingInput) => {
     const response = await apiClient.post<BookingResponse>('/bookings', data);

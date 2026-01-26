@@ -62,7 +62,7 @@ export function TripSearchForm({ className, defaultValues, onSubmit: externalOnS
         params.append('to', values.toStationId);
         params.append('date', values.date);
 
-        router.push(`/onboard/booking?${params.toString()}`);
+        router.push(`/booking?${params.toString()}`);
     };
 
     return (
@@ -98,7 +98,7 @@ export function TripSearchForm({ className, defaultValues, onSubmit: externalOnS
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+                                    <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
                                         <Command>
                                             <CommandInput placeholder="Tìm kiếm ga..." />
                                             <CommandList>
@@ -162,7 +162,7 @@ export function TripSearchForm({ className, defaultValues, onSubmit: externalOnS
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+                                    <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
                                         <Command>
                                             <CommandInput placeholder="Tìm kiếm ga..." />
                                             <CommandList>

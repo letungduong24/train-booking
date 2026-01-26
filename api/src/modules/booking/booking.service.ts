@@ -264,7 +264,23 @@ export class BookingService {
             userId,
             ...(status && { status }),
             ...(search && {
-                code: { contains: search, mode: 'insensitive' },
+                OR: [
+                    { code: { contains: search, mode: 'insensitive' } },
+                    {
+                        trip: {
+                            train: {
+                                name: { contains: search, mode: 'insensitive' }
+                            }
+                        }
+                    },
+                    {
+                        trip: {
+                            route: {
+                                name: { contains: search, mode: 'insensitive' }
+                            }
+                        }
+                    }
+                ]
             }),
         };
 

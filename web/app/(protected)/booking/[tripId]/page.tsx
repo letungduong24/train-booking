@@ -135,7 +135,7 @@ export default function TripDetailPage() {
                 onSuccess: (data) => {
                     console.log('Booking initialized:', data);
                     // Navigate to passengers page instead of showing form
-                    router.push(`/onboard/booking/passengers?bookingCode=${data.bookingCode}`);
+                    router.push(`/booking/passengers?bookingCode=${data.bookingCode}`);
                     // NOTE: Do NOT set isProcessing to false here. 
                     // We want it to remain true while the redirect happens to prevent 
                     // the socket event from triggering a false conflict with our own locks.

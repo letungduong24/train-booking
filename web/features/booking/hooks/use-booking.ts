@@ -1,32 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
+import { z } from 'zod';
+import { BookingResponseSchema } from '@/lib/schemas/booking.schema';
 
-export interface BookingResponse {
-    id: string;
-    code: string;
-    status: 'PENDING' | 'PAID' | 'CANCELLED';
-    totalPrice: number;
-    createdAt: string;
-    expiresAt: string;
-    metadata?: {
-        tripId: string;
-        fromStationId: string;
-        toStationId: string;
-        seatIds?: string[];
-        seats?: Array<{ id: string; name: string; price: number }>;
-        passengers?: Array<{
-            seatId: string;
-            passengerName: string;
-            passengerId: string;
-            passengerGroupId: string;
-            price?: number;
-            fromStationIndex?: number;
-            toStationIndex?: number;
-        }>;
-    };
-    trip: any;
-    tickets: any[];
-}
+export type BookingResponse = z.infer<typeof BookingResponseSchema>;
 
 const fetchBooking = async (code: string): Promise<BookingResponse> => {
     const response = await apiClient.get<BookingResponse>(`/bookings/${code}`);

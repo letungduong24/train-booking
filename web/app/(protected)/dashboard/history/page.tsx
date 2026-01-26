@@ -54,7 +54,7 @@ export default function HistoryPage() {
                     <div className="relative w-full sm:w-[300px]">
                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
-                            placeholder="Tìm theo mã vé..."
+                            placeholder="Tìm theo mã vé, tên tàu, chuyến đi..."
                             className="pl-9"
                             value={search}
                             onChange={handleSearchChange}

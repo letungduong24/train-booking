@@ -61,7 +61,7 @@ export default function BookingPage() {
         params.append('to', values.toStationId);
         params.append('date', values.date);
 
-        router.push(`/onboard/booking?${params.toString()}`);
+        router.push(`/booking?${params.toString()}`);
     };
 
     return (
@@ -108,7 +108,7 @@ export default function BookingPage() {
 
                             {trips.map((trip: any) => (
                                 <Card key={trip.id} className="hover:shadow-md transition-shadow cursor-pointer"
-                                    onClick={() => router.push(`/onboard/booking/${trip.id}?from=${searchParams.fromStationId}&to=${searchParams.toStationId}`)}>
+                                    onClick={() => router.push(`/booking/${trip.id}?from=${searchParams.fromStationId}&to=${searchParams.toStationId}`)}>
                                     <CardContent className="p-6">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-4">

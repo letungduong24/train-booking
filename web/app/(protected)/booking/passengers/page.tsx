@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { useBooking } from '@/features/booking/hooks/use-booking';
 import { useUpdateBookingPassengers } from '@/features/booking/hooks/use-update-booking-passengers';
-import { PassengerFormData, PassengerInfoForm } from '@/features/booking/components/passenger-info-form';
+import { PassengerInfoForm } from '@/features/booking/components/passenger-info-form';
+import { PassengerFormData } from '@/lib/schemas/booking.schema';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, MapPin, Calendar, Clock } from 'lucide-react';
@@ -73,7 +74,7 @@ function PassengersPageContent() {
     useEffect(() => {
         if (booking && booking.status !== 'PENDING') {
             toast.warning('Đơn hàng đã hết hạn chờ thanh toán hoặc bị hủy.');
-            router.push(`/onboard/history/${bookingCode}`);
+            router.push(`/dashboard/booking/${booking.trip.id}/payment-result?failed=true`);
         }
     }, [booking, bookingCode, router]);
 
@@ -131,15 +132,15 @@ function PassengersPageContent() {
     const fromStationId = booking.metadata?.fromStationId;
     const toStationId = booking.metadata?.toStationId;
 
-    const fromStation = trip.route.stations.find((rs: any) => rs.stationId === fromStationId);
-    const toStation = trip.route.stations.find((rs: any) => rs.stationId === toStationId);
+    const fromStation = (trip.route.stations || []).find((rs: any) => rs.stationId === fromStationId);
+    const toStation = (trip.route.stations || []).find((rs: any) => rs.stationId === toStationId);
 
-    const departureDate = trip.departureTime && fromStation
+    const departureDate = trip.departureTime && fromStation && fromStation.durationFromStart !== undefined
         ? addMinutes(new Date(trip.departureTime), fromStation.durationFromStart)
         : new Date(trip.departureTime);
 
     // Calculate arrival date (placeholder logic, adjust as needed)
-    const arrivalDate = trip.departureTime && toStation
+    const arrivalDate = trip.departureTime && toStation && toStation.durationFromStart !== undefined
         ? addMinutes(new Date(trip.departureTime), toStation.durationFromStart)
         : null;
 

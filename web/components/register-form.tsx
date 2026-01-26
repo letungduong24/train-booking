@@ -48,7 +48,7 @@ export function RegisterForm({
             await registerUser(data.email, data.password, data.name);
 
             // Redirect to onboard page after successful registration
-            router.push('/onboard');
+            router.push('/dashboard');
         } catch (error: any) {
             const errorMessage = error.response?.data?.message || 'Đăng ký thất bại. Vui lòng thử lại.';
             setApiError(errorMessage);
