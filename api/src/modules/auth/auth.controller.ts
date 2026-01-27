@@ -9,6 +9,7 @@ import {
     UseGuards,
     Get,
 } from '@nestjs/common';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import type { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -20,6 +21,8 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 export class AuthController {
     constructor(private authService: AuthService) { }
 
+    @UseGuards(ThrottlerGuard)
+    @Throttle({ default: { limit: 3, ttl: 60000 } }) // 3 registrations per minute
     @Post('register')
     async register(
         @Body() registerDto: RegisterDto,
@@ -28,6 +31,8 @@ export class AuthController {
         return this.authService.register(registerDto, res);
     }
 
+    @UseGuards(ThrottlerGuard)
+    @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 attempts per minute
     @Post('login')
     @HttpCode(HttpStatus.OK)
     async login(

@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { WalletService } from './wallet.service';
 import { SetupPinDto } from './dto/setup-pin.dto';
 import { WithdrawRequestDto } from './dto/withdraw-request.dto';
@@ -23,6 +24,8 @@ export class WalletController {
         return this.walletService.getWalletInfo(req.user.id);
     }
 
+    @UseGuards(ThrottlerGuard)
+    @Throttle({ default: { limit: 3, ttl: 60000 } }) // 3 attempts per minute
     @Post('setup-pin')
     async setupPin(@Req() req, @Body() dto: SetupPinDto) {
         return this.walletService.setupPin(req.user.id, dto);
@@ -33,6 +36,8 @@ export class WalletController {
         return this.walletService.requestWithdraw(req.user.id, dto);
     }
 
+    @UseGuards(ThrottlerGuard)
+    @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 payments per minute
     @Post('pay')
     async payBooking(@Req() req, @Body() dto: PayBookingWalletDto) {
         return this.walletService.payBooking(req.user.id, dto);

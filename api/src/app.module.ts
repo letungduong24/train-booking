@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BullModule } from '@nestjs/bullmq';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { RedisModule } from './modules/redis/redis.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -23,6 +24,11 @@ import { WalletModule } from './modules/wallet/wallet.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    // Rate limiting - 10 requests per minute
+    ThrottlerModule.forRoot([{
+      ttl: 60000, // 60 seconds
+      limit: 10, // 10 requests
+    }]),
     PrismaModule,
     AuthModule,
     TrainModule,

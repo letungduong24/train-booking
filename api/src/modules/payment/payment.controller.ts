@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query, Res, HttpStatus, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Res, HttpStatus, Req, Logger } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import type { Response, Request } from 'express';
@@ -10,6 +10,8 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('payment')
 export class PaymentController {
+    private readonly logger = new Logger(PaymentController.name);
+
     constructor(
         private readonly paymentService: PaymentService,
         private readonly configService: ConfigService,
@@ -114,7 +116,7 @@ export class PaymentController {
             try {
                 if (isDeposit) {
                     await this.walletService.processDeposit(result.orderId);
-                    console.log(`IPN: Deposit ${result.orderId} confirmed`);
+                    this.logger.log(`IPN: Deposit ${result.orderId} confirmed`);
                 } else {
                     const booking = await this.prisma.booking.findUnique({
                         where: { code: result.orderId },
@@ -130,10 +132,10 @@ export class PaymentController {
                         booking.userId,
                         booking.totalPrice
                     );
-                    console.log(`IPN: Booking ${result.orderId} confirmed`);
+                    this.logger.log(`IPN: Booking ${result.orderId} confirmed`);
                 }
             } catch (error) {
-                console.error(`IPN: Failed to process ${result.orderId}`, error);
+                this.logger.error(`IPN: Failed to process ${result.orderId}`, error);
             }
         }
 

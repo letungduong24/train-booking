@@ -3,14 +3,17 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 import { ForbiddenExceptionFilter } from './lib/filters/forbidden.filter';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // Force rebuild for SeatStatus enum update
+
+  // Security headers
+  app.use(helmet());
 
   // Enable CORS with credentials
   app.enableCors({
-    origin: true, // In production, specify exact origins
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true,
   });
 
