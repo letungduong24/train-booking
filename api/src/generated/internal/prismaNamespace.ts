@@ -1645,6 +1645,8 @@ export const TripScalarFieldEnum = {
   departureTime: 'departureTime',
   endTime: 'endTime',
   status: 'status',
+  departureDelayMinutes: 'departureDelayMinutes',
+  arrivalDelayMinutes: 'arrivalDelayMinutes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1783,6 +1785,20 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
+ * Reference to a field of type 'UserRole'
+ */
+export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
+    
+
+
+/**
+ * Reference to a field of type 'UserRole[]'
+ */
+export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1821,6 +1837,20 @@ export type EnumTransactionStatusFieldRefInput<$PrismaModel> = FieldRefInputType
  * Reference to a field of type 'TransactionStatus[]'
  */
 export type ListEnumTransactionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransactionStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RouteStatus'
+ */
+export type EnumRouteStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RouteStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'RouteStatus[]'
+ */
+export type ListEnumRouteStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RouteStatus[]'>
     
 
 
@@ -1867,6 +1897,34 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
 
 
 /**
+ * Reference to a field of type 'TrainStatus'
+ */
+export type EnumTrainStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'TrainStatus[]'
+ */
+export type ListEnumTrainStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrainStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'CoachStatus'
+ */
+export type EnumCoachStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CoachStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'CoachStatus[]'
+ */
+export type ListEnumCoachStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CoachStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'SeatStatus'
  */
 export type EnumSeatStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SeatStatus'>
@@ -1891,6 +1949,20 @@ export type EnumSeatTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'SeatType[]'
  */
 export type ListEnumSeatTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SeatType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'TripStatus'
+ */
+export type EnumTripStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TripStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'TripStatus[]'
+ */
+export type ListEnumTripStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TripStatus[]'>
     
 
 

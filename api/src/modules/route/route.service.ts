@@ -4,8 +4,7 @@ import { UpdateRouteDto } from './dto/update-route.dto';
 import { UpdateRouteStationDto } from './dto/update-route-station.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { FilterRouteDto } from './dto/filter-route.dto';
-import { Prisma } from '../../generated/client';
-import { RouteStatus } from '../../lib/enums/route-status.enum';
+import { Prisma, RouteStatus } from '../../generated/client';
 
 @Injectable()
 export class RouteService {
@@ -15,7 +14,7 @@ export class RouteService {
     return this.prisma.route.create({
       data: {
         ...createRouteDto,
-        status: createRouteDto.status || RouteStatus.DRAFT,
+        status: (createRouteDto.status as RouteStatus) || RouteStatus.DRAFT,
       },
     });
   }
@@ -27,7 +26,7 @@ export class RouteService {
       ...(search && {
         name: { contains: search, mode: 'insensitive' },
       }),
-      ...(status && { status }),
+      ...(status && { status: status as RouteStatus }),
     };
 
     const [data, total] = await Promise.all([
@@ -81,9 +80,13 @@ export class RouteService {
 
 
   async update(id: string, updateRouteDto: UpdateRouteDto) {
+    const { status, ...rest } = updateRouteDto;
     return this.prisma.route.update({
       where: { id },
-      data: updateRouteDto,
+      data: {
+        ...rest,
+        ...(status && { status: status as RouteStatus }),
+      },
     });
   }
 

@@ -42,7 +42,7 @@ export type UserMinAggregateOutputType = {
   name: string | null
   createdAt: Date | null
   updatedAt: Date | null
-  role: string | null
+  role: $Enums.UserRole | null
   balance: number | null
   walletPin: string | null
 }
@@ -55,7 +55,7 @@ export type UserMaxAggregateOutputType = {
   name: string | null
   createdAt: Date | null
   updatedAt: Date | null
-  role: string | null
+  role: $Enums.UserRole | null
   balance: number | null
   walletPin: string | null
 }
@@ -217,7 +217,7 @@ export type UserGroupByOutputType = {
   name: string | null
   createdAt: Date
   updatedAt: Date
-  role: string
+  role: $Enums.UserRole
   balance: number
   walletPin: string | null
   _count: UserCountAggregateOutputType | null
@@ -253,7 +253,7 @@ export type UserWhereInput = {
   name?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  role?: Prisma.StringFilter<"User"> | string
+  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   balance?: Prisma.FloatFilter<"User"> | number
   walletPin?: Prisma.StringNullableFilter<"User"> | string | null
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
@@ -288,7 +288,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  role?: Prisma.StringFilter<"User"> | string
+  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   balance?: Prisma.FloatFilter<"User"> | number
   walletPin?: Prisma.StringNullableFilter<"User"> | string | null
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
@@ -325,7 +325,7 @@ export type UserScalarWhereWithAggregatesInput = {
   name?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
-  role?: Prisma.StringWithAggregatesFilter<"User"> | string
+  role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
   balance?: Prisma.FloatWithAggregatesFilter<"User"> | number
   walletPin?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
 }
@@ -338,7 +338,7 @@ export type UserCreateInput = {
   name?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  role?: string
+  role?: $Enums.UserRole
   balance?: number
   walletPin?: string | null
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
@@ -354,7 +354,7 @@ export type UserUncheckedCreateInput = {
   name?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  role?: string
+  role?: $Enums.UserRole
   balance?: number
   walletPin?: string | null
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -370,7 +370,7 @@ export type UserUpdateInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
@@ -386,7 +386,7 @@ export type UserUncheckedUpdateInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -402,7 +402,7 @@ export type UserCreateManyInput = {
   name?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  role?: string
+  role?: $Enums.UserRole
   balance?: number
   walletPin?: string | null
 }
@@ -415,7 +415,7 @@ export type UserUpdateManyMutationInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -428,7 +428,7 @@ export type UserUncheckedUpdateManyInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -502,6 +502,10 @@ export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
 
+export type EnumUserRoleFieldUpdateOperationsInput = {
+  set?: $Enums.UserRole
+}
+
 export type FloatFieldUpdateOperationsInput = {
   set?: number
   increment?: number
@@ -562,7 +566,7 @@ export type UserCreateWithoutRefreshTokensInput = {
   name?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  role?: string
+  role?: $Enums.UserRole
   balance?: number
   walletPin?: string | null
   bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
@@ -577,7 +581,7 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   name?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  role?: string
+  role?: $Enums.UserRole
   balance?: number
   walletPin?: string | null
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
@@ -608,7 +612,7 @@ export type UserUpdateWithoutRefreshTokensInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
@@ -623,7 +627,7 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
@@ -638,7 +642,7 @@ export type UserCreateWithoutTransactionsInput = {
   name?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  role?: string
+  role?: $Enums.UserRole
   balance?: number
   walletPin?: string | null
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
@@ -653,7 +657,7 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   name?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  role?: string
+  role?: $Enums.UserRole
   balance?: number
   walletPin?: string | null
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -684,7 +688,7 @@ export type UserUpdateWithoutTransactionsInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
@@ -699,7 +703,7 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -714,7 +718,7 @@ export type UserCreateWithoutBookingsInput = {
   name?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  role?: string
+  role?: $Enums.UserRole
   balance?: number
   walletPin?: string | null
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
@@ -729,7 +733,7 @@ export type UserUncheckedCreateWithoutBookingsInput = {
   name?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  role?: string
+  role?: $Enums.UserRole
   balance?: number
   walletPin?: string | null
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -760,7 +764,7 @@ export type UserUpdateWithoutBookingsInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
@@ -775,7 +779,7 @@ export type UserUncheckedUpdateWithoutBookingsInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  role?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -912,7 +916,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     name: string | null
     createdAt: Date
     updatedAt: Date
-    role: string
+    role: $Enums.UserRole
     balance: number
     walletPin: string | null
   }, ExtArgs["result"]["user"]>
@@ -1348,7 +1352,7 @@ export interface UserFieldRefs {
   readonly name: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
-  readonly role: Prisma.FieldRef<"User", 'String'>
+  readonly role: Prisma.FieldRef<"User", 'UserRole'>
   readonly balance: Prisma.FieldRef<"User", 'Float'>
   readonly walletPin: Prisma.FieldRef<"User", 'String'>
 }

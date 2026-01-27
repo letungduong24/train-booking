@@ -15,7 +15,7 @@ export function NavbarProvider({ children }: NavbarProviderProps) {
     const pathname = usePathname();
     const { user, isAdmin } = useAuthStore(useShallow((state) => ({
         user: state.user,
-        isAdmin: state.user?.role === 'admin',
+        isAdmin: state.user?.role === 'ADMIN',
     })));
     const logout = useAuthStore((state) => state.logout);
 

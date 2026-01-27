@@ -3,7 +3,7 @@ import { CreateTrainDto } from './dto/create-train.dto';
 import { UpdateTrainDto } from './dto/update-train.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { FilterTrainDto } from './dto/filter-train.dto';
-import { Prisma } from '../../generated/client';
+import { Prisma, TrainStatus } from '../../generated/client';
 
 @Injectable()
 export class TrainService {
@@ -11,8 +11,12 @@ export class TrainService {
 
   async create(createTrainDto: CreateTrainDto) {
     try {
+      const { status, ...rest } = createTrainDto;
       return await this.prisma.train.create({
-        data: createTrainDto,
+        data: {
+          ...rest,
+          ...(status && { status: status as TrainStatus }),
+        },
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -86,9 +90,13 @@ export class TrainService {
   }
 
   async update(id: string, updateTrainDto: UpdateTrainDto) {
+    const { status, ...rest } = updateTrainDto;
     return this.prisma.train.update({
       where: { id },
-      data: updateTrainDto,
+      data: {
+        ...rest,
+        ...(status && { status: status as TrainStatus }),
+      },
     });
   }
 

@@ -8,6 +8,8 @@ export const tripSchema = z.object({
     departureTime: z.string(),
     endTime: z.string(),
     status: z.string(),
+    departureDelayMinutes: z.number().optional(),
+    arrivalDelayMinutes: z.number().optional(),
     route: z.object({
         id: z.string(),
         name: z.string(),

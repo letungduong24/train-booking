@@ -73,10 +73,10 @@ function PassengersPageContent() {
     }, [booking]);
 
     // Redirect if not PENDING
+    // Redirect if not PENDING and not CANCELLED
     useEffect(() => {
-        if (booking && booking.status !== 'PENDING') {
-            toast.warning('Đơn hàng đã hết hạn chờ thanh toán hoặc bị hủy.');
-            router.push(`/dashboard/booking/${booking.trip.id}/payment-result?failed=true`);
+        if (booking && booking.status !== 'PENDING' && booking.status !== 'CANCELLED') {
+            router.push(`/booking/payment-result?error=Đơn hàng đã hết hạn hoặc không hợp lệ.`);
         }
     }, [booking, bookingCode, router]);
 
@@ -117,6 +117,24 @@ function PassengersPageContent() {
     }
 
 
+
+    if (booking && booking.status === 'CANCELLED') {
+        return (
+            <div className="container mx-auto py-8">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-red-600">Đơn hàng đã bị hủy</CardTitle>
+                    </CardHeader>
+                    <CardContent className="py-4 text-center text-muted-foreground">
+                        <p>Bạn đã hủy đơn hàng này. Vui lòng quay lại trang chủ để đặt vé mới.</p>
+                        <Button className="mt-4" onClick={() => router.push('/')}>
+                            Về trang chủ
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
 
     if (booking && booking.status !== 'PENDING') {
         return (

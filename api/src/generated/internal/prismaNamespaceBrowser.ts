@@ -236,6 +236,8 @@ export const TripScalarFieldEnum = {
   departureTime: 'departureTime',
   endTime: 'endTime',
   status: 'status',
+  departureDelayMinutes: 'departureDelayMinutes',
+  arrivalDelayMinutes: 'arrivalDelayMinutes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

@@ -29,6 +29,52 @@ export const TransactionStatus = {
 export type TransactionStatus = (typeof TransactionStatus)[keyof typeof TransactionStatus]
 
 
+export const UserRole = {
+  USER: 'USER',
+  ADMIN: 'ADMIN',
+  DRIVER: 'DRIVER'
+} as const
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+
+
+export const TripStatus = {
+  SCHEDULED: 'SCHEDULED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type TripStatus = (typeof TripStatus)[keyof typeof TripStatus]
+
+
+export const TrainStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  MAINTENANCE: 'MAINTENANCE'
+} as const
+
+export type TrainStatus = (typeof TrainStatus)[keyof typeof TrainStatus]
+
+
+export const CoachStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  MAINTENANCE: 'MAINTENANCE'
+} as const
+
+export type CoachStatus = (typeof CoachStatus)[keyof typeof CoachStatus]
+
+
+export const RouteStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type RouteStatus = (typeof RouteStatus)[keyof typeof RouteStatus]
+
+
 export const CoachLayout = {
   SEAT: 'SEAT',
   BED: 'BED'

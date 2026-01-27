@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BullModule } from '@nestjs/bullmq';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { ScheduleModule } from '@nestjs/schedule';
 import { RedisModule } from './modules/redis/redis.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -29,6 +30,8 @@ import { WalletModule } from './modules/wallet/wallet.module';
       ttl: 60000, // 60 seconds
       limit: 10, // 10 requests
     }]),
+    // Cron jobs
+    ScheduleModule.forRoot(),
     PrismaModule,
     AuthModule,
     TrainModule,

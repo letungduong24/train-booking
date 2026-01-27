@@ -4,6 +4,7 @@ import { CreateTripDto } from './dto/create-trip.dto';
 import { UpdateTripDto } from './dto/update-trip.dto';
 import { FilterTripDto } from './dto/filter-trip.dto';
 import { SearchTripDto } from './dto/search-trip.dto';
+import { SetDelayDto } from './dto/set-delay.dto';
 
 @Controller('trip')
 export class TripController {
@@ -37,5 +38,14 @@ export class TripController {
     @Delete(':id')
     remove(@Param('id') id: string) {
         return this.tripService.remove(id);
+    }
+    @Patch(":id/departure-delay")
+    setDepartureDelay(@Param("id") id: string, @Body() dto: SetDelayDto) {
+        return this.tripService.setDepartureDelay(id, dto.minutes);
+    }
+
+    @Patch(":id/arrival-delay")
+    setArrivalDelay(@Param("id") id: string, @Body() dto: SetDelayDto) {
+        return this.tripService.setArrivalDelay(id, dto.minutes);
     }
 }

@@ -37,7 +37,7 @@ export function SelectRouteDialog({ open, onOpenChange, onSelect, selectedRouteI
         page,
         limit: 5,
         search: searchValue,
-        status: 'active'
+        status: 'ACTIVE'
     })
 
     const routes = routeData?.data || []
@@ -84,7 +84,7 @@ export function SelectRouteDialog({ open, onOpenChange, onSelect, selectedRouteI
                                             <TableCell className="font-medium">{route.name}</TableCell>
                                             <TableCell>
                                                 <span className="text-sm text-muted-foreground">
-                                                    {route.status === 'active' ? 'Hoạt động' : 'Nháp'}
+                                                    {route.status === 'ACTIVE' ? 'Hoạt động' : 'Nháp'}
                                                 </span>
                                             </TableCell>
                                             <TableCell>

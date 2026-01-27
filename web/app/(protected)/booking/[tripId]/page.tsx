@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { format, addMinutes } from 'date-fns';
-import { ArrowLeft, Train, MapPin, Clock, Calendar } from 'lucide-react';
+import { ArrowLeft, Train, MapPin, Clock, Calendar, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import apiClient from '@/lib/api-client';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { useTrip } from '@/features/trips/hooks/use-trips';
 import { useCoachWithPrices } from '@/features/booking/hooks/use-coach-with-prices';
@@ -227,78 +228,94 @@ export default function TripDetailPage() {
                 </CardContent>
             </Card>
 
-            {/* Seat Selection */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-24 lg:pb-0">
-                <div className="lg:col-span-2 space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Chọn chỗ</CardTitle>
-                            <CardDescription>
-                                Chọn toa và chỗ ngồi/giường của bạn
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            {/* Coach Navigation */}
-                            <div className="mb-8">
-                                <BookingCoachNavigationBar
-                                    coaches={trip.train.coaches}
-                                    selectedCoachId={selectedCoachId}
-                                    onCoachSelect={setSelectedCoachId}
-                                    trainCode={trip.train.code}
-                                />
-                            </div>
+            {/* Error Banner for non-SCHEDULED trips */}
+            {trip.status !== 'SCHEDULED' && (
+                <Alert variant="destructive" className="mb-6">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Chuyến tàu không khả dụng</AlertTitle>
+                    <AlertDescription>
+                        {trip.status === 'IN_PROGRESS' && 'Chuyến tàu đã khởi hành.'}
+                        {trip.status === 'COMPLETED' && 'Chuyến tàu đã hoàn thành.'}
+                        {trip.status === 'CANCELLED' && 'Chuyến tàu đã bị hủy.'}
+                        {' '}Vui lòng chọn chuyến khác.
+                    </AlertDescription>
+                </Alert>
+            )}
 
-                            {!selectedCoachId ? (
-                                <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
-                                    Vui lòng chọn toa để xem sơ đồ chỗ ngồi
+            {/* Seat Selection - Only show if SCHEDULED */}
+            {trip.status === 'SCHEDULED' && (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-24 lg:pb-0">
+                    <div className="lg:col-span-2 space-y-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Chọn chỗ</CardTitle>
+                                <CardDescription>
+                                    Chọn toa và chỗ ngồi/giường của bạn
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                {/* Coach Navigation */}
+                                <div className="mb-8">
+                                    <BookingCoachNavigationBar
+                                        coaches={trip.train.coaches}
+                                        selectedCoachId={selectedCoachId}
+                                        onCoachSelect={setSelectedCoachId}
+                                        trainCode={trip.train.code}
+                                    />
                                 </div>
-                            ) : isCoachLoading ? (
-                                <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
-                                    Đang tải sơ đồ chỗ ngồi...
-                                </div>
-                            ) : coachWithPrices ? (
-                                <div>
-                                    {coachWithPrices.template.layout === 'SEAT' ? (
-                                        <SeatLayoutViewer
-                                            seats={coachWithPrices.seats}
-                                            template={coachWithPrices.template}
-                                            selectedSeats={selectedSeats.map((s) => s.id)}
-                                            onSeatClick={handleSeatToggle}
-                                            tripId={tripId}
-                                            onSeatsForceDeselected={handleSeatsForceDeselected}
-                                            isSubmitting={isProcessing || isInitializing}
-                                        />
-                                    ) : (
-                                        <BedLayoutViewer
-                                            seats={coachWithPrices.seats}
-                                            template={coachWithPrices.template}
-                                            selectedSeats={selectedSeats.map((s) => s.id)}
-                                            onSeatClick={handleSeatToggle}
-                                            tripId={tripId}
-                                            onSeatsForceDeselected={handleSeatsForceDeselected}
-                                            isSubmitting={isProcessing || isInitializing}
-                                        />
-                                    )}
 
-                                </div>
-                            ) : null}
+                                {!selectedCoachId ? (
+                                    <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
+                                        Vui lòng chọn toa để xem sơ đồ chỗ ngồi
+                                    </div>
+                                ) : isCoachLoading ? (
+                                    <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
+                                        Đang tải sơ đồ chỗ ngồi...
+                                    </div>
+                                ) : coachWithPrices ? (
+                                    <div>
+                                        {coachWithPrices.template.layout === 'SEAT' ? (
+                                            <SeatLayoutViewer
+                                                seats={coachWithPrices.seats}
+                                                template={coachWithPrices.template}
+                                                selectedSeats={selectedSeats.map((s) => s.id)}
+                                                onSeatClick={handleSeatToggle}
+                                                tripId={tripId}
+                                                onSeatsForceDeselected={handleSeatsForceDeselected}
+                                                isSubmitting={isProcessing || isInitializing}
+                                            />
+                                        ) : (
+                                            <BedLayoutViewer
+                                                seats={coachWithPrices.seats}
+                                                template={coachWithPrices.template}
+                                                selectedSeats={selectedSeats.map((s) => s.id)}
+                                                onSeatClick={handleSeatToggle}
+                                                tripId={tripId}
+                                                onSeatsForceDeselected={handleSeatsForceDeselected}
+                                                isSubmitting={isProcessing || isInitializing}
+                                            />
+                                        )}
 
-                        </CardContent>
-                    </Card>
-                </div>
+                                    </div>
+                                ) : null}
 
-                {/* Right Column - Desktop */}
-                <div className="hidden lg:block lg:col-span-1">
-                    <div className="sticky top-6">
-                        <BookingSummary
-                            selectedSeats={selectedSeats}
-                            onRemoveSeat={handleRemoveSeat}
-                            onProceed={handleProceedToPassengerInfo}
-                            isProcessing={isProcessing || isInitializing}
-                        />
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Right Column - Desktop */}
+                    <div className="hidden lg:block lg:col-span-1">
+                        <div className="sticky top-6">
+                            <BookingSummary
+                                selectedSeats={selectedSeats}
+                                onRemoveSeat={handleRemoveSeat}
+                                onProceed={handleProceedToPassengerInfo}
+                                isProcessing={isProcessing || isInitializing}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             {/* Mobile Sticky Footer */}
             {selectedSeats.length > 0 && (

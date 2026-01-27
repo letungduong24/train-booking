@@ -21,7 +21,7 @@ export function AuthGuard({ children, fallbackPath = '/login', requireAdmin = fa
     // Use useShallow to prevent infinite loop from object selector
     const { isAuthenticated, isAdmin, isInitialized } = useAuthStore(useShallow((state) => ({
         isAuthenticated: !!state.user,
-        isAdmin: state.user?.role === 'admin',
+        isAdmin: state.user?.role === 'ADMIN',
         isInitialized: state.isInitialized,
     })));
 

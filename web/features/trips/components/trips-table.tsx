@@ -13,7 +13,8 @@ import {
 import { IconArrowDown, IconArrowsSort, IconArrowUp, IconSearch, IconTrash, IconEdit } from "@tabler/icons-react"
 import { useTrips, useDeleteTrip } from "@/features/trips/hooks/use-trips"
 import { Trip } from "@/lib/schemas/trip.schema"
-import { getTripStatusInfo } from "@/lib/trip-status"
+
+import { TripStatusBadge } from "@/lib/utils/trip-status"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -169,13 +170,11 @@ export function TripsTable() {
             header: "Trạng thái",
             cell: ({ row }) => {
                 const status = row.getValue("status") as string;
-                const { label, variant, colorClass } = getTripStatusInfo(status);
-                // Badge variant only supports specific keys, so we might override with className if needed
-                // But shadcn Badge variants are tied to background colors usually.
-                // Let's use outline variant and apply colorClass for custom colors if needed, 
-                // OR map our variant to BadgeProps['variant']
-
-                return <Badge variant={variant} className={colorClass}>{label}</Badge>
+                return (
+                    <div className="flex justify-center">
+                        <TripStatusBadge status={status} />
+                    </div>
+                )
             },
         },
         {

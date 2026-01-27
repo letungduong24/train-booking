@@ -4,7 +4,7 @@ import { UpdateCoachDto } from './dto/update-coach.dto';
 import { FilterCoachDto } from './dto/filter-coach.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { PricingService } from '../pricing/pricing.service';
-import { Prisma, CoachLayout } from '../../generated/client';
+import { Prisma, CoachLayout, CoachStatus } from '../../generated/client';
 
 @Injectable()
 export class CoachesService {
@@ -44,7 +44,7 @@ export class CoachesService {
         data: {
           name: `Toa ${nextOrder}`, // Auto-generate name
           order: nextOrder,
-          status: createCoachDto.status || 'ACTIVE',
+          status: createCoachDto.status as CoachStatus || CoachStatus.ACTIVE,
           trainId: createCoachDto.trainId,
           templateId: createCoachDto.templateId,
         },
@@ -324,9 +324,13 @@ export class CoachesService {
       throw new NotFoundException(`Coach #${id} not found`);
     }
 
+    const { trainId, templateId, status, ...updateData } = updateCoachDto;
     return this.prisma.coach.update({
       where: { id },
-      data: updateCoachDto,
+      data: {
+        ...updateData,
+        ...(status && { status: status as CoachStatus }),
+      },
       include: {
         template: true,
         seats: true,

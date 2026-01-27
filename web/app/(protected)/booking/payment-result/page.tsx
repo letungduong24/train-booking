@@ -10,6 +10,7 @@ export default function PaymentResultPage() {
 
     const success = searchParams.get('success') === 'true';
     const orderId = searchParams.get('orderId');
+    const errorMessage = searchParams.get('error');
 
     return (
         <div className="container mx-auto py-16 px-4">
@@ -26,7 +27,7 @@ export default function PaymentResultPage() {
                     <p className="text-muted-foreground mb-6">
                         {success
                             ? 'Cảm ơn bạn đã đặt vé. Vé điện tử sẽ được gửi đến email của bạn.'
-                            : `Giao dịch không thành công do ghế đã được đặt hoặc giữ chỗ bởi người khác. Tiền sẽ được hoàn vào Ví điện tử của bạn.`
+                            : errorMessage || 'Giao dịch không thành công. Tiền sẽ được hoàn vào Ví điện tử của bạn.'
                         }
                     </p>
                     <div className="flex flex-col gap-2">

@@ -65,6 +65,17 @@ export class BookingService {
             throw new BadRequestException('Không tìm thấy chuyến tàu');
         }
 
+        // Check trip status - only allow booking for SCHEDULED trips
+        if (trip.status !== 'SCHEDULED') {
+            throw new BadRequestException(
+                trip.status === 'IN_PROGRESS'
+                    ? 'Chuyến tàu đã khởi hành, không thể đặt vé'
+                    : trip.status === 'COMPLETED'
+                        ? 'Chuyến tàu đã hoàn thành, không thể đặt vé'
+                        : 'Chuyến tàu không khả dụng'
+            );
+        }
+
         const fromStation = trip.route.stations.find(s => s.stationId === fromStationId);
         const toStation = trip.route.stations.find(s => s.stationId === toStationId);
 
@@ -226,6 +237,39 @@ export class BookingService {
         // Kiểm tra race condition: ghế đã bị người khác mua chưa?
         const tripId = metadata.tripId;
         const seatIds = tickets.map(t => t.seatId);
+
+        // Check if trip is still SCHEDULED
+        const trip = await this.prisma.trip.findUnique({
+            where: { id: tripId },
+            select: { status: true }
+        });
+
+        if (trip?.status !== 'SCHEDULED') {
+            this.logger.error(`Trip ${tripId} is no longer SCHEDULED. Current status: ${trip?.status}`);
+
+            // Hoàn tiền nếu đã thanh toán
+            if (booking.userId) {
+                try {
+                    await this.walletService.refundToWallet(
+                        booking.userId,
+                        booking.totalPrice,
+                        bookingCode,
+                        'Hoàn tiền tự động - Chuyến tàu đã khởi hành'
+                    );
+                    this.logger.log(`Refunded ${booking.totalPrice} to wallet for user ${booking.userId}`);
+                } catch (refundError) {
+                    this.logger.error(`Failed to refund to wallet for booking ${bookingCode}`, refundError);
+                }
+            }
+
+            // Cập nhật trạng thái
+            await this.prisma.booking.update({
+                where: { code: bookingCode },
+                data: { status: 'CANCELLED' }
+            });
+
+            throw new BadRequestException('Chuyến tàu đã khởi hành. Tiền đã được hoàn về ví của bạn.');
+        }
 
         const existingTickets = await this.prisma.ticket.findMany({
             where: {

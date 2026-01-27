@@ -42,28 +42,6 @@ export function PassengerInfoForm({
     const [errors, setErrors] = useState<Record<number, string>>({});
     const [cccdInfo, setCccdInfo] = useState<Record<number, { age: number; groupName: string } | null>>({});
 
-    // ... (rest of state/effects)
-
-    // Skip to return
-    // I need to be careful with replace_file_content range. 
-    // I will target the `CardHeader` part only, assuming function signature is handled.
-    // Wait, I need to update function destructuring too.
-    // I'll assume I can just target the signature line and then the header later? 
-    // No, I should do signature in one chunk (which is passed as args).
-    // The previous edit handled the "interface" part.
-    // This edit handles the component logic.
-    // I'll use multi-replace or just one big one? 
-    // The function is long. I will split.
-    // 1. Function signature update.
-    // 2. CardHeader update.
-    // 3. Footer update.
-
-    // Step 1: Signature
-    // return ...
-    //   <Card>
-    //     <CardHeader> ...
-
-
 
     // Initialize/Sync passengers with seats and initialPassengers
     useEffect(() => {

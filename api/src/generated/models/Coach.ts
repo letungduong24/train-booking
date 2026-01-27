@@ -38,7 +38,7 @@ export type CoachMinAggregateOutputType = {
   id: string | null
   name: string | null
   order: number | null
-  status: string | null
+  status: $Enums.CoachStatus | null
   trainId: string | null
   templateId: string | null
   createdAt: Date | null
@@ -49,7 +49,7 @@ export type CoachMaxAggregateOutputType = {
   id: string | null
   name: string | null
   order: number | null
-  status: string | null
+  status: $Enums.CoachStatus | null
   trainId: string | null
   templateId: string | null
   createdAt: Date | null
@@ -201,7 +201,7 @@ export type CoachGroupByOutputType = {
   id: string
   name: string
   order: number
-  status: string
+  status: $Enums.CoachStatus
   trainId: string
   templateId: string
   createdAt: Date
@@ -235,7 +235,7 @@ export type CoachWhereInput = {
   id?: Prisma.StringFilter<"Coach"> | string
   name?: Prisma.StringFilter<"Coach"> | string
   order?: Prisma.IntFilter<"Coach"> | number
-  status?: Prisma.StringFilter<"Coach"> | string
+  status?: Prisma.EnumCoachStatusFilter<"Coach"> | $Enums.CoachStatus
   trainId?: Prisma.StringFilter<"Coach"> | string
   templateId?: Prisma.StringFilter<"Coach"> | string
   createdAt?: Prisma.DateTimeFilter<"Coach"> | Date | string
@@ -266,7 +266,7 @@ export type CoachWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.CoachWhereInput | Prisma.CoachWhereInput[]
   name?: Prisma.StringFilter<"Coach"> | string
   order?: Prisma.IntFilter<"Coach"> | number
-  status?: Prisma.StringFilter<"Coach"> | string
+  status?: Prisma.EnumCoachStatusFilter<"Coach"> | $Enums.CoachStatus
   trainId?: Prisma.StringFilter<"Coach"> | string
   templateId?: Prisma.StringFilter<"Coach"> | string
   createdAt?: Prisma.DateTimeFilter<"Coach"> | Date | string
@@ -299,7 +299,7 @@ export type CoachScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Coach"> | string
   name?: Prisma.StringWithAggregatesFilter<"Coach"> | string
   order?: Prisma.IntWithAggregatesFilter<"Coach"> | number
-  status?: Prisma.StringWithAggregatesFilter<"Coach"> | string
+  status?: Prisma.EnumCoachStatusWithAggregatesFilter<"Coach"> | $Enums.CoachStatus
   trainId?: Prisma.StringWithAggregatesFilter<"Coach"> | string
   templateId?: Prisma.StringWithAggregatesFilter<"Coach"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Coach"> | Date | string
@@ -310,7 +310,7 @@ export type CoachCreateInput = {
   id?: string
   name: string
   order: number
-  status?: string
+  status?: $Enums.CoachStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   train: Prisma.TrainCreateNestedOneWithoutCoachesInput
@@ -322,7 +322,7 @@ export type CoachUncheckedCreateInput = {
   id?: string
   name: string
   order: number
-  status?: string
+  status?: $Enums.CoachStatus
   trainId: string
   templateId: string
   createdAt?: Date | string
@@ -334,7 +334,7 @@ export type CoachUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumCoachStatusFieldUpdateOperationsInput | $Enums.CoachStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   train?: Prisma.TrainUpdateOneRequiredWithoutCoachesNestedInput
@@ -346,7 +346,7 @@ export type CoachUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumCoachStatusFieldUpdateOperationsInput | $Enums.CoachStatus
   trainId?: Prisma.StringFieldUpdateOperationsInput | string
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -358,7 +358,7 @@ export type CoachCreateManyInput = {
   id?: string
   name: string
   order: number
-  status?: string
+  status?: $Enums.CoachStatus
   trainId: string
   templateId: string
   createdAt?: Date | string
@@ -369,7 +369,7 @@ export type CoachUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumCoachStatusFieldUpdateOperationsInput | $Enums.CoachStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -378,7 +378,7 @@ export type CoachUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumCoachStatusFieldUpdateOperationsInput | $Enums.CoachStatus
   trainId?: Prisma.StringFieldUpdateOperationsInput | string
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -525,6 +525,10 @@ export type CoachUncheckedUpdateManyWithoutTrainNestedInput = {
   deleteMany?: Prisma.CoachScalarWhereInput | Prisma.CoachScalarWhereInput[]
 }
 
+export type EnumCoachStatusFieldUpdateOperationsInput = {
+  set?: $Enums.CoachStatus
+}
+
 export type CoachCreateNestedOneWithoutSeatsInput = {
   create?: Prisma.XOR<Prisma.CoachCreateWithoutSeatsInput, Prisma.CoachUncheckedCreateWithoutSeatsInput>
   connectOrCreate?: Prisma.CoachCreateOrConnectWithoutSeatsInput
@@ -543,7 +547,7 @@ export type CoachCreateWithoutTemplateInput = {
   id?: string
   name: string
   order: number
-  status?: string
+  status?: $Enums.CoachStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   train: Prisma.TrainCreateNestedOneWithoutCoachesInput
@@ -554,7 +558,7 @@ export type CoachUncheckedCreateWithoutTemplateInput = {
   id?: string
   name: string
   order: number
-  status?: string
+  status?: $Enums.CoachStatus
   trainId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -594,7 +598,7 @@ export type CoachScalarWhereInput = {
   id?: Prisma.StringFilter<"Coach"> | string
   name?: Prisma.StringFilter<"Coach"> | string
   order?: Prisma.IntFilter<"Coach"> | number
-  status?: Prisma.StringFilter<"Coach"> | string
+  status?: Prisma.EnumCoachStatusFilter<"Coach"> | $Enums.CoachStatus
   trainId?: Prisma.StringFilter<"Coach"> | string
   templateId?: Prisma.StringFilter<"Coach"> | string
   createdAt?: Prisma.DateTimeFilter<"Coach"> | Date | string
@@ -605,7 +609,7 @@ export type CoachCreateWithoutTrainInput = {
   id?: string
   name: string
   order: number
-  status?: string
+  status?: $Enums.CoachStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   template: Prisma.CoachTemplateCreateNestedOneWithoutCoachesInput
@@ -616,7 +620,7 @@ export type CoachUncheckedCreateWithoutTrainInput = {
   id?: string
   name: string
   order: number
-  status?: string
+  status?: $Enums.CoachStatus
   templateId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -653,7 +657,7 @@ export type CoachCreateWithoutSeatsInput = {
   id?: string
   name: string
   order: number
-  status?: string
+  status?: $Enums.CoachStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   train: Prisma.TrainCreateNestedOneWithoutCoachesInput
@@ -664,7 +668,7 @@ export type CoachUncheckedCreateWithoutSeatsInput = {
   id?: string
   name: string
   order: number
-  status?: string
+  status?: $Enums.CoachStatus
   trainId: string
   templateId: string
   createdAt?: Date | string
@@ -691,7 +695,7 @@ export type CoachUpdateWithoutSeatsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumCoachStatusFieldUpdateOperationsInput | $Enums.CoachStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   train?: Prisma.TrainUpdateOneRequiredWithoutCoachesNestedInput
@@ -702,7 +706,7 @@ export type CoachUncheckedUpdateWithoutSeatsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumCoachStatusFieldUpdateOperationsInput | $Enums.CoachStatus
   trainId?: Prisma.StringFieldUpdateOperationsInput | string
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -713,7 +717,7 @@ export type CoachCreateManyTemplateInput = {
   id?: string
   name: string
   order: number
-  status?: string
+  status?: $Enums.CoachStatus
   trainId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -723,7 +727,7 @@ export type CoachUpdateWithoutTemplateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumCoachStatusFieldUpdateOperationsInput | $Enums.CoachStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   train?: Prisma.TrainUpdateOneRequiredWithoutCoachesNestedInput
@@ -734,7 +738,7 @@ export type CoachUncheckedUpdateWithoutTemplateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumCoachStatusFieldUpdateOperationsInput | $Enums.CoachStatus
   trainId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -745,7 +749,7 @@ export type CoachUncheckedUpdateManyWithoutTemplateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumCoachStatusFieldUpdateOperationsInput | $Enums.CoachStatus
   trainId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -755,7 +759,7 @@ export type CoachCreateManyTrainInput = {
   id?: string
   name: string
   order: number
-  status?: string
+  status?: $Enums.CoachStatus
   templateId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -765,7 +769,7 @@ export type CoachUpdateWithoutTrainInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumCoachStatusFieldUpdateOperationsInput | $Enums.CoachStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   template?: Prisma.CoachTemplateUpdateOneRequiredWithoutCoachesNestedInput
@@ -776,7 +780,7 @@ export type CoachUncheckedUpdateWithoutTrainInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumCoachStatusFieldUpdateOperationsInput | $Enums.CoachStatus
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -787,7 +791,7 @@ export type CoachUncheckedUpdateManyWithoutTrainInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumCoachStatusFieldUpdateOperationsInput | $Enums.CoachStatus
   templateId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -903,7 +907,7 @@ export type $CoachPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     id: string
     name: string
     order: number
-    status: string
+    status: $Enums.CoachStatus
     trainId: string
     templateId: string
     createdAt: Date
@@ -1337,7 +1341,7 @@ export interface CoachFieldRefs {
   readonly id: Prisma.FieldRef<"Coach", 'String'>
   readonly name: Prisma.FieldRef<"Coach", 'String'>
   readonly order: Prisma.FieldRef<"Coach", 'Int'>
-  readonly status: Prisma.FieldRef<"Coach", 'String'>
+  readonly status: Prisma.FieldRef<"Coach", 'CoachStatus'>
   readonly trainId: Prisma.FieldRef<"Coach", 'String'>
   readonly templateId: Prisma.FieldRef<"Coach", 'String'>
   readonly createdAt: Prisma.FieldRef<"Coach", 'DateTime'>

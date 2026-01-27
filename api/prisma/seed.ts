@@ -1,4 +1,4 @@
-import { PrismaClient, CoachLayout } from '../src/generated/client';
+import { PrismaClient, CoachLayout, UserRole, RouteStatus } from '../src/generated/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import 'dotenv/config';
 
@@ -15,14 +15,17 @@ async function main() {
     console.log('Clearing existing data...');
     await prisma.ticket.deleteMany();
     await prisma.booking.deleteMany();
+    await prisma.transaction.deleteMany(); // Delete transactions first
     await prisma.passengerGroup.deleteMany();
     await prisma.seat.deleteMany();
     await prisma.coach.deleteMany();
     await prisma.train.deleteMany();
+    await prisma.trip.deleteMany();
     await prisma.coachTemplate.deleteMany();
     await prisma.routeStation.deleteMany();
     await prisma.route.deleteMany();
     await prisma.station.deleteMany();
+    await prisma.refreshToken.deleteMany(); // Delete refresh tokens first
     await prisma.user.deleteMany();
 
     // 0. Create Passenger Groups
@@ -156,7 +159,7 @@ async function main() {
     const route1 = await prisma.route.create({
         data: {
             name: 'SE1 - Hà Nội - Sài Gòn (Thống Nhất)',
-            status: 'active',
+            status: RouteStatus.ACTIVE,
             durationMinutes: 1920, // 32 hours
             turnaroundMinutes: 240, // 4 hours
             basePricePerKm: 1200, // VND per km
@@ -180,7 +183,7 @@ async function main() {
     const route2 = await prisma.route.create({
         data: {
             name: 'SE2 - Sài Gòn - Hà Nội',
-            status: 'active',
+            status: RouteStatus.ACTIVE,
             durationMinutes: 1920,
             turnaroundMinutes: 240,
             basePricePerKm: 1200,
@@ -204,7 +207,7 @@ async function main() {
     const route3 = await prisma.route.create({
         data: {
             name: 'SE3 - Hà Nội - Đà Nẵng',
-            status: 'active',
+            status: RouteStatus.ACTIVE,
             durationMinutes: 780, // 13 hours
             turnaroundMinutes: 120, // 2 hours
             basePricePerKm: 1100,
@@ -224,7 +227,7 @@ async function main() {
     const route4 = await prisma.route.create({
         data: {
             name: 'SNT1 - Sài Gòn - Nha Trang',
-            status: 'active',
+            status: RouteStatus.ACTIVE,
             durationMinutes: 480, // 8 hours
             turnaroundMinutes: 90, // 1.5 hours
             basePricePerKm: 1300,
@@ -243,7 +246,7 @@ async function main() {
     const route5 = await prisma.route.create({
         data: {
             name: 'SCT1 - Sài Gòn - Cần Thơ',
-            status: 'draft',
+            status: RouteStatus.DRAFT,
             durationMinutes: 240, // 4 hours
             turnaroundMinutes: 60, // 1 hour
             basePricePerKm: 1000,
@@ -381,7 +384,7 @@ async function main() {
                 email: 'admin@gmail.com',
                 password: passwordHash,
                 name: 'Admin User',
-                role: 'admin',
+                role: UserRole.ADMIN,
             },
         }),
         prisma.user.create({
@@ -389,7 +392,7 @@ async function main() {
                 email: 'user@gmail.com',
                 password: passwordHash,
                 name: 'Normal User',
-                role: 'user',
+                role: UserRole.USER,
             },
         }),
     ]);

@@ -9,9 +9,9 @@ import { Wallet, CreditCard, ChevronRight, Loader2, Lock } from "lucide-react"
 import { useWallet } from "@/features/wallet/hooks/use-wallet"
 import { formatCurrency } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
-import apiClient from '@/lib/api-client'
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { usePayWallet } from "@/features/wallet/hooks/use-pay-wallet"
 
 interface PaymentMethodDialogProps {
     open: boolean
@@ -28,6 +28,8 @@ export function PaymentMethodDialog({ open, onOpenChange, amount, paymentUrl, bo
     const [isProcessing, setIsProcessing] = useState(false)
     const router = useRouter()
 
+    const { mutate: payWallet, isPending: isPayingWallet } = usePayWallet();
+
     const handlePayment = async () => {
         if (method === "vnpay") {
             window.location.href = paymentUrl
@@ -41,17 +43,16 @@ export function PaymentMethodDialog({ open, onOpenChange, amount, paymentUrl, bo
             }
 
             setIsProcessing(true)
-            try {
-                await apiClient.post('/wallet/pay', {
-                    bookingCode,
-                    pin
-                })
-                toast.success("Thanh toán thành công!")
-                router.push(`/booking/payment-result?success=true&orderId=${bookingCode}`)
-            } catch (error: any) {
-                toast.error(error.response?.data?.message || "Thanh toán thất bại")
-                setIsProcessing(false)
-            }
+            payWallet({ bookingCode, pin }, {
+                onSuccess: () => {
+                    toast.success("Thanh toán thành công!")
+                    router.push(`/booking/payment-result?success=true&orderId=${bookingCode}`)
+                },
+                onError: (error: any) => {
+                    toast.error(error.response?.data?.message || "Thanh toán thất bại")
+                    setIsProcessing(false)
+                }
+            });
         }
     }
 

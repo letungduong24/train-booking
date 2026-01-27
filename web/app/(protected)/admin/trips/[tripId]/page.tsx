@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTrip } from "@/features/trips/hooks/use-trips";
 import { AdminTripHeader } from "@/features/admin/components/admin-trip-header";
 import { AdminSeatMap } from "@/features/admin/components/admin-seat-map";
+import { DelayControlDialog } from "@/features/admin/components/delay-control-dialog";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
@@ -53,9 +54,21 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
                 </div>
                 <div>
                     {/* Operation Panel Placeholder */}
-                    <div className="min-h-[200px] border rounded-lg bg-card p-4">
+                    <div className="min-h-[200px] border rounded-lg bg-card p-4 space-y-4">
                         <h3 className="font-semibold mb-2">Vận hành</h3>
-                        <p className="text-sm text-muted-foreground">Các chức năng Delay, Hủy chuyến sẽ được thêm vào đây.</p>
+                        <div className="space-y-2">
+                            <DelayControlDialog
+                                tripId={trip.id}
+                                tripStatus={trip.status}
+                                currentDepartureDelay={trip.departureDelayMinutes || 0}
+                                currentArrivalDelay={trip.arrivalDelayMinutes || 0}
+                            />
+                            <p className="text-xs text-muted-foreground mt-2">
+                                * Delay khởi hành: {trip.departureDelayMinutes || 0} phút
+                                <br />
+                                * Delay về bến: {trip.arrivalDelayMinutes || 0} phút
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 import {
     AlertDialog,
@@ -17,7 +17,7 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import apiClient from '@/lib/api-client';
+import { useCancelBooking } from '../hooks/use-cancel-booking';
 
 interface CancelBookingButtonProps {
     bookingCode: string;
@@ -32,23 +32,26 @@ export function CancelBookingButton({ bookingCode, onCancelSuccess, className, c
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-    const handleCancel = async () => {
-        try {
-            setIsLoading(true);
-            await apiClient.post(`/bookings/${bookingCode}/cancel`);
-            toast.success('Đã hủy đơn hàng thành công');
-            setIsOpen(false);
+    const { mutate: cancelBooking, isPending: isCancelling } = useCancelBooking();
 
-            if (onCancelSuccess) {
-                onCancelSuccess();
-            } else {
-                router.refresh();
+    const handleCancel = () => {
+        setIsLoading(true);
+        cancelBooking(bookingCode, {
+            onSuccess: () => {
+                toast.success('Đã hủy đơn hàng thành công');
+                setIsOpen(false);
+                if (onCancelSuccess) {
+                    onCancelSuccess();
+                } else {
+                    router.refresh();
+                }
+                setIsLoading(false);
+            },
+            onError: (error: any) => {
+                toast.error(error.response?.data?.message || 'Có lỗi xảy ra khi hủy đơn hàng');
+                setIsLoading(false);
             }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || 'Có lỗi xảy ra khi hủy đơn hàng');
-        } finally {
-            setIsLoading(false);
-        }
+        });
     };
 
     return (

@@ -45,7 +45,7 @@ export type RouteMinAggregateOutputType = {
   name: string | null
   createdAt: Date | null
   updatedAt: Date | null
-  status: string | null
+  status: $Enums.RouteStatus | null
   durationMinutes: number | null
   turnaroundMinutes: number | null
   basePricePerKm: number | null
@@ -57,7 +57,7 @@ export type RouteMaxAggregateOutputType = {
   name: string | null
   createdAt: Date | null
   updatedAt: Date | null
-  status: string | null
+  status: $Enums.RouteStatus | null
   durationMinutes: number | null
   turnaroundMinutes: number | null
   basePricePerKm: number | null
@@ -220,7 +220,7 @@ export type RouteGroupByOutputType = {
   name: string
   createdAt: Date
   updatedAt: Date
-  status: string
+  status: $Enums.RouteStatus
   durationMinutes: number
   turnaroundMinutes: number
   basePricePerKm: number
@@ -255,7 +255,7 @@ export type RouteWhereInput = {
   name?: Prisma.StringFilter<"Route"> | string
   createdAt?: Prisma.DateTimeFilter<"Route"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Route"> | Date | string
-  status?: Prisma.StringFilter<"Route"> | string
+  status?: Prisma.EnumRouteStatusFilter<"Route"> | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFilter<"Route"> | number
   turnaroundMinutes?: Prisma.IntFilter<"Route"> | number
   basePricePerKm?: Prisma.FloatFilter<"Route"> | number
@@ -286,7 +286,7 @@ export type RouteWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Route"> | string
   createdAt?: Prisma.DateTimeFilter<"Route"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Route"> | Date | string
-  status?: Prisma.StringFilter<"Route"> | string
+  status?: Prisma.EnumRouteStatusFilter<"Route"> | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFilter<"Route"> | number
   turnaroundMinutes?: Prisma.IntFilter<"Route"> | number
   basePricePerKm?: Prisma.FloatFilter<"Route"> | number
@@ -320,7 +320,7 @@ export type RouteScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Route"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Route"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Route"> | Date | string
-  status?: Prisma.StringWithAggregatesFilter<"Route"> | string
+  status?: Prisma.EnumRouteStatusWithAggregatesFilter<"Route"> | $Enums.RouteStatus
   durationMinutes?: Prisma.IntWithAggregatesFilter<"Route"> | number
   turnaroundMinutes?: Prisma.IntWithAggregatesFilter<"Route"> | number
   basePricePerKm?: Prisma.FloatWithAggregatesFilter<"Route"> | number
@@ -332,7 +332,7 @@ export type RouteCreateInput = {
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  status?: string
+  status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
   basePricePerKm?: number
@@ -346,7 +346,7 @@ export type RouteUncheckedCreateInput = {
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  status?: string
+  status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
   basePricePerKm?: number
@@ -360,7 +360,7 @@ export type RouteUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -374,7 +374,7 @@ export type RouteUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -388,7 +388,7 @@ export type RouteCreateManyInput = {
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  status?: string
+  status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
   basePricePerKm?: number
@@ -400,7 +400,7 @@ export type RouteUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -412,7 +412,7 @@ export type RouteUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -474,6 +474,10 @@ export type RouteScalarRelationFilter = {
   isNot?: Prisma.RouteWhereInput
 }
 
+export type EnumRouteStatusFieldUpdateOperationsInput = {
+  set?: $Enums.RouteStatus
+}
+
 export type IntFieldUpdateOperationsInput = {
   set?: number
   increment?: number
@@ -515,7 +519,7 @@ export type RouteCreateWithoutStationsInput = {
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  status?: string
+  status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
   basePricePerKm?: number
@@ -528,7 +532,7 @@ export type RouteUncheckedCreateWithoutStationsInput = {
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  status?: string
+  status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
   basePricePerKm?: number
@@ -557,7 +561,7 @@ export type RouteUpdateWithoutStationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -570,7 +574,7 @@ export type RouteUncheckedUpdateWithoutStationsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -583,7 +587,7 @@ export type RouteCreateWithoutTripsInput = {
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  status?: string
+  status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
   basePricePerKm?: number
@@ -596,7 +600,7 @@ export type RouteUncheckedCreateWithoutTripsInput = {
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  status?: string
+  status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
   basePricePerKm?: number
@@ -625,7 +629,7 @@ export type RouteUpdateWithoutTripsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -638,7 +642,7 @@ export type RouteUncheckedUpdateWithoutTripsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -757,7 +761,7 @@ export type $RoutePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     name: string
     createdAt: Date
     updatedAt: Date
-    status: string
+    status: $Enums.RouteStatus
     durationMinutes: number
     turnaroundMinutes: number
     basePricePerKm: number
@@ -1191,7 +1195,7 @@ export interface RouteFieldRefs {
   readonly name: Prisma.FieldRef<"Route", 'String'>
   readonly createdAt: Prisma.FieldRef<"Route", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Route", 'DateTime'>
-  readonly status: Prisma.FieldRef<"Route", 'String'>
+  readonly status: Prisma.FieldRef<"Route", 'RouteStatus'>
   readonly durationMinutes: Prisma.FieldRef<"Route", 'Int'>
   readonly turnaroundMinutes: Prisma.FieldRef<"Route", 'Int'>
   readonly basePricePerKm: Prisma.FieldRef<"Route", 'Float'>

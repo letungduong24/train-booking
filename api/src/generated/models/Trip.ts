@@ -20,8 +20,20 @@ export type TripModel = runtime.Types.Result.DefaultSelection<Prisma.$TripPayloa
 
 export type AggregateTrip = {
   _count: TripCountAggregateOutputType | null
+  _avg: TripAvgAggregateOutputType | null
+  _sum: TripSumAggregateOutputType | null
   _min: TripMinAggregateOutputType | null
   _max: TripMaxAggregateOutputType | null
+}
+
+export type TripAvgAggregateOutputType = {
+  departureDelayMinutes: number | null
+  arrivalDelayMinutes: number | null
+}
+
+export type TripSumAggregateOutputType = {
+  departureDelayMinutes: number | null
+  arrivalDelayMinutes: number | null
 }
 
 export type TripMinAggregateOutputType = {
@@ -30,7 +42,9 @@ export type TripMinAggregateOutputType = {
   trainId: string | null
   departureTime: Date | null
   endTime: Date | null
-  status: string | null
+  status: $Enums.TripStatus | null
+  departureDelayMinutes: number | null
+  arrivalDelayMinutes: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -41,7 +55,9 @@ export type TripMaxAggregateOutputType = {
   trainId: string | null
   departureTime: Date | null
   endTime: Date | null
-  status: string | null
+  status: $Enums.TripStatus | null
+  departureDelayMinutes: number | null
+  arrivalDelayMinutes: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -53,11 +69,23 @@ export type TripCountAggregateOutputType = {
   departureTime: number
   endTime: number
   status: number
+  departureDelayMinutes: number
+  arrivalDelayMinutes: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type TripAvgAggregateInputType = {
+  departureDelayMinutes?: true
+  arrivalDelayMinutes?: true
+}
+
+export type TripSumAggregateInputType = {
+  departureDelayMinutes?: true
+  arrivalDelayMinutes?: true
+}
 
 export type TripMinAggregateInputType = {
   id?: true
@@ -66,6 +94,8 @@ export type TripMinAggregateInputType = {
   departureTime?: true
   endTime?: true
   status?: true
+  departureDelayMinutes?: true
+  arrivalDelayMinutes?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -77,6 +107,8 @@ export type TripMaxAggregateInputType = {
   departureTime?: true
   endTime?: true
   status?: true
+  departureDelayMinutes?: true
+  arrivalDelayMinutes?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -88,6 +120,8 @@ export type TripCountAggregateInputType = {
   departureTime?: true
   endTime?: true
   status?: true
+  departureDelayMinutes?: true
+  arrivalDelayMinutes?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -131,6 +165,18 @@ export type TripAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: TripAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: TripSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: TripMinAggregateInputType
@@ -161,6 +207,8 @@ export type TripGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: TripCountAggregateInputType | true
+  _avg?: TripAvgAggregateInputType
+  _sum?: TripSumAggregateInputType
   _min?: TripMinAggregateInputType
   _max?: TripMaxAggregateInputType
 }
@@ -171,10 +219,14 @@ export type TripGroupByOutputType = {
   trainId: string
   departureTime: Date
   endTime: Date
-  status: string
+  status: $Enums.TripStatus
+  departureDelayMinutes: number
+  arrivalDelayMinutes: number
   createdAt: Date
   updatedAt: Date
   _count: TripCountAggregateOutputType | null
+  _avg: TripAvgAggregateOutputType | null
+  _sum: TripSumAggregateOutputType | null
   _min: TripMinAggregateOutputType | null
   _max: TripMaxAggregateOutputType | null
 }
@@ -203,7 +255,9 @@ export type TripWhereInput = {
   trainId?: Prisma.StringFilter<"Trip"> | string
   departureTime?: Prisma.DateTimeFilter<"Trip"> | Date | string
   endTime?: Prisma.DateTimeFilter<"Trip"> | Date | string
-  status?: Prisma.StringFilter<"Trip"> | string
+  status?: Prisma.EnumTripStatusFilter<"Trip"> | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFilter<"Trip"> | number
+  arrivalDelayMinutes?: Prisma.IntFilter<"Trip"> | number
   createdAt?: Prisma.DateTimeFilter<"Trip"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trip"> | Date | string
   route?: Prisma.XOR<Prisma.RouteScalarRelationFilter, Prisma.RouteWhereInput>
@@ -219,6 +273,8 @@ export type TripOrderByWithRelationInput = {
   departureTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  departureDelayMinutes?: Prisma.SortOrder
+  arrivalDelayMinutes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   route?: Prisma.RouteOrderByWithRelationInput
@@ -236,7 +292,9 @@ export type TripWhereUniqueInput = Prisma.AtLeast<{
   trainId?: Prisma.StringFilter<"Trip"> | string
   departureTime?: Prisma.DateTimeFilter<"Trip"> | Date | string
   endTime?: Prisma.DateTimeFilter<"Trip"> | Date | string
-  status?: Prisma.StringFilter<"Trip"> | string
+  status?: Prisma.EnumTripStatusFilter<"Trip"> | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFilter<"Trip"> | number
+  arrivalDelayMinutes?: Prisma.IntFilter<"Trip"> | number
   createdAt?: Prisma.DateTimeFilter<"Trip"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trip"> | Date | string
   route?: Prisma.XOR<Prisma.RouteScalarRelationFilter, Prisma.RouteWhereInput>
@@ -252,11 +310,15 @@ export type TripOrderByWithAggregationInput = {
   departureTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  departureDelayMinutes?: Prisma.SortOrder
+  arrivalDelayMinutes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TripCountOrderByAggregateInput
+  _avg?: Prisma.TripAvgOrderByAggregateInput
   _max?: Prisma.TripMaxOrderByAggregateInput
   _min?: Prisma.TripMinOrderByAggregateInput
+  _sum?: Prisma.TripSumOrderByAggregateInput
 }
 
 export type TripScalarWhereWithAggregatesInput = {
@@ -268,7 +330,9 @@ export type TripScalarWhereWithAggregatesInput = {
   trainId?: Prisma.StringWithAggregatesFilter<"Trip"> | string
   departureTime?: Prisma.DateTimeWithAggregatesFilter<"Trip"> | Date | string
   endTime?: Prisma.DateTimeWithAggregatesFilter<"Trip"> | Date | string
-  status?: Prisma.StringWithAggregatesFilter<"Trip"> | string
+  status?: Prisma.EnumTripStatusWithAggregatesFilter<"Trip"> | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntWithAggregatesFilter<"Trip"> | number
+  arrivalDelayMinutes?: Prisma.IntWithAggregatesFilter<"Trip"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Trip"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Trip"> | Date | string
 }
@@ -277,7 +341,9 @@ export type TripCreateInput = {
   id?: string
   departureTime: Date | string
   endTime: Date | string
-  status?: string
+  status?: $Enums.TripStatus
+  departureDelayMinutes?: number
+  arrivalDelayMinutes?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   route: Prisma.RouteCreateNestedOneWithoutTripsInput
@@ -292,7 +358,9 @@ export type TripUncheckedCreateInput = {
   trainId: string
   departureTime: Date | string
   endTime: Date | string
-  status?: string
+  status?: $Enums.TripStatus
+  departureDelayMinutes?: number
+  arrivalDelayMinutes?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutTripInput
@@ -303,7 +371,9 @@ export type TripUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   route?: Prisma.RouteUpdateOneRequiredWithoutTripsNestedInput
@@ -318,7 +388,9 @@ export type TripUncheckedUpdateInput = {
   trainId?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tickets?: Prisma.TicketUncheckedUpdateManyWithoutTripNestedInput
@@ -331,7 +403,9 @@ export type TripCreateManyInput = {
   trainId: string
   departureTime: Date | string
   endTime: Date | string
-  status?: string
+  status?: $Enums.TripStatus
+  departureDelayMinutes?: number
+  arrivalDelayMinutes?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -340,7 +414,9 @@ export type TripUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -351,7 +427,9 @@ export type TripUncheckedUpdateManyInput = {
   trainId?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -373,8 +451,15 @@ export type TripCountOrderByAggregateInput = {
   departureTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  departureDelayMinutes?: Prisma.SortOrder
+  arrivalDelayMinutes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type TripAvgOrderByAggregateInput = {
+  departureDelayMinutes?: Prisma.SortOrder
+  arrivalDelayMinutes?: Prisma.SortOrder
 }
 
 export type TripMaxOrderByAggregateInput = {
@@ -384,6 +469,8 @@ export type TripMaxOrderByAggregateInput = {
   departureTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  departureDelayMinutes?: Prisma.SortOrder
+  arrivalDelayMinutes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -395,8 +482,15 @@ export type TripMinOrderByAggregateInput = {
   departureTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  departureDelayMinutes?: Prisma.SortOrder
+  arrivalDelayMinutes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type TripSumOrderByAggregateInput = {
+  departureDelayMinutes?: Prisma.SortOrder
+  arrivalDelayMinutes?: Prisma.SortOrder
 }
 
 export type TripScalarRelationFilter = {
@@ -488,6 +582,10 @@ export type TripUncheckedUpdateManyWithoutTrainNestedInput = {
   deleteMany?: Prisma.TripScalarWhereInput | Prisma.TripScalarWhereInput[]
 }
 
+export type EnumTripStatusFieldUpdateOperationsInput = {
+  set?: $Enums.TripStatus
+}
+
 export type TripCreateNestedOneWithoutBookingsInput = {
   create?: Prisma.XOR<Prisma.TripCreateWithoutBookingsInput, Prisma.TripUncheckedCreateWithoutBookingsInput>
   connectOrCreate?: Prisma.TripCreateOrConnectWithoutBookingsInput
@@ -520,7 +618,9 @@ export type TripCreateWithoutRouteInput = {
   id?: string
   departureTime: Date | string
   endTime: Date | string
-  status?: string
+  status?: $Enums.TripStatus
+  departureDelayMinutes?: number
+  arrivalDelayMinutes?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   train: Prisma.TrainCreateNestedOneWithoutTripsInput
@@ -533,7 +633,9 @@ export type TripUncheckedCreateWithoutRouteInput = {
   trainId: string
   departureTime: Date | string
   endTime: Date | string
-  status?: string
+  status?: $Enums.TripStatus
+  departureDelayMinutes?: number
+  arrivalDelayMinutes?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutTripInput
@@ -575,7 +677,9 @@ export type TripScalarWhereInput = {
   trainId?: Prisma.StringFilter<"Trip"> | string
   departureTime?: Prisma.DateTimeFilter<"Trip"> | Date | string
   endTime?: Prisma.DateTimeFilter<"Trip"> | Date | string
-  status?: Prisma.StringFilter<"Trip"> | string
+  status?: Prisma.EnumTripStatusFilter<"Trip"> | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFilter<"Trip"> | number
+  arrivalDelayMinutes?: Prisma.IntFilter<"Trip"> | number
   createdAt?: Prisma.DateTimeFilter<"Trip"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Trip"> | Date | string
 }
@@ -584,7 +688,9 @@ export type TripCreateWithoutTrainInput = {
   id?: string
   departureTime: Date | string
   endTime: Date | string
-  status?: string
+  status?: $Enums.TripStatus
+  departureDelayMinutes?: number
+  arrivalDelayMinutes?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   route: Prisma.RouteCreateNestedOneWithoutTripsInput
@@ -597,7 +703,9 @@ export type TripUncheckedCreateWithoutTrainInput = {
   routeId: string
   departureTime: Date | string
   endTime: Date | string
-  status?: string
+  status?: $Enums.TripStatus
+  departureDelayMinutes?: number
+  arrivalDelayMinutes?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutTripInput
@@ -634,7 +742,9 @@ export type TripCreateWithoutBookingsInput = {
   id?: string
   departureTime: Date | string
   endTime: Date | string
-  status?: string
+  status?: $Enums.TripStatus
+  departureDelayMinutes?: number
+  arrivalDelayMinutes?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   route: Prisma.RouteCreateNestedOneWithoutTripsInput
@@ -648,7 +758,9 @@ export type TripUncheckedCreateWithoutBookingsInput = {
   trainId: string
   departureTime: Date | string
   endTime: Date | string
-  status?: string
+  status?: $Enums.TripStatus
+  departureDelayMinutes?: number
+  arrivalDelayMinutes?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutTripInput
@@ -674,7 +786,9 @@ export type TripUpdateWithoutBookingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   route?: Prisma.RouteUpdateOneRequiredWithoutTripsNestedInput
@@ -688,7 +802,9 @@ export type TripUncheckedUpdateWithoutBookingsInput = {
   trainId?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tickets?: Prisma.TicketUncheckedUpdateManyWithoutTripNestedInput
@@ -698,7 +814,9 @@ export type TripCreateWithoutTicketsInput = {
   id?: string
   departureTime: Date | string
   endTime: Date | string
-  status?: string
+  status?: $Enums.TripStatus
+  departureDelayMinutes?: number
+  arrivalDelayMinutes?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   route: Prisma.RouteCreateNestedOneWithoutTripsInput
@@ -712,7 +830,9 @@ export type TripUncheckedCreateWithoutTicketsInput = {
   trainId: string
   departureTime: Date | string
   endTime: Date | string
-  status?: string
+  status?: $Enums.TripStatus
+  departureDelayMinutes?: number
+  arrivalDelayMinutes?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTripInput
@@ -738,7 +858,9 @@ export type TripUpdateWithoutTicketsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   route?: Prisma.RouteUpdateOneRequiredWithoutTripsNestedInput
@@ -752,7 +874,9 @@ export type TripUncheckedUpdateWithoutTicketsInput = {
   trainId?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutTripNestedInput
@@ -763,7 +887,9 @@ export type TripCreateManyRouteInput = {
   trainId: string
   departureTime: Date | string
   endTime: Date | string
-  status?: string
+  status?: $Enums.TripStatus
+  departureDelayMinutes?: number
+  arrivalDelayMinutes?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -772,7 +898,9 @@ export type TripUpdateWithoutRouteInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   train?: Prisma.TrainUpdateOneRequiredWithoutTripsNestedInput
@@ -785,7 +913,9 @@ export type TripUncheckedUpdateWithoutRouteInput = {
   trainId?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tickets?: Prisma.TicketUncheckedUpdateManyWithoutTripNestedInput
@@ -797,7 +927,9 @@ export type TripUncheckedUpdateManyWithoutRouteInput = {
   trainId?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -807,7 +939,9 @@ export type TripCreateManyTrainInput = {
   routeId: string
   departureTime: Date | string
   endTime: Date | string
-  status?: string
+  status?: $Enums.TripStatus
+  departureDelayMinutes?: number
+  arrivalDelayMinutes?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -816,7 +950,9 @@ export type TripUpdateWithoutTrainInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   route?: Prisma.RouteUpdateOneRequiredWithoutTripsNestedInput
@@ -829,7 +965,9 @@ export type TripUncheckedUpdateWithoutTrainInput = {
   routeId?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tickets?: Prisma.TicketUncheckedUpdateManyWithoutTripNestedInput
@@ -841,7 +979,9 @@ export type TripUncheckedUpdateManyWithoutTrainInput = {
   routeId?: Prisma.StringFieldUpdateOperationsInput | string
   departureTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTripStatusFieldUpdateOperationsInput | $Enums.TripStatus
+  departureDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  arrivalDelayMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -893,6 +1033,8 @@ export type TripSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   departureTime?: boolean
   endTime?: boolean
   status?: boolean
+  departureDelayMinutes?: boolean
+  arrivalDelayMinutes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   route?: boolean | Prisma.RouteDefaultArgs<ExtArgs>
@@ -909,6 +1051,8 @@ export type TripSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   departureTime?: boolean
   endTime?: boolean
   status?: boolean
+  departureDelayMinutes?: boolean
+  arrivalDelayMinutes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   route?: boolean | Prisma.RouteDefaultArgs<ExtArgs>
@@ -922,6 +1066,8 @@ export type TripSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   departureTime?: boolean
   endTime?: boolean
   status?: boolean
+  departureDelayMinutes?: boolean
+  arrivalDelayMinutes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   route?: boolean | Prisma.RouteDefaultArgs<ExtArgs>
@@ -935,11 +1081,13 @@ export type TripSelectScalar = {
   departureTime?: boolean
   endTime?: boolean
   status?: boolean
+  departureDelayMinutes?: boolean
+  arrivalDelayMinutes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TripOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "routeId" | "trainId" | "departureTime" | "endTime" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["trip"]>
+export type TripOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "routeId" | "trainId" | "departureTime" | "endTime" | "status" | "departureDelayMinutes" | "arrivalDelayMinutes" | "createdAt" | "updatedAt", ExtArgs["result"]["trip"]>
 export type TripInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   route?: boolean | Prisma.RouteDefaultArgs<ExtArgs>
   train?: boolean | Prisma.TrainDefaultArgs<ExtArgs>
@@ -970,7 +1118,9 @@ export type $TripPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     trainId: string
     departureTime: Date
     endTime: Date
-    status: string
+    status: $Enums.TripStatus
+    departureDelayMinutes: number
+    arrivalDelayMinutes: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["trip"]>
@@ -1405,7 +1555,9 @@ export interface TripFieldRefs {
   readonly trainId: Prisma.FieldRef<"Trip", 'String'>
   readonly departureTime: Prisma.FieldRef<"Trip", 'DateTime'>
   readonly endTime: Prisma.FieldRef<"Trip", 'DateTime'>
-  readonly status: Prisma.FieldRef<"Trip", 'String'>
+  readonly status: Prisma.FieldRef<"Trip", 'TripStatus'>
+  readonly departureDelayMinutes: Prisma.FieldRef<"Trip", 'Int'>
+  readonly arrivalDelayMinutes: Prisma.FieldRef<"Trip", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Trip", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Trip", 'DateTime'>
 }

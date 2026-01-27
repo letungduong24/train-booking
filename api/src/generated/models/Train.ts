@@ -28,7 +28,7 @@ export type TrainMinAggregateOutputType = {
   id: string | null
   code: string | null
   name: string | null
-  status: string | null
+  status: $Enums.TrainStatus | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -37,7 +37,7 @@ export type TrainMaxAggregateOutputType = {
   id: string | null
   code: string | null
   name: string | null
-  status: string | null
+  status: $Enums.TrainStatus | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -157,7 +157,7 @@ export type TrainGroupByOutputType = {
   id: string
   code: string
   name: string
-  status: string
+  status: $Enums.TrainStatus
   createdAt: Date
   updatedAt: Date
   _count: TrainCountAggregateOutputType | null
@@ -187,7 +187,7 @@ export type TrainWhereInput = {
   id?: Prisma.StringFilter<"Train"> | string
   code?: Prisma.StringFilter<"Train"> | string
   name?: Prisma.StringFilter<"Train"> | string
-  status?: Prisma.StringFilter<"Train"> | string
+  status?: Prisma.EnumTrainStatusFilter<"Train"> | $Enums.TrainStatus
   createdAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   coaches?: Prisma.CoachListRelationFilter
@@ -212,7 +212,7 @@ export type TrainWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.TrainWhereInput[]
   NOT?: Prisma.TrainWhereInput | Prisma.TrainWhereInput[]
   name?: Prisma.StringFilter<"Train"> | string
-  status?: Prisma.StringFilter<"Train"> | string
+  status?: Prisma.EnumTrainStatusFilter<"Train"> | $Enums.TrainStatus
   createdAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   coaches?: Prisma.CoachListRelationFilter
@@ -238,7 +238,7 @@ export type TrainScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Train"> | string
   code?: Prisma.StringWithAggregatesFilter<"Train"> | string
   name?: Prisma.StringWithAggregatesFilter<"Train"> | string
-  status?: Prisma.StringWithAggregatesFilter<"Train"> | string
+  status?: Prisma.EnumTrainStatusWithAggregatesFilter<"Train"> | $Enums.TrainStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Train"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Train"> | Date | string
 }
@@ -247,7 +247,7 @@ export type TrainCreateInput = {
   id?: string
   code: string
   name: string
-  status?: string
+  status?: $Enums.TrainStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   coaches?: Prisma.CoachCreateNestedManyWithoutTrainInput
@@ -258,7 +258,7 @@ export type TrainUncheckedCreateInput = {
   id?: string
   code: string
   name: string
-  status?: string
+  status?: $Enums.TrainStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   coaches?: Prisma.CoachUncheckedCreateNestedManyWithoutTrainInput
@@ -269,7 +269,7 @@ export type TrainUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coaches?: Prisma.CoachUpdateManyWithoutTrainNestedInput
@@ -280,7 +280,7 @@ export type TrainUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coaches?: Prisma.CoachUncheckedUpdateManyWithoutTrainNestedInput
@@ -291,7 +291,7 @@ export type TrainCreateManyInput = {
   id?: string
   code: string
   name: string
-  status?: string
+  status?: $Enums.TrainStatus
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -300,7 +300,7 @@ export type TrainUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -309,7 +309,7 @@ export type TrainUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -346,6 +346,10 @@ export type TrainScalarRelationFilter = {
   isNot?: Prisma.TrainWhereInput
 }
 
+export type EnumTrainStatusFieldUpdateOperationsInput = {
+  set?: $Enums.TrainStatus
+}
+
 export type TrainCreateNestedOneWithoutCoachesInput = {
   create?: Prisma.XOR<Prisma.TrainCreateWithoutCoachesInput, Prisma.TrainUncheckedCreateWithoutCoachesInput>
   connectOrCreate?: Prisma.TrainCreateOrConnectWithoutCoachesInput
@@ -378,7 +382,7 @@ export type TrainCreateWithoutCoachesInput = {
   id?: string
   code: string
   name: string
-  status?: string
+  status?: $Enums.TrainStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   trips?: Prisma.TripCreateNestedManyWithoutTrainInput
@@ -388,7 +392,7 @@ export type TrainUncheckedCreateWithoutCoachesInput = {
   id?: string
   code: string
   name: string
-  status?: string
+  status?: $Enums.TrainStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutTrainInput
@@ -414,7 +418,7 @@ export type TrainUpdateWithoutCoachesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trips?: Prisma.TripUpdateManyWithoutTrainNestedInput
@@ -424,7 +428,7 @@ export type TrainUncheckedUpdateWithoutCoachesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trips?: Prisma.TripUncheckedUpdateManyWithoutTrainNestedInput
@@ -434,7 +438,7 @@ export type TrainCreateWithoutTripsInput = {
   id?: string
   code: string
   name: string
-  status?: string
+  status?: $Enums.TrainStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   coaches?: Prisma.CoachCreateNestedManyWithoutTrainInput
@@ -444,7 +448,7 @@ export type TrainUncheckedCreateWithoutTripsInput = {
   id?: string
   code: string
   name: string
-  status?: string
+  status?: $Enums.TrainStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   coaches?: Prisma.CoachUncheckedCreateNestedManyWithoutTrainInput
@@ -470,7 +474,7 @@ export type TrainUpdateWithoutTripsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coaches?: Prisma.CoachUpdateManyWithoutTrainNestedInput
@@ -480,7 +484,7 @@ export type TrainUncheckedUpdateWithoutTripsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coaches?: Prisma.CoachUncheckedUpdateManyWithoutTrainNestedInput
@@ -584,7 +588,7 @@ export type $TrainPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     id: string
     code: string
     name: string
-    status: string
+    status: $Enums.TrainStatus
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["train"]>
@@ -1015,7 +1019,7 @@ export interface TrainFieldRefs {
   readonly id: Prisma.FieldRef<"Train", 'String'>
   readonly code: Prisma.FieldRef<"Train", 'String'>
   readonly name: Prisma.FieldRef<"Train", 'String'>
-  readonly status: Prisma.FieldRef<"Train", 'String'>
+  readonly status: Prisma.FieldRef<"Train", 'TrainStatus'>
   readonly createdAt: Prisma.FieldRef<"Train", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Train", 'DateTime'>
 }

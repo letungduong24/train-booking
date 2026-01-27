@@ -70,6 +70,7 @@ export class PaymentController {
                     }
 
                     // Tạo Transaction và confirm booking
+                    // Trip status check is now in confirmBooking method
                     await this.paymentService.payBooking(
                         result.orderId,
                         booking.userId,
@@ -80,6 +81,10 @@ export class PaymentController {
                 console.error('Failed to process payment:', error);
                 // Nếu có lỗi (race condition, etc.) → Đánh dấu payment failed
                 paymentSuccess = false;
+                // Store error message for redirect
+                if (error instanceof Error) {
+                    (result as any).errorMessage = error.message;
+                }
             }
         }
 
@@ -93,7 +98,8 @@ export class PaymentController {
             if (paymentSuccess) {
                 redirectUrl = `${frontendUrl}/booking/payment-result?success=true&orderId=${result.orderId}&code=${result.responseCode}`;
             } else {
-                redirectUrl = `${frontendUrl}/booking/payment-result?success=false&orderId=${result.orderId}&code=${result.responseCode}`;
+                const errorMsg = encodeURIComponent((result as any).errorMessage || 'Giao dịch không thành công');
+                redirectUrl = `${frontendUrl}/booking/payment-result?success=false&orderId=${result.orderId}&code=${result.responseCode}&error=${errorMsg}`;
             }
         }
 
