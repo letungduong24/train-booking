@@ -1,15 +1,22 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import * as querystring from 'qs';
 import * as crypto from 'crypto';
 import dayjs from 'dayjs';
+import { PrismaService } from '../prisma/prisma.service';
+import { BookingService } from '../booking/booking.service';
 
 @Injectable()
 export class PaymentService {
     private readonly logger = new Logger(PaymentService.name);
 
-    constructor(private readonly configService: ConfigService) { }
+    constructor(
+        private readonly configService: ConfigService,
+        private readonly prisma: PrismaService,
+        @Inject(forwardRef(() => BookingService))
+        private readonly bookingService: BookingService,
+    ) { }
 
     createPaymentUrl(dto: CreatePaymentDto): string {
         const tmnCode = this.configService.get<string>('VNP_TMN_CODE') ?? '';
@@ -117,6 +124,24 @@ export class PaymentService {
         } else {
             return { RspCode: '97', Message: 'Checksum failed' };
         }
+    }
+
+    async payBooking(bookingCode: string, userId: string, amount: number) {
+        // Tạo Transaction cho thanh toán VNPAY
+        await this.prisma.transaction.create({
+            data: {
+                userId,
+                amount: -amount,
+                type: 'PAYMENT',
+                paymentMethod: 'VNPAY',
+                status: 'COMPLETED',
+                referenceId: bookingCode,
+                description: `Thanh toán vé tàu ${bookingCode} qua VNPAY`
+            }
+        });
+
+        // Xác nhận booking (tạo vé, cập nhật trạng thái)
+        await this.bookingService.confirmBooking(bookingCode);
     }
 
     private sortObject(obj: any): any {

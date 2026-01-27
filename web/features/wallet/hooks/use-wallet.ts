@@ -9,6 +9,7 @@ export interface Transaction {
     id: string;
     amount: number;
     type: TransactionType;
+    paymentMethod?: string;
     status: TransactionStatus;
     description: string | null;
     createdAt: string;

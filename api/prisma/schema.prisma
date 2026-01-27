@@ -55,6 +55,7 @@ model Transaction {
   user          User              @relation(fields: [userId], references: [id])
   amount        Float             // Số tiền (+ hoặc -)
   type          TransactionType   // DEPOSIT, WITHDRAW, PAYMENT, REFUND
+  paymentMethod String?           // WALLET, VNPAY, MOMO, etc. (for PAYMENT type)
   status        TransactionStatus @default(PENDING) 
   
   referenceId   String?           // Booking ID, Payment Gateway Ref, e.g.

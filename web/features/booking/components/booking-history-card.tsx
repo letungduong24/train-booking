@@ -52,6 +52,7 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
             case 'PENDING': return 'bg-yellow-500 hover:bg-yellow-600 text-white';
             case 'PAID': return 'bg-green-500 hover:bg-green-600 text-white';
             case 'CANCELLED': return 'bg-destructive hover:bg-destructive/90 text-destructive-foreground';
+            case 'PAYMENT_FAILED': return 'bg-red-500 hover:bg-red-600 text-white';
             default: return 'bg-muted text-muted-foreground';
         }
     };
@@ -61,6 +62,7 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
             case 'PENDING': return 'Chờ thanh toán';
             case 'PAID': return 'Đã thanh toán';
             case 'CANCELLED': return 'Đã hủy';
+            case 'PAYMENT_FAILED': return 'Thanh toán thất bại';
             default: return status;
         }
     };
@@ -78,7 +80,8 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
 
     const borderClass = booking.status === 'PAID' ? 'border-l-green-500'
         : booking.status === 'PENDING' ? 'border-l-yellow-500'
-            : 'border-l-destructive';
+            : booking.status === 'PAYMENT_FAILED' ? 'border-l-red-500'
+                : 'border-l-destructive';
 
     return (
         <Card className={cn("hover:shadow-lg transition-shadow duration-200 overflow-hidden border-l-4 justify-between", borderClass)}>

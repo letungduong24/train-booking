@@ -124,7 +124,7 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
       const checkWidth = () => {
         if (containerRef.current) {
           const width = containerRef.current.offsetWidth;
-          setIsMobile(width < 768); // 768px is md breakpoint
+          setIsMobile(width < 1024); // 1024px is lg breakpoint - use hamburger menu for md and below
         }
       };
 

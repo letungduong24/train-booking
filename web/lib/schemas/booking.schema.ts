@@ -80,7 +80,7 @@ export const BookingTicketSchema = z.object({
 export const BookingSchema = z.object({
     id: z.string(),
     code: z.string(),
-    status: z.enum(['PENDING', 'PAID', 'CANCELLED']),
+    status: z.enum(['PENDING', 'PAID', 'CANCELLED', 'PAYMENT_FAILED']),
     totalPrice: z.number(),
     createdAt: z.string(),
     expiresAt: z.string(),

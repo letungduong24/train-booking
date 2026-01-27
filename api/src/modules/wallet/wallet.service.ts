@@ -131,6 +131,7 @@ export class WalletService {
                         userId,
                         amount: -amount,
                         type: 'PAYMENT',
+                        paymentMethod: 'WALLET',
                         status: 'COMPLETED',
                         referenceId: bookingCode,
                         description: `Thanh toán vé tàu ${bookingCode}`

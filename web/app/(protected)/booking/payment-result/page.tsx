@@ -3,7 +3,6 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle2, XCircle } from 'lucide-react';
 
 export default function PaymentResultPage() {
     const searchParams = useSearchParams();
@@ -11,7 +10,6 @@ export default function PaymentResultPage() {
 
     const success = searchParams.get('success') === 'true';
     const orderId = searchParams.get('orderId');
-    const code = searchParams.get('code');
 
     return (
         <div className="container mx-auto py-16 px-4">
@@ -28,7 +26,7 @@ export default function PaymentResultPage() {
                     <p className="text-muted-foreground mb-6">
                         {success
                             ? 'Cảm ơn bạn đã đặt vé. Vé điện tử sẽ được gửi đến email của bạn.'
-                            : `Giao dịch không thành công. Mã lỗi: ${code}`
+                            : `Giao dịch không thành công do ghế đã được đặt hoặc giữ chỗ bởi người khác. Tiền sẽ được hoàn vào Ví điện tử của bạn.`
                         }
                     </p>
                     <div className="flex flex-col gap-2">

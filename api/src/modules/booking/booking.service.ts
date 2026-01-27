@@ -24,6 +24,7 @@ export class BookingService {
 
     constructor(
         private readonly prisma: PrismaService,
+        @Inject(forwardRef(() => PaymentService))
         private readonly paymentService: PaymentService,
         private readonly pricingService: PricingService,
         private readonly configService: ConfigService,
@@ -222,9 +223,7 @@ export class BookingService {
             toStationIndex: p.toStationIndex,
         }));
 
-        // [CRITICAL] Race Condition Check
-        // Trước khi chốt đơn, kiểm tra xem ghế đã bị ai mua mất chưa?
-        // (Trường hợp: Hết hạn lock -> Người khác mua -> User cũ thanh toán muộn)
+        // Kiểm tra race condition: ghế đã bị người khác mua chưa?
         const tripId = metadata.tripId;
         const seatIds = tickets.map(t => t.seatId);
 
@@ -238,7 +237,7 @@ export class BookingService {
         if (existingTickets.length > 0) {
             this.logger.error(`Race condition detected for Booking ${bookingCode}. Seats already taken.`);
 
-            // Refund to Wallet if User exists
+            // Hoàn tiền nếu thanh toán bằng ví
             if (booking.userId) {
                 try {
                     await this.walletService.refundToWallet(
@@ -264,7 +263,52 @@ export class BookingService {
             throw new BadRequestException('Ghế đã được đặt bởi người khác. Tiền đã được hoàn về ví của bạn.');
         }
 
-        // Cập nhật đơn hàng: tạo vé + chuyển trạng thái + xóa metadata
+        // Kiểm tra Redis lock - Ưu tiên người đang lock hiện tại
+        const lockKeys = seatIds.map((id: string) => `lock:seat:${tripId}:${id}`);
+        const locks = await Promise.all(lockKeys.map((key: string) => this.redis.get(key)));
+
+        const lockedByOthers = locks.some((lock, index) => {
+            if (!lock) return false; // Không có lock
+            try {
+                // The lock value is just the bookingCode string, not a JSON object.
+                // The `initBooking` method sets `await this.redis.set(key, bookingCode, 'EX', lockTimeSec, 'NX');`
+                // So we should compare directly with the bookingCode.
+                return lock !== bookingCode; // Lock bởi booking khác
+            } catch {
+                return false; // Should not happen if lock is just a string
+            }
+        });
+
+        if (lockedByOthers) {
+            this.logger.error(`Booking ${bookingCode} rejected: Seats are locked by another active booking`);
+
+            // Hoàn tiền nếu thanh toán bằng ví
+            if (booking.userId) {
+                try {
+                    await this.walletService.refundToWallet(
+                        booking.userId,
+                        booking.totalPrice,
+                        bookingCode,
+                        'Hoàn tiền do ghế đang được giữ bởi người khác'
+                    );
+                    this.logger.log(`Refunded ${booking.totalPrice} to wallet for user ${booking.userId}`);
+                } catch (refundError) {
+                    this.logger.error(`Failed to refund to wallet for booking ${bookingCode}`, refundError);
+                }
+            }
+
+            // Cập nhật trạng thái
+            await this.prisma.booking.update({
+                where: { code: bookingCode },
+                data: {
+                    status: 'PAYMENT_FAILED',
+                }
+            });
+
+            throw new BadRequestException('Ghế đang được giữ bởi người khác. Tiền đã được hoàn về ví của bạn.');
+        }
+
+        // Tạo vé và cập nhật trạng thái booking
         const updatedBooking = await this.prisma.booking.update({
             where: { code: bookingCode },
             data: {
@@ -275,7 +319,15 @@ export class BookingService {
                 },
             },
             include: {
-                tickets: true,
+                tickets: {
+                    include: {
+                        seat: {
+                            include: {
+                                coach: true
+                            }
+                        }
+                    }
+                },
             },
         });
 
@@ -710,7 +762,13 @@ export class BookingService {
                     },
                 },
                 tickets: {
-                    include: { seat: true }
+                    include: {
+                        seat: {
+                            include: {
+                                coach: true
+                            }
+                        }
+                    }
                 }
             },
         });
@@ -722,8 +780,8 @@ export class BookingService {
         const lockTimeMin = this.configService.get<number>('BOOKING_LOCK_TIME_MINUTES') || 10;
         const expiresAt = dayjs(booking.createdAt).add(lockTimeMin, 'minute').toDate();
 
-        // Enrich for PENDING or CANCELLED state if tickets are empty 
-        if ((booking.status === 'PENDING' || booking.status === 'CANCELLED') && booking.tickets.length === 0 && booking.metadata) {
+        // Enrich for PENDING, CANCELLED, or PAYMENT_FAILED state if tickets are empty 
+        if ((booking.status === 'PENDING' || booking.status === 'CANCELLED' || booking.status === 'PAYMENT_FAILED') && booking.tickets.length === 0 && booking.metadata) {
             const metadata = booking.metadata as any;
 
             // Case 1: Has Passengers info in metadata (User filled details but didn't pay)

@@ -115,6 +115,7 @@ export const TransactionScalarFieldEnum = {
   userId: 'userId',
   amount: 'amount',
   type: 'type',
+  paymentMethod: 'paymentMethod',
   status: 'status',
   referenceId: 'referenceId',
   description: 'description',

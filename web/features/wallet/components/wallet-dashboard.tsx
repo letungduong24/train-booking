@@ -163,6 +163,11 @@ export function WalletDashboard() {
                                             <div>
                                                 <div className="font-medium flex items-center gap-2">
                                                     {tx.description || getTxTitle(tx.type)}
+                                                    {tx.paymentMethod && tx.type === 'PAYMENT' && (
+                                                        <Badge variant="secondary" className="text-xs">
+                                                            {tx.paymentMethod}
+                                                        </Badge>
+                                                    )}
                                                     <StatusBadge status={tx.status} />
                                                 </div>
                                                 <div className="text-xs text-muted-foreground">

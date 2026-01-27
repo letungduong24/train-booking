@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { BookingService } from '../booking/booking.service';
 import { WalletService } from '../wallet/wallet.service';
 import { Inject, forwardRef } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('payment')
 export class PaymentController {
@@ -16,6 +17,7 @@ export class PaymentController {
         private readonly bookingService: BookingService,
         @Inject(forwardRef(() => WalletService))
         private readonly walletService: WalletService,
+        private readonly prisma: PrismaService,
     ) { }
 
     @Post('create_payment_url')
@@ -38,31 +40,55 @@ export class PaymentController {
 
     @Get('vnpay_return')
     async vnpayReturn(@Query() query: any, @Res() res: Response) {
+        // Xác thực chữ ký từ VNPAY
         const result = this.paymentService.verifyReturnUrl(query);
 
-        // Logic to determine Booking vs Deposit
-        const isDeposit = result.orderId.length > 10; // UUID is 36 chars, Booking Code is 8
+        // Phân biệt Deposit (nạp tiền) vs Booking (đặt vé)
+        const transaction = await this.prisma.transaction.findUnique({
+            where: { id: result.orderId }
+        });
+        const isDeposit = transaction?.type === 'DEPOSIT';
+
+        let paymentSuccess = result.isSuccess;
 
         if (result.isSuccess) {
             try {
                 if (isDeposit) {
+                    // Xử lý nạp tiền vào ví
                     await this.walletService.processDeposit(result.orderId);
                 } else {
-                    await this.bookingService.confirmBooking(result.orderId);
+                    // Xử lý thanh toán vé
+                    const booking = await this.prisma.booking.findUnique({
+                        where: { code: result.orderId },
+                        select: { userId: true, totalPrice: true }
+                    });
+
+                    if (!booking?.userId) {
+                        throw new Error('Booking không tồn tại hoặc thiếu userId');
+                    }
+
+                    // Tạo Transaction và confirm booking
+                    await this.paymentService.payBooking(
+                        result.orderId,
+                        booking.userId,
+                        booking.totalPrice
+                    );
                 }
             } catch (error) {
                 console.error('Failed to process payment:', error);
+                // Nếu có lỗi (race condition, etc.) → Đánh dấu payment failed
+                paymentSuccess = false;
             }
         }
 
-        // Redirect to frontend result page
+        // Redirect về frontend
         const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
         let redirectUrl = '';
 
         if (isDeposit) {
-            redirectUrl = `${frontendUrl}/user/wallet?deposit=${result.isSuccess ? 'success' : 'failed'}&amount=${query.vnp_Amount ? parseInt(query.vnp_Amount) / 100 : 0}`;
+            redirectUrl = `${frontendUrl}/user/wallet?deposit=${paymentSuccess ? 'success' : 'failed'}&amount=${query.vnp_Amount ? parseInt(query.vnp_Amount) / 100 : 0}`;
         } else {
-            if (result.isSuccess) {
+            if (paymentSuccess) {
                 redirectUrl = `${frontendUrl}/booking/payment-result?success=true&orderId=${result.orderId}&code=${result.responseCode}`;
             } else {
                 redirectUrl = `${frontendUrl}/booking/payment-result?success=false&orderId=${result.orderId}&code=${result.responseCode}`;
@@ -74,17 +100,36 @@ export class PaymentController {
 
     @Get('vnpay_ipn')
     async vnpayIpn(@Query() query: any) {
+        // Xác thực chữ ký từ VNPAY
         const result = this.paymentService.verifyReturnUrl(query);
-        const isDeposit = result.orderId.length > 10;
 
-        // Update booking if payment successful
+        // Phân biệt Deposit vs Booking
+        const transaction = await this.prisma.transaction.findUnique({
+            where: { id: result.orderId }
+        });
+        const isDeposit = transaction?.type === 'DEPOSIT';
+
+        // Cập nhật trạng thái nếu thanh toán thành công
         if (result.isSuccess) {
             try {
                 if (isDeposit) {
                     await this.walletService.processDeposit(result.orderId);
                     console.log(`IPN: Deposit ${result.orderId} confirmed`);
                 } else {
-                    await this.bookingService.confirmBooking(result.orderId);
+                    const booking = await this.prisma.booking.findUnique({
+                        where: { code: result.orderId },
+                        select: { userId: true, totalPrice: true }
+                    });
+
+                    if (!booking?.userId) {
+                        throw new Error('Booking không tồn tại hoặc thiếu userId');
+                    }
+
+                    await this.paymentService.payBooking(
+                        result.orderId,
+                        booking.userId,
+                        booking.totalPrice
+                    );
                     console.log(`IPN: Booking ${result.orderId} confirmed`);
                 }
             } catch (error) {
@@ -92,7 +137,7 @@ export class PaymentController {
             }
         }
 
-        // Return response to VNPAY
+        // Trả về response cho VNPAY
         return { RspCode: '00', Message: 'Success' };
     }
 }

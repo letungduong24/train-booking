@@ -90,6 +90,7 @@ export default function BookingDetailPage() {
             case 'PENDING': return 'bg-yellow-500 hover:bg-yellow-600 text-white';
             case 'PAID': return 'bg-green-500 hover:bg-green-600 text-white';
             case 'CANCELLED': return 'bg-destructive hover:bg-destructive/90 text-destructive-foreground';
+            case 'PAYMENT_FAILED': return 'bg-red-500 hover:bg-red-600 text-white';
             default: return 'bg-muted text-muted-foreground';
         }
     };
@@ -99,6 +100,7 @@ export default function BookingDetailPage() {
             case 'PENDING': return 'Chờ thanh toán';
             case 'PAID': return 'Đã thanh toán';
             case 'CANCELLED': return 'Đã hủy';
+            case 'PAYMENT_FAILED': return 'Thanh toán thất bại';
             default: return status;
         }
     };
@@ -197,32 +199,63 @@ export default function BookingDetailPage() {
                         <CardHeader className="bg-muted/30 p-4">
                             <CardTitle className="text-lg flex items-center gap-2">
                                 <Ticket className="h-5 w-5 text-primary" />
-                                Danh sách vé ({tickets.length})
+                                Danh sách vé ({tickets.length > 0 ? tickets.length : metadata?.passengers?.length || 0})
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="">
                             <div className="space-y-4">
-                                {tickets.map((ticket: any, index: number) => (
-                                    <div key={ticket.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 rounded-lg border bg-card/50 gap-3">
-                                        <div className="flex gap-3">
-                                            <div className="bg-primary/10 w-10 h-10 rounded-full flex items-center justify-center text-primary font-bold shrink-0">
-                                                {index + 1}
+                                {tickets.length > 0 ? (
+                                    // Hiển thị tickets đã tạo (PAID)
+                                    tickets.map((ticket: any, index: number) => (
+                                        <div key={ticket.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 rounded-lg border bg-card/50 gap-3">
+                                            <div className="flex gap-3">
+                                                <div className="bg-primary/10 w-10 h-10 rounded-full flex items-center justify-center text-primary font-bold shrink-0">
+                                                    {index + 1}
+                                                </div>
+                                                <div>
+                                                    <p className="font-bold">{ticket.passengerName}</p>
+                                                    <p className="text-sm text-muted-foreground flex items-center gap-1">
+                                                        <CreditCard className="h-3 w-3" /> {ticket.passengerId || 'N/A'}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="font-bold">{ticket.passengerName}</p>
-                                                <p className="text-sm text-muted-foreground flex items-center gap-1">
-                                                    <CreditCard className="h-3 w-3" /> {ticket.passengerId || 'N/A'}
-                                                </p>
+                                            <div className="text-right w-full sm:w-auto flex flex-row sm:flex-col justify-between items-center sm:items-end">
+                                                <Badge variant="outline" className="mb-0 sm:mb-1">
+                                                    Ghế {ticket.seat?.coach ? `${ticket.seat.coach.name}-${ticket.seat.name}` : ticket.seat?.name || '---'}
+                                                </Badge>
+                                                <span className="font-semibold">{formatCurrency(ticket.price)}</span>
                                             </div>
                                         </div>
-                                        <div className="text-right w-full sm:w-auto flex flex-row sm:flex-col justify-between items-center sm:items-end">
-                                            <Badge variant="outline" className="mb-0 sm:mb-1">
-                                                Ghế {ticket.seat?.name || '---'}
-                                            </Badge>
-                                            <span className="font-semibold">{formatCurrency(ticket.price)}</span>
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))
+                                ) : metadata?.passengers ? (
+                                    // Hiển thị passengers từ metadata (PAYMENT_FAILED, PENDING)
+                                    metadata.passengers.map((passenger: any, index: number) => {
+                                        const seat = metadata.seats?.find((s: any) => s.id === passenger.seatId);
+                                        return (
+                                            <div key={passenger.seatId} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 rounded-lg border bg-card/50 gap-3">
+                                                <div className="flex gap-3">
+                                                    <div className="bg-primary/10 w-10 h-10 rounded-full flex items-center justify-center text-primary font-bold shrink-0">
+                                                        {index + 1}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold">{passenger.passengerName}</p>
+                                                        <p className="text-sm text-muted-foreground flex items-center gap-1">
+                                                            <CreditCard className="h-3 w-3" /> {passenger.passengerId || 'N/A'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right w-full sm:w-auto flex flex-row sm:flex-col justify-between items-center sm:items-end">
+                                                    <Badge variant="outline" className="mb-0 sm:mb-1">
+                                                        Ghế {seat?.name || '---'}
+                                                    </Badge>
+                                                    <span className="font-semibold">{formatCurrency(passenger.price || seat?.price || 0)}</span>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                ) : (
+                                    <p className="text-sm text-muted-foreground text-center py-4">Không có thông tin vé</p>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
@@ -269,6 +302,17 @@ export default function BookingDetailPage() {
                                     <Button variant="outline" className="w-full" disabled>
                                         Đã thanh toán thành công
                                     </Button>
+                                </div>
+                            ) : status === 'PAYMENT_FAILED' ? (
+                                <div className="pt-4 space-y-2">
+                                    <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                                        <p className="text-sm text-red-800 dark:text-red-200 font-medium">
+                                            Thanh toán thất bại do ghế đã được đặt hoặc giữ chỗ bởi người khác.
+                                        </p>
+                                        <p className="text-xs text-red-600 dark:text-red-300 mt-1">
+                                            Tiền đã được hoàn về ví của bạn.
+                                        </p>
+                                    </div>
                                 </div>
                             ) : null}
                         </CardContent>
