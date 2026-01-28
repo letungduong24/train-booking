@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, MapPin, Calendar, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { format, addMinutes } from 'date-fns';
-import { socket } from '@/lib/socket';
+// import { socket } from '@/lib/socket';
 
 function PassengersPageContent() {
     const router = useRouter();
@@ -28,29 +28,7 @@ function PassengersPageContent() {
     const [initialPassengers, setInitialPassengers] = useState<PassengerFormData[]>([]);
     const [paymentDialog, setPaymentDialog] = useState({ open: false, amount: 0, paymentUrl: '', bookingCode: '' });
 
-    useEffect(() => {
-        if (!bookingCode) return;
-
-        function onConnect() {
-            console.log("Connected to booking namespace");
-        }
-
-        function onStatusUpdate(data: { bookingCode: string; status: string }) {
-            if (data.bookingCode === bookingCode) {
-                queryClient.invalidateQueries({ queryKey: ['booking', bookingCode] });
-                router.refresh();
-            }
-        }
-
-        socket.connect();
-        socket.on("connect", onConnect);
-        socket.on("booking.status_update", onStatusUpdate);
-
-        return () => {
-            socket.off("connect", onConnect);
-            socket.off("booking.status_update", onStatusUpdate);
-        };
-    }, [bookingCode, router, queryClient]);
+    // Socket logic moved to useBooking hook
 
     useEffect(() => {
         if (booking?.metadata?.seats) {

@@ -109,8 +109,8 @@ export default function BookingPage() {
                             {trips.map((trip: any) => (
                                 <Card key={trip.id} className="hover:shadow-md transition-shadow cursor-pointer"
                                     onClick={() => router.push(`/booking/${trip.id}?from=${searchParams.fromStationId}&to=${searchParams.toStationId}`)}>
-                                    <CardContent className="p-6">
-                                        <div className="flex items-center justify-between">
+                                    <CardContent className="px-6">
+                                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
                                             <div className="flex items-center gap-4">
                                                 <div className="p-3 bg-primary/10 rounded-lg">
                                                     <Train className="h-6 w-6 text-primary" />
@@ -120,14 +120,11 @@ export default function BookingPage() {
                                                     <p className="text-sm text-muted-foreground">Tàu {trip.train.code}</p>
                                                 </div>
                                             </div>
-                                            <div className="text-right">
-                                                <p className="text-sm text-muted-foreground">Khởi hành</p>
-                                                <div className="flex flex-col items-end">
-                                                    <span className="font-semibold text-lg">{format(new Date(trip.departureTime), 'HH:mm')}</span>
-                                                    <span className="text-sm text-muted-foreground">{format(new Date(trip.departureTime), 'dd/MM/yyyy')}</span>
-                                                </div>
+                                            <div className="flex flex-row md:flex-col items-center md:items-end gap-1 md:gap-0">
+                                                <p className="text-muted-foreground">Khởi hành<span className="inline-block md:hidden">:</span></p>
+                                                <span className="font-semibold">{format(new Date(trip.departureTime), 'HH:mm')} - {format(new Date(trip.departureTime), 'dd/MM/yyyy')}</span>
                                             </div>
-                                            <Button>Chọn chuyến</Button>
+                                            <Button className="w-full md:w-auto">Chọn chuyến</Button>
                                         </div>
                                     </CardContent>
                                 </Card>

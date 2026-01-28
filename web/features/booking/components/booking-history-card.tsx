@@ -7,13 +7,11 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useEffect } from "react";
 import { Booking } from "@/features/booking/hooks/use-my-bookings";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { BookingTimer } from "./booking-timer";
 import { CancelBookingButton } from "./cancel-booking-button";
-import { socket } from "@/lib/socket";
 
 interface BookingHistoryCardProps {
     booking: Booking;
@@ -23,29 +21,7 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
     const router = useRouter();
     const queryClient = useQueryClient();
 
-    useEffect(() => {
-        if (booking.status !== 'PENDING') return;
-
-        function onConnect() {
-            console.log("Connected to booking namespace");
-        }
-
-        function onStatusUpdate(data: { bookingCode: string; status: string }) {
-            if (data.bookingCode === booking.code) {
-                queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
-                router.refresh();
-            }
-        }
-
-        socket.connect();
-        socket.on("connect", onConnect);
-        socket.on("booking.status_update", onStatusUpdate);
-
-        return () => {
-            socket.off("connect", onConnect);
-            socket.off("booking.status_update", onStatusUpdate);
-        };
-    }, [booking.code, booking.status, router, queryClient]);
+    // Socket logic moved to useMyBookings hook
 
     const getStatusClasses = (status: string) => {
         switch (status) {

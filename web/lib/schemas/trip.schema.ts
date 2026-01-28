@@ -53,7 +53,13 @@ export const tripDetailSchema = tripSchema.extend({
             station: z.object({
                 id: z.string(),
                 name: z.string(),
+                code: z.string(),
+                latitute: z.number(),
+                longtitute: z.number(),
+                createdAt: z.string().or(z.date()),
+                updatedAt: z.string().or(z.date()),
             }),
+            index: z.number(),
             distanceFromStart: z.number(),
             durationFromStart: z.number(),
         })),

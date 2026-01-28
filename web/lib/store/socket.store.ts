@@ -15,7 +15,14 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     isConnected: false,
     connect: () => {
         const { socket } = get();
-        if (socket?.connected) return;
+
+        // If socket exists, ensure it's connected
+        if (socket) {
+            if (!socket.connected) {
+                socket.connect();
+            }
+            return;
+        }
 
         const newSocket = io(URL + "/booking", {
             autoConnect: false,

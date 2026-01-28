@@ -3,7 +3,7 @@ import { TripDetail } from "@/lib/schemas/trip.schema";
 import { format, addMinutes } from "date-fns";
 import { vi } from "date-fns/locale";
 import { Train, MapPin, Calendar, Clock, AlertTriangle, CheckCircle2 } from "lucide-react";
-import { StatsCards } from "./stats-cards";
+import { useTripStats } from "@/features/trips/hooks/use-trip-stats";
 import { TripStatusBadge } from "@/lib/utils/trip-status";
 
 interface AdminTripHeaderProps {
@@ -11,16 +11,7 @@ interface AdminTripHeaderProps {
 }
 
 export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
-    const revenue = 150000000; // Mock 150tr
-    const totalSeats = trip.train?.coaches.reduce((acc, coach) => {
-
-        return acc + (coach._count?.seats || 40); // Default 40 if missing
-    }, 0) || 100;
-
-    const ticketsSold = trip._count?.tickets || 0;
-    const ticketsPending = 50; // Mock
-    const occupancy = Math.round((ticketsSold / totalSeats) * 100);
-
+    const { data: stats } = useTripStats(trip.id);
 
     const effectiveDepartureTime = trip.departureDelayMinutes
         ? addMinutes(new Date(trip.departureTime), trip.departureDelayMinutes)
@@ -92,26 +83,29 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                 </div>
             </div>
 
-            {/* KPIs */}
-            {/* KPIs */}
-            <StatsCards stats={[
-                {
-                    title: "Doanh thu dự kiến",
-                    value: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(revenue),
-                },
-                {
-                    title: "Tỷ lệ lấp đầy",
-                    value: `${occupancy}%`,
-                },
-                {
-                    title: "Vé đã bán",
-                    value: ticketsSold.toString(),
-                },
-                {
-                    title: "Giữ chỗ (Pending)",
-                    value: ticketsPending.toString(),
-                }
-            ]} />
+            {/* Realtime KPIs */}
+            {stats && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 rounded-lg border bg-card p-4 shadow-sm">
+                    <div className="space-y-1">
+                        <p className="text-sm font-medium text-muted-foreground">Doanh thu dự kiến</p>
+                        <p className="text-2xl font-bold">
+                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(stats.revenue)}
+                        </p>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-sm font-medium text-muted-foreground">Tỷ lệ lấp đầy</p>
+                        <p className="text-2xl font-bold">{stats.occupancy}%</p>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-sm font-medium text-muted-foreground">Vé đã bán</p>
+                        <p className="text-2xl font-bold">{stats.ticketsSold}</p>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-sm font-medium text-muted-foreground">Giữ chỗ (Pending)</p>
+                        <p className="text-2xl font-bold">{stats.ticketsPending}</p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -25,6 +25,11 @@ export class TripController {
         return this.tripService.findAll(query);
     }
 
+    @Get(':id/stats')
+    getTripStats(@Param('id') id: string) {
+        return this.tripService.getTripStats(id);
+    }
+
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.tripService.findOne(id);

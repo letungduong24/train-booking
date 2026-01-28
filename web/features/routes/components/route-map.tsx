@@ -14,7 +14,12 @@ interface RouteMapProps {
     stations: {
         stationId: string;
         index: number;
-        station?: Station;
+        station?: {
+            id: string;
+            name: string;
+            latitute: number;
+            longtitute: number;
+        } | null;
     }[]
     className?: string;
     highlightSegment?: {

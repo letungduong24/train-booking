@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useTrip } from "@/features/trips/hooks/use-trips";
 import { AdminTripHeader } from "@/features/admin/components/admin-trip-header";
 import { AdminSeatMap } from "@/features/admin/components/admin-seat-map";
+import { RouteMap } from "@/features/routes/components/route-map";
 import { DelayControlDialog } from "@/features/admin/components/delay-control-dialog";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -49,6 +50,17 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
                     />
                 </div>
             </div>
+            {/* Route Map */}
+            {trip.route?.stations && (
+                <div className="border rounded-lg bg-card p-4 space-y-4">
+                    <h3 className="font-semibold mb-2">Bản đồ lộ trình</h3>
+                    <RouteMap
+                        stations={trip.route.stations}
+                        className="h-[400px]"
+                    />
+                </div>
+            )}
+
             {/* Admin Seat Map */}
             <AdminSeatMap trip={trip} />
         </div>

@@ -466,4 +466,69 @@ export class TripService {
             },
         });
     }
+
+    async getTripStats(id: string) {
+        // 1. Get Trip with Train/Coach info for total seats
+        const trip = await this.prisma.trip.findUnique({
+            where: { id },
+            include: {
+                train: {
+                    include: {
+                        coaches: {
+                            include: {
+                                _count: {
+                                    select: { seats: true }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        if (!trip) throw new NotFoundException('Trip not found');
+
+        const totalSeats = trip.train.coaches.reduce((sum, coach) => sum + (coach._count.seats || 0), 0);
+
+        // 2. Calculate Revenue & Tickets Sold (Confirmed Tickets)
+        const tickets = await this.prisma.ticket.findMany({
+            where: { tripId: id },
+            select: { price: true }
+        });
+
+        const ticketsSold = tickets.length;
+        const revenue = tickets.reduce((sum, t) => sum + t.price, 0);
+
+        // 3. Calculate Pending Tickets (from Pending Bookings)
+        // We need to look at PENDING bookings and count seats
+        const pendingBookings = await this.prisma.booking.findMany({
+            where: {
+                tripId: id,
+                status: 'PENDING'
+            },
+            select: {
+                metadata: true
+            }
+        });
+
+        let ticketsPending = 0;
+        for (const booking of pendingBookings) {
+            if (!booking.metadata) continue;
+            const meta = booking.metadata as any;
+            if (meta.seatIds && Array.isArray(meta.seatIds)) {
+                ticketsPending += meta.seatIds.length;
+            } else if (meta.passengers && Array.isArray(meta.passengers)) {
+                ticketsPending += meta.passengers.length;
+            }
+        }
+
+        const occupancy = totalSeats > 0 ? Math.round((ticketsSold / totalSeats) * 100) : 0;
+
+        return {
+            revenue,
+            ticketsSold,
+            ticketsPending,
+            occupancy
+        };
+    }
 }

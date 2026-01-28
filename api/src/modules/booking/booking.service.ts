@@ -17,6 +17,7 @@ import dayjs from 'dayjs';
 import { validateCCCD, validateCCCDAgeForGroup } from '../../common/utils/cccd.util';
 
 import { BookingGateway } from './booking.gateway';
+import { TripService } from '../trip/trip.service';
 
 @Injectable()
 export class BookingService {
@@ -33,7 +34,17 @@ export class BookingService {
         private readonly bookingGateway: BookingGateway,
         @Inject(forwardRef(() => WalletService))
         private readonly walletService: WalletService,
+        private readonly tripService: TripService,
     ) { }
+
+    async triggerStatsUpdate(tripId: string) {
+        try {
+            const stats = await this.tripService.getTripStats(tripId);
+            this.bookingGateway.emitTripStatsUpdate(tripId, stats);
+        } catch (error) {
+            this.logger.error(`Failed to trigger stats update for trip ${tripId}`, error);
+        }
+    }
 
     async createBooking(userId: string | null, dto: CreateBookingDto, ipAddr: string) {
         const { tripId, passengers, fromStationId, toStationId } = dto;
@@ -394,6 +405,10 @@ export class BookingService {
         }
 
         this.logger.log(`Đã xác nhận đơn hàng ${bookingCode} với ${tickets.length} vé`);
+
+        // Update stats
+        this.triggerStatsUpdate(tickets[0].tripId);
+
         return updatedBooking;
     }
 
@@ -559,6 +574,7 @@ export class BookingService {
 
             // 6. Emit Socket Event
             this.bookingGateway.emitSeatsLocked(tripId, seatIds);
+            this.triggerStatsUpdate(tripId);
 
             return {
                 bookingId: booking.id,
@@ -604,9 +620,14 @@ export class BookingService {
 
         this.bookingGateway.emitBookingStatusUpdate(code, 'CANCELLED');
 
-        // Release locks
         if (booking.metadata) {
             const metadata = booking.metadata as unknown as BookingMetadata;
+            
+            // Trigger stats update if tripId is present
+            if (metadata.tripId) {
+                this.triggerStatsUpdate(metadata.tripId);
+            }
+
             if (metadata.tripId && metadata.seatIds) { // For initBooking style
                 this.bookingGateway.emitSeatsReleased(metadata.tripId, metadata.seatIds);
                 // Also delete from Redis
@@ -647,6 +668,8 @@ export class BookingService {
             if (booking.metadata) {
                 const metadata = booking.metadata as unknown as BookingMetadata;
                 if (metadata.tripId) {
+                    this.triggerStatsUpdate(metadata.tripId);
+                    
                     let seatIds: string[] = [];
                     if (metadata.seatIds) {
                         seatIds = metadata.seatIds;

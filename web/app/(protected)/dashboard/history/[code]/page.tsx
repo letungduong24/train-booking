@@ -15,7 +15,7 @@ import dayjs from 'dayjs';
 import { RouteMap } from '@/features/routes/components/route-map';
 import { BookingTimer } from '@/features/booking/components/booking-timer';
 import { CancelBookingButton } from '@/features/booking/components/cancel-booking-button';
-import { socket } from '@/lib/socket';
+// import { socket } from '@/lib/socket';
 import { useEffect } from 'react';
 
 export default function BookingDetailPage() {
@@ -24,29 +24,7 @@ export default function BookingDetailPage() {
     const queryClient = useQueryClient();
     const code = params.code as string;
 
-    useEffect(() => {
-        if (!code) return;
-
-        function onConnect() {
-            console.log("Connected to booking namespace");
-        }
-
-        function onStatusUpdate(data: { bookingCode: string; status: string }) {
-            if (data.bookingCode === code) {
-                queryClient.invalidateQueries({ queryKey: ['booking', code] });
-                router.refresh();
-            }
-        }
-
-        socket.connect();
-        socket.on("connect", onConnect);
-        socket.on("booking.status_update", onStatusUpdate);
-
-        return () => {
-            socket.off("connect", onConnect);
-            socket.off("booking.status_update", onStatusUpdate);
-        };
-    }, [code, router, queryClient]);
+    // Socket logic moved to useBooking hook
 
     const { data: booking, isLoading, error } = useBooking(code);
 
