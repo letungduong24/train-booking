@@ -181,10 +181,17 @@ export default function BookingDetailPage() {
                             {trip.route.stations && (
                                 <div className="pt-4">
                                     <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                                        <MapPin className="h-4 w-4" /> Bản đồ lộ trình
+                                        <MapPin className="h-4 w-4 text-primary" /> Bản đồ lộ trình
                                     </h4>
                                     <div className="rounded-md border overflow-hidden">
-                                        <RouteMap stations={trip.route.stations} className="h-[300px]" />
+                                        <RouteMap
+                                            stations={trip.route.stations}
+                                            className="h-[300px]"
+                                            highlightSegment={{
+                                                fromStationId: fromStation?.stationId || '',
+                                                toStationId: toStation?.stationId || ''
+                                            }}
+                                        />
                                     </div>
                                 </div>
                             )}

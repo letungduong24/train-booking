@@ -16,6 +16,7 @@ import { useCoachWithPrices } from '@/features/booking/hooks/use-coach-with-pric
 import { useInitBooking } from '@/features/booking/hooks/use-init-booking';
 
 import { SeatLayoutViewer } from '@/features/booking/components/seat-layout-viewer';
+import { RouteMap } from '@/features/routes/components/route-map';
 import { BedLayoutViewer } from '@/features/booking/components/bed-layout-viewer';
 import { BookingCoachNavigationBar } from '@/features/booking/components/booking-coach-navigation-bar';
 import { BookingSummary } from '@/features/booking/components/booking-summary';
@@ -42,6 +43,7 @@ export default function TripDetailPage() {
     const [pendingError, setPendingError] = useState("");
     const [isProcessing, setIsProcessing] = useState(false);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+    const [isMobileMapOpen, setIsMobileMapOpen] = useState(false);
 
     const { data: trip, isLoading: isTripLoading } = useTrip(tripId);
 
@@ -244,126 +246,175 @@ export default function TripDetailPage() {
 
             {/* Seat Selection - Only show if SCHEDULED */}
             {trip.status === 'SCHEDULED' && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-24 lg:pb-0">
-                    <div className="lg:col-span-2 space-y-6">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Chọn chỗ</CardTitle>
-                                <CardDescription>
-                                    Chọn toa và chỗ ngồi/giường của bạn
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                {/* Coach Navigation */}
-                                <div className="mb-8">
-                                    <BookingCoachNavigationBar
-                                        coaches={trip.train.coaches}
-                                        selectedCoachId={selectedCoachId}
-                                        onCoachSelect={setSelectedCoachId}
-                                        trainCode={trip.train.code}
-                                    />
-                                </div>
-
-                                {!selectedCoachId ? (
-                                    <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
-                                        Vui lòng chọn toa để xem sơ đồ chỗ ngồi
+                <>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-24 lg:pb-0">
+                        <div className="lg:col-span-2 space-y-6">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Chọn chỗ</CardTitle>
+                                    <CardDescription>
+                                        Chọn toa và chỗ ngồi/giường của bạn
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    {/* Coach Navigation */}
+                                    <div className="mb-8">
+                                        <BookingCoachNavigationBar
+                                            coaches={trip.train.coaches}
+                                            selectedCoachId={selectedCoachId}
+                                            onCoachSelect={setSelectedCoachId}
+                                            trainCode={trip.train.code}
+                                        />
                                     </div>
-                                ) : isCoachLoading ? (
-                                    <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
-                                        Đang tải sơ đồ chỗ ngồi...
-                                    </div>
-                                ) : coachWithPrices ? (
-                                    <div>
-                                        {coachWithPrices.template.layout === 'SEAT' ? (
-                                            <SeatLayoutViewer
-                                                seats={coachWithPrices.seats}
-                                                template={coachWithPrices.template}
-                                                selectedSeats={selectedSeats.map((s) => s.id)}
-                                                onSeatClick={handleSeatToggle}
-                                                tripId={tripId}
-                                                onSeatsForceDeselected={handleSeatsForceDeselected}
-                                                isSubmitting={isProcessing || isInitializing}
-                                            />
-                                        ) : (
-                                            <BedLayoutViewer
-                                                seats={coachWithPrices.seats}
-                                                template={coachWithPrices.template}
-                                                selectedSeats={selectedSeats.map((s) => s.id)}
-                                                onSeatClick={handleSeatToggle}
-                                                tripId={tripId}
-                                                onSeatsForceDeselected={handleSeatsForceDeselected}
-                                                isSubmitting={isProcessing || isInitializing}
-                                            />
-                                        )}
 
-                                    </div>
-                                ) : null}
+                                    {!selectedCoachId ? (
+                                        <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
+                                            Vui lòng chọn toa để xem sơ đồ chỗ ngồi
+                                        </div>
+                                    ) : isCoachLoading ? (
+                                        <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
+                                            Đang tải sơ đồ chỗ ngồi...
+                                        </div>
+                                    ) : coachWithPrices ? (
+                                        <div>
+                                            {coachWithPrices.template.layout === 'SEAT' ? (
+                                                <SeatLayoutViewer
+                                                    seats={coachWithPrices.seats}
+                                                    template={coachWithPrices.template}
+                                                    selectedSeats={selectedSeats.map((s) => s.id)}
+                                                    onSeatClick={handleSeatToggle}
+                                                    tripId={tripId}
+                                                    onSeatsForceDeselected={handleSeatsForceDeselected}
+                                                    isSubmitting={isProcessing || isInitializing}
+                                                />
+                                            ) : (
+                                                <BedLayoutViewer
+                                                    seats={coachWithPrices.seats}
+                                                    template={coachWithPrices.template}
+                                                    selectedSeats={selectedSeats.map((s) => s.id)}
+                                                    onSeatClick={handleSeatToggle}
+                                                    tripId={tripId}
+                                                    onSeatsForceDeselected={handleSeatsForceDeselected}
+                                                    isSubmitting={isProcessing || isInitializing}
+                                                />
+                                            )}
 
-                            </CardContent>
-                        </Card>
-                    </div>
+                                        </div>
+                                    ) : null}
 
-                    {/* Right Column - Desktop */}
-                    <div className="hidden lg:block lg:col-span-1">
-                        <div className="sticky top-6">
-                            <BookingSummary
-                                selectedSeats={selectedSeats}
-                                onRemoveSeat={handleRemoveSeat}
-                                onProceed={handleProceedToPassengerInfo}
-                                isProcessing={isProcessing || isInitializing}
-                            />
+                                </CardContent>
+                            </Card>
                         </div>
-                    </div>
-                </div>
-            )}
 
-            {/* Mobile Sticky Footer */}
-            {selectedSeats.length > 0 && (
-                <div className="fixed bottom-0 left-0 right-0 bg-background border-t p-4 z-50 lg:hidden shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-                    <div className="flex items-center justify-between gap-4">
-                        <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1" onClick={() => setIsDetailsOpen(true)}>
-                                <span className="text-sm font-medium">Đã chọn {selectedSeats.length} chỗ</span>
-                                <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                        {/* Right Column - Desktop */}
+                        <div className="hidden lg:block lg:col-span-1">
+                            <div className="sticky top-6 space-y-4">
+                                {/* Route Map */}
+                                {trip.route.stations && trip.route.stations.length > 0 && (
+                                    <div className="rounded-lg border overflow-hidden bg-card shadow-sm">
+                                        <RouteMap
+                                            stations={trip.route.stations.map((s: any, i: number) => ({ ...s, index: i }))}
+                                            className="h-[250px]"
+                                            highlightSegment={fromStationId && toStationId ? {
+                                                fromStationId: fromStationId,
+                                                toStationId: toStationId
+                                            } : undefined}
+                                        />
+                                    </div>
+                                )}
+
+                                <BookingSummary
+                                    selectedSeats={selectedSeats}
+                                    onRemoveSeat={handleRemoveSeat}
+                                    onProceed={handleProceedToPassengerInfo}
+                                    isProcessing={isProcessing || isInitializing}
+                                />
                             </div>
-                            <p className="text-xl font-bold text-primary">
-                                {totalPrice.toLocaleString('vi-VN')} ₫
-                            </p>
-                        </div>
-
-                        <div className="flex gap-2">
-                            <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-                                <DialogTrigger asChild>
-                                    <Button variant="outline" size="icon">
-                                        <ChevronUp className="h-4 w-4" />
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-h-[80vh] overflow-y-auto p-0 gap-0">
-                                    <DialogTitle className="sr-only">Chi tiết đặt chỗ</DialogTitle>
-                                    <BookingSummary
-                                        selectedSeats={selectedSeats}
-                                        onRemoveSeat={handleRemoveSeat}
-                                        onProceed={() => {
-                                            setIsDetailsOpen(false);
-                                            handleProceedToPassengerInfo();
-                                        }}
-                                        isProcessing={isProcessing || isInitializing}
-                                        className="border-0 shadow-none"
-                                    />
-                                </DialogContent>
-                            </Dialog>
-
-                            <Button
-                                size="lg"
-                                onClick={handleProceedToPassengerInfo}
-                                disabled={isInitializing || isProcessing}
-                            >
-                                {isInitializing || isProcessing ? '...' : 'Tiếp tục'}
-                            </Button>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                </>
+            )
+            }
+
+            {/* Mobile Map Dialog */}
+            <Dialog open={isMobileMapOpen} onOpenChange={setIsMobileMapOpen}>
+                <DialogContent className="max-w-[95vw] w-full p-0 overflow-hidden">
+                    <DialogTitle className="sr-only">Bản đồ lộ trình</DialogTitle>
+                    <div className="h-[60vh] w-full">
+                        {trip.route.stations && trip.route.stations.length > 0 && (
+                            <RouteMap
+                                stations={trip.route.stations.map((s: any, i: number) => ({ ...s, index: i }))}
+                                className="h-full border-0"
+                                highlightSegment={fromStationId && toStationId ? {
+                                    fromStationId: fromStationId,
+                                    toStationId: toStationId
+                                } : undefined}
+                            />
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Mobile Map Floating Button */}
+            <div className={`fixed right-4 z-40 lg:hidden transition-all duration-300 ${selectedSeats.length > 0 ? 'bottom-24' : 'bottom-4'
+                }`}>
+                <Button
+                    size="icon"
+                    className="rounded-full h-12 w-12 shadow-lg"
+                    onClick={() => setIsMobileMapOpen(true)}
+                >
+                    <MapPin className="h-6 w-6" />
+                </Button>
+            </div>
+            {/* Mobile Sticky Footer */}
+            {
+                selectedSeats.length > 0 && (
+                    <div className="fixed bottom-0 left-0 right-0 bg-background border-t p-4 z-50 lg:hidden shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1" onClick={() => setIsDetailsOpen(true)}>
+                                    <span className="text-sm font-medium">Đã chọn {selectedSeats.length} chỗ</span>
+                                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <p className="text-xl font-bold text-primary">
+                                    {totalPrice.toLocaleString('vi-VN')} ₫
+                                </p>
+                            </div>
+
+                            <div className="flex gap-2">
+                                <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+                                    <DialogTrigger asChild>
+                                        <Button variant="outline" size="icon">
+                                            <ChevronUp className="h-4 w-4" />
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="max-h-[80vh] overflow-y-auto p-0 gap-0">
+                                        <DialogTitle className="sr-only">Chi tiết đặt chỗ</DialogTitle>
+                                        <BookingSummary
+                                            selectedSeats={selectedSeats}
+                                            onRemoveSeat={handleRemoveSeat}
+                                            onProceed={() => {
+                                                setIsDetailsOpen(false);
+                                                handleProceedToPassengerInfo();
+                                            }}
+                                            isProcessing={isProcessing || isInitializing}
+                                            className="border-0 shadow-none"
+                                        />
+                                    </DialogContent>
+                                </Dialog>
+
+                                <Button
+                                    size="lg"
+                                    onClick={handleProceedToPassengerInfo}
+                                    disabled={isInitializing || isProcessing}
+                                >
+                                    {isInitializing || isProcessing ? '...' : 'Tiếp tục'}
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+        </div >
     );
 }

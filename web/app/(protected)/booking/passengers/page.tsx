@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, MapPin, Calendar, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { format, addMinutes } from 'date-fns';
-import { useTrip } from '@/features/trips/hooks/use-trips';
 import { socket } from '@/lib/socket';
 
 function PassengersPageContent() {
@@ -151,6 +150,9 @@ function PassengersPageContent() {
     const trip = booking.trip;
     const fromStationId = booking.metadata?.fromStationId;
     const toStationId = booking.metadata?.toStationId;
+
+    console.log('Trip Route Stations:', trip.route.stations);
+    console.log('From:', fromStationId, 'To:', toStationId);
 
     const fromStation = (trip.route.stations || []).find((rs: any) => rs.stationId === fromStationId);
     const toStation = (trip.route.stations || []).find((rs: any) => rs.stationId === toStationId);
