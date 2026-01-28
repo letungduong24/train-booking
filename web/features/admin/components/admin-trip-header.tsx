@@ -60,7 +60,7 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                                         {format(effectiveDepartureTime, 'HH:mm dd/MM/yyyy')}
                                     </span>
                                     <Badge variant="destructive" className="h-5 px-1.5 text-[10px] ml-1">
-                                        Delay {trip.departureDelayMinutes}p
+                                        Delay {trip.departureDelayMinutes} phút
                                     </Badge>
                                 </>
                             ) : (
@@ -81,7 +81,7 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                                         {format(effectiveEndTime, 'HH:mm dd/MM/yyyy')}
                                     </span>
                                     <Badge variant="destructive" className="h-5 px-1.5 text-[10px] ml-1">
-                                        Delay {trip.arrivalDelayMinutes}p
+                                        Delay {trip.arrivalDelayMinutes} phút
                                     </Badge>
                                 </>
                             ) : (

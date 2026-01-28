@@ -52,6 +52,7 @@ export const BookingTripSchema = z.object({
     id: z.string(),
     departureTime: z.string(),
     endTime: z.string(),
+    status: z.enum(['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']).optional(),
     route: z.object({
         name: z.string(),
         stations: z.array(bookingRouteStationSchema).optional(),

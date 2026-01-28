@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import apiClient from "@/lib/api-client";
-import { toast } from "sonner";
 import { Clock, AlertTriangle } from "lucide-react";
+import { useTripDelayMutations } from "@/features/trips/hooks/use-trip-delay-mutations";
+import { TripStatusBadge } from "@/lib/utils/trip-status";
 
 import {
     Dialog,
@@ -28,38 +27,16 @@ interface DelayControlDialogProps {
 
 export function DelayControlDialog({ tripId, tripStatus, currentDepartureDelay = 0, currentArrivalDelay = 0 }: DelayControlDialogProps) {
     const [open, setOpen] = useState(false);
-    const queryClient = useQueryClient();
     const [departureDelay, setDepartureDelay] = useState(currentDepartureDelay.toString());
     const [arrivalDelay, setArrivalDelay] = useState(currentArrivalDelay.toString());
 
-    // Mutations
-    const setDepartureDelayMutation = useMutation({
-        mutationFn: async (minutes: number) => {
-            await apiClient.patch(`/trip/${tripId}/departure-delay`, { minutes });
-        },
-        onSuccess: () => {
-            toast.success("Cập nhật delay khởi hành thành công");
-            queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
-            setOpen(false);
-        },
-        onError: (error: any) => {
-            toast.error(error.response?.data?.message || "Lỗi khi cập nhật delay");
-        }
-    });
-
-    const setArrivalDelayMutation = useMutation({
-        mutationFn: async (minutes: number) => {
-            await apiClient.patch(`/trip/${tripId}/arrival-delay`, { minutes });
-        },
-        onSuccess: () => {
-            toast.success("Cập nhật delay đến nơi thành công");
-            queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
-            setOpen(false);
-        },
-        onError: (error: any) => {
-            toast.error(error.response?.data?.message || "Lỗi khi cập nhật delay");
-        }
-    });
+    // Custom hook
+    const {
+        setDepartureDelay: mutateDepartureDelay,
+        isSettingDepartureDelay,
+        setArrivalDelay: mutateArrivalDelay,
+        isSettingArrivalDelay
+    } = useTripDelayMutations(tripId);
 
     const isScheduled = tripStatus === 'SCHEDULED';
     const isInProgress = tripStatus === 'IN_PROGRESS';
@@ -68,8 +45,16 @@ export function DelayControlDialog({ tripId, tripStatus, currentDepartureDelay =
         return null;
     }
 
+    const handleOpenChange = (newOpen: boolean) => {
+        setOpen(newOpen);
+        if (newOpen) {
+            setDepartureDelay(currentDepartureDelay.toString());
+            setArrivalDelay(currentArrivalDelay.toString());
+        }
+    };
+
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
                 <Button variant="outline" className="w-full justify-start gap-2">
                     <Clock className="w-4 h-4" />
@@ -79,8 +64,8 @@ export function DelayControlDialog({ tripId, tripStatus, currentDepartureDelay =
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Quản lý Delay Chuyến Tàu</DialogTitle>
-                    <DialogDescription>
-                        Trạng thái: <span className="font-bold">{tripStatus}</span>
+                    <DialogDescription className="flex items-center gap-2 pt-2">
+                        Trạng thái: <TripStatusBadge status={tripStatus} />
                     </DialogDescription>
                 </DialogHeader>
 
@@ -104,10 +89,14 @@ export function DelayControlDialog({ tripId, tripStatus, currentDepartureDelay =
 
                         <Button
                             className="w-full"
-                            onClick={() => setDepartureDelayMutation.mutate(parseInt(departureDelay) || 0)}
-                            disabled={setDepartureDelayMutation.isPending}
+                            onClick={() => {
+                                mutateDepartureDelay(parseInt(departureDelay) || 0, {
+                                    onSuccess: () => setOpen(false)
+                                });
+                            }}
+                            disabled={isSettingDepartureDelay}
                         >
-                            {setDepartureDelayMutation.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+                            {isSettingDepartureDelay ? "Đang lưu..." : "Lưu thay đổi"}
                         </Button>
                     </div>
                 )}
@@ -132,10 +121,14 @@ export function DelayControlDialog({ tripId, tripStatus, currentDepartureDelay =
 
                         <Button
                             className="w-full"
-                            onClick={() => setArrivalDelayMutation.mutate(parseInt(arrivalDelay) || 0)}
-                            disabled={setArrivalDelayMutation.isPending}
+                            onClick={() => {
+                                mutateArrivalDelay(parseInt(arrivalDelay) || 0, {
+                                    onSuccess: () => setOpen(false)
+                                });
+                            }}
+                            disabled={isSettingArrivalDelay}
                         >
-                            {setArrivalDelayMutation.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+                            {isSettingArrivalDelay ? "Đang lưu..." : "Lưu thay đổi"}
                         </Button>
                     </div>
                 )}

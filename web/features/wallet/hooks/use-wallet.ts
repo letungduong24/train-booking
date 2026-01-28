@@ -54,6 +54,7 @@ export function useWallet() {
             return apiClient.post<{ url: string }>('/wallet/deposit', { amount });
         },
         onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['wallet'] });
             window.location.href = data.data.url;
         },
         onError: (error: any) => {

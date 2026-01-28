@@ -10,8 +10,32 @@ import { format } from "date-fns"
 import { vi } from "date-fns/locale"
 import { Badge } from "@/components/ui/badge"
 
+import { useState } from "react"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+
 export default function AdminWithdrawalsPage() {
     const { withdrawals, isLoading, approve, reject, isApproving, isRejecting } = useAdminWithdrawals()
+    const [actionState, setActionState] = useState<{ id: string, type: 'approve' | 'reject' } | null>(null)
+
+    const handleConfirmedAction = () => {
+        if (!actionState) return
+
+        if (actionState.type === 'approve') {
+            approve(actionState.id)
+        } else {
+            reject(actionState.id)
+        }
+        setActionState(null)
+    }
 
     if (isLoading) return <div className="p-8 text-center">Đang tải...</div>
 
@@ -78,24 +102,16 @@ export default function AdminWithdrawalsPage() {
                                                 size="sm"
                                                 variant="default"
                                                 className="bg-green-600 hover:bg-green-700"
-                                                onClick={() => {
-                                                    if (confirm("Bạn đã chuyển khoản cho khách hàng chưa?")) {
-                                                        approve(req.id)
-                                                    }
-                                                }}
+                                                onClick={() => setActionState({ id: req.id, type: 'approve' })}
                                                 disabled={isApproving || isRejecting}
                                             >
-                                                {isApproving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-1" />}
+                                                {isApproving && actionState?.id === req.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-1" />}
                                                 Duyệt
                                             </Button>
                                             <Button
                                                 size="sm"
                                                 variant="destructive"
-                                                onClick={() => {
-                                                    if (confirm("Bạn có chắc muốn từ chối yêu cầu này? Tiền sẽ được hoàn lại ví khách hàng.")) {
-                                                        reject(req.id)
-                                                    }
-                                                }}
+                                                onClick={() => setActionState({ id: req.id, type: 'reject' })}
                                                 disabled={isApproving || isRejecting}
                                             >
                                                 <XCircle className="w-4 h-4 mr-1" />
@@ -109,6 +125,31 @@ export default function AdminWithdrawalsPage() {
                     )}
                 </CardContent>
             </Card>
+
+            <AlertDialog open={!!actionState} onOpenChange={(open) => !open && setActionState(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            {actionState?.type === 'approve' ? 'Xác nhận duyệt yêu cầu' : 'Xác nhận từ chối yêu cầu'}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {actionState?.type === 'approve'
+                                ? 'Bạn có chắc chắn muốn duyệt yêu cầu này? Hãy đảm bảo đã chuyển khoản thủ công cho khách hàng.'
+                                : 'Bạn có chắc chắn muốn từ chối yêu cầu này? Tiền sẽ được hoàn lại vào ví khách hàng.'
+                            }
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Hủy</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleConfirmedAction}
+                            className={actionState?.type === 'approve' ? "bg-green-600 hover:bg-green-700" : "bg-destructive hover:bg-destructive/90"}
+                        >
+                            {actionState?.type === 'approve' ? 'Duyệt ngay' : 'Từ chối'}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }

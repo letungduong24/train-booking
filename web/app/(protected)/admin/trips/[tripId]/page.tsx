@@ -35,43 +35,22 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
             </div>
         );
     }
-
     return (
         <div className="flex flex-col gap-8 p-4 md:p-8">
             <AdminTripHeader trip={trip} />
-
-            {/* Admin Seat Map */}
-            <AdminSeatMap trip={trip} />
-
-            {/* Passenger Manifest */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2">
-                    {/* Passenger Manifest Removed - Integrated into Seat Map */}
-                    <div className="p-4 border rounded-lg bg-muted/20 text-center text-muted-foreground">
-                        Danh sách hành khách đã được tích hợp vào sơ đồ ghế.
-                        <br />Sử dụng thanh tìm kiếm trên sơ đồ để tìm khách.
-                    </div>
-                </div>
-                <div>
-                    {/* Operation Panel Placeholder */}
-                    <div className="min-h-[200px] border rounded-lg bg-card p-4 space-y-4">
-                        <h3 className="font-semibold mb-2">Vận hành</h3>
-                        <div className="space-y-2">
-                            <DelayControlDialog
-                                tripId={trip.id}
-                                tripStatus={trip.status}
-                                currentDepartureDelay={trip.departureDelayMinutes || 0}
-                                currentArrivalDelay={trip.arrivalDelayMinutes || 0}
-                            />
-                            <p className="text-xs text-muted-foreground mt-2">
-                                * Delay khởi hành: {trip.departureDelayMinutes || 0} phút
-                                <br />
-                                * Delay về bến: {trip.arrivalDelayMinutes || 0} phút
-                            </p>
-                        </div>
-                    </div>
+            <div className="border rounded-lg bg-card p-4 space-y-4">
+                <h3 className="font-semibold mb-2">Vận hành</h3>
+                <div className="space-y-2">
+                    <DelayControlDialog
+                        tripId={trip.id}
+                        tripStatus={trip.status}
+                        currentDepartureDelay={trip.departureDelayMinutes || 0}
+                        currentArrivalDelay={trip.arrivalDelayMinutes || 0}
+                    />
                 </div>
             </div>
+            {/* Admin Seat Map */}
+            <AdminSeatMap trip={trip} />
         </div>
     );
 }

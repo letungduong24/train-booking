@@ -30,8 +30,8 @@ export function MaxPendingDialog({ open, onOpenChange, message }: MaxPendingDial
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Đóng</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => router.push('/dashboard/history')}>
-                        Xem đơn hàng của tôi
+                    <AlertDialogAction onClick={() => router.push('/dashboard/history?tab=pending')}>
+                        Xem đơn hàng chờ thanh toán
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
