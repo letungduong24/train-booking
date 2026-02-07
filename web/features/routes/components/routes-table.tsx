@@ -169,6 +169,7 @@ export const columns: ColumnDef<Route>[] = [
 ]
 
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 export function RoutesTable() {
     const router = useRouter()
@@ -276,7 +277,7 @@ export function RoutesTable() {
                 <div className="relative flex-1 max-w-sm">
                     <IconSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Tìm kiếm tuyến đường..."
+                        placeholder="Tìm kiếm tuyến đường…"
                         value={searchValue}
                         onChange={(event) => setSearchValue(event.target.value)}
                         className="pl-8"
@@ -312,7 +313,7 @@ export function RoutesTable() {
                             <TableSkeleton columnCount={columns.length} rowCount={10} />
                         ) : table.getRowModel().rows?.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="h-24 text-center">Không có dữ liệu.</TableCell>
+                                <TableCell colSpan={columns.length} className="h-24 text-center">Không có dữ liệu.</TableCell>
                             </TableRow>
                         ) : (
                             table.getRowModel().rows.map((row) => (

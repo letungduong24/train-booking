@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useMyBookings } from '@/features/booking/hooks/use-my-bookings';
 import { Spinner } from '@/components/ui/spinner';
 import { Calendar, Clock, CreditCard, History, Ticket, User, ArrowRight, MapPin, Train } from 'lucide-react';
+import Link from 'next/link';
 
 import { timeSync } from '@/lib/time-sync';
 import { useMemo } from 'react';
@@ -73,9 +74,9 @@ export default function OnboardPage() {
         <div className="container mx-auto p-4 md:p-8 max-w-6xl space-y-8">
             {/* Pending Payment Alert */}
             {pendingCount > 0 && (
-                <div
+                <Link
+                    href="/dashboard/history?tab=PENDING"
                     className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900 rounded-lg p-4 flex items-center justify-between cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors"
-                    onClick={() => router.push('/dashboard/history?tab=PENDING')}
                 >
                     <div className="flex items-center gap-3">
                         <div className="bg-yellow-100 dark:bg-yellow-900/50 p-2 rounded-full text-yellow-700 dark:text-yellow-500">
@@ -89,7 +90,7 @@ export default function OnboardPage() {
                         </div>
                     </div>
                     <ArrowRight className="h-5 w-5 text-yellow-600 dark:text-yellow-500" />
-                </div>
+                </Link>
             )}
 
             {/* Header */}
@@ -100,8 +101,10 @@ export default function OnboardPage() {
                         Chào mừng trở lại với Railflow. Chúc bạn một ngày tốt lành.
                     </p>
                 </div>
-                <Button onClick={() => router.push('/booking')} className="bg-primary shadow-lg hover:shadow-xl transition-all">
-                    <Ticket className="mr-2 h-4 w-4" /> Đặt vé mới
+                <Button asChild className="bg-primary shadow-lg hover:shadow-xl transition-all">
+                    <Link href="/booking">
+                        <Ticket className="mr-2 h-4 w-4" /> Đặt vé mới
+                    </Link>
                 </Button>
             </div>
 
@@ -169,8 +172,8 @@ export default function OnboardPage() {
                                 </div>
                                 <p className="font-medium">Chưa có chuyến đi nào sắp tới</p>
                                 <p className="text-sm mt-1">Hãy tìm kiếm và đặt vé ngay hôm nay!</p>
-                                <Button variant="secondary" size="sm" className="mt-3" onClick={() => router.push('/')}>
-                                    Tìm chuyến đi
+                                <Button variant="secondary" size="sm" className="mt-3" asChild>
+                                    <Link href="/">Tìm chuyến đi</Link>
                                 </Button>
                             </div>
                         )}
@@ -189,8 +192,10 @@ export default function OnboardPage() {
                                 <History className="h-5 w-5 text-muted-foreground" />
                                 Hoạt động gần đây
                             </CardTitle>
-                            <Button variant="ghost" size="sm" className="text-xs" onClick={() => router.push('/dashboard/history')}>
-                                Xem tất cả <ArrowRight className="ml-1 h-3 w-3" />
+                            <Button variant="ghost" size="sm" className="text-xs" asChild>
+                                <Link href="/dashboard/history">
+                                    Xem tất cả <ArrowRight className="ml-1 h-3 w-3" />
+                                </Link>
                             </Button>
                         </div>
                     </CardHeader>

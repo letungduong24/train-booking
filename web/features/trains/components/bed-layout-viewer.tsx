@@ -99,9 +99,7 @@ export function BedLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdmi
             <div className="space-y-6">
                 {Array.from({ length: totalRows }).map((_, compartmentIndex) => {
                     // Lọc tất cả giường trong khoang này
-                    const compartmentBeds = seats
-                        .filter(s => s.rowIndex === compartmentIndex)
-                        .sort((a, b) => a.colIndex - b.colIndex)
+                    const compartmentBeds = seats.filter(s => s.rowIndex === compartmentIndex)
 
                     return (
                         <div key={compartmentIndex} className="border rounded-lg p-4 bg-muted/20">
@@ -116,10 +114,8 @@ export function BedLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdmi
                                     const tierIndex = tiers - reversedIndex - 1
                                     const tierNumber = tierIndex + 1
 
-                                    // Lọc 2 giường của tầng này (trái và phải)
-                                    // Giường được sắp xếp: tầng 1 = index 0,1; tầng 2 = index 2,3; tầng 3 = index 4,5
-                                    const leftBed = compartmentBeds[tierIndex * 2]
-                                    const rightBed = compartmentBeds[tierIndex * 2 + 1]
+                                    const leftBed = compartmentBeds.find(s => s.tier === tierIndex && s.colIndex === 0)
+                                    const rightBed = compartmentBeds.find(s => s.tier === tierIndex && s.colIndex === 1)
 
                                     return (
                                         <div key={tierIndex} className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center">

@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -20,13 +21,13 @@ interface BookingSummaryProps {
     className?: string;
 }
 
-export function BookingSummary({
+export const BookingSummary = React.memo(({
     selectedSeats,
     onRemoveSeat,
     onProceed,
     isProcessing,
     className
-}: BookingSummaryProps) {
+}: BookingSummaryProps) => {
     const totalPrice = selectedSeats.reduce((sum, seat) => sum + seat.price, 0);
 
     return (
@@ -107,4 +108,4 @@ export function BookingSummary({
             </CardFooter>
         </Card>
     );
-}
+});

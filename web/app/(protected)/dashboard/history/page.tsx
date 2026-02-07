@@ -10,6 +10,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useDebounce } from '@/hooks/use-debounce';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function HistoryPage() {
     const router = useRouter();
@@ -82,11 +83,10 @@ export default function HistoryPage() {
 
                 <TabsContent value={activeTab} className="mt-0">
                     {isLoading ? (
-                        <div className="flex justify-center items-center py-24">
-                            <div className="flex flex-col items-center gap-2">
-                                <Spinner className="h-8 w-8" />
-                                <p className="text-muted-foreground animate-pulse">Đang tải dữ liệu...</p>
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <Skeleton key={i} className="h-48 w-full rounded-lg" />
+                            ))}
                         </div>
                     ) : bookings.length === 0 ? (
                         <div className="text-center py-20 border-2 border-dashed rounded-lg bg-muted/10">
@@ -133,6 +133,6 @@ export default function HistoryPage() {
                     )}
                 </TabsContent>
             </Tabs>
-        </div>
+        </div >
     );
 }

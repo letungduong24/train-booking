@@ -35,6 +35,7 @@ import {
 import { useCreateCoach } from "@/features/trains/hooks/use-coach-mutations"
 import { useCoachTemplates } from "@/features/trains/hooks/use-coach-templates"
 import { createCoachSchema, CreateCoachInput } from "@/lib/schemas/coach.schema"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface CreateCoachDialogProps {
     trainId: string
@@ -104,9 +105,10 @@ export function CreateCoachDialog({ trainId }: CreateCoachDialogProps) {
                                         </FormControl>
                                         <SelectContent>
                                             {templatesLoading ? (
-                                                <SelectItem value="loading" disabled>
-                                                    Đang tải...
-                                                </SelectItem>
+                                                <div className="p-2 space-y-2">
+                                                    <Skeleton className="h-8 w-full" />
+                                                    <Skeleton className="h-8 w-full" />
+                                                </div>
                                             ) : templates && templates.length > 0 ? (
                                                 templates.map((template) => (
                                                     <SelectItem key={template.id} value={template.id}>
@@ -126,7 +128,9 @@ export function CreateCoachDialog({ trainId }: CreateCoachDialogProps) {
                         />
                         <DialogFooter>
                             <Button type="submit" disabled={createCoach.isPending}>
-                                {createCoach.isPending ? "Đang tạo..." : "Tạo toa"}
+                                {createCoach.isPending ? (
+                                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                ) : "Tạo toa"}
                             </Button>
                         </DialogFooter>
                     </form>

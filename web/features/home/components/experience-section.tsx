@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import NextImage from "next/image"
 
 const experiences = [
     {
@@ -45,15 +46,15 @@ export function ExperienceSection() {
                             key={item.id}
                             className="group relative overflow-hidden rounded-xl border border-border bg-card shadow-sm"
                         >
-                            {/* Image Background */}
-                            <div
-                                className="absolute inset-0 transition-transform duration-700 group-hover:scale-110"
-                                style={{
-                                    backgroundImage: `url(${item.image})`,
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center',
-                                }}
-                            />
+                            {/* Image Background Optimized */}
+                            <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-110">
+                                <NextImage
+                                    src={item.image}
+                                    alt={item.title}
+                                    fill
+                                    className="object-cover object-center"
+                                />
+                            </div>
                             {/* Overlay */}
                             <div className="absolute inset-0 bg-linear-to-t from-background via-background/95 to-background/5 p-6 flex flex-col justify-end">
                                 <span className="mb-2 text-xs font-bold uppercase tracking-wider text-primary">

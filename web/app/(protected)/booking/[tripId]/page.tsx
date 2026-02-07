@@ -24,6 +24,8 @@ import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/
 import { ChevronUp } from 'lucide-react';
 import { ConflictDialog } from '@/features/booking/components/conflict-dialog';
 import { MaxPendingDialog } from '@/features/booking/components/max-pending-dialog';
+import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
 
 export default function TripDetailPage() {
     const router = useRouter();
@@ -61,12 +63,18 @@ export default function TripDetailPage() {
 
     if (isTripLoading) {
         return (
-            <div className="container mx-auto py-8">
-                <Card>
-                    <CardContent className="py-8 text-center text-muted-foreground">
-                        Đang tải thông tin chuyến tàu...
-                    </CardContent>
-                </Card>
+            <div className="container mx-auto py-8 px-4 space-y-6">
+                <div className="flex flex-col gap-4">
+                    <Skeleton className="h-8 w-32" />
+                    <Card className="p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                            <Skeleton className="h-12 w-full" />
+                            <Skeleton className="h-12 w-full" />
+                            <Skeleton className="h-12 w-full" />
+                            <Skeleton className="h-12 w-full" />
+                        </div>
+                    </Card>
+                </div>
             </div>
         );
     }
@@ -272,8 +280,17 @@ export default function TripDetailPage() {
                                             Vui lòng chọn toa để xem sơ đồ chỗ ngồi
                                         </div>
                                     ) : isCoachLoading ? (
-                                        <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
-                                            Đang tải sơ đồ chỗ ngồi...
+                                        <div className="space-y-4">
+                                            <div className="flex justify-center gap-4 mb-8">
+                                                <Skeleton className="h-10 w-20" />
+                                                <Skeleton className="h-10 w-20" />
+                                                <Skeleton className="h-10 w-20" />
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
+                                                {Array.from({ length: 12 }).map((_, i) => (
+                                                    <Skeleton key={i} className="h-12 w-full" />
+                                                ))}
+                                            </div>
                                         </div>
                                     ) : coachWithPrices ? (
                                         <div>
@@ -408,7 +425,11 @@ export default function TripDetailPage() {
                                     onClick={handleProceedToPassengerInfo}
                                     disabled={isInitializing || isProcessing}
                                 >
-                                    {isInitializing || isProcessing ? '...' : 'Tiếp tục'}
+                                    {isInitializing || isProcessing ? (
+                                        <div className="flex items-center gap-2">
+                                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                        </div>
+                                    ) : 'Tiếp tục'}
                                 </Button>
                             </div>
                         </div>

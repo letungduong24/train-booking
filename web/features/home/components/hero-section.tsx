@@ -2,18 +2,22 @@
 
 import * as React from "react"
 import { TripSearchForm } from "./trip-search-form"
+import Image from "next/image"
 
 export function HeroSection() {
 
     return (
         <section className="relative h-screen w-full overflow-hidden">
-            {/* Background Image */}
-            <div
-                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-                style={{
-                    backgroundImage: 'url(/images/hero.jpg)',
-                }}
-            >
+            {/* Background Image Optimized */}
+            <div className="absolute inset-0 z-0">
+                <Image
+                    src="/images/hero.jpg"
+                    alt="Railflow Luxury Train"
+                    fill
+                    priority
+                    className="object-cover object-center"
+                    quality={90}
+                />
                 <div className="absolute inset-0 bg-background/30 dark:bg-black/40 bg-linear-to-t from-background via-background/80 to-transparent" />
             </div>
 

@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { validateCCCD, getAgeFromCCCD } from '@/lib/utils/cccd';
 import { usePassengerGroups, getPassengerGroupByAge, getChildGroup } from '../hooks/use-passenger-groups';
+import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, Check } from 'lucide-react';
 
 import { BookingTimer } from './booking-timer';
@@ -22,7 +23,7 @@ interface PassengerInfoFormProps {
     onSubmit: (passengers: PassengerFormData[]) => void;
     onCancel: () => void;
     initialPassengers?: PassengerFormData[];
-    submitLabel?: string;
+    submitLabel?: React.ReactNode;
     bookingCode?: string;
     bookingExpiresAt?: string;
 }
@@ -213,8 +214,26 @@ export function PassengerInfoForm({
     if (isLoadingGroups) {
         return (
             <Card>
-                <CardContent className="py-8 text-center text-muted-foreground">
-                    Đang tải thông tin...
+                <CardHeader>
+                    <Skeleton className="h-8 w-48 mb-2" />
+                    <Skeleton className="h-4 w-64" />
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    {[1, 2].map((i) => (
+                        <div key={i} className="border rounded-lg p-4 space-y-4">
+                            <Skeleton className="h-6 w-32" />
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-24" />
+                                    <Skeleton className="h-10 w-full" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-24" />
+                                    <Skeleton className="h-10 w-full" />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </CardContent>
             </Card>
         );
@@ -277,7 +296,7 @@ export function PassengerInfoForm({
                             </Label>
                             <Input
                                 id={`name-${index}`}
-                                placeholder="Nguyễn Văn A"
+                                placeholder="Nguyễn Văn A…"
                                 value={passenger.passengerName}
                                 onChange={(e) => updatePassenger(index, 'passengerName', e.target.value)}
                             />
@@ -291,14 +310,14 @@ export function PassengerInfoForm({
                                 </Label>
                                 <Input
                                     id={`cccd-${index}`}
-                                    placeholder="001203012345 (12 số)"
+                                    placeholder="001203012345…"
                                     value={passenger.passengerId}
                                     onChange={(e) => updatePassenger(index, 'passengerId', e.target.value)}
                                     maxLength={12}
                                     pattern="[0-9]*"
                                 />
                                 <p className="text-xs text-muted-foreground">
-                                    Nhập 12 số CCCD để tự động xác định nhóm hành khách và giảm giá
+                                    Nhập 12 số CCCD để tự động xác định nhóm hành khách và nhận ưu đãi giảm giá
                                 </p>
                             </div>
                         )}

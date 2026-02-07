@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { BookingTimer } from "./booking-timer";
 import { CancelBookingButton } from "./cancel-booking-button";
+import Link from "next/link";
 
 interface BookingHistoryCardProps {
     booking: Booking;
@@ -43,13 +44,6 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
         }
     };
 
-    const handlePay = () => {
-        router.push(`/booking/passengers?bookingCode=${booking.code}`);
-    };
-
-    const handleViewDetails = () => {
-        router.push(`/dashboard/history/${booking.code}`);
-    };
 
     const metadata = booking.metadata;
     const passengerCount = booking.tickets?.length || metadata?.passengers?.length || metadata?.seatIds?.length || 0;
@@ -110,7 +104,7 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
                         <span className="text-xs text-muted-foreground mb-0.5">Tổng tiền</span>
                         <span className="text-xl font-bold text-primary">
                             {booking.totalPrice === 0
-                                ? <span className="text-sm font-normal italic text-muted-foreground">Chưa định giá</span>
+                                ? <span className="text-sm font-normal italic text-muted-foreground">Chưa định giá…</span>
                                 : `${booking.totalPrice.toLocaleString("vi-VN")} ₫`
                             }
                         </span>
@@ -126,9 +120,9 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
                 <Button
                     variant="outline"
                     className="w-full"
-                    onClick={handleViewDetails}
+                    asChild
                 >
-                    Chi tiết
+                    <Link href={`/dashboard/history/${booking.code}`}>Chi tiết</Link>
                 </Button>
                 {booking.status === 'PENDING' && (
                     <div className="flex w-full gap-2">
@@ -141,10 +135,12 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
                             }}
                         />
                         <Button
+                            asChild
                             className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white"
-                            onClick={handlePay}
                         >
-                            Thanh toán <ArrowRight className="ml-2 h-4 w-4" />
+                            <Link href={`/booking/passengers?bookingCode=${booking.code}`}>
+                                Thanh toán <ArrowRight className="ml-2 h-4 w-4" />
+                            </Link>
                         </Button>
                     </div>
                 )}

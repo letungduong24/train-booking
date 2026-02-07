@@ -51,6 +51,8 @@ export function TripSearchForm({ className, defaultValues, onSubmit: externalOnS
         },
     });
 
+    const { isSubmitting } = form.formState;
+
     const onSubmit = (values: TripSearchInput) => {
         if (externalOnSubmit) {
             externalOnSubmit(values);
@@ -237,7 +239,7 @@ export function TripSearchForm({ className, defaultValues, onSubmit: externalOnS
                     <div className="">
                         <Button type="submit" className="w-full h-12 text-lg font-semibold shadow-md hover:shadow-lg transition-all">
                             <Search className="mr-2 h-5 w-5" />
-                            Tìm kiếm
+                            {isSubmitting ? 'Đang tìm kiếm…' : 'Tìm kiếm'}
                         </Button>
                     </div>
                 </form>

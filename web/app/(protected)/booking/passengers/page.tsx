@@ -10,9 +10,11 @@ import { PaymentMethodDialog } from '@/features/booking/components/payment-metho
 import { PassengerFormData } from '@/lib/schemas/booking.schema';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, MapPin, Calendar, Clock } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Clock, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format, addMinutes } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
 // import { socket } from '@/lib/socket';
 
 function PassengersPageContent() {
@@ -71,12 +73,23 @@ function PassengersPageContent() {
 
     if (isBookingLoading) {
         return (
-            <div className="container mx-auto py-8">
+            <div className="container mx-auto py-8 px-4 space-y-6">
+                <Skeleton className="h-10 w-24 mb-4" />
                 <Card>
-                    <CardContent className="py-8 text-center text-muted-foreground">
-                        Đang tải thông tin đơn hàng...
+                    <CardHeader>
+                        <Skeleton className="h-8 w-1/3 mb-2" />
+                        <Skeleton className="h-4 w-1/4" />
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-12 w-full" />
                     </CardContent>
                 </Card>
+                <div className="space-y-4">
+                    <Skeleton className="h-64 w-full" />
+                </div>
             </div>
         );
     }
@@ -115,12 +128,9 @@ function PassengersPageContent() {
 
     if (booking && booking.status !== 'PENDING') {
         return (
-            <div className="container mx-auto py-8">
-                <Card>
-                    <CardContent className="py-8 text-center text-muted-foreground">
-                        Đang chuyển hướng...
-                    </CardContent>
-                </Card>
+            <div className="container mx-auto py-24 space-y-6">
+                <Skeleton className="h-48 w-full" />
+                <Skeleton className="h-96 w-full" />
             </div>
         );
     }
@@ -221,7 +231,12 @@ function PassengersPageContent() {
                 initialPassengers={initialPassengers}
                 onSubmit={handleSubmit}
                 onCancel={() => router.back()}
-                submitLabel={isUpdating ? "Đang xử lý..." : "Thanh toán"}
+                submitLabel={isUpdating ? (
+                    <div className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Đang xử lý…
+                    </div>
+                ) : "Thanh toán"}
                 bookingCode={bookingCode || undefined}
                 bookingExpiresAt={booking.expiresAt}
             />
@@ -239,7 +254,13 @@ function PassengersPageContent() {
 
 export default function PassengersPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={
+            <div className="container mx-auto py-8 px-4 space-y-6">
+                <Skeleton className="h-10 w-24 mb-4" />
+                <Skeleton className="h-48 w-full mb-6" />
+                <Skeleton className="h-96 w-full" />
+            </div>
+        }>
             <PassengersPageContent />
         </Suspense>
     );

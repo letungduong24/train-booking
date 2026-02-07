@@ -44,8 +44,10 @@ import {
     Edit,
     Trash2,
     Settings,
-    TrainFront
+    TrainFront,
+    Loader2
 } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function AdminTrainDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params)
@@ -156,9 +158,34 @@ export default function AdminTrainDetailPage({ params }: { params: Promise<{ id:
         toast.success(`Đã cập nhật ghế ${updatedSeat.name}`)
     }
 
-    if (isLoading) return <div className="p-8 text-center text-muted-foreground">Đang tải dữ liệu...</div>
-    if (error) return <div className="p-8 text-center text-red-500">Đã có lỗi xảy ra khi tải dữ liệu tàu.</div>
-    if (!train) return <div className="p-8 text-center text-red-500">Không tìm thấy tàu hoặc tàu không tồn tại.</div>
+    if (isLoading) {
+        return (
+            <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+                <div className="flex items-center gap-4">
+                    <Skeleton className="h-10 w-10 rounded-md" />
+                    <div className="space-y-2">
+                        <Skeleton className="h-6 w-32" />
+                        <Skeleton className="h-4 w-48" />
+                    </div>
+                </div>
+                <div className="space-y-6">
+                    <div className="flex justify-between">
+                        <Skeleton className="h-10 w-48" />
+                        <Skeleton className="h-10 w-32" />
+                    </div>
+                    <div className="h-16 flex items-center gap-2 overflow-hidden">
+                        <Skeleton className="h-full w-24 shrink-0" />
+                        {Array.from({ length: 5 }).map((_, i) => (
+                            <Skeleton key={i} className="h-full w-24 shrink-0" />
+                        ))}
+                    </div>
+                    <Skeleton className="h-[400px] w-full rounded-lg" />
+                </div>
+            </div>
+        );
+    }
+    if (error) return <div className="p-8 text-center text-red-500 font-medium">Đã có lỗi xảy ra khi tải dữ liệu tàu.</div>
+    if (!train) return <div className="p-8 text-center text-red-500 font-medium">Không tìm thấy tàu hoặc tàu không tồn tại.</div>
 
     return (
 
@@ -278,8 +305,12 @@ export default function AdminTrainDetailPage({ params }: { params: Promise<{ id:
 
                             {/* Render appropriate viewer based on coach type */}
                             {isLoadingCoachDetail ? (
-                                <div className="flex items-center justify-center py-12">
-                                    <div className="text-muted-foreground">Đang tải dữ liệu ghế...</div>
+                                <div className="space-y-6">
+                                    <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
+                                        {Array.from({ length: 12 }).map((_, i) => (
+                                            <Skeleton key={i} className="h-12 w-full" />
+                                        ))}
+                                    </div>
                                 </div>
                             ) : selectedCoachDetail ? (
                                 selectedCoachDetail.template.layout === 'SEAT' ? (
