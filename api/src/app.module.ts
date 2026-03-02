@@ -19,6 +19,7 @@ import { PaymentModule } from './modules/payment/payment.module';
 import { BookingModule } from './modules/booking/booking.module';
 import { PassengerGroupModule } from './modules/passenger-group/passenger-group.module';
 import { WalletModule } from './modules/wallet/wallet.module';
+import { ChatbotModule } from './modules/chatbot/chatbot.module';
 
 @Module({
   imports: [
@@ -26,10 +27,12 @@ import { WalletModule } from './modules/wallet/wallet.module';
       isGlobal: true,
     }),
     // Rate limiting - 10 requests per minute
-    ThrottlerModule.forRoot([{
-      ttl: 60000, // 60 seconds
-      limit: 10, // 10 requests
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // 60 seconds
+        limit: 10, // 10 requests
+      },
+    ]),
     // Cron jobs
     ScheduleModule.forRoot(),
     PrismaModule,
@@ -46,6 +49,7 @@ import { WalletModule } from './modules/wallet/wallet.module';
     PassengerGroupModule,
     RedisModule,
     WalletModule,
+    ChatbotModule,
     BullModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -58,4 +62,4 @@ import { WalletModule } from './modules/wallet/wallet.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

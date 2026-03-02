@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { CoachesService } from './coaches.service';
 import { CreateCoachDto } from './dto/create-coach.dto';
 import { UpdateCoachDto } from './dto/update-coach.dto';
@@ -7,7 +16,7 @@ import { ReorderCoachesDto } from './dto/reorder-coaches.dto';
 
 @Controller('coaches')
 export class CoachesController {
-  constructor(private readonly coachesService: CoachesService) { }
+  constructor(private readonly coachesService: CoachesService) {}
 
   @Post()
   create(@Body() createCoachDto: CreateCoachDto) {
@@ -15,7 +24,10 @@ export class CoachesController {
   }
 
   @Post('train/:trainId/reorder')
-  reorderCoaches(@Param('trainId') trainId: string, @Body() dto: ReorderCoachesDto) {
+  reorderCoaches(
+    @Param('trainId') trainId: string,
+    @Body() dto: ReorderCoachesDto,
+  ) {
     return this.coachesService.reorderCoaches(trainId, dto);
   }
 
@@ -36,7 +48,12 @@ export class CoachesController {
     @Query('fromStationId') fromStationId: string,
     @Query('toStationId') toStationId: string,
   ) {
-    return this.coachesService.findOneWithSeatPrice(id, tripId, fromStationId, toStationId);
+    return this.coachesService.findOneWithSeatPrice(
+      id,
+      tripId,
+      fromStationId,
+      toStationId,
+    );
   }
 
   @Patch(':id')

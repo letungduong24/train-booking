@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateCoachDto } from './dto/create-coach.dto';
 import { UpdateCoachDto } from './dto/update-coach.dto';
 import { FilterCoachDto } from './dto/filter-coach.dto';
@@ -11,12 +16,12 @@ export class CoachesService {
   constructor(
     private prisma: PrismaService,
     private pricingService: PricingService,
-  ) { }
+  ) {}
 
   async create(createCoachDto: CreateCoachDto) {
     // Validate train exists
     const train = await this.prisma.train.findUnique({
-      where: { id: createCoachDto.trainId }
+      where: { id: createCoachDto.trainId },
     });
     if (!train) {
       throw new NotFoundException(`Tàu không tồn tại`);
@@ -24,7 +29,7 @@ export class CoachesService {
 
     // Validate template exists
     const template = await this.prisma.coachTemplate.findUnique({
-      where: { id: createCoachDto.templateId }
+      where: { id: createCoachDto.templateId },
     });
     if (!template) {
       throw new NotFoundException(`Template không tồn tại`);
@@ -33,7 +38,7 @@ export class CoachesService {
     // Auto-calculate order: get max order + 1
     const maxOrderCoach = await this.prisma.coach.findFirst({
       where: { trainId: createCoachDto.trainId },
-      orderBy: { order: 'desc' }
+      orderBy: { order: 'desc' },
     });
     const nextOrder = maxOrderCoach ? maxOrderCoach.order + 1 : 1;
 
@@ -44,13 +49,13 @@ export class CoachesService {
         data: {
           name: `Toa ${nextOrder}`, // Auto-generate name
           order: nextOrder,
-          status: createCoachDto.status as CoachStatus || CoachStatus.ACTIVE,
+          status: (createCoachDto.status as CoachStatus) || CoachStatus.ACTIVE,
           trainId: createCoachDto.trainId,
           templateId: createCoachDto.templateId,
         },
         include: {
           template: true,
-        }
+        },
       });
 
       // Generate seats/beds based on template
@@ -58,12 +63,12 @@ export class CoachesService {
 
       // Delete existing seats first (in case of recreation)
       await tx.seat.deleteMany({
-        where: { coachId: coach.id }
+        where: { coachId: coach.id },
       });
 
       // Bulk create seats
       await tx.seat.createMany({
-        data: seats
+        data: seats,
       });
 
       // Return coach with seats
@@ -72,12 +77,15 @@ export class CoachesService {
         include: {
           template: true,
           seats: true,
-        }
+        },
       });
     });
   }
 
-  async reorderCoaches(trainId: string, dto: { coaches: { coachId: string }[] }) {
+  async reorderCoaches(
+    trainId: string,
+    dto: { coaches: { coachId: string }[] },
+  ) {
     // Simple sequential update with auto-generated names
     return this.prisma.$transaction(
       dto.coaches.map((item, index) =>
@@ -85,16 +93,21 @@ export class CoachesService {
           where: { id: item.coachId },
           data: {
             order: index + 1,
-            name: `Toa ${index + 1}` // Auto-generate name: Toa 1, Toa 2, etc.
-          }
-        })
-      )
+            name: `Toa ${index + 1}`, // Auto-generate name: Toa 1, Toa 2, etc.
+          },
+        }),
+      ),
     );
   }
 
   private generateSeats(
     coachId: string,
-    template: { layout: CoachLayout; totalRows: number; totalCols: number; tiers: number }
+    template: {
+      layout: CoachLayout;
+      totalRows: number;
+      totalCols: number;
+      tiers: number;
+    },
   ) {
     const seats: Prisma.SeatCreateManyInput[] = [];
     let seatNumber = 1;
@@ -156,14 +169,14 @@ export class CoachesService {
         skip,
         take: limit,
         orderBy: {
-          [query?.sort || 'order']: query?.order || 'asc'
+          [query?.sort || 'order']: query?.order || 'asc',
         },
         include: {
           template: true,
           _count: {
-            select: { seats: true }
-          }
-        }
+            select: { seats: true },
+          },
+        },
       }),
       this.prisma.coach.count({ where }),
     ]);
@@ -185,7 +198,7 @@ export class CoachesService {
       include: {
         template: true,
         seats: true,
-      }
+      },
     });
 
     if (!coach) {
@@ -195,7 +208,12 @@ export class CoachesService {
     return coach;
   }
 
-  async findOneWithSeatPrice(id: string, tripId: string, fromStationId: string, toStationId: string) {
+  async findOneWithSeatPrice(
+    id: string,
+    tripId: string,
+    fromStationId: string,
+    toStationId: string,
+  ) {
     // Get coach with template and seats
     const coach = await this.prisma.coach.findUnique({
       where: { id },
@@ -248,18 +266,18 @@ export class CoachesService {
         // Check overlap: new segment overlaps with already booked segment
         AND: [
           { fromStationIndex: { lte: toStation.index } },
-          { toStationIndex: { gte: fromStation.index } }
-        ]
+          { toStationIndex: { gte: fromStation.index } },
+        ],
       },
       select: {
         seatId: true,
         passengerName: true,
         passengerId: true,
-      }
+      },
     });
 
     // Create a Map for fast lookup
-    const bookedSeatInfo = new Map(bookedTickets.map(t => [t.seatId, t]));
+    const bookedSeatInfo = new Map(bookedTickets.map((t) => [t.seatId, t]));
 
     // Calculate price for each seat and add bookingStatus
     const seatsWithPrices = coach.seats.map((seat) => {
@@ -289,7 +307,7 @@ export class CoachesService {
         if (ticket) {
           passenger = {
             name: ticket.passengerName,
-            id: ticket.passengerId
+            id: ticket.passengerId,
           };
         }
       } else {
@@ -318,7 +336,7 @@ export class CoachesService {
   async update(id: string, updateCoachDto: UpdateCoachDto) {
     // Check if coach exists
     const existing = await this.prisma.coach.findUnique({
-      where: { id }
+      where: { id },
     });
     if (!existing) {
       throw new NotFoundException(`Coach #${id} not found`);
@@ -334,14 +352,14 @@ export class CoachesService {
       include: {
         template: true,
         seats: true,
-      }
+      },
     });
   }
 
   async remove(id: string) {
     // Check if coach exists
     const existing = await this.prisma.coach.findUnique({
-      where: { id }
+      where: { id },
     });
     if (!existing) {
       throw new NotFoundException(`Coach #${id} not found`);

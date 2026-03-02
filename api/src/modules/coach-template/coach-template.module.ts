@@ -8,4 +8,4 @@ import { PrismaModule } from '../prisma/prisma.module';
   controllers: [CoachTemplateController],
   providers: [CoachTemplateService],
 })
-export class CoachTemplateModule { }
+export class CoachTemplateModule {}

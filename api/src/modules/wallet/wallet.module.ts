@@ -7,13 +7,13 @@ import { PaymentModule } from '../payment/payment.module';
 import { BookingModule } from '../booking/booking.module';
 
 @Module({
-    imports: [
-        PrismaModule,
-        forwardRef(() => BookingModule),
-        forwardRef(() => PaymentModule),
-    ],
-    controllers: [WalletController, AdminWalletController],
-    providers: [WalletService],
-    exports: [WalletService],
+  imports: [
+    PrismaModule,
+    forwardRef(() => BookingModule),
+    forwardRef(() => PaymentModule),
+  ],
+  controllers: [WalletController, AdminWalletController],
+  providers: [WalletService],
+  exports: [WalletService],
 })
-export class WalletModule { }
+export class WalletModule {}

@@ -3,7 +3,7 @@ import { PassengerGroupController } from './passenger-group.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-    imports: [PrismaModule],
-    controllers: [PassengerGroupController],
+  imports: [PrismaModule],
+  controllers: [PassengerGroupController],
 })
-export class PassengerGroupModule { }
+export class PassengerGroupModule {}

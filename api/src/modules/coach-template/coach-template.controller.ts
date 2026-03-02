@@ -3,7 +3,7 @@ import { CoachTemplateService } from './coach-template.service';
 
 @Controller('coach-template')
 export class CoachTemplateController {
-  constructor(private readonly coachTemplateService: CoachTemplateService) { }
+  constructor(private readonly coachTemplateService: CoachTemplateService) {}
 
   @Get()
   findAll() {

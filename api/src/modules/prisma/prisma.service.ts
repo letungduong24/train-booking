@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../../generated/client'
+import { PrismaClient } from '../../generated/client';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -10,6 +10,6 @@ export class PrismaService extends PrismaClient {
       connectionString: configService.get<string>('DATABASE_URL'),
     });
 
-    super({ adapter }); 
+    super({ adapter });
   }
 }

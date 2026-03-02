@@ -7,11 +7,11 @@ import { Prisma } from '../../generated/client';
 
 @Injectable()
 export class StationService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createStationDto: CreateStationDto) {
     const existing = await this.prisma.station.findFirst({
-      where: { name: createStationDto.name }
+      where: { name: createStationDto.name },
     });
     if (existing) {
       throw new ConflictException('Tên trạm đã tồn tại');
@@ -36,7 +36,7 @@ export class StationService {
         skip,
         take,
         orderBy: {
-          [query.sort || 'createdAt']: query.order || 'desc'
+          [query.sort || 'createdAt']: query.order || 'desc',
         },
       }),
       this.prisma.station.count({ where }),

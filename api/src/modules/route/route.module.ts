@@ -8,4 +8,4 @@ import { PrismaModule } from '../prisma/prisma.module';
   controllers: [RouteController],
   providers: [RouteService],
 })
-export class RouteModule { }
+export class RouteModule {}

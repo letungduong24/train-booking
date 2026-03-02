@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { TrainService } from './train.service';
 import { CreateTrainDto } from './dto/create-train.dto';
 import { UpdateTrainDto } from './dto/update-train.dto';
@@ -6,7 +15,7 @@ import { FilterTrainDto } from './dto/filter-train.dto';
 
 @Controller('train')
 export class TrainController {
-  constructor(private readonly trainService: TrainService) { }
+  constructor(private readonly trainService: TrainService) {}
 
   @Post()
   create(@Body() createTrainDto: CreateTrainDto) {

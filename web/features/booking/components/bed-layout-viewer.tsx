@@ -1,6 +1,9 @@
 import { useEffect, useState, useRef } from "react"
 import { cn, formatPrice } from "@/lib/utils"
 import { getSeatStatusColor, getSeatStatusLabel, getComputedSeatStatus } from "@/lib/utils/seat-helper"
+import { Users } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Seat } from "@/lib/schemas/seat.schema"
 import { CoachTemplate } from "@/lib/schemas/coach.schema"
 import { useSocketStore } from "@/lib/store/socket.store"
@@ -17,11 +20,13 @@ interface BedLayoutViewerProps {
     isSubmitting?: boolean
     highlightedSeatIds?: string[]
     focusedSeatId?: string | null
+    coachName?: string
+    onSearchPassenger?: () => void
 }
 
 
 
-export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = [], isAdmin = false, tripId, onSeatsForceDeselected, isSubmitting = false, highlightedSeatIds = [], focusedSeatId = null }: BedLayoutViewerProps) {
+export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = [], isAdmin = false, tripId, onSeatsForceDeselected, isSubmitting = false, highlightedSeatIds = [], focusedSeatId = null, coachName, onSearchPassenger }: BedLayoutViewerProps) {
     const lastScrolledSeatId = useRef<string | null>(null)
 
     // Scroll to focused seat
@@ -98,13 +103,33 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
     }, [lockedSeatIds, selectedSeats, onSeatsForceDeselected, isSubmitting]);
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 w-full min-w-0 overflow-hidden">
             {/* Header */}
             <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Sơ đồ giường nằm</h3>
-                    <div className="text-sm text-muted-foreground">
-                        {totalRows} khoang × {tiers} tầng
+                    <h3 className="text-lg font-semibold">
+                        {coachName && `${coachName} - `}{totalRows} khoang × {tiers} tầng
+                    </h3>
+                    <div className="flex items-center gap-3">
+                        {isAdmin && onSearchPassenger && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={onSearchPassenger}
+                                className="h-8 gap-2"
+                            >
+                                <Users className="h-4 w-4" />
+                                <span className="hidden sm:inline">Tìm hành khách</span>
+                                {seats.filter(s => s.passenger && (s.bookingStatus === 'BOOKED' || s.bookingStatus === 'HOLDING')).length > 0 && (
+                                    <Badge
+                                        variant="destructive"
+                                        className="h-4 min-w-4 flex items-center justify-center p-0 text-[10px]"
+                                    >
+                                        {seats.filter(s => s.passenger && (s.bookingStatus === 'BOOKED' || s.bookingStatus === 'HOLDING')).length}
+                                    </Badge>
+                                )}
+                            </Button>
+                        )}
                     </div>
                 </div>
 
@@ -156,111 +181,113 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                 </div>
             </div>
 
-            {/* Compartments */}
-            <div className="space-y-6">
-                {Array.from({ length: totalRows }).map((_, compartmentIndex) => {
-                    // Lọc tất cả giường trong khoang này
-                    const compartmentBeds = seats.filter(s => s.rowIndex === compartmentIndex)
+            {/* Compartments - Horizontal scroll wrapper */}
+            <div className="space-y-6 w-full overflow-x-auto p-1">
+                <div className="w-fit min-w-full space-y-6">
+                    {Array.from({ length: totalRows }).map((_, compartmentIndex) => {
+                        // Lọc tất cả giường trong khoang này
+                        const compartmentBeds = seats.filter(s => s.rowIndex === compartmentIndex)
 
-                    return (
-                        <div key={compartmentIndex} className="border rounded-lg p-4 bg-muted/20">
-                            {/* Compartment header */}
-                            <div className="text-sm font-semibold mb-3 text-center text-muted-foreground">
-                                Khoang {compartmentIndex + 1}
-                            </div>
+                        return (
+                            <div key={compartmentIndex} className="border rounded-lg p-4 bg-muted/20 w-fit min-w-full">
+                                {/* Compartment header */}
+                                <div className="text-sm font-semibold mb-3 text-center text-muted-foreground">
+                                    Khoang {compartmentIndex + 1}
+                                </div>
 
-                            {/* Tiers (from top to bottom) */}
-                            <div className="space-y-2">
-                                {Array.from({ length: tiers }).reverse().map((_, reversedIndex) => {
-                                    const tierIndex = tiers - reversedIndex - 1
-                                    const tierNumber = tierIndex + 1
+                                {/* Tiers (from top to bottom) */}
+                                <div className="space-y-2">
+                                    {Array.from({ length: tiers }).reverse().map((_, reversedIndex) => {
+                                        const tierIndex = tiers - reversedIndex - 1
+                                        const tierNumber = tierIndex + 1
 
-                                    const leftBed = compartmentBeds.find(s => s.tier === tierIndex && s.colIndex === 0)
-                                    const rightBed = compartmentBeds.find(s => s.tier === tierIndex && s.colIndex === 1)
+                                        const leftBed = compartmentBeds.find(s => s.tier === tierIndex && s.colIndex === 0)
+                                        const rightBed = compartmentBeds.find(s => s.tier === tierIndex && s.colIndex === 1)
 
-                                    return (
-                                        <div key={tierIndex} className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center">
-                                            {/* Left bed */}
-                                            {leftBed && (() => {
-                                                const displayStatus = getComputedSeatStatus(leftBed, lockedSeatIds, isAdmin);
-                                                return (
-                                                    <button
-                                                        onClick={() => onSeatClick(leftBed)}
-                                                        disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(leftBed.id)}
-                                                        className={cn(
-                                                            "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
-                                                            focusedSeatId === leftBed.id && "ring-4 ring-primary ring-offset-2 animate-pulse z-20",
-                                                            highlightedSeatIds.includes(leftBed.id) && "ring-2 ring-primary/50 z-10",
-                                                            selectedSeats.includes(leftBed.id)
-                                                                ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-md"
-                                                                : getSeatStatusColor(displayStatus, isAdmin)
-                                                        )}
-                                                        id={`seat-${leftBed.id}`}
-                                                        title={`Giường ${leftBed.name} - ${getSeatStatusLabel(leftBed.status, isAdmin)}`}
-                                                    >
-                                                        <div className="flex flex-col items-center">
-                                                            <span className={cn("text-xs font-bold", selectedSeats.includes(leftBed.id) ? "text-white" : "")}>
-                                                                Giường {leftBed.name}
-                                                            </span>
-                                                            {!isAdmin && (displayStatus === 'AVAILABLE' || selectedSeats.includes(leftBed.id)) && (
-                                                                <span className={cn(
-                                                                    "text-[10px] font-medium leading-none mt-0.5",
-                                                                    selectedSeats.includes(leftBed.id) ? "text-secondary-foreground/80" : "text-muted-foreground"
-                                                                )}>
-                                                                    {formatPrice(leftBed.price)}
-                                                                </span>
+                                        return (
+                                            <div key={tierIndex} className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center">
+                                                {/* Left bed */}
+                                                {leftBed && (() => {
+                                                    const displayStatus = getComputedSeatStatus(leftBed, lockedSeatIds, isAdmin);
+                                                    return (
+                                                        <button
+                                                            onClick={() => onSeatClick(leftBed)}
+                                                            disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(leftBed.id)}
+                                                            className={cn(
+                                                                "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
+                                                                focusedSeatId === leftBed.id && "ring-4 ring-primary ring-offset-2 animate-pulse z-20",
+                                                                highlightedSeatIds.includes(leftBed.id) && "ring-2 ring-primary/50 z-10",
+                                                                selectedSeats.includes(leftBed.id)
+                                                                    ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-md"
+                                                                    : getSeatStatusColor(displayStatus, isAdmin)
                                                             )}
-                                                        </div>
-                                                    </button>
-                                                )
-                                            })()}
+                                                            id={`seat-${leftBed.id}`}
+                                                            title={`Giường ${leftBed.name} - ${getSeatStatusLabel(leftBed.status, isAdmin)}`}
+                                                        >
+                                                            <div className="flex flex-col items-center">
+                                                                <span className={cn("text-xs font-bold", selectedSeats.includes(leftBed.id) ? "text-white" : "")}>
+                                                                    Giường {leftBed.name}
+                                                                </span>
+                                                                {!isAdmin && (displayStatus === 'AVAILABLE' || selectedSeats.includes(leftBed.id)) && (
+                                                                    <span className={cn(
+                                                                        "text-[10px] font-medium leading-none mt-0.5",
+                                                                        selectedSeats.includes(leftBed.id) ? "text-secondary-foreground/80" : "text-muted-foreground"
+                                                                    )}>
+                                                                        {formatPrice(leftBed.price)}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </button>
+                                                    )
+                                                })()}
 
-                                            {/* Tier indicator */}
-                                            <div className="px-2 text-xs text-muted-foreground whitespace-nowrap">
-                                                Tầng {tierNumber}
+                                                {/* Tier indicator */}
+                                                <div className="px-2 text-xs text-muted-foreground whitespace-nowrap">
+                                                    Tầng {tierNumber}
+                                                </div>
+
+                                                {/* Right bed */}
+                                                {rightBed && (() => {
+                                                    const displayStatus = getComputedSeatStatus(rightBed, lockedSeatIds, isAdmin);
+                                                    return (
+                                                        <button
+                                                            onClick={() => onSeatClick(rightBed)}
+                                                            disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(rightBed.id)}
+                                                            className={cn(
+                                                                "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
+                                                                focusedSeatId === rightBed.id && "ring-4 ring-primary ring-offset-2 animate-pulse z-20",
+                                                                highlightedSeatIds.includes(rightBed.id) && "ring-2 ring-primary/50 z-10",
+                                                                selectedSeats.includes(rightBed.id)
+                                                                    ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-md"
+                                                                    : getSeatStatusColor(displayStatus, isAdmin)
+                                                            )}
+                                                            id={`seat-${rightBed.id}`}
+                                                            title={`Giường ${rightBed.name} - ${getSeatStatusLabel(rightBed.status, isAdmin)}`}
+                                                        >
+                                                            <div className="flex flex-col items-center">
+                                                                <span className={cn("text-xs font-bold", selectedSeats.includes(rightBed.id) ? "text-white" : "")}>
+                                                                    Giường {rightBed.name}
+                                                                </span>
+                                                                {!isAdmin && (displayStatus === 'AVAILABLE' || selectedSeats.includes(rightBed.id)) && (
+                                                                    <span className={cn(
+                                                                        "text-[10px] font-medium leading-none mt-0.5",
+                                                                        selectedSeats.includes(rightBed.id) ? "text-secondary-foreground/80" : "text-muted-foreground"
+                                                                    )}>
+                                                                        {formatPrice(rightBed.price)}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </button>
+                                                    )
+                                                })()}
                                             </div>
-
-                                            {/* Right bed */}
-                                            {rightBed && (() => {
-                                                const displayStatus = getComputedSeatStatus(rightBed, lockedSeatIds, isAdmin);
-                                                return (
-                                                    <button
-                                                        onClick={() => onSeatClick(rightBed)}
-                                                        disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(rightBed.id)}
-                                                        className={cn(
-                                                            "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
-                                                            focusedSeatId === rightBed.id && "ring-4 ring-primary ring-offset-2 animate-pulse z-20",
-                                                            highlightedSeatIds.includes(rightBed.id) && "ring-2 ring-primary/50 z-10",
-                                                            selectedSeats.includes(rightBed.id)
-                                                                ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-md"
-                                                                : getSeatStatusColor(displayStatus, isAdmin)
-                                                        )}
-                                                        id={`seat-${rightBed.id}`}
-                                                        title={`Giường ${rightBed.name} - ${getSeatStatusLabel(rightBed.status, isAdmin)}`}
-                                                    >
-                                                        <div className="flex flex-col items-center">
-                                                            <span className={cn("text-xs font-bold", selectedSeats.includes(rightBed.id) ? "text-white" : "")}>
-                                                                Giường {rightBed.name}
-                                                            </span>
-                                                            {!isAdmin && (displayStatus === 'AVAILABLE' || selectedSeats.includes(rightBed.id)) && (
-                                                                <span className={cn(
-                                                                    "text-[10px] font-medium leading-none mt-0.5",
-                                                                    selectedSeats.includes(rightBed.id) ? "text-secondary-foreground/80" : "text-muted-foreground"
-                                                                )}>
-                                                                    {formatPrice(rightBed.price)}
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </button>
-                                                )
-                                            })()}
-                                        </div>
-                                    )
-                                })}
+                                        )
+                                    })}
+                                </div>
                             </div>
-                        </div>
-                    )
-                })}
+                        )
+                    })}
+                </div>
             </div >
         </div >
     )

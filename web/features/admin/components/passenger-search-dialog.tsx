@@ -52,72 +52,76 @@ export function PassengerSearchDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl max-h-[80vh]">
-                <DialogHeader>
+            <DialogContent className="w-[calc(100%-2rem)] max-w-2xl h-[80vh] p-0 flex flex-col gap-0 overflow-hidden">
+                <DialogHeader className="p-6 pb-2 shrink-0">
                     <DialogTitle>Danh sách hành khách</DialogTitle>
                     <DialogDescription>
                         {passengers.length} hành khách đã đặt vé
                     </DialogDescription>
                 </DialogHeader>
 
-                {/* Search Input */}
-                <div className="relative">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        placeholder="Tìm kiếm theo tên, CCCD, hoặc số ghế…"
-                        className="pl-8"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                {/* Search Input Container */}
+                <div className="px-6 pb-4 shrink-0">
+                    <div className="relative">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Tìm kiếm theo tên, CCCD, hoặc số ghế…"
+                            className="pl-8"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
                 </div>
 
                 {/* Passenger List */}
-                <ScrollArea className="h-[400px] pr-4">
-                    {filteredPassengers.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
-                            <User className="h-12 w-12 mb-2 opacity-20" />
-                            <p className="text-sm">
-                                {searchTerm
-                                    ? "Không tìm thấy hành khách"
-                                    : "Chưa có hành khách đặt vé"}
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="space-y-2">
-                            {filteredPassengers.map((passenger) => (
-                                <button
-                                    key={passenger.id}
-                                    onClick={() => handlePassengerClick(passenger)}
-                                    className="w-full text-left p-4 rounded-lg border hover:bg-accent hover:border-primary transition-colors"
-                                >
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div className="flex-1 space-y-1">
-                                            <div className="flex items-center gap-2">
-                                                <User className="h-4 w-4 text-muted-foreground" />
-                                                <span className="font-semibold">{passenger.name}</span>
+                <ScrollArea className="flex-1 min-h-0 px-6">
+                    <div className="pb-6">
+                        {filteredPassengers.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
+                                <User className="h-12 w-12 mb-2 opacity-20" />
+                                <p className="text-sm">
+                                    {searchTerm
+                                        ? "Không tìm thấy hành khách"
+                                        : "Chưa có hành khách đặt vé"}
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {filteredPassengers.map((passenger) => (
+                                    <button
+                                        key={passenger.id}
+                                        onClick={() => handlePassengerClick(passenger)}
+                                        className="w-full text-left p-4 rounded-lg border hover:bg-accent hover:border-primary transition-colors"
+                                    >
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div className="flex-1 space-y-1">
+                                                <div className="flex items-center gap-2">
+                                                    <User className="h-4 w-4 text-muted-foreground" />
+                                                    <span className="font-semibold">{passenger.name}</span>
+                                                </div>
+                                                <div className="text-sm text-muted-foreground">
+                                                    CCCD: {passenger.cccd}
+                                                </div>
+                                                <div className="text-sm text-muted-foreground">
+                                                    {passenger.coachName} - Ghế {passenger.seatName}
+                                                </div>
                                             </div>
-                                            <div className="text-sm text-muted-foreground">
-                                                CCCD: {passenger.cccd}
-                                            </div>
-                                            <div className="text-sm text-muted-foreground">
-                                                {passenger.coachName} - Ghế {passenger.seatName}
-                                            </div>
+                                            <Badge
+                                                variant={passenger.status === 'BOOKED' ? 'default' : 'secondary'}
+                                            >
+                                                {passenger.status === 'BOOKED' ? 'Đã bán' : 'Đang giữ'}
+                                            </Badge>
                                         </div>
-                                        <Badge
-                                            variant={passenger.status === 'BOOKED' ? 'default' : 'secondary'}
-                                        >
-                                            {passenger.status === 'BOOKED' ? 'Đã bán' : 'Đang giữ'}
-                                        </Badge>
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-                    )}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </ScrollArea>
 
                 {/* Results count */}
                 {searchTerm && filteredPassengers.length > 0 && (
-                    <div className="text-sm text-muted-foreground text-center">
+                    <div className="text-sm text-muted-foreground text-center py-4 border-t bg-muted/10 shrink-0">
                         Hiển thị {filteredPassengers.length} / {passengers.length} hành khách
                     </div>
                 )}

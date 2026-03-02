@@ -8,7 +8,7 @@ import { Prisma, RouteStatus } from '../../generated/client';
 
 @Injectable()
 export class RouteService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createRouteDto: CreateRouteDto) {
     return this.prisma.route.create({
@@ -35,18 +35,18 @@ export class RouteService {
         skip,
         take,
         orderBy: {
-          [query.sort || 'createdAt']: query.order || 'desc'
+          [query.sort || 'createdAt']: query.order || 'desc',
         },
         include: {
           stations: {
             include: {
-              station: true
+              station: true,
             },
             orderBy: {
-              index: 'asc'
-            }
-          }
-        }
+              index: 'asc',
+            },
+          },
+        },
       }),
       this.prisma.route.count({ where }),
     ]);
@@ -68,16 +68,15 @@ export class RouteService {
       include: {
         stations: {
           include: {
-            station: true
+            station: true,
           },
           orderBy: {
-            index: 'asc'
-          }
-        }
-      }
+            index: 'asc',
+          },
+        },
+      },
     });
   }
-
 
   async update(id: string, updateRouteDto: UpdateRouteDto) {
     const { status, ...rest } = updateRouteDto;
@@ -90,7 +89,10 @@ export class RouteService {
     });
   }
 
-  async addStation(routeId: string, dto: { stationId: string; index: number; distanceFromStart: number }) {
+  async addStation(
+    routeId: string,
+    dto: { stationId: string; index: number; distanceFromStart: number },
+  ) {
     try {
       return await this.prisma.routeStation.create({
         data: {
@@ -102,7 +104,9 @@ export class RouteService {
       });
     } catch (error) {
       if (error.code === 'P2002') {
-        throw new ConflictException('Thứ tự trạm đã tồn tại trong tuyến đường này');
+        throw new ConflictException(
+          'Thứ tự trạm đã tồn tại trong tuyến đường này',
+        );
       }
       throw error;
     }
@@ -112,7 +116,7 @@ export class RouteService {
     return this.prisma.$transaction(async (tx) => {
       // 1. Get the index of the station being removed
       const stationToRemove = await tx.routeStation.findFirst({
-        where: { routeId, stationId }
+        where: { routeId, stationId },
       });
 
       if (!stationToRemove) {
@@ -123,7 +127,7 @@ export class RouteService {
 
       // 2. Delete the station
       await tx.routeStation.deleteMany({
-        where: { routeId, stationId }
+        where: { routeId, stationId },
       });
 
       // 3. Reindex all stations with index > removedIndex
@@ -131,26 +135,33 @@ export class RouteService {
       await tx.routeStation.updateMany({
         where: {
           routeId,
-          index: { gt: removedIndex }
+          index: { gt: removedIndex },
         },
         data: {
-          index: { decrement: 1 }
-        }
+          index: { decrement: 1 },
+        },
       });
 
-      return { success: true, removedIndex, reindexedCount: await tx.routeStation.count({ where: { routeId } }) };
+      return {
+        success: true,
+        removedIndex,
+        reindexedCount: await tx.routeStation.count({ where: { routeId } }),
+      };
     });
   }
 
-  async reorderStations(routeId: string, dto: { stations: { stationId: string; distanceFromStart: number }[] }) {
+  async reorderStations(
+    routeId: string,
+    dto: { stations: { stationId: string; distanceFromStart: number }[] },
+  ) {
     return this.prisma.$transaction(async (tx) => {
       // 1. Delete all existing stations for this route
       await tx.routeStation.deleteMany({
-        where: { routeId }
+        where: { routeId },
       });
 
       // 2. Create new stations with derived indices
-      // We use Promise.all to create them. 
+      // We use Promise.all to create them.
       // Note: If distinct stationIds are required, the DTO validation or logic should handle it.
       // Assuming dto.stations is unique by stationId.
 
@@ -161,32 +172,35 @@ export class RouteService {
             stationId: item.stationId,
             index: index, // derived from array order
             distanceFromStart: item.distanceFromStart,
-          }
-        })
+          },
+        }),
       );
 
       return Promise.all(creates);
     });
   }
 
-  async getAvailableStations(routeId: string, query: { page?: number; limit?: number; search?: string }) {
+  async getAvailableStations(
+    routeId: string,
+    query: { page?: number; limit?: number; search?: string },
+  ) {
     const { page = 1, limit = 10, search } = query;
     const skip = (page - 1) * limit;
 
     // Get station IDs already in this route
     const routeStations = await this.prisma.routeStation.findMany({
       where: { routeId },
-      select: { stationId: true }
+      select: { stationId: true },
     });
 
-    const usedStationIds = routeStations.map(rs => rs.stationId);
+    const usedStationIds = routeStations.map((rs) => rs.stationId);
 
     // Build where clause
     const where: Prisma.StationWhereInput = {
       id: { notIn: usedStationIds },
       ...(search && {
-        name: { contains: search, mode: 'insensitive' }
-      })
+        name: { contains: search, mode: 'insensitive' },
+      }),
     };
 
     // Get available stations with pagination
@@ -195,9 +209,9 @@ export class RouteService {
         where,
         skip,
         take: limit,
-        orderBy: { name: 'asc' }
+        orderBy: { name: 'asc' },
       }),
-      this.prisma.station.count({ where })
+      this.prisma.station.count({ where }),
     ]);
 
     return {
@@ -207,21 +221,25 @@ export class RouteService {
         page,
         limit,
         totalPages: Math.ceil(total / limit),
-      }
+      },
     };
   }
 
-  async updateStation(routeId: string, stationId: string, dto: UpdateRouteStationDto) {
+  async updateStation(
+    routeId: string,
+    stationId: string,
+    dto: UpdateRouteStationDto,
+  ) {
     return this.prisma.$transaction(async (tx) => {
       // 1. Update RouteStation (distanceFromStart)
       await tx.routeStation.updateMany({
         where: {
           routeId,
-          stationId
+          stationId,
         },
         data: {
-          distanceFromStart: dto.distanceFromStart
-        }
+          distanceFromStart: dto.distanceFromStart,
+        },
       });
 
       // 2. Update Station (name, lat, long)
@@ -230,8 +248,8 @@ export class RouteService {
         data: {
           name: dto.name,
           latitute: dto.latitute,
-          longtitute: dto.longtitute
-        }
+          longtitute: dto.longtitute,
+        },
       });
 
       return { success: true };

@@ -7,38 +7,38 @@ import type { Request } from 'express';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-    constructor(
-        private configService: ConfigService,
-        private prisma: PrismaService,
-    ) {
-        const secret = configService.get<string>('JWT_SECRET');
-        if (!secret) {
-            throw new Error('JWT_SECRET is not defined in environment variables');
-        }
-
-        super({
-            jwtFromRequest: (req: Request) => {
-                let token = null;
-                if (req && req.cookies) {
-                    token = req.cookies['accessToken'];
-                }
-                return token;
-            },
-            ignoreExpiration: false,
-            secretOrKey: secret,
-        });
+  constructor(
+    private configService: ConfigService,
+    private prisma: PrismaService,
+  ) {
+    const secret = configService.get<string>('JWT_SECRET');
+    if (!secret) {
+      throw new Error('JWT_SECRET is not defined in environment variables');
     }
 
-    async validate(payload: { sub: string; email: string }) {
-        const user = await this.prisma.user.findUnique({
-            where: { id: payload.sub },
-        });
-
-        if (!user) {
-            throw new UnauthorizedException('User not found');
+    super({
+      jwtFromRequest: (req: Request) => {
+        let token = null;
+        if (req && req.cookies) {
+          token = req.cookies['accessToken'];
         }
-        const { password: _password, ...rest } = user;
+        return token;
+      },
+      ignoreExpiration: false,
+      secretOrKey: secret,
+    });
+  }
 
-        return rest;
+  async validate(payload: { sub: string; email: string }) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
     }
+    const { password: _password, ...rest } = user;
+
+    return rest;
+  }
 }

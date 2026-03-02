@@ -11,20 +11,20 @@ import { Role } from 'src/lib/enums/roles.enum';
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Roles(Role.Admin)
 export class AdminWalletController {
-    constructor(private readonly walletService: WalletService) { }
+  constructor(private readonly walletService: WalletService) {}
 
-    @Post('approve-withdraw')
-    async approveWithdraw(@Body() dto: ApproveWithdrawDto) {
-        return this.walletService.approveWithdraw(dto.transactionId);
-    }
+  @Post('approve-withdraw')
+  async approveWithdraw(@Body() dto: ApproveWithdrawDto) {
+    return this.walletService.approveWithdraw(dto.transactionId);
+  }
 
-    @Post('reject-withdraw')
-    async rejectWithdraw(@Body() dto: ApproveWithdrawDto) {
-        return this.walletService.rejectWithdraw(dto.transactionId);
-    }
+  @Post('reject-withdraw')
+  async rejectWithdraw(@Body() dto: ApproveWithdrawDto) {
+    return this.walletService.rejectWithdraw(dto.transactionId);
+  }
 
-    @Get('withdrawals')
-    async getWithdrawals() {
-        return this.walletService.getPendingWithdrawals();
-    }
+  @Get('withdrawals')
+  async getWithdrawals() {
+    return this.walletService.getPendingWithdrawals();
+  }
 }

@@ -3,19 +3,19 @@ import { PaginationDto } from '../../../lib/dto/pagination.dto';
 import { BookingStatus } from '../../../generated/client';
 
 export class FilterBookingDto extends PaginationDto {
-    @IsOptional()
-    @IsString()
-    search?: string;
+  @IsOptional()
+  @IsString()
+  search?: string;
 
-    @IsOptional()
-    @IsEnum(BookingStatus)
-    status?: BookingStatus;
+  @IsOptional()
+  @IsEnum(BookingStatus)
+  status?: BookingStatus;
 
-    @IsOptional()
-    @IsString()
-    sort?: string;
+  @IsOptional()
+  @IsString()
+  sort?: string;
 
-    @IsOptional()
-    @IsString()
-    order?: 'asc' | 'desc';
+  @IsOptional()
+  @IsString()
+  order?: 'asc' | 'desc';
 }

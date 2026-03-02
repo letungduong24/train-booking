@@ -5,9 +5,9 @@ import { TripCron } from './trip.cron';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-    imports: [PrismaModule],
-    controllers: [TripController],
-    providers: [TripService, TripCron],
-    exports: [TripService],
+  imports: [PrismaModule],
+  controllers: [TripController],
+  providers: [TripService, TripCron],
+  exports: [TripService],
 })
-export class TripModule { }
+export class TripModule {}

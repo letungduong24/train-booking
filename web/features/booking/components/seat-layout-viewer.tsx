@@ -4,6 +4,9 @@ import { cn, formatPrice } from "@/lib/utils"
 import { Seat } from "@/lib/schemas/seat.schema"
 import { CoachTemplate } from "@/lib/schemas/coach.schema"
 import { getSeatStatusColor, getSeatStatusLabel, getComputedSeatStatus } from "@/lib/utils/seat-helper"
+import { Users } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { useSocketStore } from "@/lib/store/socket.store"
 import { useLockedSeats } from "../hooks/use-locked-seats"
 
@@ -18,11 +21,13 @@ interface SeatLayoutViewerProps {
     isSubmitting?: boolean
     highlightedSeatIds?: string[]
     focusedSeatId?: string | null
+    coachName?: string
+    onSearchPassenger?: () => void
 }
 
 
 
-export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats = [], isAdmin = false, tripId, onSeatsForceDeselected, isSubmitting = false, highlightedSeatIds = [], focusedSeatId = null }: SeatLayoutViewerProps) {
+export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats = [], isAdmin = false, tripId, onSeatsForceDeselected, isSubmitting = false, highlightedSeatIds = [], focusedSeatId = null, coachName, onSearchPassenger }: SeatLayoutViewerProps) {
     const lastScrolledSeatId = useRef<string | null>(null)
 
     // Scroll to focused seat
@@ -91,19 +96,39 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
     }, [lockedSeatIds, selectedSeats, onSeatsForceDeselected, isSubmitting]);
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 w-full min-w-0 overflow-hidden">
             {/* Header */}
             <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Sơ đồ ghế ngồi</h3>
-                    <div className="text-sm text-muted-foreground">
-                        {template.name}
+                    <h3 className="text-lg font-semibold">
+                        {coachName && `${coachName} - `}{template.name}
+                    </h3>
+                    <div className="flex items-center gap-3">
+                        {isAdmin && onSearchPassenger && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={onSearchPassenger}
+                                className="h-8 gap-2"
+                            >
+                                <Users className="h-4 w-4" />
+                                <span className="hidden sm:inline">Tìm hành khách</span>
+                                {seats.filter(s => s.passenger && (s.bookingStatus === 'BOOKED' || s.bookingStatus === 'HOLDING')).length > 0 && (
+                                    <Badge
+                                        variant="destructive"
+                                        className="h-4 min-w-4 flex items-center justify-center p-0 text-[10px]"
+                                    >
+                                        {seats.filter(s => s.passenger && (s.bookingStatus === 'BOOKED' || s.bookingStatus === 'HOLDING')).length}
+                                    </Badge>
+                                )}
+                            </Button>
+                        )}
                     </div>
                 </div>
 
                 {/* Stats - Only show in User mode */}
                 {!isAdmin && (
-                    <div className="flex gap-4 text-sm bg-muted/20 rounded-lg w-full">
+                    <div className="flex gap-4 text-sm bg-muted/20 rounded-lg w-full p-3">
                         <div>
                             <span className="text-muted-foreground">Tổng số ghế:</span>{' '}
                             <span className="font-semibold">{seats.length}</span>
@@ -150,8 +175,8 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
             </div>
 
             {/* Seat Grid */}
-            <div className="relative">
-                <div className="border rounded-lg p-4 bg-muted/20">
+            <div className="relative w-full overflow-x-auto p-1">
+                <div className="border rounded-lg p-4 bg-muted/20 w-fit min-w-full">
                     {/* Mobile: Vertical layout (rows stacked) */}
                     <div className="md:hidden">
                         <div
@@ -230,7 +255,6 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                             style={{ gridRow: rowIndex + 1, gridColumn: 4 }}
                                         >
                                             {rowSeats.slice(2, 4).map((seat) => {
-                                                const isLocked = lockedSeatIds.includes(seat.id)
                                                 const displayStatus = getComputedSeatStatus(seat, lockedSeatIds, isAdmin);
 
                                                 return (
@@ -271,7 +295,7 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                     </div>
 
                     {/* Desktop: Horizontal layout (columns scroll horizontally) */}
-                    <div className="hidden md:block w-full overflow-x-auto pb-2">
+                    <div className="hidden md:block w-full pb-2">
                         <div
                             className="grid gap-2 min-w-max"
                             style={{

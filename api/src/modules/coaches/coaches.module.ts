@@ -9,4 +9,4 @@ import { PricingModule } from '../pricing/pricing.module';
   controllers: [CoachesController],
   providers: [CoachesService],
 })
-export class CoachesModule { }
+export class CoachesModule {}

@@ -144,11 +144,11 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="space-y-6">
+                <div className="space-y-6 min-w-0">
                     {/* Stations & Coach Navi */}
                     <div className="space-y-4 border-b pb-4">
-                        <div className="flex flex-col md:flex-row gap-4">
-                            <div className="flex-1 space-y-2">
+                        <div className="flex flex-col md:flex-row gap-4 items-end">
+                            <div className="flex-1 w-full space-y-2">
                                 <Label>Ga đi</Label>
                                 <Select value={fromStationId} onValueChange={(val) => {
                                     setFromStationId(val)
@@ -176,7 +176,7 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className="flex-1 space-y-2">
+                            <div className="flex-1 w-full space-y-2">
                                 <Label>Ga đến</Label>
                                 <Select value={toStationId} onValueChange={setToStationId}>
                                     <SelectTrigger>
@@ -230,6 +230,8 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
                                         selectedSeats={[]}
                                         highlightedSeatIds={highlightedSeatId ? [highlightedSeatId] : []}
                                         focusedSeatId={highlightedSeatId}
+                                        coachName={coachWithPrices.name}
+                                        onSearchPassenger={() => setIsPassengerDialogOpen(true)}
                                     />
                                 ) : (
                                     <BedLayoutViewer
@@ -241,6 +243,8 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
                                         selectedSeats={[]}
                                         highlightedSeatIds={highlightedSeatId ? [highlightedSeatId] : []}
                                         focusedSeatId={highlightedSeatId}
+                                        coachName={coachWithPrices.name}
+                                        onSearchPassenger={() => setIsPassengerDialogOpen(true)}
                                     />
                                 )}
                             </div>
@@ -313,25 +317,6 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
                 onPassengerClick={handlePassengerClick}
             />
 
-            {/* Floating Action Button */}
-            <Button
-                onClick={() => setIsPassengerDialogOpen(true)}
-                className="fixed bottom-8 right-8 h-14 w-14 rounded-full shadow-lg z-50"
-                size="icon"
-                title="Tìm kiếm hành khách"
-            >
-                <div className="relative">
-                    <Users className="h-6 w-6" />
-                    {allPassengers.length > 0 && (
-                        <Badge
-                            variant="destructive"
-                            className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                        >
-                            {allPassengers.length}
-                        </Badge>
-                    )}
-                </div>
-            </Button>
         </Card>
     )
 }

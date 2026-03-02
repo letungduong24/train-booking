@@ -37,7 +37,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
         );
     }
     return (
-        <div className="flex flex-col gap-8 p-4 md:p-8">
+        <div className="flex flex-col gap-8 p-4 md:p-8 min-w-0 max-w-full overflow-x-hidden">
             <AdminTripHeader trip={trip} />
             <div className="border rounded-lg bg-card p-4 space-y-4">
                 <h3 className="font-semibold mb-2">Vận hành</h3>

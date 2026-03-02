@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTrainDto } from './dto/create-train.dto';
 import { UpdateTrainDto } from './dto/update-train.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -7,7 +11,7 @@ import { Prisma, TrainStatus } from '../../generated/client';
 
 @Injectable()
 export class TrainService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createTrainDto: CreateTrainDto) {
     try {
@@ -47,7 +51,7 @@ export class TrainService {
         skip,
         take: limit,
         orderBy: {
-          [query.sort || 'createdAt']: query.order || 'desc'
+          [query.sort || 'createdAt']: query.order || 'desc',
         },
       }),
       this.prisma.train.count({ where }),
@@ -73,15 +77,15 @@ export class TrainService {
             template: true,
             _count: {
               select: {
-                seats: true
-              }
-            }
+                seats: true,
+              },
+            },
           },
           orderBy: {
-            order: 'asc'
-          }
-        }
-      }
+            order: 'asc',
+          },
+        },
+      },
     });
     if (!train) {
       throw new NotFoundException(`Train #${id} not found`);

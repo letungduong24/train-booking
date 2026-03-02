@@ -12,18 +12,18 @@ import { WalletModule } from '../wallet/wallet.module';
 import { TripModule } from '../trip/trip.module';
 
 @Module({
-    imports: [
-        PrismaModule,
-        forwardRef(() => PaymentModule),
-        forwardRef(() => WalletModule),
-        PricingModule,
-        TripModule,
-        BullModule.registerQueue({
-            name: 'booking',
-        }),
-    ],
-    controllers: [BookingController],
-    providers: [BookingService, BookingProcessor, BookingGateway],
-    exports: [BookingService],
+  imports: [
+    PrismaModule,
+    forwardRef(() => PaymentModule),
+    forwardRef(() => WalletModule),
+    PricingModule,
+    TripModule,
+    BullModule.registerQueue({
+      name: 'booking',
+    }),
+  ],
+  controllers: [BookingController],
+  providers: [BookingService, BookingProcessor, BookingGateway],
+  exports: [BookingService],
 })
-export class BookingModule { }
+export class BookingModule {}

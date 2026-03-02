@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { RouteService } from './route.service';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
@@ -14,7 +24,7 @@ import { FilterAvailableStationsDto } from './dto/filter-available-stations.dto'
 
 @Controller('route')
 export class RouteController {
-  constructor(private readonly routeService: RouteService) { }
+  constructor(private readonly routeService: RouteService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -55,29 +65,39 @@ export class RouteController {
   }
 
   @Post(':id/stations/reorder')
-  reorderStations(@Param('id') id: string, @Body() dto: ReorderRouteStationsDto) {
+  reorderStations(
+    @Param('id') id: string,
+    @Body() dto: ReorderRouteStationsDto,
+  ) {
     return this.routeService.reorderStations(id, dto);
   }
 
   @Get(':id/stations/available')
-  getAvailableStations(@Param('id') id: string, @Query() query: FilterAvailableStationsDto) {
+  getAvailableStations(
+    @Param('id') id: string,
+    @Query() query: FilterAvailableStationsDto,
+  ) {
     return this.routeService.getAvailableStations(id, query);
   }
-
-
 
   @Delete(':id/stations/:stationId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin)
-  removeStation(@Param('id') id: string, @Param('stationId') stationId: string) {
+  removeStation(
+    @Param('id') id: string,
+    @Param('stationId') stationId: string,
+  ) {
     return this.routeService.removeStation(id, stationId);
   }
 
   @Patch(':id/stations/:stationId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin)
-  updateStation(@Param('id') id: string, @Param('stationId') stationId: string, @Body() dto: UpdateRouteStationDto) {
+  updateStation(
+    @Param('id') id: string,
+    @Param('stationId') stationId: string,
+    @Body() dto: UpdateRouteStationDto,
+  ) {
     return this.routeService.updateStation(id, stationId, dto);
   }
 }
-
