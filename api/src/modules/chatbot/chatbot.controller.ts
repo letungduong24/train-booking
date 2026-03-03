@@ -1,7 +1,11 @@
 import { Controller, Post, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { google } from '@ai-sdk/google';
+import { createGroq, type GroqLanguageModelOptions } from '@ai-sdk/groq';
 import { streamText, convertToModelMessages, type UIMessage } from 'ai';
+
+const groq = createGroq({
+  apiKey: process.env.GROQ_API_KEY,
+});
 
 @Controller('api/chat')
 export class ChatbotController {
@@ -10,7 +14,12 @@ export class ChatbotController {
     const { messages }: { messages: UIMessage[] } = req.body;
 
     const result = streamText({
-      model: google('gemma-3-27b-it'),
+      model: groq('qwen/qwen3-32b'),
+      providerOptions: {
+        groq: {
+          reasoningFormat: 'parsed',
+        } satisfies GroqLanguageModelOptions,
+      },
       system:
         'Bạn là trợ lý ảo thân thiện và hữu ích của hệ thống Quản lý Tuyến Đường và Đặt Vé Tàu (Railway Management System) tại Việt Nam. Bạn giúp người dùng giải đáp các thắc mắc về lịch trình tàu, cách đặt vé, ga tàu, các chính sách, và những thông tin chung về hệ thống đường sắt. Hãy trả lời ngắn gọn, súc tích và luôn bằng tiếng Việt lịch sự.',
       messages: await convertToModelMessages(messages),

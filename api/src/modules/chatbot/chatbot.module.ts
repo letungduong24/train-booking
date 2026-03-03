@@ -4,4 +4,4 @@ import { ChatbotController } from './chatbot.controller';
 @Module({
   controllers: [ChatbotController],
 })
-export class ChatbotModule {}
+export class ChatbotModule { }
