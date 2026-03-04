@@ -19,7 +19,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async register(registerDto: RegisterDto, res: Response) {
     const { email, password, name } = registerDto;
@@ -307,5 +307,22 @@ export class AuthService {
 
     const { password: _password, ...rest } = user;
     return rest;
+  }
+
+  /**
+   * Lấy userId từ request (optional) — đọc accessToken cookie, không throw lỗi.
+   * Trả về userId nếu token hợp lệ, null nếu không có hoặc hết hạn.
+   */
+  async getUserIdFromRequest(req: Request): Promise<string | null> {
+    try {
+      const token = req.cookies?.accessToken;
+      if (!token) return null;
+      const payload = this.jwtService.verify(token, {
+        secret: this.configService.get<string>('JWT_SECRET'),
+      }) as { sub: string };
+      return payload?.sub ?? null;
+    } catch {
+      return null;
+    }
   }
 }

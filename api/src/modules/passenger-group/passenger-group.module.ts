@@ -6,4 +6,4 @@ import { PrismaModule } from '../prisma/prisma.module';
   imports: [PrismaModule],
   controllers: [PassengerGroupController],
 })
-export class PassengerGroupModule {}
+export class PassengerGroupModule { }
