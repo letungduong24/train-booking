@@ -135,25 +135,22 @@ Trả lời súc tích bằng tiếng Việt. Không dùng markdown (**, *, #).`
                     train: { select: { code: true } },
                   },
                 },
-                tickets: {
-                  take: 1,
-                  include: { seat: true },
-                },
               },
               orderBy: { createdAt: 'desc' },
               take: 5,
             });
 
             return {
-              bookings: bookings.map((b) => ({
-                bookingCode: b.code,
-                status: b.status,
-                totalPrice: b.totalPrice,
-                createdAt: b.createdAt,
-                routeName: b.trip?.route?.name ?? '',
-                trainCode: b.trip?.train?.code ?? '',
-                ticketCount: b.tickets.length,
-              })),
+              bookings: bookings.map((b) => {
+                return {
+                  bookingCode: b.code,
+                  status: b.status,
+                  totalPrice: b.totalPrice,
+                  createdAt: b.createdAt,
+                  routeName: b.trip?.route?.name ?? '',
+                  trainCode: b.trip?.train?.code ?? '',
+                };
+              }),
             };
           },
         }),

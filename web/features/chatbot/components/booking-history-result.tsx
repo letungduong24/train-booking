@@ -15,7 +15,6 @@ export interface BookingHistoryData {
     createdAt: string;
     routeName: string;
     trainCode: string;
-    ticketCount: number;
 }
 
 const STATUS_MAP: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
@@ -42,10 +41,6 @@ function BookingHistoryCard({ booking }: { booking: BookingHistoryData }) {
                 <span className="flex items-center gap-1">
                     <Train className="h-3 w-3" />
                     {booking.trainCode || "—"}
-                </span>
-                <span className="flex items-center gap-1">
-                    <TicketCheck className="h-3 w-3" />
-                    {booking.ticketCount} vé
                 </span>
                 <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
