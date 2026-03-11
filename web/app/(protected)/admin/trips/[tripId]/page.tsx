@@ -57,6 +57,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
                     <RouteMap
                         stations={trip.route.stations}
                         className="h-[400px]"
+                        pathCoordinates={trip.route.pathCoordinates}
                     />
                 </div>
             )}

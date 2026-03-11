@@ -56,6 +56,7 @@ export const BookingTripSchema = z.object({
     route: z.object({
         name: z.string(),
         stations: z.array(bookingRouteStationSchema).optional(),
+        pathCoordinates: z.any().optional(),
     }),
     train: z.object({
         code: z.string(),

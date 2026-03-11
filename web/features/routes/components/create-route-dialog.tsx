@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { IconPlus } from "@tabler/icons-react"
+import * as turf from "@turf/turf"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -35,6 +36,7 @@ import {
 } from "@/components/ui/select"
 import { createRouteSchema, CreateRouteInput } from "@/lib/schemas/route.schema"
 import { useCreateRoute } from "@/features/routes/hooks/use-route-mutations"
+import { InteractiveRouteBuilder } from "./interactive-route-builder"
 
 interface CreateRouteDialogProps {
     onSuccess?: () => void;
@@ -52,6 +54,7 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
             turnaroundMinutes: 60,
             basePricePerKm: 1000,
             stationFee: 0,
+            stations: [] as { id: string, name: string, latitude: number, longitude: number }[],
         },
     })
 
@@ -76,7 +79,7 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                     <IconPlus className="mr-2 h-4 w-4" /> Thêm tuyến
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Thêm tuyến đường mới</DialogTitle>
                     <DialogDescription>
@@ -98,17 +101,50 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                                 </FormItem>
                             )}
                         />
+
+                        {/* Interactive Station Picker UI */}
+                        <FormField
+                            control={form.control}
+                            name="stations"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Chọn tuyến đường trên Bản đồ</FormLabel>
+                                    <FormControl>
+                                        <InteractiveRouteBuilder
+                                            value={field.value}
+                                            onChange={(stations) => {
+                                                field.onChange(stations)
+                                                // Auto-estimate durationMinutes using straight-line distance at 60km/h
+                                                if (stations.length >= 2) {
+                                                    let totalKm = 0;
+                                                    for (let i = 0; i < stations.length - 1; i++) {
+                                                        const a = turf.point([stations[i].longitude, stations[i].latitude]);
+                                                        const b = turf.point([stations[i + 1].longitude, stations[i + 1].latitude]);
+                                                        totalKm += turf.distance(a, b, { units: 'kilometers' });
+                                                    }
+                                                    // Assume 60 km/h average speed as rough estimate
+                                                    const estimatedMinutes = Math.round(totalKm / 60 * 60);
+                                                    form.setValue('durationMinutes', estimatedMinutes)
+                                                }
+                                            }}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
                         <div className="grid grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
                                 name="durationMinutes"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Thời gian chạy (phút)</FormLabel>
+                                        <FormLabel>Thời gian chạy (phút) <span className="text-muted-foreground text-xs">(có thể chỉnh sửa)</span></FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="number"
-                                                placeholder="VD: 1920"
+                                                placeholder="Tự động tính sau khi chọn trạm"
                                                 {...field}
                                                 onChange={(e) => field.onChange(+e.target.value)}
                                             />

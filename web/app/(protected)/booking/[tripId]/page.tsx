@@ -336,6 +336,7 @@ export default function TripDetailPage() {
                                                 fromStationId: fromStationId,
                                                 toStationId: toStationId
                                             } : undefined}
+                                            pathCoordinates={trip.route.pathCoordinates}
                                         />
                                     </div>
                                 )}
@@ -366,6 +367,7 @@ export default function TripDetailPage() {
                                     fromStationId: fromStationId,
                                     toStationId: toStationId
                                 } : undefined}
+                                pathCoordinates={trip.route.pathCoordinates}
                             />
                         )}
                     </div>

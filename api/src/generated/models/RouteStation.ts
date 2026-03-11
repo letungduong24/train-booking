@@ -257,7 +257,7 @@ export type RouteStationOrderByWithRelationInput = {
 }
 
 export type RouteStationWhereUniqueInput = Prisma.AtLeast<{
-  routeId_index?: Prisma.RouteStationRouteIdIndexCompoundUniqueInput
+  routeId_stationId?: Prisma.RouteStationRouteIdStationIdCompoundUniqueInput
   AND?: Prisma.RouteStationWhereInput | Prisma.RouteStationWhereInput[]
   OR?: Prisma.RouteStationWhereInput[]
   NOT?: Prisma.RouteStationWhereInput | Prisma.RouteStationWhereInput[]
@@ -270,7 +270,7 @@ export type RouteStationWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"RouteStation"> | Date | string
   route?: Prisma.XOR<Prisma.RouteScalarRelationFilter, Prisma.RouteWhereInput>
   station?: Prisma.XOR<Prisma.StationScalarRelationFilter, Prisma.StationWhereInput>
-}, "routeId_index">
+}, "routeId_stationId">
 
 export type RouteStationOrderByWithAggregationInput = {
   routeId?: Prisma.SortOrder
@@ -378,9 +378,9 @@ export type RouteStationOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type RouteStationRouteIdIndexCompoundUniqueInput = {
+export type RouteStationRouteIdStationIdCompoundUniqueInput = {
   routeId: string
-  index: number
+  stationId: string
 }
 
 export type RouteStationCountOrderByAggregateInput = {

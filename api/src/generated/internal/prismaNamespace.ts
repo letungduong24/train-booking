@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.4.2
- * Query Engine version: 94a226be1cf2967af2541cca5529f0f7ba866919
+ * Prisma Client JS version: 7.2.0
+ * Query Engine version: 0c8ef2ce45c83248ab3df073180d5eda9e8be7a3
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.4.2",
-  engine: "94a226be1cf2967af2541cca5529f0f7ba866919"
+  client: "7.2.0",
+  engine: "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3"
 }
 
 /**
@@ -389,6 +389,7 @@ export const ModelName = {
   Transaction: 'Transaction',
   Station: 'Station',
   Route: 'Route',
+  RailwayLine: 'RailwayLine',
   RouteStation: 'RouteStation',
   CoachTemplate: 'CoachTemplate',
   Train: 'Train',
@@ -413,7 +414,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "refreshToken" | "transaction" | "station" | "route" | "routeStation" | "coachTemplate" | "train" | "coach" | "seat" | "trip" | "booking" | "passengerGroup" | "ticket"
+    modelProps: "user" | "refreshToken" | "transaction" | "station" | "route" | "railwayLine" | "routeStation" | "coachTemplate" | "train" | "coach" | "seat" | "trip" | "booking" | "passengerGroup" | "ticket"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -784,6 +785,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.RouteCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.RouteCountAggregateOutputType> | number
+        }
+      }
+    }
+    RailwayLine: {
+      payload: Prisma.$RailwayLinePayload<ExtArgs>
+      fields: Prisma.RailwayLineFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RailwayLineFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RailwayLinePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RailwayLineFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RailwayLinePayload>
+        }
+        findFirst: {
+          args: Prisma.RailwayLineFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RailwayLinePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RailwayLineFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RailwayLinePayload>
+        }
+        findMany: {
+          args: Prisma.RailwayLineFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RailwayLinePayload>[]
+        }
+        create: {
+          args: Prisma.RailwayLineCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RailwayLinePayload>
+        }
+        createMany: {
+          args: Prisma.RailwayLineCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RailwayLineCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RailwayLinePayload>[]
+        }
+        delete: {
+          args: Prisma.RailwayLineDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RailwayLinePayload>
+        }
+        update: {
+          args: Prisma.RailwayLineUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RailwayLinePayload>
+        }
+        deleteMany: {
+          args: Prisma.RailwayLineDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RailwayLineUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RailwayLineUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RailwayLinePayload>[]
+        }
+        upsert: {
+          args: Prisma.RailwayLineUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RailwayLinePayload>
+        }
+        aggregate: {
+          args: Prisma.RailwayLineAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRailwayLine>
+        }
+        groupBy: {
+          args: Prisma.RailwayLineGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RailwayLineGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RailwayLineCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RailwayLineCountAggregateOutputType> | number
         }
       }
     }
@@ -1541,8 +1616,8 @@ export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[key
 export const StationScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  latitute: 'latitute',
-  longtitute: 'longtitute',
+  latitude: 'latitude',
+  longitude: 'longitude',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1558,11 +1633,24 @@ export const RouteScalarFieldEnum = {
   status: 'status',
   durationMinutes: 'durationMinutes',
   turnaroundMinutes: 'turnaroundMinutes',
+  totalDistanceKm: 'totalDistanceKm',
   basePricePerKm: 'basePricePerKm',
-  stationFee: 'stationFee'
+  stationFee: 'stationFee',
+  pathCoordinates: 'pathCoordinates'
 } as const
 
 export type RouteScalarFieldEnum = (typeof RouteScalarFieldEnum)[keyof typeof RouteScalarFieldEnum]
+
+
+export const RailwayLineScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  pathCoordinates: 'pathCoordinates',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RailwayLineScalarFieldEnum = (typeof RailwayLineScalarFieldEnum)[keyof typeof RailwayLineScalarFieldEnum]
 
 
 export const RouteStationScalarFieldEnum = {
@@ -1601,6 +1689,7 @@ export const TrainScalarFieldEnum = {
   code: 'code',
   name: 'name',
   status: 'status',
+  averageSpeedKmH: 'averageSpeedKmH',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1710,19 +1799,19 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
-
-
 export const NullableJsonNullValueInput = {
   DbNull: DbNull,
   JsonNull: JsonNull
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -1869,20 +1958,6 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'CoachLayout'
- */
-export type EnumCoachLayoutFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CoachLayout'>
-    
-
-
-/**
- * Reference to a field of type 'CoachLayout[]'
- */
-export type ListEnumCoachLayoutFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CoachLayout[]'>
-    
-
-
-/**
  * Reference to a field of type 'Json'
  */
 export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -1893,6 +1968,20 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  * Reference to a field of type 'QueryMode'
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
+ * Reference to a field of type 'CoachLayout'
+ */
+export type EnumCoachLayoutFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CoachLayout'>
+    
+
+
+/**
+ * Reference to a field of type 'CoachLayout[]'
+ */
+export type ListEnumCoachLayoutFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CoachLayout[]'>
     
 
 
@@ -2079,6 +2168,7 @@ export type GlobalOmitConfig = {
   transaction?: Prisma.TransactionOmit
   station?: Prisma.StationOmit
   route?: Prisma.RouteOmit
+  railwayLine?: Prisma.RailwayLineOmit
   routeStation?: Prisma.RouteStationOmit
   coachTemplate?: Prisma.CoachTemplateOmit
   train?: Prisma.TrainOmit

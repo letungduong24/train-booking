@@ -17,7 +17,7 @@ import { SetDelayDto } from './dto/set-delay.dto';
 
 @Controller('trip')
 export class TripController {
-  constructor(private readonly tripService: TripService) {}
+  constructor(private readonly tripService: TripService) { }
 
   @Post()
   create(@Body() createTripDto: CreateTripDto) {

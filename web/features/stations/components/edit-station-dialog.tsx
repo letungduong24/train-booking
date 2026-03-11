@@ -40,16 +40,16 @@ export function EditStationDialog({ station }: EditStationDialogProps) {
         resolver: zodResolver(updateStationSchema),
         defaultValues: {
             name: station.name,
-            latitute: station.latitute,
-            longtitute: station.longtitute,
+            latitude: station.latitude,
+            longitude: station.longitude,
         },
     })
 
     React.useEffect(() => {
         form.reset({
             name: station.name,
-            latitute: station.latitute,
-            longtitute: station.longtitute,
+            latitude: station.latitude,
+            longitude: station.longitude,
         })
     }, [station, form])
 
@@ -97,7 +97,7 @@ export function EditStationDialog({ station }: EditStationDialogProps) {
 
                         <FormField
                             control={form.control}
-                            name="latitute"
+                            name="latitude"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Vĩ độ</FormLabel>
@@ -118,7 +118,7 @@ export function EditStationDialog({ station }: EditStationDialogProps) {
 
                         <FormField
                             control={form.control}
-                            name="longtitute"
+                            name="longitude"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Kinh độ</FormLabel>

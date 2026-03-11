@@ -17,8 +17,10 @@ export const routeSchema = z.object({
     status: z.string(),
     durationMinutes: z.number().default(0),
     turnaroundMinutes: z.number().default(60),
+    totalDistanceKm: z.number().default(0),
     basePricePerKm: z.number().default(1000),
     stationFee: z.number().default(0),
+    pathCoordinates: z.any().optional(),
     createdAt: z.string().or(z.date()),
     updatedAt: z.string().or(z.date()),
     stations: z.array(routeStationSchema).optional(),
@@ -35,6 +37,12 @@ export const createRouteSchema = routeSchema.omit({
     turnaroundMinutes: z.number(),
     basePricePerKm: z.number().default(1000),
     stationFee: z.number().default(0),
+    stations: z.array(z.object({
+        id: z.string(),
+        name: z.string(),
+        latitude: z.number(),
+        longitude: z.number(),
+    })).optional(),
 });
 
 export const updateRouteSchema = createRouteSchema.partial();
@@ -42,8 +50,8 @@ export const updateRouteSchema = createRouteSchema.partial();
 // Schema for updating route station details
 export const updateRouteStationSchema = z.object({
     name: z.string().min(1, "Tên trạm không được để trống"),
-    latitute: z.number(),
-    longtitute: z.number(),
+    latitude: z.number(),
+    longitude: z.number(),
     distanceFromStart: z.number().min(0, "Khoảng cách phải lớn hơn hoặc bằng 0"),
 });
 

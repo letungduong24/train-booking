@@ -7,9 +7,9 @@ export class CreateStationDto {
 
   @IsNotEmpty()
   @IsNumber()
-  latitute: number;
+  latitude: number;
 
   @IsNotEmpty()
   @IsNumber()
-  longtitute: number;
+  longitude: number;
 }

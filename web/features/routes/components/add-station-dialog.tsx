@@ -43,8 +43,8 @@ interface AddStationDialogProps {
 
 const addStationSchema = z.object({
     name: z.string().min(1, "Tên trạm không được để trống"),
-    latitute: z.number(),
-    longtitute: z.number(),
+    latitude: z.number(),
+    longitude: z.number(),
     distanceFromStart: z.number().min(0),
 })
 
@@ -72,8 +72,8 @@ export function AddStationDialog({ routeId, currentStationCount, open, onOpenCha
         resolver: zodResolver(addStationSchema),
         defaultValues: {
             name: "",
-            latitute: 0,
-            longtitute: 0,
+            latitude: 0,
+            longitude: 0,
             distanceFromStart: 0,
         },
     })
@@ -87,8 +87,8 @@ export function AddStationDialog({ routeId, currentStationCount, open, onOpenCha
             try {
                 const res = await apiClient.post<Station>('/station', {
                     name: values.name,
-                    latitute: values.latitute,
-                    longtitute: values.longtitute
+                    latitude: values.latitude,
+                    longitude: values.longitude
                 })
                 stationId = res.data.id
             } catch (err: any) {
@@ -196,7 +196,7 @@ export function AddStationDialog({ routeId, currentStationCount, open, onOpenCha
                                         className="col-span-3"
                                         type="number"
                                         step="any"
-                                        {...form.register("latitute", { valueAsNumber: true })}
+                                        {...form.register("latitude", { valueAsNumber: true })}
                                         placeholder="21.0285"
                                     />
                                 </div>
@@ -206,7 +206,7 @@ export function AddStationDialog({ routeId, currentStationCount, open, onOpenCha
                                         className="col-span-3"
                                         type="number"
                                         step="any"
-                                        {...form.register("longtitute", { valueAsNumber: true })}
+                                        {...form.register("longitude", { valueAsNumber: true })}
                                         placeholder="105.8542"
                                     />
                                 </div>
@@ -256,8 +256,8 @@ export function AddStationDialog({ routeId, currentStationCount, open, onOpenCha
                                             stations.map((station) => (
                                                 <TableRow key={station.id}>
                                                     <TableCell className="font-medium">{station.name}</TableCell>
-                                                    <TableCell>{station.latitute}</TableCell>
-                                                    <TableCell>{station.longtitute}</TableCell>
+                                                    <TableCell>{station.latitude}</TableCell>
+                                                    <TableCell>{station.longitude}</TableCell>
                                                     <TableCell>
                                                         <Button
                                                             size="sm"

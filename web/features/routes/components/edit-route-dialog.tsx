@@ -203,9 +203,9 @@ export function EditRouteDialog({ route, onSuccess }: EditRouteDialogProps) {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value="draft">Nháp</SelectItem>
-                                            <SelectItem value="active">Hoạt động</SelectItem>
-                                            <SelectItem value="inactive">Không hoạt động</SelectItem>
+                                            <SelectItem value="DRAFT">Nháp</SelectItem>
+                                            <SelectItem value="ACTIVE">Hoạt động</SelectItem>
+                                            <SelectItem value="INACTIVE">Không hoạt động</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />

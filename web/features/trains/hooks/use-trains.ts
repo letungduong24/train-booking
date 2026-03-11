@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData, UseQueryOptions } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
 import { Train, CreateTrainInput, UpdateTrainInput, TrainsResponse, TrainFilters } from '@/lib/schemas/train.schema';
 
@@ -38,11 +38,12 @@ const deleteTrain = async (id: string) => {
 };
 
 // Hooks
-export const useTrains = (filters: TrainFilters) => {
+export const useTrains = (filters: TrainFilters, options?: Omit<UseQueryOptions<TrainsResponse, Error, TrainsResponse, any>, 'queryKey' | 'queryFn'>) => {
     return useQuery({
         queryKey: ['trains', filters],
         queryFn: () => fetchTrains(filters),
         placeholderData: keepPreviousData,
+        ...options,
     });
 };
 

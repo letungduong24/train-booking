@@ -43,6 +43,11 @@ export type Station = Prisma.StationModel
  */
 export type Route = Prisma.RouteModel
 /**
+ * Model RailwayLine
+ * 
+ */
+export type RailwayLine = Prisma.RailwayLineModel
+/**
  * Model RouteStation
  * 
  */

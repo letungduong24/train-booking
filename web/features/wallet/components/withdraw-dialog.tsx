@@ -29,7 +29,7 @@ export function WithdrawDialog({ open, onOpenChange, maxAmount }: WithdrawDialog
     const { withdraw, isWithdrawing } = useWallet()
 
     const form = useForm<z.infer<typeof withdrawSchema>>({
-        resolver: zodResolver(withdrawSchema),
+        resolver: zodResolver(withdrawSchema) as any,
         defaultValues: {
             amount: 0,
             bankName: "",
@@ -38,7 +38,7 @@ export function WithdrawDialog({ open, onOpenChange, maxAmount }: WithdrawDialog
         },
     })
 
-    const onSubmit = (values: z.infer<typeof withdrawSchema>) => {
+    const onSubmitForm = (values: z.infer<typeof withdrawSchema>) => {
         if (values.amount > maxAmount) {
             form.setError("amount", { message: "Số dư không đủ" })
             return
@@ -63,7 +63,7 @@ export function WithdrawDialog({ open, onOpenChange, maxAmount }: WithdrawDialog
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={form.handleSubmit(onSubmitForm)} className="space-y-4">
                         <FormField
                             control={form.control}
                             name="amount"

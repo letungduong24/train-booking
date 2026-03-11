@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateTrainDto {
   @IsString()
@@ -12,4 +12,8 @@ export class CreateTrainDto {
   @IsOptional()
   @IsString()
   status?: string;
+
+  @IsOptional()
+  @IsNumber()
+  averageSpeedKmH?: number;
 }

@@ -1,12 +1,12 @@
 "use client"
 
-import React from 'react'
+import React, { useMemo } from 'react'
 import {
     Map,
     MapMarker,
     MarkerContent,
     MarkerTooltip,
-    MapRoute,
+    MapLineLayer,
 } from "@/components/ui/map"
 import { Station } from '@/lib/schemas/station.schema';
 
@@ -17,8 +17,8 @@ interface RouteMapProps {
         station?: {
             id: string;
             name: string;
-            latitute: number;
-            longtitute: number;
+            latitude: number;
+            longitude: number;
         } | null;
     }[]
     className?: string;
@@ -26,11 +26,12 @@ interface RouteMapProps {
         fromStationId: string;
         toStationId: string;
     }
+    pathCoordinates?: [number, number][][] | null;
 }
 
-export function RouteMap({ stations, className, highlightSegment }: RouteMapProps) {
+export function RouteMap({ stations, className, highlightSegment, pathCoordinates }: RouteMapProps) {
     // Filter valid stations first
-    const validStations = stations.filter(s => s.station && s.station.longtitute && s.station.latitute);
+    const validStations = stations.filter(s => s.station && s.station.longitude && s.station.latitude);
 
     // If no data, show placeholder
     if (validStations.length === 0) {
@@ -41,8 +42,35 @@ export function RouteMap({ stations, className, highlightSegment }: RouteMapProp
         )
     }
 
-    // Prepare coordinates for polyline
-    const routeCoordinates = validStations.map(s => [s.station!.longtitute, s.station!.latitute] as [number, number]);
+    // Build GeoJSON from pathCoordinates (number[][][]) — each sub-array is a LineString segment
+    const pathGeoJson = useMemo(() => {
+        if (!pathCoordinates || pathCoordinates.length === 0) return null;
+        return {
+            type: "FeatureCollection" as const,
+            features: [{
+                type: "Feature" as const,
+                properties: {},
+                geometry: {
+                    type: "MultiLineString" as const,
+                    coordinates: pathCoordinates
+                }
+            }]
+        } as GeoJSON.FeatureCollection<GeoJSON.MultiLineString>;
+    }, [pathCoordinates]);
+
+    // Fallback: straight line between stations when no path data
+    const fallbackGeoJson = useMemo(() => {
+        const coords = validStations.map(s => [s.station!.longitude, s.station!.latitude]);
+        if (coords.length < 2) return null;
+        return {
+            type: "FeatureCollection" as const,
+            features: [{
+                type: "Feature" as const,
+                properties: {},
+                geometry: { type: "LineString" as const, coordinates: coords }
+            }]
+        } as GeoJSON.FeatureCollection<GeoJSON.LineString>;
+    }, [validStations]);
 
     // Calculate highlighted segment coordinates ONLY for centering map
     let highlightCoordinates: [number, number][] = [];
@@ -53,12 +81,12 @@ export function RouteMap({ stations, className, highlightSegment }: RouteMapProp
         if (fromIndex !== -1 && toIndex !== -1 && fromIndex <= toIndex) {
             highlightCoordinates = validStations
                 .slice(fromIndex, toIndex + 1)
-                .map(s => [s.station!.longtitute, s.station!.latitute] as [number, number]);
+                .map(s => [s.station!.longitude, s.station!.latitude] as [number, number]);
         }
     }
 
     // Use first station as center or calculating center of highlighted segment
-    let center = [validStations[0].station!.longtitute, validStations[0].station!.latitute] as [number, number];
+    let center = [validStations[0].station!.longitude, validStations[0].station!.latitude] as [number, number];
     if (highlightCoordinates.length > 0) {
         const midIndex = Math.floor(highlightCoordinates.length / 2);
         center = highlightCoordinates[midIndex];
@@ -70,13 +98,24 @@ export function RouteMap({ stations, className, highlightSegment }: RouteMapProp
                 center={center}
                 zoom={highlightCoordinates.length > 0 ? 9 : 8}
             >
-                {/* Full Route (Dimmed) */}
-                <MapRoute
-                    coordinates={routeCoordinates}
-                    color="#94a3b8" // slate-400
-                    width={4}
-                    opacity={0.5}
-                />
+                {/* Route path — follows railway tracks if pathCoordinates available */}
+                {pathGeoJson ? (
+                    <MapLineLayer
+                        id="route-path"
+                        data={pathGeoJson}
+                        color="#4285F4"
+                        width={4}
+                        opacity={0.9}
+                    />
+                ) : fallbackGeoJson ? (
+                    <MapLineLayer
+                        id="route-path-fallback"
+                        data={fallbackGeoJson as any}
+                        color="#4285F4"
+                        width={3}
+                        opacity={0.6}
+                    />
+                ) : null}
 
                 {/* NO HIGHLIGHTED ROUTE LINE to avoid color crashes */}
 
@@ -88,8 +127,8 @@ export function RouteMap({ stations, className, highlightSegment }: RouteMapProp
                     return (
                         <MapMarker
                             key={`${item.stationId}`}
-                            longitude={item.station!.longtitute}
-                            latitude={item.station!.latitute}
+                            longitude={item.station!.longitude}
+                            latitude={item.station!.latitude}
                         >
                             <MarkerContent>
                                 <div className={`size-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-primary-foreground text-xs font-bold transition-all ${isHighlighted ? 'bg-primary scale-125 z-10' : 'bg-primary/80'

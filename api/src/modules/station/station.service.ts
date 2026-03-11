@@ -7,7 +7,7 @@ import { Prisma } from '../../generated/client';
 
 @Injectable()
 export class StationService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createStationDto: CreateStationDto) {
     const existing = await this.prisma.station.findFirst({
@@ -22,7 +22,7 @@ export class StationService {
   }
 
   async findAll(query: FilterStationDto) {
-    const { page = 1, limit = 10, skip, take, search } = query;
+    const { page = 1, limit = 10, skip, take, search, all } = query;
 
     const where: Prisma.StationWhereInput = {
       ...(search && {
@@ -33,8 +33,8 @@ export class StationService {
     const [data, total] = await Promise.all([
       this.prisma.station.findMany({
         where,
-        skip,
-        take,
+        ...(all !== 'true' && { skip }),
+        ...(all !== 'true' && { take }),
         orderBy: {
           [query.sort || 'createdAt']: query.order || 'desc',
         },

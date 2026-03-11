@@ -13,6 +13,7 @@ export const tripSchema = z.object({
     route: z.object({
         id: z.string(),
         name: z.string(),
+        pathCoordinates: z.any().optional(),
     }).optional(),
     train: z.object({
         id: z.string(),
@@ -54,8 +55,8 @@ export const tripDetailSchema = tripSchema.extend({
                 id: z.string(),
                 name: z.string(),
                 code: z.string(),
-                latitute: z.number(),
-                longtitute: z.number(),
+                latitude: z.number(),
+                longitude: z.number(),
                 createdAt: z.string().or(z.date()),
                 updatedAt: z.string().or(z.date()),
             }),
@@ -63,6 +64,7 @@ export const tripDetailSchema = tripSchema.extend({
             distanceFromStart: z.number(),
             durationFromStart: z.number(),
         })),
+        pathCoordinates: z.any().optional(),
     }),
     train: z.object({
         id: z.string(),

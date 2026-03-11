@@ -24,7 +24,7 @@ import { FilterAvailableStationsDto } from './dto/filter-available-stations.dto'
 
 @Controller('route')
 export class RouteController {
-  constructor(private readonly routeService: RouteService) {}
+  constructor(private readonly routeService: RouteService) { }
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -55,6 +55,13 @@ export class RouteController {
   @Roles(Role.Admin)
   remove(@Param('id') id: string) {
     return this.routeService.remove(id);
+  }
+
+  @Post(':id/recalculate-path')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin)
+  recalculatePath(@Param('id') id: string) {
+    return this.routeService.recalculatePath(id);
   }
 
   @Post(':id/stations')

@@ -38,6 +38,8 @@ export function SelectRouteDialog({ open, onOpenChange, onSelect, selectedRouteI
         limit: 5,
         search: searchValue,
         status: 'ACTIVE'
+    }, {
+        enabled: open
     })
 
     const routes = routeData?.data || []

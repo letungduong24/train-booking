@@ -7,6 +7,7 @@ export const trainSchema = z.object({
     code: z.string(),
     name: z.string(),
     status: z.string(),
+    averageSpeedKmH: z.number().nullable().optional(),
     coaches: z.array(coachSchema).optional(),
     createdAt: z.string().optional(),
     updatedAt: z.string().optional(),
@@ -16,10 +17,12 @@ export const trainSchema = z.object({
 export const createTrainSchema = z.object({
     code: z.string().min(1, "Mã tàu không được để trống"),
     name: z.string().min(1, "Tên tàu không được để trống"),
+    averageSpeedKmH: z.coerce.number().min(1, "Vận tốc phải lớn hơn 0").optional(),
     status: z.string().optional(),
 })
 
 export const updateTrainSchema = createTrainSchema.partial();
+
 
 // Inferred Types
 export type Train = z.infer<typeof trainSchema>;

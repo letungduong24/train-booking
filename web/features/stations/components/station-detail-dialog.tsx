@@ -76,11 +76,11 @@ export function StationDetailDialog({
                         </div>
                         <div>
                             <span className="font-semibold">Vĩ độ:</span>
-                            <p className="mt-1">{station.latitute}</p>
+                            <p className="mt-1">{station.latitude}</p>
                         </div>
                         <div>
                             <span className="font-semibold">Kinh độ:</span>
-                            <p className="mt-1">{station.longtitute}</p>
+                            <p className="mt-1">{station.longitude}</p>
                         </div>
                     </div>
                 </div>

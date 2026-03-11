@@ -53,8 +53,8 @@ export function CreateStationDialog({ routeId, open, onOpenChange, onSuccess }: 
             try {
                 const res = await apiClient.post<Station>('/station', {
                     name: name,
-                    latitute: parseFloat(lat),
-                    longtitute: parseFloat(long)
+                    latitude: parseFloat(lat),
+                    longitude: parseFloat(long)
                 })
                 stationId = res.data.id
             } catch (err: any) {

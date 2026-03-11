@@ -37,7 +37,7 @@ export interface TripSearchFormProps {
 
 export function TripSearchForm({ className, defaultValues, onSubmit: externalOnSubmit }: TripSearchFormProps) {
     const router = useRouter();
-    const { data: stationsData } = useStations({ page: 1, limit: 100 });
+    const { data: stationsData } = useStations({ page: 1, limit: 1000 });
     const stations = stationsData?.data || [];
     const [openFrom, setOpenFrom] = useState(false);
     const [openTo, setOpenTo] = useState(false);

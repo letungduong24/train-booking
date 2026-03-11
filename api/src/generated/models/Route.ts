@@ -29,6 +29,7 @@ export type AggregateRoute = {
 export type RouteAvgAggregateOutputType = {
   durationMinutes: number | null
   turnaroundMinutes: number | null
+  totalDistanceKm: number | null
   basePricePerKm: number | null
   stationFee: number | null
 }
@@ -36,6 +37,7 @@ export type RouteAvgAggregateOutputType = {
 export type RouteSumAggregateOutputType = {
   durationMinutes: number | null
   turnaroundMinutes: number | null
+  totalDistanceKm: number | null
   basePricePerKm: number | null
   stationFee: number | null
 }
@@ -48,6 +50,7 @@ export type RouteMinAggregateOutputType = {
   status: $Enums.RouteStatus | null
   durationMinutes: number | null
   turnaroundMinutes: number | null
+  totalDistanceKm: number | null
   basePricePerKm: number | null
   stationFee: number | null
 }
@@ -60,6 +63,7 @@ export type RouteMaxAggregateOutputType = {
   status: $Enums.RouteStatus | null
   durationMinutes: number | null
   turnaroundMinutes: number | null
+  totalDistanceKm: number | null
   basePricePerKm: number | null
   stationFee: number | null
 }
@@ -72,8 +76,10 @@ export type RouteCountAggregateOutputType = {
   status: number
   durationMinutes: number
   turnaroundMinutes: number
+  totalDistanceKm: number
   basePricePerKm: number
   stationFee: number
+  pathCoordinates: number
   _all: number
 }
 
@@ -81,6 +87,7 @@ export type RouteCountAggregateOutputType = {
 export type RouteAvgAggregateInputType = {
   durationMinutes?: true
   turnaroundMinutes?: true
+  totalDistanceKm?: true
   basePricePerKm?: true
   stationFee?: true
 }
@@ -88,6 +95,7 @@ export type RouteAvgAggregateInputType = {
 export type RouteSumAggregateInputType = {
   durationMinutes?: true
   turnaroundMinutes?: true
+  totalDistanceKm?: true
   basePricePerKm?: true
   stationFee?: true
 }
@@ -100,6 +108,7 @@ export type RouteMinAggregateInputType = {
   status?: true
   durationMinutes?: true
   turnaroundMinutes?: true
+  totalDistanceKm?: true
   basePricePerKm?: true
   stationFee?: true
 }
@@ -112,6 +121,7 @@ export type RouteMaxAggregateInputType = {
   status?: true
   durationMinutes?: true
   turnaroundMinutes?: true
+  totalDistanceKm?: true
   basePricePerKm?: true
   stationFee?: true
 }
@@ -124,8 +134,10 @@ export type RouteCountAggregateInputType = {
   status?: true
   durationMinutes?: true
   turnaroundMinutes?: true
+  totalDistanceKm?: true
   basePricePerKm?: true
   stationFee?: true
+  pathCoordinates?: true
   _all?: true
 }
 
@@ -223,8 +235,10 @@ export type RouteGroupByOutputType = {
   status: $Enums.RouteStatus
   durationMinutes: number
   turnaroundMinutes: number
+  totalDistanceKm: number
   basePricePerKm: number
   stationFee: number
+  pathCoordinates: runtime.JsonValue | null
   _count: RouteCountAggregateOutputType | null
   _avg: RouteAvgAggregateOutputType | null
   _sum: RouteSumAggregateOutputType | null
@@ -258,8 +272,10 @@ export type RouteWhereInput = {
   status?: Prisma.EnumRouteStatusFilter<"Route"> | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFilter<"Route"> | number
   turnaroundMinutes?: Prisma.IntFilter<"Route"> | number
+  totalDistanceKm?: Prisma.FloatFilter<"Route"> | number
   basePricePerKm?: Prisma.FloatFilter<"Route"> | number
   stationFee?: Prisma.FloatFilter<"Route"> | number
+  pathCoordinates?: Prisma.JsonNullableFilter<"Route">
   stations?: Prisma.RouteStationListRelationFilter
   trips?: Prisma.TripListRelationFilter
 }
@@ -272,8 +288,10 @@ export type RouteOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   durationMinutes?: Prisma.SortOrder
   turnaroundMinutes?: Prisma.SortOrder
+  totalDistanceKm?: Prisma.SortOrder
   basePricePerKm?: Prisma.SortOrder
   stationFee?: Prisma.SortOrder
+  pathCoordinates?: Prisma.SortOrderInput | Prisma.SortOrder
   stations?: Prisma.RouteStationOrderByRelationAggregateInput
   trips?: Prisma.TripOrderByRelationAggregateInput
 }
@@ -289,8 +307,10 @@ export type RouteWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumRouteStatusFilter<"Route"> | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFilter<"Route"> | number
   turnaroundMinutes?: Prisma.IntFilter<"Route"> | number
+  totalDistanceKm?: Prisma.FloatFilter<"Route"> | number
   basePricePerKm?: Prisma.FloatFilter<"Route"> | number
   stationFee?: Prisma.FloatFilter<"Route"> | number
+  pathCoordinates?: Prisma.JsonNullableFilter<"Route">
   stations?: Prisma.RouteStationListRelationFilter
   trips?: Prisma.TripListRelationFilter
 }, "id">
@@ -303,8 +323,10 @@ export type RouteOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   durationMinutes?: Prisma.SortOrder
   turnaroundMinutes?: Prisma.SortOrder
+  totalDistanceKm?: Prisma.SortOrder
   basePricePerKm?: Prisma.SortOrder
   stationFee?: Prisma.SortOrder
+  pathCoordinates?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.RouteCountOrderByAggregateInput
   _avg?: Prisma.RouteAvgOrderByAggregateInput
   _max?: Prisma.RouteMaxOrderByAggregateInput
@@ -323,8 +345,10 @@ export type RouteScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumRouteStatusWithAggregatesFilter<"Route"> | $Enums.RouteStatus
   durationMinutes?: Prisma.IntWithAggregatesFilter<"Route"> | number
   turnaroundMinutes?: Prisma.IntWithAggregatesFilter<"Route"> | number
+  totalDistanceKm?: Prisma.FloatWithAggregatesFilter<"Route"> | number
   basePricePerKm?: Prisma.FloatWithAggregatesFilter<"Route"> | number
   stationFee?: Prisma.FloatWithAggregatesFilter<"Route"> | number
+  pathCoordinates?: Prisma.JsonNullableWithAggregatesFilter<"Route">
 }
 
 export type RouteCreateInput = {
@@ -335,8 +359,10 @@ export type RouteCreateInput = {
   status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
+  totalDistanceKm?: number
   basePricePerKm?: number
   stationFee?: number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   stations?: Prisma.RouteStationCreateNestedManyWithoutRouteInput
   trips?: Prisma.TripCreateNestedManyWithoutRouteInput
 }
@@ -349,8 +375,10 @@ export type RouteUncheckedCreateInput = {
   status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
+  totalDistanceKm?: number
   basePricePerKm?: number
   stationFee?: number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   stations?: Prisma.RouteStationUncheckedCreateNestedManyWithoutRouteInput
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutRouteInput
 }
@@ -363,8 +391,10 @@ export type RouteUpdateInput = {
   status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  totalDistanceKm?: Prisma.FloatFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
   stationFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   stations?: Prisma.RouteStationUpdateManyWithoutRouteNestedInput
   trips?: Prisma.TripUpdateManyWithoutRouteNestedInput
 }
@@ -377,8 +407,10 @@ export type RouteUncheckedUpdateInput = {
   status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  totalDistanceKm?: Prisma.FloatFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
   stationFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   stations?: Prisma.RouteStationUncheckedUpdateManyWithoutRouteNestedInput
   trips?: Prisma.TripUncheckedUpdateManyWithoutRouteNestedInput
 }
@@ -391,8 +423,10 @@ export type RouteCreateManyInput = {
   status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
+  totalDistanceKm?: number
   basePricePerKm?: number
   stationFee?: number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type RouteUpdateManyMutationInput = {
@@ -403,8 +437,10 @@ export type RouteUpdateManyMutationInput = {
   status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  totalDistanceKm?: Prisma.FloatFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
   stationFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type RouteUncheckedUpdateManyInput = {
@@ -415,8 +451,10 @@ export type RouteUncheckedUpdateManyInput = {
   status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  totalDistanceKm?: Prisma.FloatFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
   stationFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type RouteCountOrderByAggregateInput = {
@@ -427,13 +465,16 @@ export type RouteCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   durationMinutes?: Prisma.SortOrder
   turnaroundMinutes?: Prisma.SortOrder
+  totalDistanceKm?: Prisma.SortOrder
   basePricePerKm?: Prisma.SortOrder
   stationFee?: Prisma.SortOrder
+  pathCoordinates?: Prisma.SortOrder
 }
 
 export type RouteAvgOrderByAggregateInput = {
   durationMinutes?: Prisma.SortOrder
   turnaroundMinutes?: Prisma.SortOrder
+  totalDistanceKm?: Prisma.SortOrder
   basePricePerKm?: Prisma.SortOrder
   stationFee?: Prisma.SortOrder
 }
@@ -446,6 +487,7 @@ export type RouteMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   durationMinutes?: Prisma.SortOrder
   turnaroundMinutes?: Prisma.SortOrder
+  totalDistanceKm?: Prisma.SortOrder
   basePricePerKm?: Prisma.SortOrder
   stationFee?: Prisma.SortOrder
 }
@@ -458,6 +500,7 @@ export type RouteMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   durationMinutes?: Prisma.SortOrder
   turnaroundMinutes?: Prisma.SortOrder
+  totalDistanceKm?: Prisma.SortOrder
   basePricePerKm?: Prisma.SortOrder
   stationFee?: Prisma.SortOrder
 }
@@ -465,6 +508,7 @@ export type RouteMinOrderByAggregateInput = {
 export type RouteSumOrderByAggregateInput = {
   durationMinutes?: Prisma.SortOrder
   turnaroundMinutes?: Prisma.SortOrder
+  totalDistanceKm?: Prisma.SortOrder
   basePricePerKm?: Prisma.SortOrder
   stationFee?: Prisma.SortOrder
 }
@@ -522,8 +566,10 @@ export type RouteCreateWithoutStationsInput = {
   status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
+  totalDistanceKm?: number
   basePricePerKm?: number
   stationFee?: number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   trips?: Prisma.TripCreateNestedManyWithoutRouteInput
 }
 
@@ -535,8 +581,10 @@ export type RouteUncheckedCreateWithoutStationsInput = {
   status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
+  totalDistanceKm?: number
   basePricePerKm?: number
   stationFee?: number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutRouteInput
 }
 
@@ -564,8 +612,10 @@ export type RouteUpdateWithoutStationsInput = {
   status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  totalDistanceKm?: Prisma.FloatFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
   stationFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   trips?: Prisma.TripUpdateManyWithoutRouteNestedInput
 }
 
@@ -577,8 +627,10 @@ export type RouteUncheckedUpdateWithoutStationsInput = {
   status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  totalDistanceKm?: Prisma.FloatFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
   stationFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   trips?: Prisma.TripUncheckedUpdateManyWithoutRouteNestedInput
 }
 
@@ -590,8 +642,10 @@ export type RouteCreateWithoutTripsInput = {
   status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
+  totalDistanceKm?: number
   basePricePerKm?: number
   stationFee?: number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   stations?: Prisma.RouteStationCreateNestedManyWithoutRouteInput
 }
 
@@ -603,8 +657,10 @@ export type RouteUncheckedCreateWithoutTripsInput = {
   status?: $Enums.RouteStatus
   durationMinutes?: number
   turnaroundMinutes?: number
+  totalDistanceKm?: number
   basePricePerKm?: number
   stationFee?: number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   stations?: Prisma.RouteStationUncheckedCreateNestedManyWithoutRouteInput
 }
 
@@ -632,8 +688,10 @@ export type RouteUpdateWithoutTripsInput = {
   status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  totalDistanceKm?: Prisma.FloatFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
   stationFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   stations?: Prisma.RouteStationUpdateManyWithoutRouteNestedInput
 }
 
@@ -645,8 +703,10 @@ export type RouteUncheckedUpdateWithoutTripsInput = {
   status?: Prisma.EnumRouteStatusFieldUpdateOperationsInput | $Enums.RouteStatus
   durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   turnaroundMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  totalDistanceKm?: Prisma.FloatFieldUpdateOperationsInput | number
   basePricePerKm?: Prisma.FloatFieldUpdateOperationsInput | number
   stationFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  pathCoordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   stations?: Prisma.RouteStationUncheckedUpdateManyWithoutRouteNestedInput
 }
 
@@ -698,8 +758,10 @@ export type RouteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   status?: boolean
   durationMinutes?: boolean
   turnaroundMinutes?: boolean
+  totalDistanceKm?: boolean
   basePricePerKm?: boolean
   stationFee?: boolean
+  pathCoordinates?: boolean
   stations?: boolean | Prisma.Route$stationsArgs<ExtArgs>
   trips?: boolean | Prisma.Route$tripsArgs<ExtArgs>
   _count?: boolean | Prisma.RouteCountOutputTypeDefaultArgs<ExtArgs>
@@ -713,8 +775,10 @@ export type RouteSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   status?: boolean
   durationMinutes?: boolean
   turnaroundMinutes?: boolean
+  totalDistanceKm?: boolean
   basePricePerKm?: boolean
   stationFee?: boolean
+  pathCoordinates?: boolean
 }, ExtArgs["result"]["route"]>
 
 export type RouteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -725,8 +789,10 @@ export type RouteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   status?: boolean
   durationMinutes?: boolean
   turnaroundMinutes?: boolean
+  totalDistanceKm?: boolean
   basePricePerKm?: boolean
   stationFee?: boolean
+  pathCoordinates?: boolean
 }, ExtArgs["result"]["route"]>
 
 export type RouteSelectScalar = {
@@ -737,11 +803,13 @@ export type RouteSelectScalar = {
   status?: boolean
   durationMinutes?: boolean
   turnaroundMinutes?: boolean
+  totalDistanceKm?: boolean
   basePricePerKm?: boolean
   stationFee?: boolean
+  pathCoordinates?: boolean
 }
 
-export type RouteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "status" | "durationMinutes" | "turnaroundMinutes" | "basePricePerKm" | "stationFee", ExtArgs["result"]["route"]>
+export type RouteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt" | "status" | "durationMinutes" | "turnaroundMinutes" | "totalDistanceKm" | "basePricePerKm" | "stationFee" | "pathCoordinates", ExtArgs["result"]["route"]>
 export type RouteInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stations?: boolean | Prisma.Route$stationsArgs<ExtArgs>
   trips?: boolean | Prisma.Route$tripsArgs<ExtArgs>
@@ -764,8 +832,10 @@ export type $RoutePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     status: $Enums.RouteStatus
     durationMinutes: number
     turnaroundMinutes: number
+    totalDistanceKm: number
     basePricePerKm: number
     stationFee: number
+    pathCoordinates: runtime.JsonValue | null
   }, ExtArgs["result"]["route"]>
   composites: {}
 }
@@ -1198,8 +1268,10 @@ export interface RouteFieldRefs {
   readonly status: Prisma.FieldRef<"Route", 'RouteStatus'>
   readonly durationMinutes: Prisma.FieldRef<"Route", 'Int'>
   readonly turnaroundMinutes: Prisma.FieldRef<"Route", 'Int'>
+  readonly totalDistanceKm: Prisma.FieldRef<"Route", 'Float'>
   readonly basePricePerKm: Prisma.FieldRef<"Route", 'Float'>
   readonly stationFee: Prisma.FieldRef<"Route", 'Float'>
+  readonly pathCoordinates: Prisma.FieldRef<"Route", 'Json'>
 }
     
 

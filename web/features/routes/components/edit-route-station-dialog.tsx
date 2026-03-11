@@ -40,10 +40,10 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
     // Extract default values to useMemo with primitive dependencies (rerender-dependencies pattern)
     const defaultValues = React.useMemo(() => ({
         name: station.station.name,
-        latitute: Number(station.station.latitute),
-        longtitute: Number(station.station.longtitute),
+        latitude: Number(station.station.latitude),
+        longitude: Number(station.station.longitude),
         distanceFromStart: Number(station.distanceFromStart),
-    }), [station.station.name, station.station.latitute, station.station.longtitute, station.distanceFromStart])
+    }), [station.station.name, station.station.latitude, station.station.longitude, station.distanceFromStart])
 
     // Fix type parameters: use UpdateRouteStationInput directly
     const form = useForm<UpdateRouteStationInput>({
@@ -109,7 +109,7 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
                         <div className="grid grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
-                                name="latitute"
+                                name="latitude"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Vĩ độ</FormLabel>
@@ -122,7 +122,7 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
                             />
                             <FormField
                                 control={form.control}
-                                name="longtitute"
+                                name="longitude"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Kinh độ</FormLabel>
