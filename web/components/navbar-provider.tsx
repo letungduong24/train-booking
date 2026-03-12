@@ -38,8 +38,6 @@ export function NavbarProvider({ children }: NavbarProviderProps) {
         { href: '/', label: 'Trang chủ', active: pathname === '/' },
         { href: '/dashboard', label: 'Quản lý', active: pathname === '/dashboard' },
         { href: '/booking', label: 'Đặt vé', active: pathname === '/booking' },
-        { href: '/dashboard/history', label: 'Lịch sử', active: pathname?.startsWith('/dashboard/history') },
-        { href: '/user/wallet', label: 'Ví của tôi', active: pathname?.startsWith('/user/wallet') },
         { href: '/contact', label: 'Liên hệ', active: pathname === '/contact' },
     ];
 

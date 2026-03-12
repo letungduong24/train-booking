@@ -5,21 +5,21 @@ import NextImage from "next/image"
 const experiences = [
     {
         id: 1,
-        title: "Ẩm thực Michelin",
-        description: "Ẩm thực",
-        image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=1000&auto=format&fit=crop", // Dining
-        span: "col-span-1",
-    },
-    {
-        id: 2,
-        title: "Phòng Suites Toàn Cảnh",
-        description: "Chỗ ở",
+        title: "Toa Giường Nằm Máy Lạnh",
+        description: "Tiện nghi",
         image: "https://images.unsplash.com/photo-1590490360182-137d62341e1d?q=80&w=1000&auto=format&fit=crop", // Suite
         span: "col-span-1",
     },
     {
+        id: 2,
+        title: "Cảnh Sắc Tuyệt Đẹp",
+        description: "Trải nghiệm",
+        image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=1000&auto=format&fit=crop", // Dining
+        span: "col-span-1",
+    },
+    {
         id: 3,
-        title: "Phòng Chờ Sang Trọng",
+        title: "Không Gian Thân Thiện",
         description: "Thư giãn",
         image: "https://images.unsplash.com/photo-1550966871-3ed3c47e2ce2?q=80&w=1000&auto=format&fit=crop", // Lounge
         span: "col-span-1",
@@ -32,8 +32,8 @@ export function ExperienceSection() {
             <div className="container mx-auto px-4">
                 <div className="mb-12 flex items-end justify-between">
                     <div>
-                        <h2 className="text-3xl font-bold sm:text-4xl text-foreground">Trải Nghiệm Cao Cấp</h2>
-                        <p className="mt-2 text-muted-foreground">Tận hưởng những tiện nghi được tuyển chọn cho những du khách sành điệu nhất.</p>
+                        <h2 className="text-3xl font-bold sm:text-4xl text-foreground">Trải Nghiệm Đáng Nhớ</h2>
+                        <p className="mt-2 text-muted-foreground">Tận hưởng hành trình an toàn và ngắm nhìn cảnh đẹp hùng vĩ của đất nước dọc theo tuyến đường sắt Bắc Nam.</p>
                     </div>
                     <Button variant="link" className="text-primary hover:text-primary/80">
                         XEM TẤT CẢ <ArrowRight className="ml-2 h-4 w-4" />
