@@ -16,6 +16,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -67,5 +68,43 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async updateProfile(@Req() req: any, @Body() dto: UpdateProfileDto) {
     return this.authService.updateProfile(req.user.id, dto);
+  }
+
+  // ── Google OAuth ─────────────────────────────────────────────────────────
+
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuth() {
+    // Guard handles the redirect to Google
+  }
+
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  async googleCallback(
+    @Req() req: any,
+    @Res() res: Response,
+  ) {
+    const user = req.user;
+
+    const tokens = await this.authService.generateTokensPublic(user.id, user.email);
+
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4000';
+    res.redirect(`${frontendUrl}/dashboard`);
   }
 }

@@ -1,25 +1,25 @@
-import { Leaf, Headset, ShieldCheck, Globe2 } from "lucide-react"
+import { CreditCard, History, MessageCircleMore, Search } from "lucide-react"
 
 const features = [
     {
-        icon: Leaf,
-        title: "Du Lịch Bền Vững",
-        description: "Đội tàu điện của chúng tôi giảm 85% lượng khí thải carbon so với các chuyến bay trong khu vực.",
+        icon: Search,
+        title: "Tìm chuyến theo ga và ngày",
+        description: "Tra cứu nhanh hành trình bằng ga đi, ga đến và ngày khởi hành để chọn chuyến tàu phù hợp nhất.",
     },
     {
-        icon: Headset,
-        title: "Hỗ Trợ 24/7",
-        description: "Trợ lý cá nhân tận tâm biến mọi yêu cầu của bạn thành hiện thực trong suốt hành trình.",
+        icon: CreditCard,
+        title: "Thanh toán linh hoạt",
+        description: "Hoàn tất đặt vé bằng VNPAY hoặc thanh toán trực tiếp từ ví điện tử sau khi thiết lập mã PIN bảo mật.",
     },
     {
-        icon: ShieldCheck,
-        title: "An Ninh Riêng Biệt",
-        description: "Các giao thức bảo vệ và quyền riêng tư cấp cao, kín đáo cho tất cả các vị khách quý của chúng tôi.",
+        icon: History,
+        title: "Theo dõi đơn và hành trình",
+        description: "Kiểm tra trạng thái thanh toán, xem lịch sử đặt vé và quản lý các chuyến sắp khởi hành trong khu vực cá nhân.",
     },
     {
-        icon: Globe2,
-        title: "Mạng Lưới Toàn Cầu",
-        description: "Các tuyến đường kết nối trải dài 14 quốc gia với sự chuyển tiếp liền mạch và xe đưa đón sang trọng.",
+        icon: MessageCircleMore,
+        title: "Trợ lý ảo hỗ trợ nhanh",
+        description: "Đặt câu hỏi về chuyến tàu, lịch sử vé, số dư ví và các thông tin thường gặp ngay trong giao diện web.",
     },
 ]
 
@@ -27,9 +27,18 @@ export function FeatureSection() {
     return (
         <section className="bg-muted py-24">
             <div className="container mx-auto px-4">
-                <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+                <div className="mx-auto mb-14 max-w-3xl text-center">
+                    <h2 className="text-4xl font-extrabold text-foreground">
+                        Một nền tảng cho toàn bộ <span className="text-primary">quy trình đặt vé</span>
+                    </h2>
+                    <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
+                        Railflow không chỉ tìm chuyến và đặt vé, mà còn hỗ trợ thanh toán, quản lý ví, tra cứu lịch sử và tương tác với trợ lý ảo ngay trên cùng hệ thống.
+                    </p>
+                </div>
+
+                <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
                     {features.map((feature, idx) => (
-                        <div key={idx} className="space-y-4">
+                        <div key={idx} className="space-y-4 rounded-2xl border border-border bg-background p-6 shadow-sm">
                             <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                                 <feature.icon className="h-6 w-6" />
                             </div>

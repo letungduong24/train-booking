@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { ModeToggle } from "@/components/mode-toggle"
+import { GlobalChatbot } from "@/components/chatbot/global-chatbot"
 
 export function SiteHeader() {
   return (
@@ -17,6 +18,7 @@ export function SiteHeader() {
           <p className="text-xs text-muted-foreground">{new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
         </div>
         <div className="ml-auto flex items-center gap-2">
+          <GlobalChatbot />
           <ModeToggle />
         </div>
       </div>

@@ -48,7 +48,7 @@ export function NavUser({
 
   const handleLogout = async () => {
     await logout()
-    router.push("/auth/login")
+    router.push("/login")
   }
 
   // If collapsed, we can't easily show two buttons. 

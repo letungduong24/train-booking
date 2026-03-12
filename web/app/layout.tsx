@@ -6,7 +6,6 @@ import TanStackProvider from "@/components/providers/tanstack-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { SocketInitializer } from "@/components/providers/socket-initializer";
 import { ThemeProvider } from "@/components/theme-provider";
-import { GlobalChatbot } from "@/components/chatbot/global-chatbot";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,7 +43,6 @@ export default function RootLayout({
             >
               {children}
               <Toaster />
-              <GlobalChatbot />
             </ThemeProvider>
           </AuthProvider>
         </TanStackProvider>

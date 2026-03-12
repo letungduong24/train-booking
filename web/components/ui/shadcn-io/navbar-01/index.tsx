@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/mode-toggle';
+import { GlobalChatbot } from '@/components/chatbot/global-chatbot';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 import {
@@ -231,6 +232,7 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
           </div>
           {/* Right side */}
           <div className="flex items-center gap-3">
+            <GlobalChatbot />
             <ModeToggle />
             <Button
               variant="ghost"

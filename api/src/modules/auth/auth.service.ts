@@ -78,7 +78,8 @@ export class AuthService {
       where: { email },
     });
 
-    if (!user) {
+    if (!user || !user.password) {
+      // user.password is null for Google OAuth accounts
       throw new UnauthorizedException('Email hoặc mật khẩu không đúng');
     }
 
@@ -205,6 +206,13 @@ export class AuthService {
     }
   }
 
+  /**
+   * Alias public để controller Google OAuth có thể gọi.
+   */
+  async generateTokensPublic(userId: string, email: string) {
+    return this.generateTokens(userId, email);
+  }
+
   private async generateTokens(userId: string, email: string) {
     const payload = { sub: userId, email };
 
@@ -275,7 +283,8 @@ export class AuthService {
       where: { email },
     });
 
-    if (!user) {
+    if (!user || !user.password) {
+      // user.password is null for Google OAuth accounts
       return null;
     }
 
@@ -284,6 +293,45 @@ export class AuthService {
     if (!isPasswordValid) {
       return null;
     }
+    const { password: _password, ...rest } = user;
+    return rest;
+  }
+
+  async findOrCreateGoogleUser(googleUser: {
+    googleId: string;
+    email: string;
+    name?: string;
+    profilePic?: string;
+  }) {
+    const { googleId, email, name, profilePic } = googleUser;
+
+    // Try to find existing user by googleId first
+    let user = await this.prisma.user.findUnique({ where: { googleId } });
+
+    if (!user) {
+      // Try to find existing user by email (to link accounts)
+      user = await this.prisma.user.findUnique({ where: { email } });
+
+      if (user) {
+        // Link Google account to existing email-based account
+        user = await this.prisma.user.update({
+          where: { id: user.id },
+          data: { googleId, profilePic: profilePic ?? user.profilePic },
+        });
+      } else {
+        // Create a new user
+        user = await this.prisma.user.create({
+          data: {
+            email,
+            name,
+            googleId,
+            profilePic,
+            password: null,
+          },
+        });
+      }
+    }
+
     const { password: _password, ...rest } = user;
     return rest;
   }

@@ -101,11 +101,23 @@ export default function OnboardPage() {
                         Chào mừng trở lại với Railflow. Chúc bạn một ngày tốt lành.
                     </p>
                 </div>
-                <Button asChild className="bg-primary shadow-lg hover:shadow-xl transition-all">
-                    <Link href="/booking">
-                        <Ticket className="mr-2 h-4 w-4" /> Đặt vé mới
-                    </Link>
-                </Button>
+                <div className="flex items-center gap-2">
+                    <Button asChild variant="outline" className="hidden sm:flex bg-background hover:bg-accent hover:text-accent-foreground">
+                        <Link href="/user/wallet">
+                            <CreditCard className="mr-2 h-4 w-4" /> Ví của tôi
+                        </Link>
+                    </Button>
+                    <Button asChild variant="outline" className="hidden sm:flex bg-background hover:bg-accent hover:text-accent-foreground">
+                        <Link href="/dashboard/history">
+                            <History className="mr-2 h-4 w-4" /> Lịch sử đặt vé
+                        </Link>
+                    </Button>
+                    <Button asChild className="bg-primary shadow-lg hover:shadow-xl transition-all">
+                        <Link href="/booking">
+                            <Ticket className="mr-2 h-4 w-4" /> Đặt vé mới
+                        </Link>
+                    </Button>
+                </div>
             </div>
 
 
