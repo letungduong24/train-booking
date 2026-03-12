@@ -23,9 +23,9 @@ export function calculateDistance(
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(toRadians(lat1)) *
-      Math.cos(toRadians(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+    Math.cos(toRadians(lat2)) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c;
@@ -42,18 +42,18 @@ function toRadians(degrees: number): number {
 
 /**
  * Calculate distance between two stations in a route
- * @param fromStation Station with latitute and longtitute
- * @param toStation Station with latitute and longtitute
+ * @param fromStation Station with latitude and longitude
+ * @param toStation Station with latitude and longitude
  * @returns Distance in kilometers
  */
 export function calculateStationDistance(
-  fromStation: { latitute: number; longtitute: number },
-  toStation: { latitute: number; longtitute: number },
+  fromStation: { latitude: number; longitude: number },
+  toStation: { latitude: number; longitude: number },
 ): number {
   return calculateDistance(
-    fromStation.latitute,
-    fromStation.longtitute,
-    toStation.latitute,
-    toStation.longtitute,
+    fromStation.latitude,
+    fromStation.longitude,
+    toStation.latitude,
+    toStation.longitude,
   );
 }

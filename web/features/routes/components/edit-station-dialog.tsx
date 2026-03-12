@@ -35,8 +35,8 @@ export function EditStationDialog({ routeId, station, open, onOpenChange, onSucc
     React.useEffect(() => {
         if (station) {
             setName(station.station.name)
-            setLat(station.station.latitute)
-            setLong(station.station.longtitute)
+            setLat(station.station.latitude)
+            setLong(station.station.longitude)
             setDistance(station.distanceFromStart)
         }
     }, [station])
@@ -52,8 +52,8 @@ export function EditStationDialog({ routeId, station, open, onOpenChange, onSucc
 
             await apiClient.patch(`/route/${routeId}/stations/${station.stationId}`, {
                 name: name,
-                latitute: parseFloat(lat),
-                longtitute: parseFloat(long),
+                latitude: parseFloat(lat),
+                longitude: parseFloat(long),
                 distanceFromStart: parseFloat(distance)
             })
 

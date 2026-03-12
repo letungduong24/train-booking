@@ -5,10 +5,10 @@ export class UpdateRouteStationDto {
   name: string;
 
   @IsNumber()
-  latitute: number;
+  latitude: number;
 
   @IsNumber()
-  longtitute: number;
+  longitude: number;
 
   @IsNumber()
   distanceFromStart: number;

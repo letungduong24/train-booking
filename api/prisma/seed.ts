@@ -81,186 +81,81 @@ async function main() {
         prisma.station.create({
             data: {
                 name: 'Ga Hà Nội',
-                latitute: 21.0245,
-                longtitute: 105.8412,
+                latitude: 21.0245,
+                longitude: 105.8412,
             },
         }),
         prisma.station.create({
             data: {
                 name: 'Ga Vinh',
-                latitute: 18.6792,
-                longtitute: 105.6811,
+                latitude: 18.6792,
+                longitude: 105.6811,
             },
         }),
         prisma.station.create({
             data: {
                 name: 'Ga Huế',
-                latitute: 16.4637,
-                longtitute: 107.5909,
+                latitude: 16.4637,
+                longitude: 107.5909,
             },
         }),
         prisma.station.create({
             data: {
                 name: 'Ga Đà Nẵng',
-                latitute: 16.0544,
-                longtitute: 108.2022,
+                latitude: 16.0544,
+                longitude: 108.2022,
             },
         }),
         prisma.station.create({
             data: {
                 name: 'Ga Quảng Ngãi',
-                latitute: 15.1214,
-                longtitute: 108.8044,
+                latitude: 15.1214,
+                longitude: 108.8044,
             },
         }),
         prisma.station.create({
             data: {
                 name: 'Ga Nha Trang',
-                latitute: 12.2388,
-                longtitute: 109.1967,
+                latitude: 12.2388,
+                longitude: 109.1967,
             },
         }),
         prisma.station.create({
             data: {
                 name: 'Ga Phan Thiết',
-                latitute: 10.9333,
-                longtitute: 108.1000,
+                latitude: 10.9333,
+                longitude: 108.1000,
             },
         }),
         prisma.station.create({
             data: {
                 name: 'Ga Biên Hòa',
-                latitute: 10.9450,
-                longtitute: 106.8200,
+                latitude: 10.9450,
+                longitude: 106.8200,
             },
         }),
         prisma.station.create({
             data: {
                 name: 'Ga Sài Gòn',
-                latitute: 10.7820,
-                longtitute: 106.6770,
+                latitude: 10.7820,
+                longitude: 106.6770,
             },
         }),
         prisma.station.create({
             data: {
                 name: 'Ga Cần Thơ',
-                latitute: 10.0340,
-                longtitute: 105.7880,
+                latitude: 10.0340,
+                longitude: 105.7880,
             },
         }),
     ]);
 
     console.log(`Created ${stations.length} stations`);
 
-    // 2. Create 5 Routes (Real Vietnam Railway Routes)
-    console.log('Creating routes...');
-
-    // Route 1: Hà Nội - Sài Gòn (Thống Nhất)
-    const route1 = await prisma.route.create({
-        data: {
-            name: 'SE1 - Hà Nội - Sài Gòn (Thống Nhất)',
-            status: RouteStatus.ACTIVE,
-            durationMinutes: 1920, // 32 hours
-            turnaroundMinutes: 240, // 4 hours
-            basePricePerKm: 1200, // VND per km
-            stationFee: 10000, // VND
-            stations: {
-                create: [
-                    { stationId: stations[0].id, index: 0, distanceFromStart: 0, durationFromStart: 0 },
-                    { stationId: stations[1].id, index: 1, distanceFromStart: 319, durationFromStart: 240 },
-                    { stationId: stations[2].id, index: 2, distanceFromStart: 688, durationFromStart: 510 },
-                    { stationId: stations[3].id, index: 3, distanceFromStart: 791, durationFromStart: 590 },
-                    { stationId: stations[4].id, index: 4, distanceFromStart: 900, durationFromStart: 670 },
-                    { stationId: stations[5].id, index: 5, distanceFromStart: 1315, durationFromStart: 850 },
-                    { stationId: stations[7].id, index: 6, distanceFromStart: 1650, durationFromStart: 970 },
-                    { stationId: stations[8].id, index: 7, distanceFromStart: 1726, durationFromStart: 1020 },
-                ],
-            },
-        },
-    });
-
-    // Route 2: Sài Gòn - Hà Nội (Chiều ngược)
-    const route2 = await prisma.route.create({
-        data: {
-            name: 'SE2 - Sài Gòn - Hà Nội',
-            status: RouteStatus.ACTIVE,
-            durationMinutes: 1920,
-            turnaroundMinutes: 240,
-            basePricePerKm: 1200,
-            stationFee: 10000,
-            stations: {
-                create: [
-                    { stationId: stations[8].id, index: 0, distanceFromStart: 0, durationFromStart: 0 },
-                    { stationId: stations[7].id, index: 1, distanceFromStart: 76, durationFromStart: 60 },
-                    { stationId: stations[5].id, index: 2, distanceFromStart: 411, durationFromStart: 320 },
-                    { stationId: stations[4].id, index: 3, distanceFromStart: 826, durationFromStart: 640 },
-                    { stationId: stations[3].id, index: 4, distanceFromStart: 935, durationFromStart: 720 },
-                    { stationId: stations[2].id, index: 5, distanceFromStart: 1038, durationFromStart: 800 },
-                    { stationId: stations[1].id, index: 6, distanceFromStart: 1407, durationFromStart: 960 },
-                    { stationId: stations[0].id, index: 7, distanceFromStart: 1726, durationFromStart: 1020 },
-                ],
-            },
-        },
-    });
-
-    // Route 3: Hà Nội - Đà Nẵng (Tàu nhanh)
-    const route3 = await prisma.route.create({
-        data: {
-            name: 'SE3 - Hà Nội - Đà Nẵng',
-            status: RouteStatus.ACTIVE,
-            durationMinutes: 780, // 13 hours
-            turnaroundMinutes: 120, // 2 hours
-            basePricePerKm: 1100,
-            stationFee: 8000,
-            stations: {
-                create: [
-                    { stationId: stations[0].id, index: 0, distanceFromStart: 0, durationFromStart: 0 },
-                    { stationId: stations[1].id, index: 1, distanceFromStart: 319, durationFromStart: 315 },
-                    { stationId: stations[2].id, index: 2, distanceFromStart: 688, durationFromStart: 620 },
-                    { stationId: stations[3].id, index: 3, distanceFromStart: 791, durationFromStart: 780 },
-                ],
-            },
-        },
-    });
-
-    // Route 4: Sài Gòn - Nha Trang (Tàu du lịch)
-    const route4 = await prisma.route.create({
-        data: {
-            name: 'SNT1 - Sài Gòn - Nha Trang',
-            status: RouteStatus.ACTIVE,
-            durationMinutes: 480, // 8 hours
-            turnaroundMinutes: 90, // 1.5 hours
-            basePricePerKm: 1300,
-            stationFee: 5000,
-            stations: {
-                create: [
-                    { stationId: stations[8].id, index: 0, distanceFromStart: 0, durationFromStart: 0 },
-                    { stationId: stations[6].id, index: 1, distanceFromStart: 231, durationFromStart: 270 },
-                    { stationId: stations[5].id, index: 2, distanceFromStart: 411, durationFromStart: 480 },
-                ],
-            },
-        },
-    });
-
-    // Route 5: Sài Gòn - Cần Thơ (Tàu nội địa)
-    const route5 = await prisma.route.create({
-        data: {
-            name: 'SCT1 - Sài Gòn - Cần Thơ',
-            status: RouteStatus.DRAFT,
-            durationMinutes: 240, // 4 hours
-            turnaroundMinutes: 60, // 1 hour
-            basePricePerKm: 1000,
-            stationFee: 5000,
-            stations: {
-                create: [
-                    { stationId: stations[8].id, index: 0, distanceFromStart: 0, durationFromStart: 0 },
-                    { stationId: stations[9].id, index: 1, distanceFromStart: 169, durationFromStart: 240 },
-                ],
-            },
-        },
-    });
-
-    console.log(` Created 5 routes`);
+    // Route seeding has been temporarily removed because the schema was updated 
+    // to separate physical RailwayLines from commercial Routes.
+    // Routes will be created dynamically via the admin interface.
+    console.log(` Skipped routes seeding due to schema update`);
 
     // 3. Create 6 Coach Templates
     console.log(' Creating coach templates...');

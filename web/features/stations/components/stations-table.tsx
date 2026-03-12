@@ -60,14 +60,14 @@ export const columns: ColumnDef<Station>[] = [
         cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
     },
     {
-        accessorKey: "latitute",
+        accessorKey: "latitude",
         header: "Vĩ độ",
-        cell: ({ row }) => <div>{row.getValue("latitute")}</div>,
+        cell: ({ row }) => <div>{row.getValue("latitude")}</div>,
     },
     {
-        accessorKey: "longtitute",
+        accessorKey: "longitude",
         header: "Kinh độ",
-        cell: ({ row }) => <div>{row.getValue("longtitute")}</div>,
+        cell: ({ row }) => <div>{row.getValue("longitude")}</div>,
     },
     {
         accessorKey: "createdAt",

@@ -36,8 +36,8 @@ export function CreateStationDialog() {
         resolver: zodResolver(createStationSchema),
         defaultValues: {
             name: "",
-            latitute: 0,
-            longtitute: 0,
+            latitude: 0,
+            longitude: 0,
         },
     })
 
@@ -86,7 +86,7 @@ export function CreateStationDialog() {
 
                         <FormField
                             control={form.control}
-                            name="latitute"
+                            name="latitude"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Vĩ độ</FormLabel>
@@ -106,7 +106,7 @@ export function CreateStationDialog() {
 
                         <FormField
                             control={form.control}
-                            name="longtitute"
+                            name="longitude"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Kinh độ</FormLabel>

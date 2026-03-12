@@ -13,4 +13,8 @@ export class FilterStationDto extends PaginationDto {
   @IsOptional()
   @IsString()
   order?: 'asc' | 'desc';
+
+  @IsOptional()
+  @IsString()
+  all?: string;
 }

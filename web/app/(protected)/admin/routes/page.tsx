@@ -1,4 +1,5 @@
 import { RoutesTable } from "@/features/routes/components/routes-table"
+import { SyncGeojsonModal } from "@/features/routes/components/sync-geojson-modal"
 
 export default function RoutesPage() {
     return (
@@ -7,6 +8,9 @@ export default function RoutesPage() {
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight">Quản lý tuyến đường</h1>
                     <p className="text-muted-foreground">Danh sách và quản lý các tuyến đường trong hệ thống.</p>
+                </div>
+                <div>
+                    <SyncGeojsonModal />
                 </div>
             </div>
 

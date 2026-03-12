@@ -3,8 +3,8 @@ import { z } from "zod";
 export const stationSchema = z.object({
     id: z.string(),
     name: z.string().min(1, "Bắt buộc"),
-    latitute: z.number(),
-    longtitute: z.number(),
+    latitude: z.number(),
+    longitude: z.number(),
     createdAt: z.string().or(z.date()),
     updatedAt: z.string().or(z.date()),
 });

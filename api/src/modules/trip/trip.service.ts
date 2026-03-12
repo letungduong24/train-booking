@@ -11,7 +11,7 @@ import { Prisma, TripStatus } from '../../generated/client';
 
 @Injectable()
 export class TripService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createTripDto: CreateTripDto) {
     // Validate route exists

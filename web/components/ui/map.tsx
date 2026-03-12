@@ -382,13 +382,15 @@ type MarkerContentProps = {
   children?: ReactNode;
   /** Additional CSS classes for the marker container */
   className?: string;
+  /** Optional onClick handler for the marker content */
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 };
 
-function MarkerContent({ children, className }: MarkerContentProps) {
+function MarkerContent({ children, className, onClick }: MarkerContentProps) {
   const { marker } = useMarkerContext();
 
   return createPortal(
-    <div className={cn("relative cursor-pointer", className)}>
+    <div className={cn("relative cursor-pointer", className)} onClick={onClick}>
       {children || <DefaultMarkerIcon />}
     </div>,
     marker.getElement()
@@ -911,8 +913,8 @@ function MapPopup({
 type MapRouteProps = {
   /** Optional unique identifier for the route layer */
   id?: string;
-  /** Array of [longitude, latitude] coordinate pairs defining the route */
-  coordinates: [number, number][];
+  /** Array of coordinates defining the route. Can be a LineString ([number, number][]) or MultiLineString ([number, number][][]) */
+  coordinates: [number, number][] | [number, number][][];
   /** Line color as CSS color value (default: "#4285F4") */
   color?: string;
   /** Line width in pixels (default: 3) */
@@ -949,6 +951,11 @@ function MapRoute({
   const sourceId = `route-source-${id}`;
   const layerId = `route-layer-${id}`;
 
+  // Determine if it's a simple line or multi-line
+  const geometryType = coordinates.length > 0 && Array.isArray(coordinates[0][0])
+    ? "MultiLineString"
+    : "LineString";
+
   // Add source and layer on mount
   useEffect(() => {
     if (!isLoaded || !map) return;
@@ -958,7 +965,7 @@ function MapRoute({
       data: {
         type: "Feature",
         properties: {},
-        geometry: { type: "LineString", coordinates: [] },
+        geometry: { type: geometryType as any, coordinates: [] },
       },
     });
 
@@ -988,14 +995,15 @@ function MapRoute({
 
   // When coordinates change, update the source data
   useEffect(() => {
-    if (!isLoaded || !map || coordinates.length < 2) return;
+    // Basic existence check, handle both LineString and MultiLineString minimum lengths
+    if (!isLoaded || !map || coordinates.length === 0) return;
 
     const source = map.getSource(sourceId) as MapLibreGL.GeoJSONSource;
     if (source) {
       source.setData({
         type: "Feature",
         properties: {},
-        geometry: { type: "LineString", coordinates },
+        geometry: { type: geometryType as any, coordinates: coordinates as any },
       });
     }
   }, [isLoaded, map, coordinates, sourceId]);
@@ -1346,6 +1354,90 @@ function MapClusterLayer<
   return null;
 }
 
+type MapLineLayerProps = {
+  /** Optional unique identifier for the layer */
+  id?: string;
+  /** GeoJSON data containing LineStrings or MultiLineStrings */
+  data: GeoJSON.FeatureCollection<GeoJSON.LineString | GeoJSON.MultiLineString | GeoJSON.Geometry> | string;
+  /** Line color as CSS color value (default: "#4285F4") */
+  color?: string;
+  /** Line width in pixels (default: 3) */
+  width?: number;
+  /** Line opacity from 0 to 1 (default: 0.8) */
+  opacity?: number;
+  /** Dash pattern [dash length, gap length] for dashed lines */
+  dashArray?: [number, number];
+};
+
+function MapLineLayer({
+  id: propId,
+  data,
+  color = "#4285F4",
+  width = 3,
+  opacity = 0.8,
+  dashArray,
+}: MapLineLayerProps) {
+  const { map, isLoaded } = useMap();
+  const autoId = useId();
+  const id = propId ?? autoId;
+  const sourceId = `multi-line-source-${id}`;
+  const layerId = `multi-line-layer-${id}`;
+
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+
+    map.addSource(sourceId, {
+      type: "geojson",
+      data,
+    });
+
+    map.addLayer({
+      id: layerId,
+      type: "line",
+      source: sourceId,
+      layout: { "line-join": "round", "line-cap": "round" },
+      paint: {
+        "line-color": color,
+        "line-width": width,
+        "line-opacity": opacity,
+        ...(dashArray && { "line-dasharray": dashArray }),
+      },
+    });
+
+    return () => {
+      try {
+        if (map.getLayer(layerId)) map.removeLayer(layerId);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+      } catch {
+        // ignore
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, map]);
+
+  useEffect(() => {
+    if (!isLoaded || !map || typeof data === "string") return;
+
+    const source = map.getSource(sourceId) as MapLibreGL.GeoJSONSource;
+    if (source) {
+      source.setData(data);
+    }
+  }, [isLoaded, map, data, sourceId]);
+
+  useEffect(() => {
+    if (!isLoaded || !map || !map.getLayer(layerId)) return;
+
+    map.setPaintProperty(layerId, "line-color", color);
+    map.setPaintProperty(layerId, "line-width", width);
+    map.setPaintProperty(layerId, "line-opacity", opacity);
+    if (dashArray) {
+      map.setPaintProperty(layerId, "line-dasharray", dashArray);
+    }
+  }, [isLoaded, map, layerId, color, width, opacity, dashArray]);
+
+  return null;
+}
+
 export {
   Map,
   useMap,
@@ -1357,6 +1449,7 @@ export {
   MapPopup,
   MapControls,
   MapRoute,
+  MapLineLayer,
   MapClusterLayer,
 };
 

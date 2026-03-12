@@ -12,7 +12,7 @@ import { useSearchTrips } from '@/features/booking/hooks/use-search-trips';
 import { TripSearchForm } from '@/features/home/components/trip-search-form';
 import { timeSync } from '@/lib/time-sync';
 
-export default function BookingPage() {
+function BookingPageContent() {
     const router = useRouter();
     const urlSearchParams = useSearchParams();
 
@@ -140,5 +140,15 @@ export default function BookingPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+import { Suspense } from 'react';
+
+export default function BookingPage() {
+    return (
+        <Suspense fallback={<div className="container mx-auto py-8 px-4 text-center">Đang tải cấu hình...</div>}>
+            <BookingPageContent />
+        </Suspense>
     );
 }

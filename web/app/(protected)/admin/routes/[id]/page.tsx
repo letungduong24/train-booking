@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { vi } from "date-fns/locale"
 import { toast } from "sonner"
-import { Trash2, Plus, GripVertical, Save, ArrowLeft } from "lucide-react"
+import { Trash2, Plus, GripVertical, Save, ArrowLeft, RefreshCw } from "lucide-react"
 import {
     DndContext,
     closestCenter,
@@ -81,8 +81,8 @@ function SortableRow({ id, station, onDelete, routeId, onSuccess }: any) {
             </TableCell>
             <TableCell>{station.index + 1}</TableCell>
             <TableCell className="font-medium">{station.station?.name || "Unknown"}</TableCell>
-            <TableCell>{station.station?.latitute}</TableCell>
-            <TableCell>{station.station?.longtitute}</TableCell>
+            <TableCell>{station.station?.latitude}</TableCell>
+            <TableCell>{station.station?.longitude}</TableCell>
             <TableCell>{station.distanceFromStart}</TableCell>
             <TableCell className="flex gap-2">
                 <EditRouteStationDialog
@@ -175,6 +175,17 @@ export default function RouteDetailPage() {
         setHasChanged(false)
     }
 
+    const handleRecalculatePath = async () => {
+        try {
+            await apiClient.post(`/route/${routeId}/recalculate-path`)
+            toast.success("Tính lại đường đi thành công")
+            queryClient.invalidateQueries({ queryKey: ['route', routeId] })
+        } catch (error: any) {
+            const msg = error?.response?.data?.message || "Tính lại đường đi thất bại"
+            toast.error(msg)
+        }
+    }
+
     const handleBack = () => {
         router.push('/admin/routes')
     }
@@ -222,11 +233,19 @@ export default function RouteDetailPage() {
                         </p>
                     </div>
                     <div className="flex gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleRecalculatePath}
+                            title="Tính lại đường đi theo đường ray"
+                        >
+                            <RefreshCw className="h-4 w-4 mr-1" />
+                            Tính lại đường
+                        </Button>
                         <EditRouteDialog route={route} />
                         <DeleteRouteAlert
                             route={route}
                             onSuccess={handleRouteDeleted}
-                            // Pass dummy values as we are in detail page and just want to redirect
                             currentPage={1}
                             totalItems={1}
                             itemsPerPage={10}
@@ -265,8 +284,8 @@ export default function RouteDetailPage() {
                 </div>
 
                 {/* Map */}
-                <div className="rounded-md border overflow-hidden">
-                    <RouteMap stations={items} />
+                <div className="rounded-md border overflow-hidden mt-6 mb-6">
+                    <RouteMap stations={items} pathCoordinates={route.pathCoordinates} />
                 </div>
 
                 {/* Stations Table */}

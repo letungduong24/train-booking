@@ -20,8 +20,18 @@ export type TrainModel = runtime.Types.Result.DefaultSelection<Prisma.$TrainPayl
 
 export type AggregateTrain = {
   _count: TrainCountAggregateOutputType | null
+  _avg: TrainAvgAggregateOutputType | null
+  _sum: TrainSumAggregateOutputType | null
   _min: TrainMinAggregateOutputType | null
   _max: TrainMaxAggregateOutputType | null
+}
+
+export type TrainAvgAggregateOutputType = {
+  averageSpeedKmH: number | null
+}
+
+export type TrainSumAggregateOutputType = {
+  averageSpeedKmH: number | null
 }
 
 export type TrainMinAggregateOutputType = {
@@ -29,6 +39,7 @@ export type TrainMinAggregateOutputType = {
   code: string | null
   name: string | null
   status: $Enums.TrainStatus | null
+  averageSpeedKmH: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -38,6 +49,7 @@ export type TrainMaxAggregateOutputType = {
   code: string | null
   name: string | null
   status: $Enums.TrainStatus | null
+  averageSpeedKmH: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -47,17 +59,27 @@ export type TrainCountAggregateOutputType = {
   code: number
   name: number
   status: number
+  averageSpeedKmH: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
 
+export type TrainAvgAggregateInputType = {
+  averageSpeedKmH?: true
+}
+
+export type TrainSumAggregateInputType = {
+  averageSpeedKmH?: true
+}
+
 export type TrainMinAggregateInputType = {
   id?: true
   code?: true
   name?: true
   status?: true
+  averageSpeedKmH?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -67,6 +89,7 @@ export type TrainMaxAggregateInputType = {
   code?: true
   name?: true
   status?: true
+  averageSpeedKmH?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -76,6 +99,7 @@ export type TrainCountAggregateInputType = {
   code?: true
   name?: true
   status?: true
+  averageSpeedKmH?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -119,6 +143,18 @@ export type TrainAggregateArgs<ExtArgs extends runtime.Types.Extensions.Internal
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: TrainAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: TrainSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: TrainMinAggregateInputType
@@ -149,6 +185,8 @@ export type TrainGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   _count?: TrainCountAggregateInputType | true
+  _avg?: TrainAvgAggregateInputType
+  _sum?: TrainSumAggregateInputType
   _min?: TrainMinAggregateInputType
   _max?: TrainMaxAggregateInputType
 }
@@ -158,9 +196,12 @@ export type TrainGroupByOutputType = {
   code: string
   name: string
   status: $Enums.TrainStatus
+  averageSpeedKmH: number
   createdAt: Date
   updatedAt: Date
   _count: TrainCountAggregateOutputType | null
+  _avg: TrainAvgAggregateOutputType | null
+  _sum: TrainSumAggregateOutputType | null
   _min: TrainMinAggregateOutputType | null
   _max: TrainMaxAggregateOutputType | null
 }
@@ -188,6 +229,7 @@ export type TrainWhereInput = {
   code?: Prisma.StringFilter<"Train"> | string
   name?: Prisma.StringFilter<"Train"> | string
   status?: Prisma.EnumTrainStatusFilter<"Train"> | $Enums.TrainStatus
+  averageSpeedKmH?: Prisma.IntFilter<"Train"> | number
   createdAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   coaches?: Prisma.CoachListRelationFilter
@@ -199,6 +241,7 @@ export type TrainOrderByWithRelationInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  averageSpeedKmH?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   coaches?: Prisma.CoachOrderByRelationAggregateInput
@@ -213,6 +256,7 @@ export type TrainWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.TrainWhereInput | Prisma.TrainWhereInput[]
   name?: Prisma.StringFilter<"Train"> | string
   status?: Prisma.EnumTrainStatusFilter<"Train"> | $Enums.TrainStatus
+  averageSpeedKmH?: Prisma.IntFilter<"Train"> | number
   createdAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Train"> | Date | string
   coaches?: Prisma.CoachListRelationFilter
@@ -224,11 +268,14 @@ export type TrainOrderByWithAggregationInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  averageSpeedKmH?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TrainCountOrderByAggregateInput
+  _avg?: Prisma.TrainAvgOrderByAggregateInput
   _max?: Prisma.TrainMaxOrderByAggregateInput
   _min?: Prisma.TrainMinOrderByAggregateInput
+  _sum?: Prisma.TrainSumOrderByAggregateInput
 }
 
 export type TrainScalarWhereWithAggregatesInput = {
@@ -239,6 +286,7 @@ export type TrainScalarWhereWithAggregatesInput = {
   code?: Prisma.StringWithAggregatesFilter<"Train"> | string
   name?: Prisma.StringWithAggregatesFilter<"Train"> | string
   status?: Prisma.EnumTrainStatusWithAggregatesFilter<"Train"> | $Enums.TrainStatus
+  averageSpeedKmH?: Prisma.IntWithAggregatesFilter<"Train"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Train"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Train"> | Date | string
 }
@@ -248,6 +296,7 @@ export type TrainCreateInput = {
   code: string
   name: string
   status?: $Enums.TrainStatus
+  averageSpeedKmH?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   coaches?: Prisma.CoachCreateNestedManyWithoutTrainInput
@@ -259,6 +308,7 @@ export type TrainUncheckedCreateInput = {
   code: string
   name: string
   status?: $Enums.TrainStatus
+  averageSpeedKmH?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   coaches?: Prisma.CoachUncheckedCreateNestedManyWithoutTrainInput
@@ -270,6 +320,7 @@ export type TrainUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
+  averageSpeedKmH?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coaches?: Prisma.CoachUpdateManyWithoutTrainNestedInput
@@ -281,6 +332,7 @@ export type TrainUncheckedUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
+  averageSpeedKmH?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coaches?: Prisma.CoachUncheckedUpdateManyWithoutTrainNestedInput
@@ -292,6 +344,7 @@ export type TrainCreateManyInput = {
   code: string
   name: string
   status?: $Enums.TrainStatus
+  averageSpeedKmH?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -301,6 +354,7 @@ export type TrainUpdateManyMutationInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
+  averageSpeedKmH?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -310,6 +364,7 @@ export type TrainUncheckedUpdateManyInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
+  averageSpeedKmH?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -319,8 +374,13 @@ export type TrainCountOrderByAggregateInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  averageSpeedKmH?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type TrainAvgOrderByAggregateInput = {
+  averageSpeedKmH?: Prisma.SortOrder
 }
 
 export type TrainMaxOrderByAggregateInput = {
@@ -328,6 +388,7 @@ export type TrainMaxOrderByAggregateInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  averageSpeedKmH?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -337,8 +398,13 @@ export type TrainMinOrderByAggregateInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  averageSpeedKmH?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type TrainSumOrderByAggregateInput = {
+  averageSpeedKmH?: Prisma.SortOrder
 }
 
 export type TrainScalarRelationFilter = {
@@ -383,6 +449,7 @@ export type TrainCreateWithoutCoachesInput = {
   code: string
   name: string
   status?: $Enums.TrainStatus
+  averageSpeedKmH?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   trips?: Prisma.TripCreateNestedManyWithoutTrainInput
@@ -393,6 +460,7 @@ export type TrainUncheckedCreateWithoutCoachesInput = {
   code: string
   name: string
   status?: $Enums.TrainStatus
+  averageSpeedKmH?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutTrainInput
@@ -419,6 +487,7 @@ export type TrainUpdateWithoutCoachesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
+  averageSpeedKmH?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trips?: Prisma.TripUpdateManyWithoutTrainNestedInput
@@ -429,6 +498,7 @@ export type TrainUncheckedUpdateWithoutCoachesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
+  averageSpeedKmH?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trips?: Prisma.TripUncheckedUpdateManyWithoutTrainNestedInput
@@ -439,6 +509,7 @@ export type TrainCreateWithoutTripsInput = {
   code: string
   name: string
   status?: $Enums.TrainStatus
+  averageSpeedKmH?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   coaches?: Prisma.CoachCreateNestedManyWithoutTrainInput
@@ -449,6 +520,7 @@ export type TrainUncheckedCreateWithoutTripsInput = {
   code: string
   name: string
   status?: $Enums.TrainStatus
+  averageSpeedKmH?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   coaches?: Prisma.CoachUncheckedCreateNestedManyWithoutTrainInput
@@ -475,6 +547,7 @@ export type TrainUpdateWithoutTripsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
+  averageSpeedKmH?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coaches?: Prisma.CoachUpdateManyWithoutTrainNestedInput
@@ -485,6 +558,7 @@ export type TrainUncheckedUpdateWithoutTripsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumTrainStatusFieldUpdateOperationsInput | $Enums.TrainStatus
+  averageSpeedKmH?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coaches?: Prisma.CoachUncheckedUpdateManyWithoutTrainNestedInput
@@ -535,6 +609,7 @@ export type TrainSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   code?: boolean
   name?: boolean
   status?: boolean
+  averageSpeedKmH?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   coaches?: boolean | Prisma.Train$coachesArgs<ExtArgs>
@@ -547,6 +622,7 @@ export type TrainSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   code?: boolean
   name?: boolean
   status?: boolean
+  averageSpeedKmH?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["train"]>
@@ -556,6 +632,7 @@ export type TrainSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   code?: boolean
   name?: boolean
   status?: boolean
+  averageSpeedKmH?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["train"]>
@@ -565,11 +642,12 @@ export type TrainSelectScalar = {
   code?: boolean
   name?: boolean
   status?: boolean
+  averageSpeedKmH?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TrainOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["train"]>
+export type TrainOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "status" | "averageSpeedKmH" | "createdAt" | "updatedAt", ExtArgs["result"]["train"]>
 export type TrainInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   coaches?: boolean | Prisma.Train$coachesArgs<ExtArgs>
   trips?: boolean | Prisma.Train$tripsArgs<ExtArgs>
@@ -589,6 +667,7 @@ export type $TrainPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     code: string
     name: string
     status: $Enums.TrainStatus
+    averageSpeedKmH: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["train"]>
@@ -1020,6 +1099,7 @@ export interface TrainFieldRefs {
   readonly code: Prisma.FieldRef<"Train", 'String'>
   readonly name: Prisma.FieldRef<"Train", 'String'>
   readonly status: Prisma.FieldRef<"Train", 'TrainStatus'>
+  readonly averageSpeedKmH: Prisma.FieldRef<"Train", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Train", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Train", 'DateTime'>
 }

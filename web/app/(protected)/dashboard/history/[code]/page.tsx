@@ -169,6 +169,7 @@ export default function BookingDetailPage() {
                                                 fromStationId: fromStation?.stationId || '',
                                                 toStationId: toStation?.stationId || ''
                                             }}
+                                            pathCoordinates={trip.route.pathCoordinates}
                                         />
                                     </div>
                                 </div>

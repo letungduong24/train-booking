@@ -10,6 +10,7 @@ import {
   IconCalendar,
   IconHome,
   IconCreditCard,
+  IconMap,
   type Icon,
 } from "@tabler/icons-react"
 
@@ -34,6 +35,11 @@ const navMain = [
     title: "Bảng điều khiển",
     url: "/admin",
     icon: IconDashboard,
+  },
+  {
+    title: "Đồng bộ Mạng lưới",
+    url: "/admin/network-sync",
+    icon: IconMap,
   },
   {
     title: "Tuyến đường",

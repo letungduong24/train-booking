@@ -20,6 +20,7 @@ import { BookingModule } from './modules/booking/booking.module';
 import { PassengerGroupModule } from './modules/passenger-group/passenger-group.module';
 import { WalletModule } from './modules/wallet/wallet.module';
 import { ChatbotModule } from './modules/chatbot/chatbot.module';
+import { GeojsonModule } from './modules/geojson/geojson.module';
 
 @Module({
   imports: [
@@ -58,8 +59,9 @@ import { ChatbotModule } from './modules/chatbot/chatbot.module';
         },
       }),
     }),
+    GeojsonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

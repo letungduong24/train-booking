@@ -34,10 +34,11 @@ export function CreateTrainDialog() {
     const createTrain = useCreateTrain()
 
     const form = useForm<CreateTrainInput>({
-        resolver: zodResolver(createTrainSchema),
+        resolver: zodResolver(createTrainSchema) as any,
         defaultValues: {
             code: "",
             name: "",
+            averageSpeedKmH: 60,
         },
     })
 
@@ -95,6 +96,19 @@ export function CreateTrainDialog() {
                                     <FormLabel>Tên tàu</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Thống Nhất..." {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="averageSpeedKmH"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Vận tốc (km/h)</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" placeholder="Ví dụ: 60" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

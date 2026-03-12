@@ -1,4 +1,4 @@
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { useQuery, keepPreviousData, UseQueryOptions } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
 import { Route } from '@/lib/schemas/route.schema';
 
@@ -34,10 +34,11 @@ const fetchRoutes = async (filters: RouteFilters) => {
     return response.data;
 };
 
-export const useRoutes = (filters: RouteFilters) => {
+export const useRoutes = (filters: RouteFilters, options?: Omit<UseQueryOptions<RoutesResponse, Error, RoutesResponse, any>, 'queryKey' | 'queryFn'>) => {
     return useQuery({
         queryKey: ['routes', filters],
         queryFn: () => fetchRoutes(filters),
         placeholderData: keepPreviousData,
+        ...options,
     });
 };

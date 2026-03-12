@@ -121,13 +121,13 @@ enum RouteStatus {
 // Station
 
 model Station {
-  id         String         @id @default(uuid())
-  name       String
-  latitute   Float
-  longtitute Float
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
-  routes     RouteStation[]
+  id        String         @id @default(uuid())
+  name      String
+  latitude  Float
+  longitude Float
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  routes    RouteStation[]
 }
 
 model Route {
@@ -140,10 +140,24 @@ model Route {
   status            RouteStatus @default(DRAFT)
   durationMinutes   Int            @default(0) // Thời gian chạy (phút)
   turnaroundMinutes Int            @default(60) // Thời gian nghỉ quay đầu (phút)
+  totalDistanceKm   Float          @default(0) // Tổng chiều dài tuyến đường (do Turf.js tự đo)
 
   // Pricing configuration
   basePricePerKm Float @default(1000) // Giá cơ bản mỗi km (VND)
   stationFee     Float @default(0) // Phí ra vào bến (VND)
+
+  // Geographic visual path
+  pathCoordinates Json? // Stores GeoJSON MultiLineString coordinates snapped from RailwayLine
+
+}
+
+// Physical infrastructure: the railway lines connecting stations
+model RailwayLine {
+  id              String   @id @default(uuid())
+  name            String
+  pathCoordinates Json     // Stores GeoJSON MultiLineString coordinates
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model RouteStation {
@@ -157,7 +171,7 @@ model RouteStation {
   route             Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
   station           Station  @relation(fields: [stationId], references: [id], onDelete: Cascade)
 
-  @@id([routeId, index])
+  @@id([routeId, stationId])
 }
 
 // Train
@@ -189,6 +203,7 @@ model Train {
   code      String   @unique
   name      String
   status    TrainStatus @default(ACTIVE)
+  averageSpeedKmH Int   @default(60) // Vận tốc trung bình (km/h) để gợi ý thời gian chạy
   coaches   Coach[]
   trips     Trip[]
   createdAt DateTime @default(now())

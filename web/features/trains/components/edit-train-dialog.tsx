@@ -38,10 +38,11 @@ export function EditTrainDialog({ train }: EditTrainDialogProps) {
     const updateTrain = useUpdateTrain()
 
     const form = useForm<UpdateTrainInput>({
-        resolver: zodResolver(updateTrainSchema),
+        resolver: zodResolver(updateTrainSchema) as any,
         defaultValues: {
             code: train.code,
             name: train.name,
+            averageSpeedKmH: train.averageSpeedKmH || 60,
         },
     })
 
@@ -50,6 +51,7 @@ export function EditTrainDialog({ train }: EditTrainDialogProps) {
             form.reset({
                 code: train.code,
                 name: train.name,
+                averageSpeedKmH: train.averageSpeedKmH || 60,
             })
         }
     }, [open, train, form])
@@ -107,6 +109,19 @@ export function EditTrainDialog({ train }: EditTrainDialogProps) {
                                     <FormLabel>Tên tàu</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Thống Nhất..." {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="averageSpeedKmH"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Vận tốc (km/h)</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" placeholder="Ví dụ: 60" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

@@ -37,6 +37,8 @@ export function SelectTrainDialog({ open, onOpenChange, onSelect, selectedTrainI
         page,
         limit: 5,
         search: searchValue,
+    }, {
+        enabled: open
     })
 
     const trains = trainData?.data || []
