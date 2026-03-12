@@ -422,15 +422,55 @@ export class RouteService {
     let totalDistanceKm = 0;
     const segmentDistancesKm: number[] = [];
 
+    // Helper to check if a new segment overlaps with any previously added segments
+    // meaning the train is physically backtracking over the same track it already covered.
+    const hasBacktracking = (newCoords: number[][]) => {
+      if (pathCoordinates.length === 0) return false;
+      if (newCoords.length < 2) return false;
+
+      const newLine = turf.lineString(newCoords);
+
+      // Check against all previous segments EXCEPT the last one's end (which is our start)
+      for (let i = 0; i < pathCoordinates.length; i++) {
+        const prevCoords = pathCoordinates[i];
+        if (prevCoords.length < 2) continue;
+        
+        // For the immediately preceding segment, we only want to ignore the connection point
+        // For older segments, any overlap is a backtrack
+        
+        // We can just sample points along the new line and see if they are too close to the prev line
+        // Skip the first point of the new line, since it connects to the previous segment naturally.
+        const prevLine = turf.lineString(prevCoords);
+        
+        for (let j = 1; j < newCoords.length - 1; j++) { // skip first and last points of the new line
+          const pt = turf.point(newCoords[j]);
+          try {
+            const snapped = turf.nearestPointOnLine(prevLine, pt);
+            // If an intermediate point of the new segment is very close (< 100 meters) to an old segment, it's backtracking
+            if ((snapped.properties.dist ?? Infinity) <= 0.1) {
+              return true;
+            }
+          } catch { }
+        }
+      }
+      return false;
+    };
+
     const hasIntermediateOverlap = (coords: number[][], currentIdx: number) => {
       if (coords.length < 2) return false;
       const line = turf.lineString(coords);
+
+      // Check all stations in the route
       for (let j = 0; j < routeStations.length; j++) {
+        // Skip the start and end stations for the current segment
         if (j === currentIdx || j === currentIdx + 1) continue;
+        
         const st = routeStations[j].station;
         const pt = turf.point([st.longitude, st.latitude]);
         try {
           const snapped = turf.nearestPointOnLine(line, pt);
+          // If the path comes within 5km of another station in the route sequence,
+          // it means the path is doubling back or crossing over a future/past station incorrectly.
           if ((snapped.properties.dist ?? Infinity) <= 5) {
             return true;
           }
@@ -505,7 +545,10 @@ export class RouteService {
           const snapSum = (sStart.properties.dist ?? Infinity) + (sEnd.properties.dist ?? Infinity);
           if (snapSum < bestSnapSum) {
             const result = trySnapAndSlice(coords);
-            if (result && !hasIntermediateOverlap(result.slicedCoords, i)) { bestSnapSum = snapSum; bestResult = result; }
+            if (result && !hasIntermediateOverlap(result.slicedCoords, i) && !hasBacktracking(result.slicedCoords)) { 
+              bestSnapSum = snapSum; 
+              bestResult = result; 
+            }
           }
         } catch { /* skip */ }
       }
@@ -614,7 +657,7 @@ export class RouteService {
             );
             const slicedCoords = sliced.geometry.coordinates as number[][];
             if (slicedCoords.length >= 2) {
-              if (!hasIntermediateOverlap(slicedCoords, i)) {
+              if (!hasIntermediateOverlap(slicedCoords, i) && !hasBacktracking(slicedCoords)) {
                 const segKm = turf.length(sliced, { units: 'kilometers' });
                 pathCoordinates.push(slicedCoords);
                 segmentDistancesKm.push(segKm);
@@ -626,30 +669,11 @@ export class RouteService {
         }
       }
 
-      // ── Không tìm thấy đoạn hoặc bị loại (backtrack) → fallback đường chim bay ──
+      // ── Không tìm thấy đoạn hoặc bị loại (backtrack) → ném exception ──
       if (!found) {
-        await tx.route.update({
-          where: { id: routeId },
-          data: { pathCoordinates: [], totalDistanceKm: 0 },
-        });
-
-        let cumulative = 0;
-        for (let j = 0; j < routeStations.length; j++) {
-          await tx.routeStation.updateMany({
-            where: { routeId, stationId: routeStations[j].stationId },
-            data: { distanceFromStart: Math.round(cumulative * 10) / 10 },
-          });
-          if (j < routeStations.length - 1) {
-            const pA = routeStations[j].station;
-            const pB = routeStations[j + 1].station;
-            cumulative += turf.distance(
-              turf.point([pA.longitude, pA.latitude]),
-              turf.point([pB.longitude, pB.latitude]),
-              { units: 'kilometers' }
-            );
-          }
-        }
-        return;
+        throw new BadRequestException(
+          `Đoạn đường từ ${p1.name} đến ${p2.name} không hợp lệ.`
+        );
       }
     }
 

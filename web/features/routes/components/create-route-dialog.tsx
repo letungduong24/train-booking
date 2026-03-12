@@ -61,13 +61,12 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
     async function onSubmit(values: CreateRouteInput) {
         createRoute.mutate(values, {
             onSuccess: () => {
-                toast.success("Tạo tuyến đường thành công")
                 setOpen(false)
                 form.reset()
                 onSuccess?.()
             },
             onError: (error) => {
-                toast.error(error.message || "Tạo tuyến đường thất bại")
+                // Error toast is already handled by useCreateRoute hook
             }
         })
     }
@@ -114,6 +113,21 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                                             value={field.value}
                                             onChange={(stations) => {
                                                 field.onChange(stations)
+                                                // Auto-suggest name
+                                                if (stations.length >= 2) {
+                                                    const newName = `${stations[0].name} - ${stations[stations.length - 1].name}`;
+                                                    const currentName = form.getValues('name');
+                                                    // Only auto-update if it's empty or it looks like a previously auto-generated name
+                                                    if (!currentName || currentName.includes(' - ')) {
+                                                        form.setValue('name', newName, { shouldValidate: true });
+                                                    }
+                                                } else if (stations.length < 2) {
+                                                     const currentName = form.getValues('name');
+                                                     if (currentName && currentName.includes(' - ')) {
+                                                         form.setValue('name', '', { shouldValidate: true });
+                                                     }
+                                                }
+
                                                 // Auto-estimate durationMinutes using straight-line distance at 60km/h
                                                 if (stations.length >= 2) {
                                                     let totalKm = 0;
@@ -125,6 +139,8 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                                                     // Assume 60 km/h average speed as rough estimate
                                                     const estimatedMinutes = Math.round(totalKm / 60 * 60);
                                                     form.setValue('durationMinutes', estimatedMinutes)
+                                                } else {
+                                                    form.setValue('durationMinutes', 0)
                                                 }
                                             }}
                                         />
