@@ -20,7 +20,7 @@ model User {
   id            String         @id @default(uuid())
   profilePic    String?
   email         String         @unique
-  password      String?        // nullable để hỗ trợ Google OAuth (users không có mật khẩu)
+  password      String? // nullable để hỗ trợ Google OAuth (users không có mật khẩu)
   name          String?
   googleId      String?        @unique
   createdAt     DateTime       @default(now())
@@ -28,11 +28,11 @@ model User {
   refreshTokens RefreshToken[]
   bookings      Booking[]
   role          UserRole       @default(USER)
-  
+
   // Wallet info
-  balance       Float          @default(0)
-  walletPin     String?
-  transactions  Transaction[]
+  balance      Float         @default(0)
+  walletPin    String?
+  transactions Transaction[]
 }
 
 model RefreshToken {
@@ -47,28 +47,27 @@ model RefreshToken {
   @@index([token])
 }
 
-
 // Wallet & Transactions
 
 model Transaction {
   id            String            @id @default(uuid())
   userId        String
   user          User              @relation(fields: [userId], references: [id])
-  amount        Float             // Số tiền (+ hoặc -)
-  type          TransactionType   // DEPOSIT, WITHDRAW, PAYMENT, REFUND
-  paymentMethod String?           // WALLET, VNPAY, MOMO, etc. (for PAYMENT type)
-  status        TransactionStatus @default(PENDING) 
-  
-  referenceId   String?           // Booking ID, Payment Gateway Ref, e.g.
-  description   String?           
-  
-  // Withdrawal Info (Only for type=WITHDRAW)
-  bankName      String?
-  bankAccount   String?
-  accountName   String?
+  amount        Float // Số tiền (+ hoặc -)
+  type          TransactionType // DEPOSIT, WITHDRAW, PAYMENT, REFUND
+  paymentMethod String? // WALLET, VNPAY, MOMO, etc. (for PAYMENT type)
+  status        TransactionStatus @default(PENDING)
 
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  referenceId String? // Booking ID, Payment Gateway Ref, e.g.
+  description String?
+
+  // Withdrawal Info (Only for type=WITHDRAW)
+  bankName    String?
+  bankAccount String?
+  accountName String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
 }
@@ -138,7 +137,7 @@ model Route {
   updatedAt         DateTime       @updatedAt
   stations          RouteStation[]
   trips             Trip[]
-  status            RouteStatus @default(DRAFT)
+  status            RouteStatus    @default(DRAFT)
   durationMinutes   Int            @default(0) // Thời gian chạy (phút)
   turnaroundMinutes Int            @default(60) // Thời gian nghỉ quay đầu (phút)
   totalDistanceKm   Float          @default(0) // Tổng chiều dài tuyến đường (do Turf.js tự đo)
@@ -149,14 +148,13 @@ model Route {
 
   // Geographic visual path
   pathCoordinates Json? // Stores GeoJSON MultiLineString coordinates snapped from RailwayLine
-
 }
 
 // Physical infrastructure: the railway lines connecting stations
 model RailwayLine {
   id              String   @id @default(uuid())
   name            String
-  pathCoordinates Json     // Stores GeoJSON MultiLineString coordinates
+  pathCoordinates Json // Stores GeoJSON MultiLineString coordinates
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -200,15 +198,15 @@ enum CoachLayout {
 }
 
 model Train {
-  id        String   @id @default(uuid())
-  code      String   @unique
-  name      String
-  status    TrainStatus @default(ACTIVE)
-  averageSpeedKmH Int   @default(60) // Vận tốc trung bình (km/h) để gợi ý thời gian chạy
-  coaches   Coach[]
-  trips     Trip[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String      @id @default(uuid())
+  code            String      @unique
+  name            String
+  status          TrainStatus @default(ACTIVE)
+  averageSpeedKmH Int         @default(60) // Vận tốc trung bình (km/h) để gợi ý thời gian chạy
+  coaches         Coach[]
+  trips           Trip[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }
 
 model Coach {
@@ -261,22 +259,22 @@ enum SeatType {
 // Trip Management
 
 model Trip {
-  id            String    @id @default(uuid())
+  id            String     @id @default(uuid())
   routeId       String
-  route         Route     @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  route         Route      @relation(fields: [routeId], references: [id], onDelete: Cascade)
   trainId       String
-  train         Train     @relation(fields: [trainId], references: [id], onDelete: Cascade)
+  train         Train      @relation(fields: [trainId], references: [id], onDelete: Cascade)
   departureTime DateTime // Thời gian khởi hành (bao gồm cả ngày và giờ)
   endTime       DateTime // Thời gian kết thúc (bao gồm cả thời gian chạy + nghỉ)
   status        TripStatus @default(SCHEDULED) // SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED
-  
+
   // Delay management (phút) - Giữ nguyên departureTime/endTime gốc
-  departureDelayMinutes Int @default(0) // Delay khởi hành
-  arrivalDelayMinutes   Int @default(0) // Delay kết thúc
-  tickets       Ticket[]
-  bookings      Booking[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  departureDelayMinutes Int       @default(0) // Delay khởi hành
+  arrivalDelayMinutes   Int       @default(0) // Delay kết thúc
+  tickets               Ticket[]
+  bookings              Booking[]
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   @@index([routeId])
   @@index([trainId])
