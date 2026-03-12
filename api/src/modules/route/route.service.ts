@@ -422,6 +422,23 @@ export class RouteService {
     let totalDistanceKm = 0;
     const segmentDistancesKm: number[] = [];
 
+    const hasIntermediateOverlap = (coords: number[][], currentIdx: number) => {
+      if (coords.length < 2) return false;
+      const line = turf.lineString(coords);
+      for (let j = 0; j < routeStations.length; j++) {
+        if (j === currentIdx || j === currentIdx + 1) continue;
+        const st = routeStations[j].station;
+        const pt = turf.point([st.longitude, st.latitude]);
+        try {
+          const snapped = turf.nearestPointOnLine(line, pt);
+          if ((snapped.properties.dist ?? Infinity) <= 5) {
+            return true;
+          }
+        } catch { }
+      }
+      return false;
+    };
+
     for (let i = 0; i < routeStations.length - 1; i++) {
       const p1 = routeStations[i].station;
       const p2 = routeStations[i + 1].station;
@@ -488,7 +505,7 @@ export class RouteService {
           const snapSum = (sStart.properties.dist ?? Infinity) + (sEnd.properties.dist ?? Infinity);
           if (snapSum < bestSnapSum) {
             const result = trySnapAndSlice(coords);
-            if (result) { bestSnapSum = snapSum; bestResult = result; }
+            if (result && !hasIntermediateOverlap(result.slicedCoords, i)) { bestSnapSum = snapSum; bestResult = result; }
           }
         } catch { /* skip */ }
       }
@@ -597,22 +614,42 @@ export class RouteService {
             );
             const slicedCoords = sliced.geometry.coordinates as number[][];
             if (slicedCoords.length >= 2) {
-              const segKm = turf.length(sliced, { units: 'kilometers' });
-              pathCoordinates.push(slicedCoords);
-              segmentDistancesKm.push(segKm);
-              totalDistanceKm += segKm;
-              found = true;
+              if (!hasIntermediateOverlap(slicedCoords, i)) {
+                const segKm = turf.length(sliced, { units: 'kilometers' });
+                pathCoordinates.push(slicedCoords);
+                segmentDistancesKm.push(segKm);
+                totalDistanceKm += segKm;
+                found = true;
+              }
             }
           }
         }
       }
 
-      // ── Không tìm thấy đường sắt nào → ném exception ──
+      // ── Không tìm thấy đoạn hoặc bị loại (backtrack) → fallback đường chim bay ──
       if (!found) {
-        throw new BadRequestException(
-          `Không tìm thấy đường sắt kết nối giữa "${p1.name}" và "${p2.name}". ` +
-          `Vui lòng chọn các ga nằm trên cùng tuyến đường sắt.`,
-        );
+        await tx.route.update({
+          where: { id: routeId },
+          data: { pathCoordinates: [], totalDistanceKm: 0 },
+        });
+
+        let cumulative = 0;
+        for (let j = 0; j < routeStations.length; j++) {
+          await tx.routeStation.updateMany({
+            where: { routeId, stationId: routeStations[j].stationId },
+            data: { distanceFromStart: Math.round(cumulative * 10) / 10 },
+          });
+          if (j < routeStations.length - 1) {
+            const pA = routeStations[j].station;
+            const pB = routeStations[j + 1].station;
+            cumulative += turf.distance(
+              turf.point([pA.longitude, pA.latitude]),
+              turf.point([pB.longitude, pB.latitude]),
+              { units: 'kilometers' }
+            );
+          }
+        }
+        return;
       }
     }
 
