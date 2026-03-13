@@ -17,6 +17,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ChevronDown, LogOut, UserCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Simple logo component for the navbar
@@ -92,6 +99,9 @@ export interface Navbar01Props extends React.HTMLAttributes<HTMLElement> {
   ctaHref?: string;
   onSignInClick?: () => void;
   onCtaClick?: () => void;
+  showUserDropdown?: boolean;
+  onProfileClick?: () => void;
+  onLogoutClick?: () => void;
 }
 
 // Default navigation links
@@ -113,6 +123,9 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
       ctaHref = '#get-started',
       onSignInClick,
       onCtaClick,
+      showUserDropdown = false,
+      onProfileClick,
+      onLogoutClick,
       ...props
     },
     ref
@@ -234,27 +247,62 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
           <div className="flex items-center gap-3">
             <GlobalChatbot />
             <ModeToggle />
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.preventDefault();
-                if (onSignInClick) onSignInClick();
-              }}
-            >
-              {signInText}
-            </Button>
-            <Button
-              size="sm"
-              className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.preventDefault();
-                if (onCtaClick) onCtaClick();
-              }}
-            >
-              {ctaText}
-            </Button>
+            {showUserDropdown ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                  >
+                    {signInText}
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      if (onProfileClick) onProfileClick();
+                    }}
+                  >
+                    <UserCircle className="mr-2 h-4 w-4" />
+                    Hồ sơ
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      if (onLogoutClick) onLogoutClick();
+                    }}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Đăng xuất
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                    e.preventDefault();
+                    if (onSignInClick) onSignInClick();
+                  }}
+                >
+                  {signInText}
+                </Button>
+                <Button
+                  size="sm"
+                  className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
+                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                    e.preventDefault();
+                    if (onCtaClick) onCtaClick();
+                  }}
+                >
+                  {ctaText}
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>

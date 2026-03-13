@@ -87,6 +87,9 @@ export function NavbarProvider({ children }: NavbarProviderProps) {
                 ctaHref={user ? '#' : '/register'}
                 onSignInClick={handleSignInClick}
                 onCtaClick={handleCtaClick}
+                showUserDropdown={!!user}
+                onProfileClick={handleSignInClick}
+                onLogoutClick={handleCtaClick}
             />
             <div className="flex-1 flex flex-col">
                 {children}
