@@ -90,6 +90,8 @@ export function NavbarProvider({ children }: NavbarProviderProps) {
                 showUserDropdown={!!user}
                 onProfileClick={handleSignInClick}
                 onLogoutClick={handleCtaClick}
+                hideCta={!user}
+                signInAsPrimary={!user}
             />
             <div className="flex-1 flex flex-col">
                 {children}

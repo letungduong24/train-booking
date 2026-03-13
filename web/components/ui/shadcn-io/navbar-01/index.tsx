@@ -102,6 +102,8 @@ export interface Navbar01Props extends React.HTMLAttributes<HTMLElement> {
   showUserDropdown?: boolean;
   onProfileClick?: () => void;
   onLogoutClick?: () => void;
+  hideCta?: boolean;
+  signInAsPrimary?: boolean;
 }
 
 // Default navigation links
@@ -126,6 +128,8 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
       showUserDropdown = false,
       onProfileClick,
       onLogoutClick,
+      hideCta = false,
+      signInAsPrimary = false,
       ...props
     },
     ref
@@ -281,9 +285,14 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
             ) : (
               <>
                 <Button
-                  variant="ghost"
+                  variant={signInAsPrimary ? 'default' : 'ghost'}
                   size="sm"
-                  className="text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                  className={cn(
+                    'text-sm font-medium',
+                    signInAsPrimary
+                      ? 'px-4 h-9 rounded-md shadow-sm'
+                      : 'hover:bg-accent hover:text-accent-foreground'
+                  )}
                   onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.preventDefault();
                     if (onSignInClick) onSignInClick();
@@ -291,16 +300,18 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
                 >
                   {signInText}
                 </Button>
-                <Button
-                  size="sm"
-                  className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
-                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                    e.preventDefault();
-                    if (onCtaClick) onCtaClick();
-                  }}
-                >
-                  {ctaText}
-                </Button>
+                {!hideCta && (
+                  <Button
+                    size="sm"
+                    className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.preventDefault();
+                      if (onCtaClick) onCtaClick();
+                    }}
+                  >
+                    {ctaText}
+                  </Button>
+                )}
               </>
             )}
           </div>
