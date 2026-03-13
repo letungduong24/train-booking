@@ -71,7 +71,7 @@ export default function OnboardPage() {
         );
     }
     return (
-        <div className="container mx-auto p-4 md:p-8 max-w-6xl space-y-8">
+        <div className="container mx-auto py-8 px-4 space-y-8">
             {/* Pending Payment Alert */}
             {pendingCount > 0 && (
                 <Link

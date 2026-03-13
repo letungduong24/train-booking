@@ -39,11 +39,11 @@ export function LatestTripsSection() {
                 </div>
 
                 {isLoading ? (
-                    <div className="grid gap-6 lg:grid-cols-3">
+                    <div className="flex flex-wrap gap-6">
                         {Array.from({ length: 3 }).map((_, index) => (
                             <div
                                 key={index}
-                                className="h-64 animate-pulse rounded-3xl border border-border bg-muted/60"
+                                className="h-64 animate-pulse rounded-3xl border border-border bg-muted/60 flex-1 basis-[min(100%,18rem)]"
                             />
                         ))}
                     </div>
@@ -68,7 +68,7 @@ export function LatestTripsSection() {
                         </p>
                     </div>
                 ) : (
-                    <div className="grid gap-6 lg:grid-cols-3">
+                    <div className="flex flex-wrap gap-6">
                         {trips.map((trip) => {
                             const firstStationId = trip.route?.stations?.[0]?.stationId
                             const lastStationId = trip.route?.stations?.[trip.route.stations.length - 1]?.stationId
@@ -79,42 +79,24 @@ export function LatestTripsSection() {
                             return (
                             <article
                                 key={trip.id}
-                                className="rounded-3xl border border-border bg-card p-6 shadow-sm transition-transform duration-300 hover:-translate-y-1"
+                                className="flex-1 basis-[min(100%,18rem)] rounded-3xl border border-border bg-card p-6 shadow-sm transition-transform duration-300 hover:-translate-y-1"
                             >
-                                <div className="mb-6 flex items-start justify-between gap-4">
-                                    <div>
-                                        <p className="text-sm uppercase tracking-[0.24em] text-primary/80">
-                                            {trip.train?.code || "Tàu"}
-                                        </p>
-                                        <h3 className="mt-2 text-2xl font-bold leading-tight text-foreground">
-                                            {trip.route?.name || "Chuyến tàu"}
-                                        </h3>
-                                    </div>
-                                    <TripStatusBadge status={trip.status} />
-                                </div>
-
-                                <div className="space-y-4 text-sm text-muted-foreground">
-                                    <div className="flex items-center gap-3 rounded-2xl bg-muted/60 px-4 py-3">
-                                        <CalendarClock className="h-4 w-4 text-primary" />
-                                        <span>
-                                            {format(new Date(trip.departureTime), "HH:mm '•' EEEE, dd/MM/yyyy", { locale: vi })}
-                                        </span>
-                                    </div>
-
+                                <div className="flex items-start justify-between gap-4">
+                                    <h3 className="mt-2 text-2xl font-bold leading-tight text-foreground">
+                                        {trip.route?.name || "Chuyến tàu"}
+                                    </h3>
                                     <div className="flex items-center gap-3 rounded-2xl bg-muted/60 px-4 py-3">
                                         <TrainFront className="h-4 w-4 text-primary" />
-                                        <span>{trip.train?.name || "Đang cập nhật đầu tàu"}</span>
+                                        <span className="font-bold">{trip.train?.name || "Đang cập nhật đầu tàu"}</span>
                                     </div>
                                 </div>
-
-                                <div className="mt-6 flex items-center justify-between border-t border-border pt-5">
+                                <div className="mt-6 flex items-end justify-between border-t border-border pt-5">
                                     <div>
                                         <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
                                             Khởi hành
                                         </p>
                                         <p className="mt-1 text-lg font-semibold text-foreground">
-                                            {format(new Date(trip.departureTime), "dd/MM/yyyy", { locale: vi })}
-                                        </p>
+                                            {format(new Date(trip.departureTime), "HH:mm '•' EEEE, dd/MM/yyyy", { locale: vi })}                                        </p>
                                     </div>
 
                                     <Button asChild>

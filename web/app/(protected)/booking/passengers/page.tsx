@@ -61,7 +61,7 @@ function PassengersPageContent() {
 
     if (!bookingCode) {
         return (
-            <div className="container mx-auto py-8">
+            <div className="container mx-auto py-8 px-4">
                 <Card>
                     <CardContent className="py-8 text-center text-muted-foreground">
                         Không tìm thấy mã đơn hàng
@@ -96,7 +96,7 @@ function PassengersPageContent() {
 
     if (!booking) {
         return (
-            <div className="container mx-auto py-8">
+            <div className="container mx-auto py-8 px-4">
                 <Card>
                     <CardContent className="py-8 text-center text-muted-foreground">
                         Không tìm thấy đơn hàng
@@ -110,7 +110,7 @@ function PassengersPageContent() {
 
     if (booking && booking.status === 'CANCELLED') {
         return (
-            <div className="container mx-auto py-8">
+            <div className="container mx-auto py-8 px-4">
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-red-600">Đơn hàng đã bị hủy</CardTitle>
@@ -128,7 +128,7 @@ function PassengersPageContent() {
 
     if (booking && booking.status !== 'PENDING') {
         return (
-            <div className="container mx-auto py-24 space-y-6">
+            <div className="container mx-auto py-8 px-4 space-y-6">
                 <Skeleton className="h-48 w-full" />
                 <Skeleton className="h-96 w-full" />
             </div>

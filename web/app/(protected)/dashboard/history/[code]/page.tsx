@@ -30,7 +30,7 @@ export default function BookingDetailPage() {
 
     if (isLoading) {
         return (
-            <div className="container mx-auto py-20 flex justify-center">
+            <div className="container mx-auto py-8 px-4 flex justify-center">
                 <Spinner className="h-8 w-8" />
             </div>
         );
@@ -38,7 +38,7 @@ export default function BookingDetailPage() {
 
     if (error || !booking) {
         return (
-            <div className="container mx-auto py-20 text-center">
+            <div className="container mx-auto py-8 px-4 text-center">
                 <h2 className="text-xl font-semibold mb-2">Không tìm thấy đơn hàng</h2>
                 <Button onClick={() => router.push('/dashboard/history')}>Quay lại danh sách</Button>
             </div>
@@ -84,7 +84,7 @@ export default function BookingDetailPage() {
     };
 
     return (
-        <div className="container mx-auto py-8 px-4 max-w-6xl">
+        <div className="container mx-auto py-8 px-4">
             <Button variant="ghost" onClick={() => router.push('/dashboard/history')} className="mb-6">
                 <ArrowLeft className="mr-2 h-4 w-4" /> Quay lại lịch sử
             </Button>

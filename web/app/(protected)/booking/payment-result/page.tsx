@@ -13,7 +13,7 @@ export default function PaymentResultPage() {
     const errorMessage = searchParams.get('error');
 
     return (
-        <div className="container mx-auto py-16 px-4">
+        <div className="container mx-auto py-8 px-4">
             <Card className="max-w-md mx-auto text-center">
                 <CardHeader>
                     <CardTitle className="text-2xl">

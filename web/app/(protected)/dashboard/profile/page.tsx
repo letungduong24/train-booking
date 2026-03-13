@@ -74,7 +74,7 @@ export default function ProfilePage() {
     }
 
     return (
-        <div className="container mx-auto py-8 px-4 max-w-2xl">
+        <div className="container mx-auto py-8 px-4">
             <h1 className="text-2xl font-bold mb-6">Thông tin cá nhân</h1>
 
             <div className="bg-card p-6 rounded-lg shadow-sm border">

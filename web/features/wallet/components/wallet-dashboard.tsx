@@ -5,7 +5,7 @@ import { useWallet } from "../hooks/use-wallet"
 import { useQueryClient } from "@tanstack/react-query"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Loader2, Wallet, ArrowUpCircle, ArrowDownCircle, History, ShieldCheck, CreditCard, Plus } from "lucide-react"
+import { Loader2, Wallet, ArrowUpCircle, ArrowDownCircle, History, ShieldCheck, Plus } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
 import { WithdrawDialog } from "./withdraw-dialog"
 import { SetupPinDialog } from "./setup-pin-dialog"
@@ -52,9 +52,9 @@ export function WalletDashboard() {
 
     return (
         <div className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div>
                 {/* Balance Card */}
-                <Card className="col-span-2 bg-linear-to-br from-primary/10 via-primary/5 to-background border-primary/20 shadow-sm relative overflow-hidden">
+                <Card className="bg-linear-to-br from-primary/10 via-primary/5 to-background border-primary/20 shadow-sm relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-10">
                         <Wallet className="w-32 h-32" />
                     </div>
@@ -101,33 +101,6 @@ export function WalletDashboard() {
                                 * Bạn cần thiết lập mã PIN để thanh toán
                             </p>
                         )}
-                    </CardContent>
-                </Card>
-
-                {/* Quick Stats or Info */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm font-medium">Thông tin ví</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full text-green-600">
-                                <ShieldCheck className="w-5 h-5" />
-                            </div>
-                            <div>
-                                <p className="text-sm font-medium">Bảo mật</p>
-                                <p className="text-xs text-muted-foreground">Ví được bảo vệ an toàn</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-blue-600">
-                                <CreditCard className="w-5 h-5" />
-                            </div>
-                            <div>
-                                <p className="text-sm font-medium">Thanh toán nhanh</p>
-                                <p className="text-xs text-muted-foreground">Không cần chuyển khoản lại</p>
-                            </div>
-                        </div>
                     </CardContent>
                 </Card>
             </div>
