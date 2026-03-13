@@ -14,6 +14,7 @@ const fetchTrips = async (filters: TripFilters) => {
     if (filters.trainId) params.append('trainId', filters.trainId);
     if (filters.departureTime) params.append('departureTime', filters.departureTime);
     if (filters.status) params.append('status', filters.status);
+    if (typeof filters.upcoming === 'boolean') params.append('upcoming', String(filters.upcoming));
     if (filters.sort) params.append('sort', filters.sort);
     if (filters.order) params.append('order', filters.order);
 

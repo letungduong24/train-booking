@@ -1,0 +1,9 @@
+railflow.duongle.dev {
+    encode gzip zstd
+    reverse_proxy 127.0.0.1:4000
+}
+
+railflow-api.duongle.dev {
+    encode gzip zstd
+    reverse_proxy 127.0.0.1:9000
+}

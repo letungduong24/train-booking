@@ -97,8 +97,29 @@ export class TripService {
       trainId,
       departureTime,
       status,
+      upcoming,
     } = query;
     const skip = (page - 1) * limit;
+
+    const andConditions: Prisma.TripWhereInput[] = [];
+
+    if (departureTime) {
+      const startOfDay = new Date(departureTime);
+      andConditions.push({
+        departureTime: {
+          gte: startOfDay,
+          lt: new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000),
+        },
+      });
+    }
+
+    if (upcoming) {
+      andConditions.push({
+        departureTime: {
+          gte: new Date(),
+        },
+      });
+    }
 
     const where: Prisma.TripWhereInput = {
       ...(search && {
@@ -110,13 +131,12 @@ export class TripService {
       }),
       ...(routeId && { routeId }),
       ...(trainId && { trainId }),
-      ...(departureTime && {
-        departureTime: {
-          gte: new Date(departureTime),
-          lt: new Date(new Date(departureTime).getTime() + 24 * 60 * 60 * 1000),
-        },
-      }),
-      ...(status && { status: status as TripStatus }),
+      ...(andConditions.length > 0 && { AND: andConditions }),
+      ...(status
+        ? { status: status as TripStatus }
+        : upcoming
+          ? { status: { not: TripStatus.CANCELLED } }
+          : {}),
     };
 
     const [data, total] = await Promise.all([
@@ -128,7 +148,19 @@ export class TripService {
           [query.sort || 'departureTime']: query.order || 'desc',
         },
         include: {
-          route: true,
+          route: {
+            include: {
+              stations: {
+                select: {
+                  stationId: true,
+                  index: true,
+                },
+                orderBy: {
+                  index: 'asc',
+                },
+              },
+            },
+          },
           train: true,
           _count: {
             select: {

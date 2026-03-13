@@ -13,6 +13,10 @@ export const tripSchema = z.object({
     route: z.object({
         id: z.string(),
         name: z.string(),
+        stations: z.array(z.object({
+            stationId: z.string(),
+            index: z.number(),
+        })).optional(),
         pathCoordinates: z.any().optional(),
     }).optional(),
     train: z.object({
@@ -94,6 +98,7 @@ export type TripFilters = {
     trainId?: string;
     departureTime?: string;
     status?: string;
+    upcoming?: boolean;
     sort?: string;
     order?: 'asc' | 'desc';
 }

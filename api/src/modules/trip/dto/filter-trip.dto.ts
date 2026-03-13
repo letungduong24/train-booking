@@ -1,4 +1,10 @@
-import { IsEnum, IsOptional, IsString, IsDateString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsEnum,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class FilterTripDto {
@@ -29,6 +35,11 @@ export class FilterTripDto {
   @IsOptional()
   @IsString()
   status?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
+  @IsBoolean()
+  upcoming?: boolean;
 
   @IsOptional()
   @IsString()
