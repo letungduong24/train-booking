@@ -35,6 +35,7 @@ services:
 
   # ─── API (NestJS) ─────────────────────────────────────────────
   api:
+    image: ${DOCKER_REPO}/train-booking-api:${DOCKER_TAG}
     build:
       context: ./api
       dockerfile: Dockerfile
@@ -51,6 +52,7 @@ services:
 
   # ─── Web (Next.js) ────────────────────────────────────────────
   web:
+    image: ${DOCKER_REPO}/train-booking-web:${DOCKER_TAG}
     build:
       context: ./web
       dockerfile: Dockerfile
