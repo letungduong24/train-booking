@@ -354,17 +354,15 @@ export function GlobalChatbot() {
             </Sheet>
 
             {/* Navbar Toggle Button */}
-            <Button
-                variant="outline"
-                size="icon"
+            <button
                 className={cn(
-                    "flex-shrink-0",
-                    isOpen && "bg-muted text-muted-foreground"
+                    "size-9 flex-shrink-0 flex items-center justify-center rounded-xl bg-zinc-50 dark:bg-zinc-900 text-muted-foreground/60 hover:text-[#802222] hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-all border border-transparent hover:border-rose-100 dark:hover:border-rose-900/20",
+                    isOpen && "bg-rose-50 dark:bg-rose-900/10 text-[#802222] border-rose-100 dark:border-rose-900/20"
                 )}
                 onClick={() => setIsOpen(!isOpen)}
             >
-                {isOpen ? <X className="h-5 w-5" /> : <MessageCircle className="h-5 w-5" />}
-            </Button>
+                {isOpen ? <X className="size-5" /> : <Bot className="size-5" />}
+            </button>
         </>
     );
 }

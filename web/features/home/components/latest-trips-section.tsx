@@ -71,7 +71,7 @@ export function LatestTripsSection() {
                         </p>
                     </div>
                 ) : (
-                    <div className="flex justify-between gap-6 lg:grid-cols-3">
+                    <div className="grid gap-6 lg:grid-cols-3">
                         {trips.map((trip) => {
                             const firstStationId = trip.route?.stations?.[0]?.stationId
                             const lastStationId = trip.route?.stations?.[trip.route.stations.length - 1]?.stationId
@@ -84,32 +84,49 @@ export function LatestTripsSection() {
                             return (
                             <article
                                 key={trip.id}
-                                className="rounded-3xl border border-border bg-card p-6 shadow-sm transition-transform duration-300 hover:-translate-y-1"
+                                className="group relative rounded-3xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm hover:shadow-2xl hover:shadow-rose-900/5 transition-all duration-500 hover:-translate-y-1.5 overflow-hidden"
                             >
-                                <div className="flex items-start justify-between gap-4">
-                                    <h3 className="mt-2 text-2xl font-bold leading-tight text-foreground">
-                                        {trip.route?.name || "Chuyến tàu"}
-                                    </h3>
-                                    <div className="flex items-center gap-3 rounded-2xl bg-muted/60 px-4 py-3">
-                                        <TrainFront className="h-4 w-4 text-primary" />
-                                        <span className="font-bold">{trip.train?.name || "Đang cập nhật đầu tàu"}</span>
-                                    </div>
-                                </div>
-                                <div className="mt-6 flex items-end justify-between border-t border-border pt-5">
-                                    <div>
-                                        <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                                            Khởi hành
-                                        </p>
-                                        <p className="mt-1 text-lg font-semibold text-foreground">
-                                            {format(new Date(trip.departureTime), "HH:mm '•' EEEE, dd/MM/yyyy", { locale: vi })}                                        </p>
+                                <div className="absolute -right-20 -top-20 w-40 h-40 bg-rose-50/50 dark:bg-rose-950/10 rounded-full blur-3xl group-hover:bg-rose-100/50 transition-colors" />
+                                
+                                <div className="relative z-10">
+                                    <div className="flex items-start justify-between mb-6">
+                                        <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-900/20 text-[10px] font-bold text-[#802222] dark:text-rose-400 border border-rose-100 dark:border-rose-900/30 w-fit">
+                                                <div className="size-1.5 bg-[#802222] dark:bg-rose-400 rounded-full animate-pulse" />
+                                                SẮP KHỞI HÀNH
+                                            </div>
+                                            <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight mt-2">
+                                                {trip.route?.name || "Chuyến tàu"}
+                                            </h3>
+                                        </div>
+                                        <div className="flex items-center gap-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 px-3 py-2 border border-zinc-100 dark:border-zinc-800">
+                                            <TrainFront className="h-3.5 w-3.5 text-[#802222] dark:text-rose-400" />
+                                            <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300">{trip.train?.name || "Đầu tàu"}</span>
+                                        </div>
                                     </div>
 
-                                    <Button asChild>
-                                        <Link href={bookingHref}>
-                                            Đặt vé
-                                            <ArrowRight className="h-4 w-4" />
-                                        </Link>
-                                    </Button>
+                                    <div className="flex flex-col gap-4 pt-4 border-t border-zinc-50 dark:border-zinc-800">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex flex-col">
+                                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-1">
+                                                    Khởi hành
+                                                </p>
+                                                <p className="text-xl font-black text-[#802222] dark:text-rose-400 tabular-nums">
+                                                    {format(new Date(trip.departureTime), "HH:mm")}
+                                                </p>
+                                                <p className="text-[11px] font-medium text-zinc-500 mt-0.5">
+                                                    {format(new Date(trip.departureTime), "EEEE, dd/MM/yyyy", { locale: vi })}
+                                                </p>
+                                            </div>
+
+                                            <Button asChild className="rounded-xl h-10 px-6 bg-[#802222] hover:bg-rose-900 text-white shadow-lg shadow-rose-900/20 border-none transition-all group-hover:scale-105 active:scale-95">
+                                                <Link href={bookingHref} className="flex items-center gap-2">
+                                                    <span className="font-bold">Đặt vé ngay</span>
+                                                    <ArrowRight className="h-4 w-4" />
+                                                </Link>
+                                            </Button>
+                                        </div>
+                                    </div>
                                 </div>
                             </article>
                         )})}

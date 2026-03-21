@@ -65,19 +65,19 @@ export function NavUser({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="h-14 rounded-2xl transition-all duration-200 border-none hover:bg-zinc-50 dark:hover:bg-zinc-900 group/user"
             >
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
+              <Avatar className="h-9 w-9 rounded-xl grayscale group-hover/user:grayscale-0 transition-all">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-xl bg-zinc-100 dark:bg-zinc-800 text-xs font-bold">CN</AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="text-muted-foreground truncate text-xs">
-                  {user.email}
+              <div className="grid flex-1 text-left text-sm leading-tight ml-1">
+                <span className="truncate font-bold text-zinc-900 dark:text-zinc-100">{user.name}</span>
+                <span className="text-[11px] font-medium text-muted-foreground/60 truncate uppercase tracking-widest -mt-0.5">
+                  {user.email.split('@')[0]}
                 </span>
               </div>
-              <IconDotsVertical className="ml-auto size-4" />
+              <IconDotsVertical className="ml-auto size-4 text-muted-foreground/30 group-hover/user:text-muted-foreground/60" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

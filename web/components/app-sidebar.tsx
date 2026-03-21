@@ -140,33 +140,35 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }
 
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader>
+    <Sidebar collapsible="offcanvas" className="bg-white dark:bg-zinc-950 border-r border-gray-100 dark:border-zinc-800" {...props}>
+      <SidebarHeader className="pt-6 px-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              size="lg"
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
-            >
-              <a href="/">
-                <div className="flex flex-col gap-0.5">
-                    <span className="text-lg font-black tracking-tight">Railflow</span>
-                    <span className="text-[10px] uppercase tracking-widest opacity-70">
-                        {isAdminView ? "Admin Panel" : "User Panel"}
-                    </span>
-                </div>
-              </a>
-            </SidebarMenuButton>
+            <div className="flex items-center gap-3 px-2 mb-6">
+              <div className="flex size-9 items-center justify-center rounded-xl bg-[#802222] text-white shadow-lg shadow-rose-900/20">
+                <span className="text-xl font-black italic">R</span>
+              </div>
+              <div className="flex flex-col gap-0">
+                <span className="text-lg font-bold tracking-tight text-zinc-900 dark:text-white">Railflow</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#802222]/60 -mt-1">
+                    {isAdminView ? "Admin Panel" : "User Panel"}
+                </span>
+              </div>
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="px-2">
+        <div className="px-4 py-2 mt-2 mb-1">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/30">
+            Menu
+          </p>
+        </div>
         <NavMain items={navMain} />
         {crossNav.length > 0 && (
             <>
-                <div className="px-4 py-2 mt-4">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
+                <div className="px-4 py-2 mt-6 mb-1">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/30">
                         Chuyển đổi
                     </p>
                 </div>
@@ -176,7 +178,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={userData} />
       </SidebarFooter>
     </Sidebar>
   )
