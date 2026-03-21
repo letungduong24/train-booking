@@ -40,7 +40,7 @@ export default function AdminWithdrawalsPage() {
 
     if (isLoading) {
         return (
-            <div className="flex-1 space-y-4 p-8 pt-6">
+        <div className="flex flex-1 flex-col gap-6">
                 <div className="space-y-2">
                     <Skeleton className="h-10 w-48" />
                     <Skeleton className="h-4 w-64" />
@@ -63,7 +63,7 @@ export default function AdminWithdrawalsPage() {
     }
 
     return (
-        <div className="flex-1 space-y-4 p-8 pt-6">
+        <div className="flex flex-1 flex-col gap-6">
             <div className="flex items-center justify-between space-y-2">
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight">Yêu cầu rút tiền</h2>

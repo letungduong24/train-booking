@@ -21,6 +21,7 @@ import { PassengerGroupModule } from './modules/passenger-group/passenger-group.
 import { WalletModule } from './modules/wallet/wallet.module';
 import { ChatbotModule } from './modules/chatbot/chatbot.module';
 import { GeojsonModule } from './modules/geojson/geojson.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { GeojsonModule } from './modules/geojson/geojson.module';
       }),
     }),
     GeojsonModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

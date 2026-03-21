@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sovereign Rail - Danh sách chuyến tàu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#f5dddd",
+              "surface": "#fff8f7",
+              "on-tertiary": "#ffffff",
+              "inverse-surface": "#3b2d2d",
+              "on-primary-container": "#ff828a",
+              "tertiary": "#002c36",
+              "surface-container-high": "#fbe2e2",
+              "primary-fixed-dim": "#ffb3b5",
+              "surface-container": "#ffe9e8",
+              "outline": "#8c7071",
+              "on-secondary-fixed": "#1a1c1e",
+              "on-error-container": "#93000a",
+              "on-background": "#251819",
+              "primary": "#570013",
+              "on-tertiary-fixed": "#001f26",
+              "secondary": "#5d5e61",
+              "outline-variant": "#e0bfbf",
+              "on-secondary": "#ffffff",
+              "on-primary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed-dim": "#9acfde",
+              "secondary-fixed-dim": "#c6c6c9",
+              "on-surface": "#251819",
+              "secondary-container": "#e0dfe3",
+              "inverse-on-surface": "#ffedec",
+              "tertiary-container": "#004451",
+              "on-error": "#ffffff",
+              "error-container": "#ffdad6",
+              "on-primary-fixed": "#40000b",
+              "primary-fixed": "#ffdada",
+              "surface-variant": "#f5dddd",
+              "inverse-primary": "#ffb3b5",
+              "surface-bright": "#fff8f7",
+              "error": "#ba1a1a",
+              "on-secondary-fixed-variant": "#45474a",
+              "secondary-fixed": "#e2e2e5",
+              "surface-dim": "#edd4d4",
+              "on-secondary-container": "#616265",
+              "on-tertiary-fixed-variant": "#114d5b",
+              "tertiary-fixed": "#b6ebfb",
+              "background": "#fff8f7",
+              "surface-tint": "#af2b3e",
+              "on-primary-fixed-variant": "#8e0f28",
+              "surface-container-low": "#fff0f0",
+              "primary-container": "#800020",
+              "on-surface-variant": "#584141",
+              "on-tertiary-container": "#7cb0c0"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glassmorphism-effect {
+            backdrop-filter: blur(24px);
+        }
+        .tonal-split {
+            border-right: none;
+        }
+        body {
+            background-color: #fff8f7;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="fixed left-0 top-0 h-full z-40 py-8 flex flex-col h-screen w-72 border-none bg-[#fff0f0] dark:bg-[#251819] no-border tonal-split">
+<div class="px-8 mb-12">
+<h1 class="text-2xl font-black text-[#570013] dark:text-[#ffb4ab] font-headline tracking-tight">The Sovereign Rail</h1>
+<p class="text-xs font-medium text-on-surface-variant opacity-70 tracking-widest mt-1">PREMIUM TRAVEL CONCIERGE</p>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Active Tab: Chuyến đi của tôi (Closest match for current screen) -->
+<a class="text-[#251819] dark:text-[#e0bfbf] hover:bg-[#fbe2e2] dark:hover:bg-[#3d000a] rounded-xl mx-4 my-1 flex items-center px-4 py-3 transition-colors font-headline font-bold tracking-tight" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="bg-[#570013] text-white rounded-xl mx-4 my-1 flex items-center px-4 py-3 font-headline font-bold tracking-tight scale-95 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="train">train</span>
+                Chuyển đi của tôi
+            </a>
+<a class="text-[#251819] dark:text-[#e0bfbf] hover:bg-[#fbe2e2] dark:hover:bg-[#3d000a] rounded-xl mx-4 my-1 flex items-center px-4 py-3 transition-colors font-headline font-bold tracking-tight" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="calendar_month">calendar_month</span>
+                Lịch trình
+            </a>
+<a class="text-[#251819] dark:text-[#e0bfbf] hover:bg-[#fbe2e2] dark:hover:bg-[#3d000a] rounded-xl mx-4 my-1 flex items-center px-4 py-3 transition-colors font-headline font-bold tracking-tight" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="account_balance_wallet">account_balance_wallet</span>
+                Ví
+            </a>
+<a class="text-[#251819] dark:text-[#e0bfbf] hover:bg-[#fbe2e2] dark:hover:bg-[#3d000a] rounded-xl mx-4 my-1 flex items-center px-4 py-3 transition-colors font-headline font-bold tracking-tight" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="support_agent">support_agent</span>
+                Hỗ trợ
+            </a>
+</nav>
+<div class="mt-auto px-6 py-4 mx-4 bg-surface-container-high rounded-2xl flex items-center gap-4">
+<img alt="User Profile Avatar" class="w-10 h-10 rounded-full object-cover" data-alt="Close up portrait of an elegant user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCs7zP_zeTbLpswVPQgPsSi1o25W2ltCi8hauupSZWNq97KarNgt18nvXOzapYNP_nI6dHk-N-2jqJUtPcT51anNZ85xwMk9oNwjqKckfps9yQJ2ynO_DnKhqfN5TWX3ty9wP66vvYUcjTGAVSZQv4EfaMq8OhgCeZkaY08j6X442CAxSrTSSzA3q9BtTNhQZfva7W5rkuNmoEt4OpxCKDNwXxtVqevpOX9TD4gNt-_UZsaFFKKC1dgyD1lKb_6IifouKYH1ASpLA"/>
+<div class="overflow-hidden">
+<p class="text-sm font-bold truncate">Alex Sovereign</p>
+<p class="text-xs opacity-60">Thẻ Platinum</p>
+</div>
+</div>
+</aside>
+<!-- TopNavBar (Authority: JSON) -->
+<header class="fixed top-0 right-0 left-72 z-30 flex justify-between items-center px-8 h-20 bg-[#fff8f7]/60 dark:bg-[#1a0a0c]/60 backdrop-blur-xl no-border glassmorphism-effect shadow-[0_16px_32px_rgba(37,24,25,0.06)]">
+<div class="flex items-center gap-6 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full pl-12 pr-4 py-2.5 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-[#e0bfbf] transition-all text-sm font-body" placeholder="Tìm kiếm chuyến tàu, số hiệu..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-[#570013] hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-[#570013] hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant opacity-30 mx-2"></div>
+<div class="flex items-center gap-3">
+<span class="text-sm font-bold font-headline text-primary">Sovereign Rail</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-72 pt-28 pb-12 px-12 min-h-screen">
+<header class="mb-12">
+<div class="flex justify-between items-end">
+<div>
+<h2 class="text-5xl font-extrabold font-headline text-primary tracking-tight mb-2">Chuyến tàu đang chạy</h2>
+<p class="text-on-surface-variant font-body">Theo dõi lộ trình và trạng thái trực tiếp của các đoàn tàu cao cấp.</p>
+</div>
+<div class="flex gap-2">
+<button class="px-6 py-2.5 rounded-full bg-primary text-white font-bold text-sm flex items-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+                        Bộ lọc
+                    </button>
+</div>
+</div>
+</header>
+<!-- Bento-style Grid for Train List -->
+<div class="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
+<!-- Train Card 1 -->
+<div class="group bg-surface-container-lowest rounded-3xl p-8 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-transparent hover:border-outline-variant/30 transition-all duration-300">
+<div class="flex justify-between items-start mb-8">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-2xl bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-3xl" data-icon="train">train</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface-variant tracking-widest">SỐ HIỆU</p>
+<h3 class="text-2xl font-black font-headline text-primary">SR-2024</h3>
+</div>
+</div>
+<div class="px-4 py-1.5 rounded-full bg-tertiary/10 text-tertiary flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="text-xs font-bold uppercase tracking-wider">Đang chạy</span>
+</div>
+</div>
+<div class="relative flex justify-between items-center mb-10 px-2">
+<div class="text-left">
+<p class="text-sm font-medium text-on-surface-variant mb-1">Hà Nội</p>
+<p class="text-4xl font-black font-headline text-on-surface">08:00</p>
+</div>
+<div class="flex-1 flex flex-col items-center px-6 relative">
+<div class="w-full h-[2px] bg-outline-variant/30 relative">
+<div class="absolute top-1/2 left-1/3 -translate-y-1/2 w-4 h-4 bg-primary rounded-full shadow-lg shadow-primary/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-white" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<p class="mt-4 text-[10px] font-bold text-primary tracking-[0.2em] uppercase">Thanh Hóa (10:30)</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-medium text-on-surface-variant mb-1">TP. Hồ Chí Minh</p>
+<p class="text-4xl font-black font-headline text-on-surface">22:30</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant/10">
+<div class="flex -space-x-3">
+<img alt="Staff" class="w-8 h-8 rounded-full border-2 border-surface-container-lowest object-cover" data-alt="Portrait of a train conductor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjSvPuiWPNIiRjaQILlommWi-7Hu_fPXsthOjr5Lw9NTWTVgze7JzZk1ycRdPYYa6NukGbh279IoSHY_kHxfeUYa-XKPfvyMBm088HrJR_iXGtOyGUXl2g9dPAqh3fdOKX6GG2FNxAyzHIvOLXMpjk65h71Lh1CawpH2lKlJ5xWog8s4ltrm54E38-WxKhZxH9Jb5MHoya7SykEtCvPFLPH5KAWNpy0twt9nwDW4xtyC1ZnXv9jD5mqVIKAZ-WmDT3TAqjKSD5Dw"/>
+<img alt="Staff" class="w-8 h-8 rounded-full border-2 border-surface-container-lowest object-cover" data-alt="Portrait of a travel attendant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDTvrFLlP_D3fZv3az80JkvRo7LHc8wgQRELvcdPSqIVv9qjJ523TtW4Q6-V7C23mUD2NdxuOfkheBZMCHK3p1KXOW9JtvcODy7AhEHug_nXPR1qeq2cWbeb_McTlOkhTTkYfVB4NdBDagVt9ml4OyJTdh12Mne0ipDInvTuYlkEwSEGWCfv21m_BqYtToV_rquO9mOU9XKD7GeOjZpfS6X6HmkjIEWZ6heDDSLKGANkKDFR56OXYW1k7MO8FUKzj2gOenMzuVxg"/>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border-2 border-surface-container-lowest flex items-center justify-center text-[10px] font-bold text-on-surface-variant">+4</div>
+</div>
+<button class="px-6 py-3 rounded-xl bg-surface-container-high text-primary font-bold text-sm hover:bg-primary hover:text-white transition-all">Xem chi tiết</button>
+</div>
+</div>
+<!-- Train Card 2 -->
+<div class="group bg-surface-container-lowest rounded-3xl p-8 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-transparent hover:border-outline-variant/30 transition-all duration-300">
+<div class="flex justify-between items-start mb-8">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-2xl bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-3xl" data-icon="train">train</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface-variant tracking-widest">SỐ HIỆU</p>
+<h3 class="text-2xl font-black font-headline text-primary">SR-1992</h3>
+</div>
+</div>
+<div class="px-4 py-1.5 rounded-full bg-tertiary/10 text-tertiary flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="text-xs font-bold uppercase tracking-wider">Đang chạy</span>
+</div>
+</div>
+<div class="relative flex justify-between items-center mb-10 px-2">
+<div class="text-left">
+<p class="text-sm font-medium text-on-surface-variant mb-1">Đà Nẵng</p>
+<p class="text-4xl font-black font-headline text-on-surface">14:15</p>
+</div>
+<div class="flex-1 flex flex-col items-center px-6 relative">
+<div class="w-full h-[2px] bg-outline-variant/30 relative">
+<div class="absolute top-1/2 left-2/3 -translate-y-1/2 w-4 h-4 bg-primary rounded-full shadow-lg shadow-primary/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-white" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<p class="mt-4 text-[10px] font-bold text-primary tracking-[0.2em] uppercase">Huế (Vừa qua)</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-medium text-on-surface-variant mb-1">Hà Nội</p>
+<p class="text-4xl font-black font-headline text-on-surface">06:45</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant/10">
+<div class="flex -space-x-3">
+<img alt="Staff" class="w-8 h-8 rounded-full border-2 border-surface-container-lowest object-cover" data-alt="Female train captain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxRyomCaEhCPqfM7bfya4K81PLQUgLauJt9wnwv29cvEHzNbLWYwKBxR4eARpk5lAa8vrerd3CH9tWSR6VUjvnQDhtJptjdugHhZ9McPNzqQdoC9cb-UYtH44hGghorTGKrB6bc3L_u5Na7oJFJMnim376dPKNycTLfIXBOdfp75BveoyoBSLCHtuBTgcBf4NqZ43e8lNe86-tZBToxCi7VeRsEQwT6UKgddZjJlcj_D12kZd0eYDLEJPxSQlJJqy0NR2irI4qTA"/>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border-2 border-surface-container-lowest flex items-center justify-center text-[10px] font-bold text-on-surface-variant">+2</div>
+</div>
+<button class="px-6 py-3 rounded-xl bg-surface-container-high text-primary font-bold text-sm hover:bg-primary hover:text-white transition-all">Xem chi tiết</button>
+</div>
+</div>
+<!-- Train Card 3 (Highlight Card) -->
+<div class="group bg-primary-container rounded-3xl p-8 shadow-[0_12px_32px_rgba(87,0,19,0.15)] border border-transparent transition-all duration-300 text-white xl:col-span-1 2xl:col-span-1">
+<div class="flex justify-between items-start mb-8">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl text-white" data-icon="speed">speed</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-primary-container tracking-widest">CAO TỐC</p>
+<h3 class="text-2xl font-black font-headline">EXPRESS-01</h3>
+</div>
+</div>
+<div class="px-4 py-1.5 rounded-full bg-error text-white flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+<span class="text-xs font-bold uppercase tracking-wider">Ưu tiên</span>
+</div>
+</div>
+<div class="relative flex justify-between items-center mb-10 px-2">
+<div class="text-left">
+<p class="text-sm font-medium text-on-primary-container mb-1">Hải Phòng</p>
+<p class="text-4xl font-black font-headline">10:00</p>
+</div>
+<div class="flex-1 flex flex-col items-center px-6 relative">
+<div class="w-full h-[2px] bg-white/20 relative">
+<div class="absolute top-1/2 left-[10%] -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg shadow-white/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-primary" data-icon="bolt">bolt</span>
+</div>
+</div>
+<p class="mt-4 text-[10px] font-bold text-white tracking-[0.2em] uppercase">Đang khởi hành</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-medium text-on-primary-container mb-1">Lào Cai</p>
+<p class="text-4xl font-black font-headline">16:45</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-6 border-t border-white/10">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-primary-container" data-icon="restaurant">restaurant</span>
+<span class="text-xs font-medium text-on-primary-container">Dining Car: Open</span>
+</div>
+<button class="px-6 py-3 rounded-xl bg-white text-primary font-bold text-sm hover:bg-surface-container-high transition-all">Xem chi tiết</button>
+</div>
+</div>
+<!-- Map View Placeholder / Sidebar Content -->
+<div class="group bg-surface-container-low rounded-3xl p-4 xl:col-span-1 2xl:col-span-2 relative overflow-hidden min-h-[300px]">
+<div class="absolute inset-0 bg-cover bg-center opacity-40 grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="Top down aerial view of a vintage railway map" data-location="Vietnam" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD--OUGgpT1DPZak--S5HmUdIRXp9jNiO7vbUZsCoC_lCO2euF4zQEF_N12hHuyIHF4aUcfKKqSUQgXu_Wi5RSFky6OZMgpJNAeLMsJgrR_BqmrTtehMlFHy0p5nOivEbQ18NTb4RA2plplPiaXTB1KRNSdYh6mbv3xF5fXJyUIu8rKQr-y-jRfRzdxj_70E8H8ruORa4gkA_F1VPfz425sVU8_1kpJts1euNdzxyEVwwEZXKeCUTlh6Im_1d2JCVwpcjSAIwNUPQ')"></div>
+<div class="relative z-10 flex flex-col h-full p-4">
+<div class="bg-surface-container-lowest/90 backdrop-blur px-6 py-4 rounded-2xl w-fit shadow-xl border border-outline-variant/20">
+<h4 class="font-headline font-black text-primary text-lg">Bản đồ thời gian thực</h4>
+<p class="text-xs text-on-surface-variant mt-1">Hiện có 12 chuyến tàu đang vận hành trên mạng lưới.</p>
+<div class="mt-4 flex gap-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-[10px] font-bold uppercase">Bắc Nam</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-[10px] font-bold uppercase">Tuyến Tây Bắc</span>
+</div>
+</div>
+</div>
+<div class="mt-auto flex justify-end">
+<button class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-xl shadow-primary/30">
+<span class="material-symbols-outlined" data-icon="fullscreen">fullscreen</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Train Card 4 -->
+<div class="group bg-surface-container-lowest rounded-3xl p-8 shadow-[0_8px_24px_rgba(0,0,0,0.02)] border border-transparent hover:border-outline-variant/30 transition-all duration-300">
+<div class="flex justify-between items-start mb-8">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-2xl bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-3xl" data-icon="train">train</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface-variant tracking-widest">SỐ HIỆU</p>
+<h3 class="text-2xl font-black font-headline text-primary">SR-701</h3>
+</div>
+</div>
+<div class="px-4 py-1.5 rounded-full bg-tertiary/10 text-tertiary flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="text-xs font-bold uppercase tracking-wider">Đang chạy</span>
+</div>
+</div>
+<div class="relative flex justify-between items-center mb-10 px-2">
+<div class="text-left">
+<p class="text-sm font-medium text-on-surface-variant mb-1">Nha Trang</p>
+<p class="text-4xl font-black font-headline text-on-surface">19:30</p>
+</div>
+<div class="flex-1 flex flex-col items-center px-6 relative">
+<div class="w-full h-[2px] bg-outline-variant/30 relative">
+<div class="absolute top-1/2 left-1/4 -translate-y-1/2 w-4 h-4 bg-primary rounded-full shadow-lg shadow-primary/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-white" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<p class="mt-4 text-[10px] font-bold text-primary tracking-[0.2em] uppercase">Phan Thiết (22:00)</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-medium text-on-surface-variant mb-1">Sài Gòn</p>
+<p class="text-4xl font-black font-headline text-on-surface">04:30</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant/10">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="wifi">wifi</span>
+<span class="text-xs font-medium">Free High Speed</span>
+</div>
+<button class="px-6 py-3 rounded-xl bg-surface-container-high text-primary font-bold text-sm hover:bg-primary hover:text-white transition-all">Xem chi tiết</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB (Suppressed based on logic for details, but kept for main list view as "Book") -->
+<button class="fixed bottom-10 right-10 w-16 h-16 rounded-2xl bg-primary text-white shadow-[0_12px_24px_rgba(87,0,19,0.3)] flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+</body></html>

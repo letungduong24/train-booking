@@ -3,14 +3,13 @@ import { Separator } from "@/components/ui/separator"
 
 export default function WalletPage() {
     return (
-        <div className="container mx-auto py-8 px-4 space-y-6">
-            <div>
-                <h2 className="text-3xl font-bold tracking-tight">Ví điện tử</h2>
-                <p className="text-muted-foreground">
+        <div className="flex flex-1 flex-col gap-4">
+            <div className="mb-8">
+                <h1 className="text-4xl font-black text-primary mb-2">Ví điện tử</h1>
+                <p className="text-muted-foreground text-lg">
                     Quản lý số dư, nạp rút và lịch sử giao dịch.
                 </p>
             </div>
-            <Separator />
             <WalletDashboard />
         </div>
     )

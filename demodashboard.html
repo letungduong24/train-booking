@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sovereign Rail | Premium Travel Concierge</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-background": "#251819",
+                        "on-tertiary-fixed-variant": "#114d5b",
+                        "surface-container": "#ffe9e8",
+                        "secondary-fixed-dim": "#c6c6c9",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#002c36",
+                        "on-surface": "#251819",
+                        "surface-container-high": "#fbe2e2",
+                        "error-container": "#ffdad6",
+                        "outline": "#8c7071",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-container": "#7cb0c0",
+                        "on-surface-variant": "#584141",
+                        "surface-container-highest": "#f5dddd",
+                        "on-secondary-fixed-variant": "#45474a",
+                        "surface-dim": "#edd4d4",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#ffedec",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#004451",
+                        "outline-variant": "#e0bfbf",
+                        "primary-fixed": "#ffdada",
+                        "secondary": "#5d5e61",
+                        "secondary-container": "#e0dfe3",
+                        "secondary-fixed": "#e2e2e5",
+                        "surface-variant": "#f5dddd",
+                        "inverse-surface": "#3b2d2d",
+                        "surface": "#fff8f7",
+                        "primary-fixed-dim": "#ffb3b5",
+                        "on-primary-fixed-variant": "#8e0f28",
+                        "inverse-primary": "#ffb3b5",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#b6ebfb",
+                        "on-primary-fixed": "#40000b",
+                        "primary-container": "#800020",
+                        "surface-tint": "#af2b3e",
+                        "on-tertiary-fixed": "#001f26",
+                        "on-secondary-container": "#616265",
+                        "on-primary-container": "#ff828a",
+                        "on-secondary-fixed": "#1a1c1e",
+                        "surface-bright": "#fff8f7",
+                        "tertiary-fixed-dim": "#9acfde",
+                        "primary": "#570013",
+                        "on-primary": "#ffffff",
+                        "background": "#fff8f7",
+                        "surface-container-low": "#fff0f0"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fff8f7; color: #251819; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background text-on-background">
+<!-- SideNavBar (Shared Component) -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col py-8 px-4 bg-[#fff0f0] dark:bg-[#1a1111] z-50">
+<div class="mb-12 px-2">
+<h1 class="text-2xl font-extrabold text-[#570013] dark:text-[#ffb4ab] font-headline tracking-tight">Sovereign Rail</h1>
+<p class="text-xs font-medium opacity-60 tracking-wider">Premium Travel Concierge</p>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Active: Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 text-[#570013] dark:text-[#ffb4ab] font-bold border-r-4 border-[#570013] bg-[#fbe2e2] dark:bg-[#3d000a] transition-colors duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-headline tracking-tight">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#251819] dark:text-[#f0dede] opacity-70 hover:bg-[#fbe2e2] dark:hover:bg-[#3d000a] transition-colors duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="confirmation_number">confirmation_number</span>
+<span class="font-headline tracking-tight">My Tickets</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#251819] dark:text-[#f0dede] opacity-70 hover:bg-[#fbe2e2] dark:hover:bg-[#3d000a] transition-colors duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-headline tracking-tight">Schedule</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#251819] dark:text-[#f0dede] opacity-70 hover:bg-[#fbe2e2] dark:hover:bg-[#3d000a] transition-colors duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-headline tracking-tight">Wallet</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#251819] dark:text-[#f0dede] opacity-70 hover:bg-[#fbe2e2] dark:hover:bg-[#3d000a] transition-colors duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+<span class="font-headline tracking-tight">Support</span>
+</a>
+</nav>
+<div class="mt-auto px-4 py-4 bg-surface-container-high rounded-xl">
+<div class="flex items-center gap-3">
+<img alt="User profile" class="w-10 h-10 rounded-full bg-primary-fixed" data-alt="User profile avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuuXUQ3GmiklcxX_HLyPykKJtEDcSPQT0rO_R-smckftITlHVElqBANkZa1NvChyQ53GylpRySmSQrBQtj1lguQS9Cq3vXWHhTgZtdvCk-VvUL_tgPV5EeJYNiUKzpMlPTRsib1Vb7s27jkXLw-QVAIKzDRoW9XhYVZ5Qte2WZNw-jRi2dj0LUFSiX5kHitqRze6og7v8YsV2z0gbDh1WYoJI5aIt1IHvOSPQJLHx-XcYy7NBDgMBJZ2Ow5cfYD6Z-2HbwKvCF6w"/>
+<div>
+<p class="text-sm font-bold">Julian Vane</p>
+<p class="text-[10px] opacity-60">Elite Member</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopNavBar (Shared Component) -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 flex justify-between items-center h-20 px-8 ml-64 bg-[#fff8f7]/60 dark:bg-[#1a1111]/60 backdrop-blur-xl">
+<div class="relative w-96">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2.5 pl-12 pr-4 text-sm focus:ring-2 focus:ring-[#570013]/20 transition-all outline-none" placeholder="Search routes, stations or tickets..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative text-[#570013] hover:opacity-100 transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-[#570013] hover:opacity-100 transition-all">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant opacity-30"></div>
+<div class="flex items-center gap-3">
+<span class="text-sm font-medium text-on-surface">Sovereign Rail</span>
+<span class="material-symbols-outlined text-[#570013]" data-icon="travel_explore">travel_explore</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 p-8 min-h-screen">
+<!-- Section 1: Welcome Banner -->
+<section class="mb-10">
+<div class="relative h-64 rounded-xl overflow-hidden bg-primary-container flex items-center px-12 text-on-primary">
+<div class="z-10 max-w-xl">
+<h2 class="text-4xl md:text-5xl font-extrabold font-headline mb-4 leading-tight">Good morning, traveler.</h2>
+<p class="text-lg opacity-90 font-body mb-6">Your next premium journey to the Highlands awaits. Check your status or book a new destination.</p>
+<button class="bg-surface-container-lowest text-primary px-8 py-3 rounded-xl font-bold font-headline transition-transform hover:scale-105 duration-150">
+                        View Itinerary
+                    </button>
+</div>
+<!-- Abstract Gradient Decorative Background -->
+<div class="absolute inset-0 bg-gradient-to-br from-primary via-primary-container to-tertiary-container opacity-50"></div>
+<div class="absolute right-0 top-0 h-full w-1/2 opacity-20 pointer-events-none" data-alt="Abstract silhouette of a luxury high speed train" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAY6xu562i4pypf6Srk14fvxz-XTjNyVSKd-sMJjKix5uxgQmlwBXq0Zs-5PvLTJWONMgzVP7s2pR2s0mvnH8Y-qQGlJ30PJflNDsO2tffvwmmHIfC49WeA0foD4ns1lY2I48WzueBZ4OVzv0Vw02XdLsjumpvpQrcT-lBhwj1stXfSOkuoUrcuTW-zG9GrjOpPbPONNFdSz5h6s8kvLC_IFOb2w34B7PHYYCeF4G3OlRfcrcciWOy21uMEBqqrvrtSa32LZJUHjA'); background-size: cover; background-position: center;"></div>
+</div>
+</section>
+<!-- Section 2: Key Stats -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<div class="bg-surface-container-lowest p-6 rounded-xl border-none transition-all hover:bg-surface-container-low group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 rounded-lg bg-surface-container-high text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="moving">moving</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline">Status</span>
+</div>
+<h3 class="text-3xl font-extrabold font-headline mb-1">02</h3>
+<p class="text-sm text-on-surface-variant font-medium">Active Trips</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border-none transition-all hover:bg-surface-container-low group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 rounded-lg bg-surface-container-high text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline">Upcoming</span>
+</div>
+<h3 class="text-3xl font-extrabold font-headline mb-1">05</h3>
+<p class="text-sm text-on-surface-variant font-medium">Scheduled Trips</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border-none transition-all hover:bg-surface-container-low group">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 rounded-lg bg-surface-container-high text-error group-hover:bg-error group-hover:text-on-error transition-colors">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline">Pending</span>
+</div>
+<h3 class="text-3xl font-extrabold font-headline mb-1">01</h3>
+<p class="text-sm text-on-surface-variant font-medium">Payment Required</p>
+</div>
+<div class="bg-primary p-6 rounded-xl border-none transition-all shadow-lg text-on-primary">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 rounded-lg bg-primary-container text-on-primary-container">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest opacity-60">Balance</span>
+</div>
+<h3 class="text-3xl font-extrabold font-headline mb-1">$4,850.00</h3>
+<p class="text-sm opacity-80 font-medium">Wallet Balance</p>
+</div>
+</section>
+<!-- Bento Grid Section: Transactions, Actions, & Schedule -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Section 3: Recent Transactions Table (Span 8) -->
+<section class="lg:col-span-8 bg-surface-container-lowest rounded-xl p-8">
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-xl font-extrabold font-headline">Recent Transactions</h3>
+<button class="text-sm font-bold text-primary hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-[10px] font-bold uppercase tracking-widest text-outline border-b border-outline-variant/20">
+<th class="pb-4">Transaction Details</th>
+<th class="pb-4">Date</th>
+<th class="pb-4">Amount</th>
+<th class="pb-4 text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="group hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="train">train</span>
+</div>
+<div>
+<p class="text-sm font-bold">Edinburgh Express - First Class</p>
+<p class="text-xs text-on-surface-variant">Ticket #SR-9921</p>
+</div>
+</div>
+</td>
+<td class="py-4 text-sm text-on-surface-variant">Oct 24, 2023</td>
+<td class="py-4 text-sm font-bold">$320.00</td>
+<td class="py-4 text-right">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant text-[10px] font-bold rounded-full">Completed</span>
+</td>
+</tr>
+<tr class="group hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<div>
+<p class="text-sm font-bold">Wallet Recharge</p>
+<p class="text-xs text-on-surface-variant">Bank Transfer **** 4421</p>
+</div>
+</div>
+</td>
+<td class="py-4 text-sm text-on-surface-variant">Oct 21, 2023</td>
+<td class="py-4 text-sm font-bold">$1,000.00</td>
+<td class="py-4 text-right">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant text-[10px] font-bold rounded-full">Completed</span>
+</td>
+</tr>
+<tr class="group hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="train">train</span>
+</div>
+<div>
+<p class="text-sm font-bold">London Direct - Sleeper Cabin</p>
+<p class="text-xs text-on-surface-variant">Ticket #SR-8840</p>
+</div>
+</div>
+</td>
+<td class="py-4 text-sm text-on-surface-variant">Oct 19, 2023</td>
+<td class="py-4 text-sm font-bold">$450.00</td>
+<td class="py-4 text-right">
+<span class="px-3 py-1 bg-error-container text-on-error-container text-[10px] font-bold rounded-full">Pending</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Right Sidebar Column (Span 4) -->
+<div class="lg:col-span-4 space-y-8">
+<!-- Section 4: Quick Actions -->
+<section class="bg-surface-container-low p-8 rounded-xl">
+<h3 class="text-lg font-extrabold font-headline mb-6">Quick Actions</h3>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex flex-col items-center justify-center gap-3 p-6 bg-surface-container-lowest rounded-xl hover:bg-primary hover:text-on-primary transition-all group">
+<span class="material-symbols-outlined text-primary group-hover:text-on-primary" data-icon="shopping_cart">shopping_cart</span>
+<span class="text-xs font-bold">Buy Ticket</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 p-6 bg-surface-container-lowest rounded-xl hover:bg-primary hover:text-on-primary transition-all group">
+<span class="material-symbols-outlined text-primary group-hover:text-on-primary" data-icon="add_card">add_card</span>
+<span class="text-xs font-bold">Recharge</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 p-6 bg-surface-container-lowest rounded-xl hover:bg-primary hover:text-on-primary transition-all group">
+<span class="material-symbols-outlined text-primary group-hover:text-on-primary" data-icon="map">map</span>
+<span class="text-xs font-bold">Live Map</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 p-6 bg-surface-container-lowest rounded-xl hover:bg-primary hover:text-on-primary transition-all group">
+<span class="material-symbols-outlined text-primary group-hover:text-on-primary" data-icon="loyalty">loyalty</span>
+<span class="text-xs font-bold">Rewards</span>
+</button>
+</div>
+</section>
+<!-- Section 5: Mini Calendar / Schedule Preview -->
+<section class="bg-surface-container-highest p-8 rounded-xl">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-lg font-extrabold font-headline">Upcoming Schedule</h3>
+<span class="material-symbols-outlined text-primary" data-icon="more_horiz">more_horiz</span>
+</div>
+<div class="space-y-4">
+<div class="flex gap-4 p-4 bg-surface-container-lowest rounded-lg border-l-4 border-primary">
+<div class="flex flex-col items-center justify-center px-3 border-r border-outline-variant/20">
+<span class="text-[10px] font-bold text-outline">OCT</span>
+<span class="text-lg font-extrabold font-headline">28</span>
+</div>
+<div>
+<p class="text-xs font-bold">14:30 - London St. Pancras</p>
+<p class="text-[10px] text-on-surface-variant">Sovereign Line • Platform 4</p>
+</div>
+</div>
+<div class="flex gap-4 p-4 bg-surface-container-lowest/60 rounded-lg opacity-80">
+<div class="flex flex-col items-center justify-center px-3 border-r border-outline-variant/20">
+<span class="text-[10px] font-bold text-outline">OCT</span>
+<span class="text-lg font-extrabold font-headline">30</span>
+</div>
+<div>
+<p class="text-xs font-bold">09:15 - Manchester Piccadilly</p>
+<p class="text-[10px] text-on-surface-variant">Highland Express • Platform 12</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-3 border border-primary/20 rounded-lg text-xs font-bold text-primary hover:bg-primary hover:text-on-primary transition-all">
+                        Synchronize Calendar
+                    </button>
+</section>
+</div>
+</div>
+</main>
+<!-- FAB for Quick Booking (Suppressed on detail pages as per mandate, shown here for dashboard) -->
+<button class="fixed bottom-8 right-8 w-16 h-16 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform z-50 group">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+<span class="absolute right-20 bg-primary text-on-primary px-4 py-2 rounded-lg text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Book New Journey</span>
+</button>
+</body></html>

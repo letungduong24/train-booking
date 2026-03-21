@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { PassengerSearchDialog, type PassengerInfo } from "./passenger-search-dialog"
+import { RouteMap } from "@/features/routes/components/route-map"
 
 interface AdminSeatMapProps {
     trip: TripDetail
@@ -60,6 +61,35 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
     const [toStationId, setToStationId] = useState<string>(
         trip.route?.stations?.[trip.route.stations.length - 1]?.stationId || ""
     )
+
+    const orderedStations = [...(trip.route?.stations || [])].sort((a, b) => a.index - b.index)
+
+    const handleStationClick = (stationId: string) => {
+        const clickedIndex = orderedStations.findIndex((s) => s.stationId === stationId)
+        if (clickedIndex === -1 || orderedStations.length < 2) return
+
+        const fromIndex = orderedStations.findIndex((s) => s.stationId === fromStationId)
+        const toIndex = orderedStations.findIndex((s) => s.stationId === toStationId)
+
+        if (fromIndex === -1 || toIndex === -1 || fromIndex >= toIndex) {
+            const safeFromIndex = Math.min(clickedIndex, orderedStations.length - 2)
+            setFromStationId(orderedStations[safeFromIndex].stationId)
+            setToStationId(orderedStations[safeFromIndex + 1].stationId)
+            return
+        }
+
+        // Click on/left of A moves A, click right of A moves B.
+        if (clickedIndex <= fromIndex) {
+            const safeFromIndex = Math.min(clickedIndex, orderedStations.length - 2)
+            setFromStationId(orderedStations[safeFromIndex].stationId)
+            if (toIndex <= safeFromIndex) {
+                setToStationId(orderedStations[safeFromIndex + 1].stationId)
+            }
+            return
+        }
+
+        setToStationId(orderedStations[clickedIndex].stationId)
+    }
 
     const { data: coachWithPrices, isLoading: isCoachLoading } = useCoachWithPrices(
         {
@@ -147,7 +177,7 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
                 <div className="space-y-6 min-w-0">
                     {/* Stations & Coach Navi */}
                     <div className="space-y-4 border-b pb-4">
-                        <div className="flex flex-col md:flex-row gap-4 items-end">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             <div className="flex-1 w-full space-y-2">
                                 <Label>Ga đi</Label>
                                 <Select value={fromStationId} onValueChange={(val) => {
@@ -161,13 +191,13 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
                                         if (nextStation) setToStationId(nextStation.stationId)
                                     }
                                 }}>
-                                    <SelectTrigger>
+                                    <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Chọn ga đi" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {trip.route?.stations.map((s, index) => (
+                                        {orderedStations.map((s, index) => (
                                             // Hide last station as From Station
-                                            index < (trip.route?.stations.length || 0) - 1 && (
+                                            index < orderedStations.length - 1 && (
                                                 <SelectItem key={s.stationId} value={s.stationId}>
                                                     {s.station.name}
                                                 </SelectItem>
@@ -179,12 +209,12 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
                             <div className="flex-1 w-full space-y-2">
                                 <Label>Ga đến</Label>
                                 <Select value={toStationId} onValueChange={setToStationId}>
-                                    <SelectTrigger>
+                                    <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Chọn ga đến" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {trip.route?.stations.map((s, index) => {
-                                            const fromIndex = trip.route?.stations?.findIndex(st => st.stationId === fromStationId) ?? -1
+                                        {orderedStations.map((s, index) => {
+                                            const fromIndex = orderedStations.findIndex(st => st.stationId === fromStationId)
                                             // Only show stations AFTER From Station
                                             if (index > fromIndex) {
                                                 return (
@@ -198,6 +228,22 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
                                     </SelectContent>
                                 </Select>
                             </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Chọn nhanh trên bản đồ</Label>
+                            <RouteMap
+                                stations={orderedStations}
+                                className="h-[300px]"
+                                pathCoordinates={trip.route?.pathCoordinates}
+                                selectedFromStationId={fromStationId}
+                                selectedToStationId={toStationId}
+                                onStationClick={handleStationClick}
+                                highlightSegment={{
+                                    fromStationId,
+                                    toStationId,
+                                }}
+                            />
                         </div>
 
                         <BookingCoachNavigationBar

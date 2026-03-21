@@ -1,5 +1,7 @@
-import Link from "next/link"
+"use client"
 
+import Link from "next/link"
+import { useAuthStore } from "@/lib/store/auth.store"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, CheckCircle2 } from "lucide-react"
 
@@ -37,6 +39,8 @@ const journeys = [
 ]
 
 export function JourneySection() {
+    const user = useAuthStore((state) => state.user)
+
     return (
         <section className="bg-background py-24 text-foreground">
             <div className="container mx-auto px-4">
@@ -50,53 +54,61 @@ export function JourneySection() {
                 </div>
 
                 <div className="grid gap-8 lg:grid-cols-3">
-                    {journeys.map((journey) => (
-                        <div
-                            key={journey.id}
-                            className="group relative h-96 overflow-hidden rounded-2xl border border-border bg-card"
-                        >
+                    {journeys.map((journey) => {
+                        let finalHref = journey.href
+                        if (user) {
+                            if (journey.id === 1) finalHref = "/dashboard/booking"
+                            if (journey.id === 2) finalHref = "/dashboard/wallet"
+                        }
+
+                        return (
                             <div
-                                className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
-                                style={{
-                                    backgroundImage: `url(${journey.image})`,
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center',
-                                }}
-                            />
+                                key={journey.id}
+                                className="group relative h-96 overflow-hidden rounded-2xl border border-border bg-card"
+                            >
+                                <div
+                                    className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+                                    style={{
+                                        backgroundImage: `url(${journey.image})`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                    }}
+                                />
 
-                            <div className="absolute inset-0 bg-linear-to-t from-background via-background/50 to-transparent" />
-                            <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                                <div className="mb-4 flex items-center justify-between">
-                                    <h3 className="text-3xl font-bold text-white">{journey.title}</h3>
-                                    <span className="rounded-full bg-primary px-3 py-1 text-sm font-bold text-primary-foreground">
-                                        {journey.tag}
-                                    </span>
-                                </div>
-
-                                <p className="mb-6 max-w-md text-gray-300">
-                                    {journey.description}
-                                </p>
-
-                                <div className="border-t border-white/20 pt-4">
-                                    <div className="mb-4 space-y-2 text-sm text-gray-200">
-                                        {journey.highlights.map((highlight) => (
-                                            <div key={highlight} className="flex items-center gap-2">
-                                                <CheckCircle2 className="h-4 w-4 text-primary" />
-                                                <span>{highlight}</span>
-                                            </div>
-                                        ))}
+                                <div className="absolute inset-0 bg-linear-to-t from-background via-background/50 to-transparent" />
+                                <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                                    <div className="mb-4 flex items-center justify-between">
+                                        <h3 className="text-3xl font-bold text-white">{journey.title}</h3>
+                                        <span className="rounded-full bg-primary px-3 py-1 text-sm font-bold text-primary-foreground">
+                                            {journey.tag}
+                                        </span>
                                     </div>
 
-                                    <Button asChild variant="outline" className="h-9 border-white/20 bg-white/10 text-xs text-white hover:bg-white/20 hover:text-white">
-                                        <Link href={journey.href}>
-                                            {journey.ctaLabel}
-                                            <ArrowRight className="ml-2 h-4 w-4" />
-                                        </Link>
-                                    </Button>
+                                    <p className="mb-6 max-w-md text-gray-300">
+                                        {journey.description}
+                                    </p>
+
+                                    <div className="border-t border-white/20 pt-4">
+                                        <div className="mb-4 space-y-2 text-sm text-gray-200">
+                                            {journey.highlights.map((highlight) => (
+                                                <div key={highlight} className="flex items-center gap-2">
+                                                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                                                    <span>{highlight}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <Button asChild variant="outline" className="h-9 border-white/20 bg-white/10 text-xs text-white hover:bg-white/20 hover:text-white">
+                                            <Link href={finalHref}>
+                                                {user && journey.id === 2 ? "Nạp tiền ngay" : journey.ctaLabel}
+                                                <ArrowRight className="ml-2 h-4 w-4" />
+                                            </Link>
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </div>
             </div>
         </section>

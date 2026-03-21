@@ -80,6 +80,12 @@ export class BookingController {
     return this.bookingService.cancelBooking(code, userId);
   }
 
+  @Get('my-active-trips')
+  @UseGuards(JwtAuthGuard)
+  async getMyActiveTrips(@Req() req: any) {
+    return this.bookingService.getMyActiveTrips(req.user.id);
+  }
+
   @Get('my-bookings')
   @UseGuards(JwtAuthGuard)
   async getMyBookings(@Req() req: any, @Query() query: FilterBookingDto) {

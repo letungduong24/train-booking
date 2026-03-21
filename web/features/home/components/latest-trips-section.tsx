@@ -9,7 +9,10 @@ import { Button } from "@/components/ui/button"
 import { useTrips } from "@/features/trips/hooks/use-trips"
 import { TripStatusBadge } from "@/lib/utils/trip-status"
 
+import { useAuthStore } from "@/lib/store/auth.store"
+
 export function LatestTripsSection() {
+    const user = useAuthStore((state) => state.user)
     const { data, isLoading, isError } = useTrips({
         page: 1,
         limit: 3,
@@ -31,7 +34,7 @@ export function LatestTripsSection() {
                     </div>
 
                     <Button asChild variant="outline" className="w-fit">
-                        <Link href="/booking">
+                        <Link href={user ? "/dashboard/booking" : "/booking"}>
                             Tìm chuyến khác
                             <ArrowRight className="h-4 w-4" />
                         </Link>
@@ -39,11 +42,11 @@ export function LatestTripsSection() {
                 </div>
 
                 {isLoading ? (
-                    <div className="flex flex-wrap gap-6">
+                    <div className="grid gap-6 lg:grid-cols-3">
                         {Array.from({ length: 3 }).map((_, index) => (
                             <div
                                 key={index}
-                                className="h-64 animate-pulse rounded-3xl border border-border bg-muted/60 flex-1 basis-[min(100%,18rem)]"
+                                className="h-64 animate-pulse rounded-3xl border border-border bg-muted/60"
                             />
                         ))}
                     </div>
@@ -68,18 +71,20 @@ export function LatestTripsSection() {
                         </p>
                     </div>
                 ) : (
-                    <div className="flex flex-wrap gap-6">
+                    <div className="flex justify-between gap-6 lg:grid-cols-3">
                         {trips.map((trip) => {
                             const firstStationId = trip.route?.stations?.[0]?.stationId
                             const lastStationId = trip.route?.stations?.[trip.route.stations.length - 1]?.stationId
+                            
+                            const basePath = user ? "/dashboard/booking" : "/booking"
                             const bookingHref = firstStationId && lastStationId
-                                ? `/booking/${trip.id}?from=${firstStationId}&to=${lastStationId}`
-                                : `/booking/${trip.id}`
+                                ? `${basePath}/${trip.id}?from=${firstStationId}&to=${lastStationId}`
+                                : `${basePath}/${trip.id}`
 
                             return (
                             <article
                                 key={trip.id}
-                                className="flex-1 basis-[min(100%,18rem)] rounded-3xl border border-border bg-card p-6 shadow-sm transition-transform duration-300 hover:-translate-y-1"
+                                className="rounded-3xl border border-border bg-card p-6 shadow-sm transition-transform duration-300 hover:-translate-y-1"
                             >
                                 <div className="flex items-start justify-between gap-4">
                                     <h3 className="mt-2 text-2xl font-bold leading-tight text-foreground">

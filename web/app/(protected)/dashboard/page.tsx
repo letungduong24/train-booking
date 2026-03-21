@@ -4,64 +4,21 @@ import { useAuthStore } from '@/lib/store/auth.store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
-import { useMyBookings } from '@/features/booking/hooks/use-my-bookings';
+import { useDashboardOverview } from '@/features/dashboard/hooks/use-dashboard-overview';
 import { Spinner } from '@/components/ui/spinner';
-import { Calendar, Clock, CreditCard, History, Ticket, User, ArrowRight, MapPin, Train } from 'lucide-react';
+import { Calendar, Clock, CreditCard, History, Ticket, ArrowRight, Train, Wallet, Map, Heart } from 'lucide-react';
 import Link from 'next/link';
+import { format } from 'date-fns';
+import { vi } from 'date-fns/locale';
 
-import { timeSync } from '@/lib/time-sync';
-import { useMemo } from 'react';
-import { DashboardTripCard } from './components/dashboard-trip-card';
-import { DashboardActivityItem } from './components/dashboard-activity-item';
+import { DashboardTripCard, DashboardTransactionItem } from '@/features/dashboard/components';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function OnboardPage() {
+export default function DashboardPage() {
     const user = useAuthStore((state) => state.user);
     const router = useRouter();
 
-    // Fetch recent bookings (limit 10 should be enough to find an upcoming one usually)
-    const { data, isLoading } = useMyBookings({
-        page: 1,
-        limit: 10,
-        status: 'ALL',
-    });
-
-    // Check for pending bookings
-    const { data: pendingData } = useMyBookings({
-        page: 1,
-        limit: 1,
-        status: 'PENDING',
-    });
-
-    const pendingCount = pendingData?.meta?.total || 0;
-
-    const bookings = data?.data || [];
-
-    // ... (rest of filtering logic)
-
-    // Get all in-progress trips: Status is PAID and trip status is IN_PROGRESS
-    // Sort by departure time ascending, limit to 5 trips
-    const inProgressTrips = useMemo(() => {
-        return bookings
-            .filter(b =>
-                b.status === 'PAID' &&
-                b.trip.status === 'IN_PROGRESS'
-            )
-            .sort((a, b) => new Date(a.trip.departureTime).getTime() - new Date(b.trip.departureTime).getTime())
-            .slice(0, 3);
-    }, [bookings]);
-
-    // Get all upcoming trips: Status is PAID and departure time is in future (Pending filtered out)
-    // Sort by departure time ascending, limit to 5 trips
-    const upcomingTrips = useMemo(() => {
-        const now = timeSync.now();
-        return bookings
-            .filter(b =>
-                b.status === 'PAID' &&
-                new Date(b.trip.departureTime) > now
-            )
-            .sort((a, b) => new Date(a.trip.departureTime).getTime() - new Date(b.trip.departureTime).getTime())
-            .slice(0, 3);
-    }, [bookings]);
+    const { data: overview, isLoading } = useDashboardOverview();
 
     if (isLoading && !user) {
         return (
@@ -70,162 +27,255 @@ export default function OnboardPage() {
             </div>
         );
     }
+
+    const stats = overview?.stats;
+    const pendingCount = stats?.pendingCount || 0;
+    const activeCount = stats?.activeCount || 0;
+    const upcomingTrips = overview?.upcomingTrips || [];
+    const pendingBookings = overview?.pendingBookings || [];
+    const recentTransactions = overview?.recentTransactions || [];
+    const activeTrips = overview?.activeTrips || [];
+
+    const currencyFormatter = new Intl.NumberFormat('vi-VN', { 
+        style: 'currency', 
+        currency: 'VND' 
+    });
+
     return (
-        <div className="container mx-auto py-8 px-4 space-y-8">
-            {/* Pending Payment Alert */}
-            {pendingCount > 0 && (
-                <Link
-                    href="/dashboard/history?tab=PENDING"
-                    className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900 rounded-lg p-4 flex items-center justify-between cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors"
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="bg-yellow-100 dark:bg-yellow-900/50 p-2 rounded-full text-yellow-700 dark:text-yellow-500">
-                            <Clock className="h-5 w-5" />
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-yellow-800 dark:text-yellow-500">Thanh toán đang chờ xử lý</h3>
-                            <p className="text-sm text-yellow-700 dark:text-yellow-600">
-                                Bạn có <span className="font-bold">{pendingCount} đơn hàng</span> cần thanh toán.
-                            </p>
-                        </div>
+        <div className="flex flex-1 flex-col gap-8 pb-10">
+            {/* Section 1: Welcome Banner */}
+            <section className="">
+                <div className="relative rounded-[2rem] overflow-hidden bg-gradient-to-br from-[#802222] to-rose-900 shadow-xl flex items-center p-8 text-white group border border-rose-800/20">
+                    <div className="z-10 max-w-2xl relative">
+                        <p className="text-xs font-medium mb-1.5 opacity-80">Xin chào trở lại</p>
+                        <h1 className="text-2xl font-bold mb-4 leading-tight tracking-tight">
+                            Chúc {user?.name?.split(' ')[0] || 'bạn'} một ngày <br/>
+                            hành trình <span className="text-rose-200">tuyệt vời!</span>
+                        </h1>
+                        <Button 
+                            asChild 
+                            className="bg-white text-[#802222] hover:bg-rose-50 font-medium text-sm h-10 px-6 rounded-xl transition-all shadow-md shadow-rose-950/10 hover:scale-105 active:scale-95"
+                        >
+                            <Link href="/dashboard/history">Xem hành trình</Link>
+                        </Button>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-yellow-600 dark:text-yellow-500" />
-                </Link>
-            )}
-
-            {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Xin chào, {user?.name || 'Bạn'}!</h1>
-                    <p className="text-muted-foreground mt-1">
-                        Chào mừng trở lại với Railflow. Chúc bạn một ngày tốt lành.
-                    </p>
+                    
+                    {/* Decorative elements */}
+                    <div className="absolute right-0 top-0 w-1/3 h-full bg-white/5 skew-x-[-20deg] translate-x-12 -z-0" />
+                    <Train className="absolute -right-20 -bottom-10 w-96 h-96 opacity-[0.03] -rotate-12 group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute -left-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
                 </div>
-                <div className="flex items-center gap-2">
-                    <Button asChild variant="outline" className="hidden sm:flex bg-background hover:bg-accent hover:text-accent-foreground">
-                        <Link href="/user/wallet">
-                            <CreditCard className="mr-2 h-4 w-4" /> Ví của tôi
-                        </Link>
-                    </Button>
-                    <Button asChild variant="outline" className="hidden sm:flex bg-background hover:bg-accent hover:text-accent-foreground">
-                        <Link href="/dashboard/history">
-                            <History className="mr-2 h-4 w-4" /> Lịch sử đặt vé
-                        </Link>
-                    </Button>
-                    <Button asChild className="bg-primary shadow-lg hover:shadow-xl transition-all">
-                        <Link href="/booking">
-                            <Ticket className="mr-2 h-4 w-4" /> Đặt vé mới
-                        </Link>
-                    </Button>
+            </section>
+
+            {/* Section 2: Key Stats */}
+            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white dark:bg-zinc-900 rounded-[1.25rem] p-5 shadow-xl shadow-rose-900/5 transition-all hover:scale-[1.01] border border-gray-100 dark:border-zinc-800 relative overflow-hidden group">
+                    <div className="flex justify-between items-start mb-4 relative z-10">
+                        <div className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-zinc-800 flex items-center justify-center text-gray-400 transition-colors group-hover:bg-[#802222] group-hover:text-white shrink-0">
+                            <Train className="h-4 w-4" />
+                        </div>
+                        <span className="text-[10px] font-medium text-muted-foreground opacity-40 uppercase tracking-widest">Status</span>
+                    </div>
+                    <h3 className="text-2xl font-bold mb-0.5 leading-none tracking-tight tabular-nums relative z-10">{String(activeCount).padStart(2, '0')}</h3>
+                    <p className="text-[11px] text-muted-foreground font-medium relative z-10">Chuyến đang chạy</p>
+                    
+                    {/* Decorative backgrounds */}
+                    <div className="absolute -right-16 -top-16 w-40 h-40 bg-rose-100/30 dark:bg-rose-950/10 rounded-full blur-3xl z-0" />
+                    <div className="absolute -left-16 -bottom-16 w-32 h-32 bg-rose-100/20 dark:bg-rose-950/5 rounded-full blur-3xl z-0" />
                 </div>
-            </div>
 
-
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* In-Progress Trips Section */}
-                <Card className="shadow-sm overflow-hidden">
-                    <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                            <CardTitle className="text-xl flex items-center gap-2">
-                                <Train className="h-5 w-5 text-green-600" />
-                                Chuyến đang chạy
-                            </CardTitle>
-
+                <div className="bg-white dark:bg-zinc-900 rounded-[1.25rem] p-5 shadow-xl shadow-rose-900/5 transition-all hover:scale-[1.01] border border-gray-100 dark:border-zinc-800 relative overflow-hidden group">
+                    <div className="flex justify-between items-start mb-4 relative z-10">
+                        <div className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-zinc-800 flex items-center justify-center text-gray-400 transition-colors group-hover:bg-[#802222] group-hover:text-white shrink-0">
+                            <Calendar className="h-4 w-4" />
                         </div>
-                        <CardDescription>
-                            Các chuyến tàu của bạn đang trên đường đi
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        {inProgressTrips.length > 0 ? (
-                            <div className="space-y-4">
-                                {inProgressTrips.map((booking) => (
-                                    <DashboardTripCard key={booking.id} booking={booking} />
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-8 text-muted-foreground">
-                                <div className="bg-background p-3 rounded-full mb-3 mx-auto w-fit">
-                                    <Train className="h-6 w-6 text-muted-foreground" />
-                                </div>
-                                <p className="font-medium">Không có chuyến nào đang chạy</p>
-                                <p className="text-sm mt-1">Các chuyến tàu của bạn sẽ hiển thị ở đây khi đang di chuyển</p>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
+                        <span className="text-[10px] font-medium text-muted-foreground opacity-40 uppercase tracking-widest">Upcoming</span>
+                    </div>
+                    <h3 className="text-2xl font-bold mb-0.5 leading-none tracking-tight tabular-nums relative z-10">{String(upcomingTrips.length).padStart(2, '0')}</h3>
+                    <p className="text-[11px] text-muted-foreground font-medium relative z-10">Chuyến sắp tới</p>
 
-                {/* Upcoming Trips Section */}
-                <Card className="shadow-sm overflow-hidden">
-                    <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                            <CardTitle className="text-xl flex items-center gap-2">
-                                <Calendar className="h-5 w-5 text-primary" />
-                                Chuyến đi sắp tới
-                            </CardTitle>
+                    {/* Decorative backgrounds */}
+                    <div className="absolute -right-16 -top-16 w-40 h-40 bg-rose-100/30 dark:bg-rose-950/10 rounded-full blur-3xl z-0" />
+                    <div className="absolute -left-16 -bottom-16 w-32 h-32 bg-rose-100/20 dark:bg-rose-950/5 rounded-full blur-3xl z-0" />
+                </div>
 
+                <div className="bg-white dark:bg-zinc-900 rounded-[1.25rem] p-5 shadow-xl shadow-rose-900/5 transition-all hover:scale-[1.01] border border-gray-100 dark:border-zinc-800 relative overflow-hidden group">
+                    <div className="flex justify-between items-start mb-4 relative z-10">
+                        <div className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-zinc-800 flex items-center justify-center text-gray-400 transition-colors group-hover:bg-[#802222] group-hover:text-white shrink-0">
+                            <Clock className="h-4 w-4" />
                         </div>
-                        <CardDescription>
-                            Hãy chuẩn bị sẵn sàng cho các hành trình sắp tới
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        {upcomingTrips.length > 0 ? (
-                            <div className="space-y-4">
-                                {upcomingTrips.map((booking) => (
-                                    <DashboardTripCard key={booking.id} booking={booking} />
-                                ))}
+                        <span className="text-[10px] font-medium text-muted-foreground opacity-40 uppercase tracking-widest">Pending</span>
+                    </div>
+                    <h3 className="text-2xl font-bold mb-0.5 leading-none tracking-tight tabular-nums text-[#802222] relative z-10">{String(pendingCount).padStart(2, '0')}</h3>
+                    <p className="text-[11px] text-muted-foreground font-medium relative z-10">Chờ thanh toán</p>
+
+                    {/* Decorative backgrounds */}
+                    <div className="absolute -right-16 -top-16 w-40 h-40 bg-rose-100/30 dark:bg-rose-950/10 rounded-full blur-3xl z-0" />
+                    <div className="absolute -left-16 -bottom-16 w-32 h-32 bg-rose-100/20 dark:bg-rose-950/5 rounded-full blur-3xl z-0" />
+                </div>
+
+                <div className="bg-gradient-to-br from-[#802222] to-rose-900 text-white rounded-2xl p-5 shadow-lg shadow-rose-950/10 relative overflow-hidden group transition-all hover:scale-[1.02]">
+                    <div className="flex justify-between items-start mb-4 relative z-10">
+                        <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white backdrop-blur-md">
+                            <Wallet className="h-4 w-4" />
+                        </div>
+                        <span className="text-[11px] font-medium text-white/80">Balance</span>
+                    </div>
+                    <h3 className="text-xl font-bold mb-1 p-0 leading-none tracking-tight tabular-nums relative z-10">{currencyFormatter.format(stats?.balance || 0)}</h3>
+                    <p className="text-xs text-white/90 font-medium mt-1 relative z-10">Số dư hiện tại</p>
+
+                    <Wallet className="absolute -right-6 -bottom-6 w-24 h-24 opacity-10 group-hover:scale-110 transition-transform -rotate-12" />
+                    <div className="absolute -left-10 -top-10 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
+                </div>
+            </section>
+
+            {/* Section 3: Main Grid (Trips & Transactions) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Left Side: Recent Trips with Tabs (8 cols) */}
+                <div className="lg:col-span-8">
+                    <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 shadow-sm shadow-gray-100/50 dark:shadow-none border border-gray-100 dark:border-zinc-800">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <div>
+                                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Chuyến đi của bạn</h2>
+                                <p className="text-xs font-medium text-muted-foreground">Theo dõi hành trình và đơn hàng</p>
                             </div>
-                        ) : (
-                            <div className="text-center py-8 text-muted-foreground">
-                                <div className="bg-background p-3 rounded-full mb-3 mx-auto w-fit">
-                                    <Ticket className="h-6 w-6 text-muted-foreground" />
-                                </div>
-                                <p className="font-medium">Chưa có chuyến đi nào sắp tới</p>
-                                <p className="text-sm mt-1">Hãy tìm kiếm và đặt vé ngay hôm nay!</p>
-                                <Button variant="secondary" size="sm" className="mt-3" asChild>
-                                    <Link href="/">Tìm chuyến đi</Link>
-                                </Button>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
-
-
-
-            <div className="grid grid-cols-1 gap-6">
-                {/* Recent Activity Section */}
-                <Card className="shadow-sm">
-                    <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                            <CardTitle className="text-xl flex items-center gap-2">
-                                <History className="h-5 w-5 text-muted-foreground" />
-                                Hoạt động gần đây
-                            </CardTitle>
-                            <Button variant="ghost" size="sm" className="text-xs" asChild>
-                                <Link href="/dashboard/history">
-                                    Xem tất cả <ArrowRight className="ml-1 h-3 w-3" />
-                                </Link>
+                            <Button variant="outline" size="sm" asChild className="rounded-xl px-4 border-gray-200 text-[#802222] font-medium text-xs h-8 hover:bg-rose-50 hover:border-rose-200 transition-all">
+                                <Link href="/dashboard/history">Lịch sử</Link>
                             </Button>
                         </div>
-                    </CardHeader>
-                    <CardContent>
-                        {bookings.length > 0 ? (
-                            <div className="space-y-3">
-                                {bookings.slice(0, 5).map((booking) => (
-                                    <DashboardActivityItem key={booking.id} booking={booking} />
-                                ))}
+
+                        <Tabs defaultValue="active" className="w-full">
+                            <TabsList className="inline-flex h-12 items-center justify-center rounded-2xl bg-gray-100/50 dark:bg-zinc-800/50 p-1 text-muted-foreground mb-6 border border-gray-100 dark:border-zinc-800 w-full sm:w-auto">
+                                <TabsTrigger value="active" className="rounded-xl px-6 py-2 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-[#802222] transition-all">
+                                    Đang chạy ({activeTrips.length})
+                                </TabsTrigger>
+                                <TabsTrigger value="upcoming" className="rounded-xl px-6 py-2 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-[#802222] transition-all">
+                                    Sắp tới ({upcomingTrips.length})
+                                </TabsTrigger>
+                                <TabsTrigger value="pending" className="rounded-xl px-6 py-2 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-[#802222] transition-all">
+                                    Chờ xử lý ({pendingBookings.length})
+                                </TabsTrigger>
+                            </TabsList>
+
+                            <TabsContent value="active" className="mt-0 focus-visible:outline-none">
+                                {activeTrips.length > 0 ? (
+                                    <div className="grid grid-cols-1 gap-6">
+                                        {activeTrips.map(trip => (
+                                            <DashboardTripCard key={trip.id} booking={trip} />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-24 bg-gray-50/30 dark:bg-zinc-800/20 rounded-[2rem] border-2 border-dashed border-gray-100 dark:border-zinc-800">
+                                        <div className="w-16 h-16 bg-white dark:bg-zinc-900 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                                            <Train className="h-7 w-7 text-gray-200" />
+                                        </div>
+                                        <p className="text-sm font-medium text-muted-foreground mt-2">Không có chuyến đang hành trình</p>
+                                    </div>
+                                )}
+                            </TabsContent>
+
+                            <TabsContent value="upcoming" className="mt-0 focus-visible:outline-none">
+                                {upcomingTrips.length > 0 ? (
+                                    <div className="grid grid-cols-1 gap-6">
+                                        {upcomingTrips.map((booking) => (
+                                            <DashboardTripCard key={booking.id} booking={booking} />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-24 bg-gray-50/30 dark:bg-zinc-800/20 rounded-[2rem] border-2 border-dashed border-gray-100 dark:border-zinc-800">
+                                        <div className="w-16 h-16 bg-white dark:bg-zinc-900 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                                            <Calendar className="h-7 w-7 text-gray-200" />
+                                        </div>
+                                        <p className="text-sm font-medium text-muted-foreground mt-2">Không có chuyến đi sắp tới</p>
+                                    </div>
+                                )}
+                            </TabsContent>
+
+                            <TabsContent value="pending" className="mt-0 focus-visible:outline-none">
+                                {pendingBookings.length > 0 ? (
+                                    <div className="grid grid-cols-1 gap-6">
+                                        {pendingBookings.map((booking) => (
+                                            <DashboardTripCard key={booking.id} booking={booking} />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-24 bg-gray-50/30 dark:bg-zinc-800/20 rounded-[2rem] border-2 border-dashed border-gray-100 dark:border-zinc-800">
+                                        <div className="w-16 h-16 bg-white dark:bg-zinc-900 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                                            <Ticket className="h-7 w-7 text-gray-200" />
+                                        </div>
+                                        <p className="text-sm font-medium text-muted-foreground mt-2">Không có đơn hàng chờ xử lý</p>
+                                    </div>
+                                )}
+                            </TabsContent>
+                        </Tabs>
+                    </div>
+                </div>
+
+            {/* Right Side: Quick Actions & Transactions (4 cols) */}
+                <div className="lg:col-span-4 space-y-6">
+                    {/* Quick Actions */}
+                    <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 shadow-sm shadow-gray-100/50 dark:shadow-none border border-gray-100 dark:border-zinc-800">
+                        <div className="mb-6">
+                            <h3 className="text-base font-semibold text-gray-900 dark:text-white">Thao tác nhanh</h3>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                            <Link href="/dashboard/booking" className="flex flex-col items-center justify-center gap-3 p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl hover:bg-gray-100 dark:hover:bg-zinc-700 transition-all border border-gray-100 dark:border-zinc-800 group group shadow-sm">
+                                <Ticket className="h-5 w-5 text-gray-500 group-hover:text-[#802222] transition-colors duration-300" />
+                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-[#802222] transition-colors">Đặt vé</span>
+                            </Link>
+                            <Link href="/dashboard/wallet" className="flex flex-col items-center justify-center gap-3 p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl hover:bg-gray-100 dark:hover:bg-zinc-700 transition-all border border-gray-100 dark:border-zinc-800 group shadow-sm">
+                                <CreditCard className="h-5 w-5 text-gray-500 group-hover:text-[#802222] transition-colors duration-300" />
+                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-[#802222] transition-colors">Ví tiền</span>
+                            </Link>
+                            <Link href="/dashboard/history" className="flex flex-col items-center justify-center gap-3 p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl hover:bg-gray-100 dark:hover:bg-zinc-700 transition-all border border-gray-100 dark:border-zinc-800 group shadow-sm">
+                                <History className="h-5 w-5 text-gray-500 group-hover:text-[#802222] transition-colors duration-300" />
+                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-[#802222] transition-colors">Lịch sử</span>
+                            </Link>
+                            <Link href="#" className="flex flex-col items-center justify-center gap-3 p-4 bg-gray-50/50 dark:bg-zinc-800/50 rounded-2xl opacity-40 cursor-not-allowed border border-gray-100 dark:border-zinc-800 shadow-sm transition-all">
+                                <Heart className="h-5 w-5 text-gray-400" />
+                                <span className="text-xs font-medium text-gray-400">Ưu đãi</span>
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Recent Transactions */}
+                    <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 shadow-sm shadow-gray-100/50 dark:shadow-none border border-gray-100 dark:border-zinc-800 overflow-hidden">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 className="text-base font-semibold text-gray-900 dark:text-white">Giao dịch</h3>
                             </div>
-                        ) : (
-                            <div className="text-center py-8 text-muted-foreground">
-                                <p>Chưa có hoạt động nào gần đây</p>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
+                            <Button variant="ghost" size="sm" asChild className="h-8 px-3 text-xs font-medium text-[#802222] hover:bg-rose-50 rounded-xl">
+                                <Link href="/dashboard/wallet">Tất cả</Link>
+                            </Button>
+                        </div>
+                        <div className="pt-0">
+                            {recentTransactions.length > 0 ? (
+                                <div className="space-y-4">
+                                    {recentTransactions.slice(0, 5).map((tx) => (
+                                        <DashboardTransactionItem key={tx.id} transaction={tx} />
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-10 bg-gray-50/30 dark:bg-zinc-800/20 rounded-2xl border-2 border-dashed border-gray-100 dark:border-zinc-800">
+                                    <p className="text-xs font-medium text-muted-foreground opacity-60">Chưa có giao dịch</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            {/* FAB Quick Action */}
+            <Link 
+                href="/dashboard/booking" 
+                className="fixed bottom-10 right-10 w-20 h-20 bg-gradient-to-br from-[#802222] to-rose-900 text-white rounded-[2rem] shadow-2xl shadow-rose-900/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-50 group border-4 border-white dark:border-zinc-800"
+                title="Đặt vé mới"
+            >
+                <Ticket className="h-8 w-8 transition-transform group-hover:rotate-12 duration-300" />
+                <span className="absolute right-24 bg-[#802222] text-white px-5 py-3 rounded-2xl text-xs font-medium opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap pointer-events-none shadow-2xl translate-x-4 group-hover:translate-x-0">
+                    Đặt vé mới ngay
+                </span>
+            </Link>
         </div>
     );
 }

@@ -46,7 +46,7 @@ export function PaymentMethodDialog({ open, onOpenChange, amount, paymentUrl, bo
             payWallet({ bookingCode, pin }, {
                 onSuccess: () => {
                     toast.success("Thanh toán thành công!")
-                    router.push(`/booking/payment-result?success=true&orderId=${bookingCode}`)
+                    router.push(`/dashboard/booking/payment-result?success=true&orderId=${bookingCode}`)
                 },
                 onError: (error: any) => {
                     toast.error(error.response?.data?.message || "Thanh toán thất bại")

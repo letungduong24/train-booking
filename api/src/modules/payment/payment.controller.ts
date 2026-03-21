@@ -104,15 +104,15 @@ export class PaymentController {
     let redirectUrl = '';
 
     if (isDeposit) {
-      redirectUrl = `${frontendUrl}/user/wallet?deposit=${paymentSuccess ? 'success' : 'failed'}&amount=${query.vnp_Amount ? parseInt(query.vnp_Amount) / 100 : 0}`;
+      redirectUrl = `${frontendUrl}/dashboard/wallet?deposit=${paymentSuccess ? 'success' : 'failed'}&amount=${query.vnp_Amount ? parseInt(query.vnp_Amount) / 100 : 0}`;
     } else {
       if (paymentSuccess) {
-        redirectUrl = `${frontendUrl}/booking/payment-result?success=true&orderId=${result.orderId}&code=${result.responseCode}`;
+        redirectUrl = `${frontendUrl}/dashboard/booking/payment-result?success=true&orderId=${result.orderId}&code=${result.responseCode}`;
       } else {
         const errorMsg = encodeURIComponent(
           (result as any).errorMessage || 'Giao dịch không thành công',
         );
-        redirectUrl = `${frontendUrl}/booking/payment-result?success=false&orderId=${result.orderId}&code=${result.responseCode}&error=${errorMsg}`;
+        redirectUrl = `${frontendUrl}/dashboard/booking/payment-result?success=false&orderId=${result.orderId}&code=${result.responseCode}&error=${errorMsg}`;
       }
     }
 

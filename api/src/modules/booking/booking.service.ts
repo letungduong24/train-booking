@@ -543,6 +543,31 @@ export class BookingService {
     };
   }
 
+  async getMyActiveTrips(userId: string) {
+    return this.prisma.booking.findMany({
+      where: {
+        userId,
+        status: 'PAID',
+        trip: {
+          status: 'IN_PROGRESS',
+        },
+      },
+      include: {
+        trip: {
+          include: {
+            route: true,
+            train: true,
+          },
+        },
+      },
+      orderBy: {
+        trip: {
+          departureTime: 'asc',
+        },
+      },
+    });
+  }
+
   async initBooking(
     userId: string | null,
     dto: InitBookingDto,

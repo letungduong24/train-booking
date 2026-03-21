@@ -1,17 +1,15 @@
 "use client";
 
 import { format } from "date-fns";
-import { Train, Tag, Users, Calendar, Clock, MapPin, ArrowRight } from "lucide-react";
+import { Train, Tag, Users, Calendar, Clock, MapPin, ArrowRight, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Booking } from "@/features/booking/hooks/use-my-bookings";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { BookingTimer } from "./booking-timer";
-import { CancelBookingButton } from "./cancel-booking-button";
 import Link from "next/link";
 
 interface BookingHistoryCardProps {
@@ -24,13 +22,28 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
 
     // Socket logic moved to useMyBookings hook
 
-    const getStatusClasses = (status: string) => {
+    const getStatusStyles = (status: string) => {
         switch (status) {
-            case 'PENDING': return 'bg-yellow-500 hover:bg-yellow-600 text-white';
-            case 'PAID': return 'bg-green-500 hover:bg-green-600 text-white';
-            case 'CANCELLED': return 'bg-destructive hover:bg-destructive/90 text-destructive-foreground';
-            case 'PAYMENT_FAILED': return 'bg-red-500 hover:bg-red-600 text-white';
-            default: return 'bg-muted text-muted-foreground';
+            case 'PENDING': return {
+                bg: 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-500',
+                dot: 'bg-amber-500'
+            };
+            case 'PAID': return {
+                bg: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-500',
+                dot: 'bg-emerald-500'
+            };
+            case 'CANCELLED': return {
+                bg: 'bg-gray-50 dark:bg-zinc-800 text-gray-600 dark:text-gray-400',
+                dot: 'bg-gray-500'
+            };
+            case 'PAYMENT_FAILED': return {
+                bg: 'bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-500',
+                dot: 'bg-rose-500'
+            };
+            default: return {
+                bg: 'bg-gray-50 dark:bg-zinc-800 text-muted-foreground',
+                dot: 'bg-muted-foreground'
+            };
         }
     };
 
@@ -39,7 +52,7 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
             case 'PENDING': return 'Chờ thanh toán';
             case 'PAID': return 'Đã thanh toán';
             case 'CANCELLED': return 'Đã hủy';
-            case 'PAYMENT_FAILED': return 'Thanh toán thất bại';
+            case 'PAYMENT_FAILED': return 'Thanh toán lỗi';
             default: return status;
         }
     };
@@ -54,97 +67,108 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
                 : 'border-l-destructive';
 
     return (
-        <Card className={cn("hover:shadow-lg transition-shadow duration-200 overflow-hidden border-l-4 justify-between", borderClass)}>
-            <CardHeader className="bg-muted/30">
-                <div className="space-y-1 py-2">
-                    <div className="flex items-center gap-2 py-">
-                        <div className="bg-primary/10 rounded text-primary">
-                            <Train className="h-4 w-4" />
-                        </div>
-                        <span className="font-bold text-lg">{booking.trip.train.code}</span>
-                        <Badge variant="outline" className="font-mono text-xs">
-                            {booking.code}
-                        </Badge>
+        <div 
+            className="group relative bg-white dark:bg-zinc-900 rounded-[1.25rem] p-4 shadow-xl shadow-rose-900/5 dark:shadow-none border border-gray-100 dark:border-zinc-800 transition-all overflow-hidden"
+        >
+            <div className="flex justify-between items-start mb-4 relative z-10">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-[#802222] flex items-center justify-center text-white shrink-0 shadow-sm">
+                        <Train className="h-4 w-4" />
                     </div>
-                    <p className="text-sm text-muted-foreground font-medium flex items-center gap-2 pl-1">
-                        {booking.trip.route.name}
-                    </p>
-                    <div className="flex items-center justify-between">
-                        <Badge className={`${getStatusClasses(booking.status)} border-none shadow-sm`}>
-                            {getStatusLabel(booking.status)}
-                        </Badge>
-                        {booking.status === 'PENDING' && (
+                    <div>
+                        <div className="flex items-center gap-2 mb-0.5">
+                            <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">{booking.trip.route.name}</h3>
+                            <Badge variant="outline" className="font-mono text-[8px] h-3.5 px-1 opacity-40 border-gray-300">
+                                {booking.code}
+                            </Badge>
+                        </div>
+                        <p className="text-[10px] font-medium text-muted-foreground leading-none">
+                            Tàu {booking.trip.train.code}
+                        </p>
+                    </div>
+                </div>
+                
+                <div className="flex flex-col items-end gap-1.5">
+                    {(() => {
+                        const styles = getStatusStyles(booking.status);
+                        return (
+                            <div className={cn(
+                                "flex items-center gap-1.5 px-2.5 py-1 rounded-full border-none",
+                                styles.bg
+                            )}>
+                                <div className={cn("w-1.5 h-1.5 rounded-full shrink-0", styles.dot)} />
+                                <span className={cn("text-[10px] font-medium leading-none")}>
+                                    {getStatusLabel(booking.status)}
+                                </span>
+                            </div>
+                        );
+                    })()}
+                    {booking.status === 'PENDING' && (
+                        <div className="scale-75 origin-right translate-y-0.5 opacity-80">
                             <BookingTimer expiresAt={booking.expiresAt} onExpire={() => {
                                 queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
                                 router.refresh();
                             }} />
-                        )}
-                    </div>
-                </div>
-
-
-            </CardHeader>
-            <CardContent className="grid gap-2">
-                <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="flex flex-col">
-                            <span className="text-xs text-muted-foreground mb-0.5">Khởi hành</span>
-                            <div className="flex items-center gap-1.5 font-semibold">
-                                <Calendar className="h-3.5 w-3.5 text-primary" />
-                                {format(new Date(booking.trip.departureTime), "dd/MM/yyyy")}
-                            </div>
-                            <div className="flex items-center gap-1.5 font-semibold">
-                                <Clock className="h-3.5 w-3.5 text-primary" />
-                                {format(new Date(booking.trip.departureTime), "HH:mm")}
-                            </div>
                         </div>
-                    </div>
+                    )}
+                </div>
+            </div>
 
-                    <div className="flex flex-col items-end">
-                        <span className="text-xs text-muted-foreground mb-0.5">Tổng tiền</span>
-                        <span className="text-xl font-bold text-primary">
-                            {booking.totalPrice === 0
-                                ? <span className="text-sm font-normal italic text-muted-foreground">Chưa định giá…</span>
-                                : `${booking.totalPrice.toLocaleString("vi-VN")} ₫`
-                            }
+            <Separator className="bg-gray-50 dark:bg-zinc-800/50 mb-4" />
+
+            <div className="flex justify-between items-end mb-4">
+                <div className="flex gap-4">
+                    <div className="flex flex-col">
+                        <p className="text-[10px] font-medium text-muted-foreground opacity-70 leading-none">Khởi hành</p>
+                        <span className="text-base font-semibold text-[#802222] dark:text-rose-400 tabular-nums leading-none mt-1">
+                            {format(new Date(booking.trip.departureTime), "HH:mm")}
                         </span>
-                        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                            <Users className="h-3.5 w-3.5" />
-                            <span>{passengerCount} hành khách</span>
-                        </div>
+                        <span className="text-[10px] font-medium text-muted-foreground mt-1 leading-none">{format(new Date(booking.trip.departureTime), "dd/MM/yyyy")}</span>
+                    </div>
+                    <div className="flex flex-col">
+                        <p className="text-[10px] font-medium text-muted-foreground opacity-70 leading-none">Hành khách</p>
+                        <span className="text-base font-semibold text-[#802222] dark:text-rose-400 leading-none mt-1">
+                            {passengerCount}
+                        </span>
+                        <span className="text-[10px] font-medium text-muted-foreground mt-1 leading-none">người</span>
                     </div>
                 </div>
-            </CardContent>
 
-            <CardFooter className="grid gap-3 items-end">
+                <div className="text-right">
+                    <p className="text-[10px] font-medium text-muted-foreground opacity-70 leading-none mb-1">Tổng chi phí</p>
+                    <div className="text-lg font-bold text-[#802222] tracking-tight leading-none">
+                        {booking.totalPrice === 0
+                            ? <span className="text-[10px] font-normal italic opacity-40">Chưa định giá</span>
+                            : formatCurrency(booking.totalPrice)
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex gap-2">
                 <Button
-                    variant="outline"
-                    className="w-full"
+                    variant="default"
+                    className="flex-1 bg-[#802222] hover:bg-rose-900 text-white font-medium text-xs rounded-full h-9 border-none shadow-md"
                     asChild
                 >
-                    <Link href={`/dashboard/history/${booking.code}`}>Chi tiết</Link>
+                    <Link href={`/dashboard/history/${booking.code}`}>Chi tiết chuyến</Link>
                 </Button>
+                
                 {booking.status === 'PENDING' && (
-                    <div className="flex w-full gap-2">
-                        <CancelBookingButton
-                            bookingCode={booking.code}
-                            className="flex-1"
-                            onCancelSuccess={() => {
-                                queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
-                                router.refresh();
-                            }}
-                        />
-                        <Button
-                            asChild
-                            className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white"
-                        >
-                            <Link href={`/booking/passengers?bookingCode=${booking.code}`}>
-                                Thanh toán <ArrowRight className="ml-2 h-4 w-4" />
-                            </Link>
-                        </Button>
-                    </div>
+                    <Button
+                        asChild
+                        className="flex-1 bg-[#802222] hover:bg-rose-900 text-white font-medium text-xs rounded-full h-9 shadow-lg shadow-rose-900/20"
+                    >
+                        <Link href={`/dashboard/booking/passengers?bookingCode=${booking.code}`}>
+                            Thanh toán ngay <ArrowRight className="ml-1.5 h-3 w-3" />
+                        </Link>
+                    </Button>
                 )}
-            </CardFooter>
-        </Card>
+            </div>
+
+            {/* Decorative background element */}
+            <div className="absolute -right-16 -top-16 w-48 h-48 bg-rose-100/30 dark:bg-rose-900/10 rounded-full blur-3xl z-0" />
+            <div className="absolute -left-16 -bottom-16 w-48 h-48 bg-rose-100/20 dark:bg-rose-900/5 rounded-full blur-3xl z-0" />
+        </div>
     );
 }

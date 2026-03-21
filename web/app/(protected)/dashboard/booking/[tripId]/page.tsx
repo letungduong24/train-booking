@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import apiClient from '@/lib/api-client';
 
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
@@ -146,7 +147,7 @@ export default function TripDetailPage() {
                 onSuccess: (data) => {
                     console.log('Booking initialized:', data);
                     // Navigate to passengers page instead of showing form
-                    router.push(`/booking/passengers?bookingCode=${data.bookingCode}`);
+                    router.push(`/dashboard/booking/passengers?bookingCode=${data.bookingCode}`);
                     // NOTE: Do NOT set isProcessing to false here. 
                     // We want it to remain true while the redirect happens to prevent 
                     // the socket event from triggering a false conflict with our own locks.
@@ -173,7 +174,8 @@ export default function TripDetailPage() {
     // Remove old form handler and cancellation
 
     return (
-        <div className="container mx-auto py-8 px-4">
+        <div className="flex flex-1 flex-col gap-4">
+            <div className="">
             <ConflictDialog
                 open={isConflictDialogOpen}
                 onOpenChange={setIsConflictDialogOpen}
@@ -187,56 +189,68 @@ export default function TripDetailPage() {
                 message={pendingError}
             />
 
-            <Button variant="ghost" onClick={() => router.back()} className="mb-4">
-                <ArrowLeft className="mr-2 h-4 w-4" />
+            <Button 
+                variant="ghost" 
+                onClick={() => router.back()} 
+                className="mb-8 group hover:bg-rose-50 hover:text-[#802222] rounded-xl transition-all font-medium text-sm px-4"
+            >
+                <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
                 Quay lại
             </Button>
 
             {/* Trip Info */}
-            <Card className="mb-6">
-                <CardHeader>
-                    <div className="flex items-center justify-between">
+            <div className="bg-white dark:bg-zinc-900 rounded-[1.5rem] p-5 shadow-lg shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-zinc-800 relative overflow-hidden group mb-6">
+                <div className="flex justify-between items-start mb-5 relative z-10">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-[#802222] dark:text-rose-400">
+                            <Train className="h-5 w-5" />
+                        </div>
                         <div>
-                            <CardTitle className="text-2xl">{trip.route.name}</CardTitle>
-                            <CardDescription>Tàu {trip.train.code}</CardDescription>
+                            <p className="text-[11px] font-medium text-muted-foreground mb-1">Chi tiết chuyến</p>
+                            <h2 className="text-xl font-bold text-[#802222] dark:text-rose-400 leading-none">{trip.route.name}</h2>
                         </div>
                     </div>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <Badge variant="outline" className="border-[#802222]/20 text-[#802222] dark:text-rose-400 font-medium px-3 py-1 rounded-full text-[11px]">
+                        Tàu {trip.train.code}
+                    </Badge>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 relative z-10">
+                    <div className="flex flex-col gap-1">
+                        <p className="text-[11px] font-medium text-muted-foreground opacity-60">Ga đi</p>
                         <div className="flex items-center gap-2">
-                            <MapPin className="h-5 w-5 text-muted-foreground" />
-                            <div>
-                                <p className="text-sm text-muted-foreground">Ga đi</p>
-                                <p className="font-semibold">{fromStation?.station.name}</p>
-                            </div>
+                            <MapPin className="h-3.5 w-3.5 text-[#802222]/40" />
+                            <span className="font-semibold text-sm text-gray-900 dark:text-white">{fromStation?.station.name}</span>
                         </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <p className="text-[11px] font-medium text-muted-foreground opacity-60">Ga đến</p>
                         <div className="flex items-center gap-2">
-                            <MapPin className="h-5 w-5 text-muted-foreground" />
-                            <div>
-                                <p className="text-sm text-muted-foreground">Ga đến</p>
-                                <p className="font-semibold">{toStation?.station.name}</p>
-                            </div>
+                            <MapPin className="h-3.5 w-3.5 text-[#802222]/40" />
+                            <span className="font-semibold text-sm text-gray-900 dark:text-white">{toStation?.station.name}</span>
                         </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <p className="text-[11px] font-medium text-muted-foreground opacity-60">Khởi hành</p>
                         <div className="flex items-center gap-2">
-                            <Calendar className="h-5 w-5 text-muted-foreground" />
-                            <div>
-                                <p className="text-sm text-muted-foreground">Khởi hành</p>
-                                <p className="font-semibold">{format(departureDate, 'HH:mm dd/MM/yyyy')}</p>
-                            </div>
+                            <Calendar className="h-3.5 w-3.5 text-[#802222]/40" />
+                            <span className="font-semibold text-sm text-gray-900 dark:text-white tabular-nums">{format(departureDate, 'HH:mm dd/MM')}</span>
                         </div>
-                        {arrivalDate && (
+                    </div>
+                    {arrivalDate && (
+                        <div className="flex flex-col gap-1">
+                            <p className="text-[11px] font-medium text-muted-foreground opacity-60">Dự kiến đến</p>
                             <div className="flex items-center gap-2">
-                                <Clock className="h-5 w-5 text-muted-foreground" />
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Về đích</p>
-                                    <p className="font-semibold">{format(arrivalDate, 'HH:mm dd/MM/yyyy')}</p>
-                                </div>
+                                <Clock className="h-3.5 w-3.5 text-[#802222]/40" />
+                                <span className="font-semibold text-sm text-gray-900 dark:text-white tabular-nums">{format(arrivalDate, 'HH:mm dd/MM')}</span>
                             </div>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
+                        </div>
+                    )}
+                </div>
+                
+                {/* Decorative element */}
+                <div className="absolute -right-16 -top-16 w-48 h-48 bg-rose-50/40 dark:bg-rose-950/5 rounded-full blur-3xl -z-0" />
+            </div>
 
             {/* Error Banner for non-SCHEDULED trips */}
             {trip.status !== 'SCHEDULED' && (
@@ -257,16 +271,16 @@ export default function TripDetailPage() {
                 <>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-24 lg:pb-0">
                         <div className="lg:col-span-2 space-y-6">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Chọn chỗ</CardTitle>
-                                    <CardDescription>
+                            <div className="bg-white dark:bg-zinc-900 rounded-[2rem] p-6 shadow-xl shadow-gray-100 border border-gray-100 dark:border-zinc-800">
+                                <div className="mb-6">
+                                    <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400">Chọn chỗ</h3>
+                                    <p className="text-[11px] font-medium text-muted-foreground mt-1">
                                         Chọn toa và chỗ ngồi/giường của bạn
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
+                                    </p>
+                                </div>
+                                <div>
                                     {/* Coach Navigation */}
-                                    <div className="mb-8">
+                                    <div className="mb-8 p-1 bg-gray-50/50 dark:bg-zinc-800/50 rounded-2xl">
                                         <BookingCoachNavigationBar
                                             coaches={trip.train.coaches}
                                             selectedCoachId={selectedCoachId}
@@ -276,24 +290,24 @@ export default function TripDetailPage() {
                                     </div>
 
                                     {!selectedCoachId ? (
-                                        <div className="py-12 text-center text-muted-foreground border-2 border-dashed rounded-lg">
-                                            Vui lòng chọn toa để xem sơ đồ chỗ ngồi
+                                        <div className="py-12 text-center text-muted-foreground border-2 border-dashed border-gray-100 rounded-[1.5rem] bg-gray-50/30">
+                                            <p className="text-sm font-medium opacity-50">Vui lòng chọn toa để xem sơ đồ chỗ ngồi</p>
                                         </div>
                                     ) : isCoachLoading ? (
-                                        <div className="space-y-4">
-                                            <div className="flex justify-center gap-4 mb-8">
-                                                <Skeleton className="h-10 w-20" />
-                                                <Skeleton className="h-10 w-20" />
-                                                <Skeleton className="h-10 w-20" />
+                                        <div className="space-y-6">
+                                            <div className="flex justify-center gap-4">
+                                                <Skeleton className="h-10 w-24 rounded-full" />
+                                                <Skeleton className="h-10 w-24 rounded-full" />
+                                                <Skeleton className="h-10 w-24 rounded-full" />
                                             </div>
                                             <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
                                                 {Array.from({ length: 12 }).map((_, i) => (
-                                                    <Skeleton key={i} className="h-12 w-full" />
+                                                    <Skeleton key={i} className="h-14 w-full rounded-xl" />
                                                 ))}
                                             </div>
                                         </div>
                                     ) : coachWithPrices ? (
-                                        <div>
+                                        <div className="bg-gray-50/30 dark:bg-zinc-800/30 rounded-[1.5rem] p-4 border border-gray-50 dark:border-zinc-800">
                                             {coachWithPrices.template.layout === 'SEAT' ? (
                                                 <SeatLayoutViewer
                                                     seats={coachWithPrices.seats}
@@ -318,9 +332,8 @@ export default function TripDetailPage() {
 
                                         </div>
                                     ) : null}
-
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Right Column - Desktop */}
@@ -328,16 +341,26 @@ export default function TripDetailPage() {
                             <div className="sticky top-6 space-y-4">
                                 {/* Route Map */}
                                 {trip.route.stations && trip.route.stations.length > 0 && (
-                                    <div className="rounded-lg border overflow-hidden bg-card shadow-sm">
-                                        <RouteMap
-                                            stations={trip.route.stations.map((s: any, i: number) => ({ ...s, index: i }))}
-                                            className="h-[250px]"
-                                            highlightSegment={fromStationId && toStationId ? {
-                                                fromStationId: fromStationId,
-                                                toStationId: toStationId
-                                            } : undefined}
-                                            pathCoordinates={trip.route.pathCoordinates}
-                                        />
+                                    <div className="bg-white dark:bg-zinc-900 rounded-[2rem] p-5 shadow-xl shadow-gray-100 dark:shadow-none border border-gray-100 dark:border-zinc-800 overflow-hidden group">
+                                        <div className="flex items-center gap-3 mb-5">
+                                            <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-[#802222] dark:text-rose-400">
+                                                <MapPin className="h-4 w-4" />
+                                            </div>
+                                            <h3 className="text-sm font-semibold text-[#802222] dark:text-rose-400">
+                                                LỘ TRÌNH
+                                            </h3>
+                                        </div>
+                                        <div className="rounded-[1.2rem] overflow-hidden border border-gray-50 dark:border-zinc-800 h-[220px]">
+                                            <RouteMap
+                                                stations={trip.route.stations.map((s: any, i: number) => ({ ...s, index: i }))}
+                                                className="h-full border-0"
+                                                highlightSegment={fromStationId && toStationId ? {
+                                                    fromStationId: fromStationId,
+                                                    toStationId: toStationId
+                                                } : undefined}
+                                                pathCoordinates={trip.route.pathCoordinates}
+                                            />
+                                        </div>
                                     </div>
                                 )}
 
@@ -438,6 +461,7 @@ export default function TripDetailPage() {
                     </div>
                 )
             }
-        </div >
+            </div>
+        </div>
     );
 }

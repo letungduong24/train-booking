@@ -31,12 +31,14 @@ export function NavbarProvider({ children }: NavbarProviderProps) {
         // { href: '/about', label: 'Giới thiệu', active: pathname === '/about' },
         // { href: '/services', label: 'Dịch vụ', active: pathname === '/services' },
         { href: '/booking', label: 'Đặt vé', active: pathname === '/booking' }, // Allow guests to see booking
+        { href: '/contact', label: 'Liên hệ', active: pathname === '/contact' },
     ];
 
     const userLinks: Navbar01NavLink[] = [
         { href: '/', label: 'Trang chủ', active: pathname === '/' },
         { href: '/dashboard', label: 'Quản lý', active: pathname === '/dashboard' },
         { href: '/booking', label: 'Đặt vé', active: pathname === '/booking' },
+        { href: '/contact', label: 'Liên hệ', active: pathname === '/contact' },
     ];
 
     const adminLinks: Navbar01NavLink[] = [
@@ -71,7 +73,7 @@ export function NavbarProvider({ children }: NavbarProviderProps) {
         }
     };
 
-    if (pathname?.startsWith('/admin')) {
+    if (pathname !== '/') {
         return <div className="flex-1 flex flex-col">{children}</div>;
     }
 
@@ -85,11 +87,6 @@ export function NavbarProvider({ children }: NavbarProviderProps) {
                 ctaHref={user ? '#' : '/register'}
                 onSignInClick={handleSignInClick}
                 onCtaClick={handleCtaClick}
-                showUserDropdown={!!user}
-                onProfileClick={handleSignInClick}
-                onLogoutClick={handleCtaClick}
-                hideCta={!user}
-                signInAsPrimary={!user}
             />
             <div className="flex-1 flex flex-col">
                 {children}

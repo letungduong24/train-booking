@@ -240,12 +240,12 @@ export function PassengerInfoForm({
     }
 
     return (
-        <Card>
-            <CardHeader>
+        <Card className="rounded-[2rem] border-none shadow-2xl overflow-hidden">
+            <CardHeader className="bg-[#802222] text-white p-5 md:p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <CardTitle>Thông tin hành khách</CardTitle>
-                        <CardDescription>
+                        <CardTitle className="text-xl font-bold">Thông tin hành khách</CardTitle>
+                        <CardDescription className="text-rose-100/70 font-medium text-[10px] mt-0.5">
                             Vui lòng nhập thông tin cho {seats.length} hành khách
                         </CardDescription>
                     </div>
@@ -254,13 +254,13 @@ export function PassengerInfoForm({
                     )}
                 </div>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="p-5 md:p-6 space-y-6">
                 {passengers.map((passenger, index) => (
-                    <div key={passenger.seatId} className="border rounded-lg p-4 space-y-4">
+                    <div key={passenger.seatId} className="bg-gray-50/50 dark:bg-zinc-800/50 rounded-2xl p-4 md:p-5 border border-gray-100 dark:border-zinc-800 space-y-5 transition-all hover:bg-white dark:hover:bg-zinc-800 hover:shadow-xl hover:shadow-gray-200/50 dark:hover:shadow-none group">
                         <div className="flex items-center justify-between">
-                            <h3 className="font-semibold">Ghế {passenger.seatName}</h3>
+                            <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400">Ghế {passenger.seatName}</h3>
                             {cccdInfo[index] && (
-                                <Badge variant="secondary" className="gap-1">
+                                <Badge variant="secondary" className="bg-rose-50 dark:bg-rose-950/20 text-[#802222] dark:text-rose-400 border-none font-medium px-3 py-1 rounded-full text-[11px] gap-1">
                                     <Check className="h-3 w-3" />
                                     {cccdInfo[index]!.groupName} - {cccdInfo[index]!.age} tuổi
                                 </Badge>
@@ -268,21 +268,22 @@ export function PassengerInfoForm({
                         </div>
 
                         {/* Age Category */}
-                        <div className="space-y-2">
-                            <Label>Độ tuổi</Label>
+                        <div className="space-y-3">
+                            <Label className="text-[11px] font-medium text-muted-foreground">Độ tuổi</Label>
                             <RadioGroup
                                 value={passenger.ageCategory}
                                 onValueChange={(value: string) => updatePassenger(index, 'ageCategory', value)}
+                                className="flex flex-wrap gap-4"
                             >
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="child" id={`child-${index}`} />
-                                    <Label htmlFor={`child-${index}`} className="font-normal cursor-pointer">
+                                <div className="flex items-center space-x-2 bg-white dark:bg-zinc-900 px-4 py-2 rounded-xl border border-gray-100 dark:border-zinc-800 cursor-pointer hover:border-[#802222]/30 transition-colors">
+                                    <RadioGroupItem value="child" id={`child-${index}`} className="border-[#802222] text-[#802222]" />
+                                    <Label htmlFor={`child-${index}`} className="font-medium text-sm cursor-pointer text-gray-700 dark:text-gray-300">
                                         Dưới 14 tuổi (Trẻ em)
                                     </Label>
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="adult" id={`adult-${index}`} />
-                                    <Label htmlFor={`adult-${index}`} className="font-normal cursor-pointer">
+                                <div className="flex items-center space-x-2 bg-white dark:bg-zinc-900 px-4 py-2 rounded-xl border border-gray-100 dark:border-zinc-800 cursor-pointer hover:border-[#802222]/30 transition-colors">
+                                    <RadioGroupItem value="adult" id={`adult-${index}`} className="border-[#802222] text-[#802222]" />
+                                    <Label htmlFor={`adult-${index}`} className="font-medium text-sm cursor-pointer text-gray-700 dark:text-gray-300">
                                         Từ 14 tuổi trở lên
                                     </Label>
                                 </div>
@@ -290,58 +291,64 @@ export function PassengerInfoForm({
                         </div>
 
                         {/* Passenger Name */}
-                        <div className="space-y-2">
-                            <Label htmlFor={`name-${index}`}>
-                                Họ và tên <span className="text-red-500">*</span>
+                        <div className="space-y-3">
+                            <Label htmlFor={`name-${index}`} className="text-[11px] font-medium text-muted-foreground">
+                                Họ và tên <span className="text-[#802222]">*</span>
                             </Label>
                             <Input
                                 id={`name-${index}`}
-                                placeholder="Nguyễn Văn A…"
+                                placeholder="Nguyễn Văn A..."
                                 value={passenger.passengerName}
                                 onChange={(e) => updatePassenger(index, 'passengerName', e.target.value)}
+                                className="h-11 rounded-xl border-gray-100 dark:border-zinc-800 font-medium focus-visible:ring-[#802222] transition-all bg-white dark:bg-zinc-900"
                             />
                         </div>
 
                         {/* CCCD (only for adults) */}
                         {passenger.ageCategory === 'adult' && (
-                            <div className="space-y-2">
-                                <Label htmlFor={`cccd-${index}`}>
-                                    Số CCCD/CMND <span className="text-red-500">*</span>
+                            <div className="space-y-3">
+                                <Label htmlFor={`cccd-${index}`} className="text-[11px] font-medium text-muted-foreground">
+                                    Số CCCD/CMND <span className="text-[#802222]">*</span>
                                 </Label>
                                 <Input
                                     id={`cccd-${index}`}
-                                    placeholder="001203012345…"
+                                    placeholder="001203012345"
                                     value={passenger.passengerId}
                                     onChange={(e) => updatePassenger(index, 'passengerId', e.target.value)}
                                     maxLength={12}
                                     pattern="[0-9]*"
+                                    className="h-11 rounded-xl border-gray-100 dark:border-zinc-800 font-medium focus-visible:ring-[#802222] transition-all bg-white dark:bg-zinc-900"
                                 />
-                                <p className="text-xs text-muted-foreground">
-                                    Nhập 12 số CCCD để tự động xác định nhóm hành khách và nhận ưu đãi giảm giá
+                                <p className="text-[10px] font-medium text-muted-foreground opacity-60">
+                                    Nhập 12 số CCCD để tự động xác định nhóm hành khách
                                 </p>
                             </div>
                         )}
 
                         {/* Error Message */}
                         {errors[index] && (
-                            <Alert variant="destructive">
+                            <Alert variant="destructive" className="bg-red-50 dark:bg-red-950/20 border-none rounded-xl text-red-600 dark:text-red-400">
                                 <AlertCircle className="h-4 w-4" />
-                                <AlertDescription>{errors[index]}</AlertDescription>
+                                <AlertDescription className="text-sm font-medium">{errors[index]}</AlertDescription>
                             </Alert>
                         )}
                     </div>
                 ))}
 
                 {/* Action Buttons */}
-                <div className="flex gap-3 pt-4">
+                <div className="flex flex-col md:flex-row gap-3 pt-4">
                     {bookingCode ? (
-                        <div className="flex-1 flex gap-2">
-                            <Button variant="outline" onClick={onCancel} className="flex-1">
+                        <div className="flex-1 flex gap-3">
+                            <Button 
+                                variant="outline" 
+                                onClick={onCancel} 
+                                className="flex-1 h-11 rounded-xl font-semibold border-gray-100 hover:bg-gray-50 transition-all text-xs"
+                            >
                                 Quay lại
                             </Button>
                             <CancelBookingButton
                                 bookingCode={bookingCode}
-                                className="flex-1"
+                                className="flex-1 h-11 rounded-xl font-semibold transition-all text-xs"
                                 onCancelSuccess={onCancel}
                                 variant="destructive"
                             >
@@ -349,12 +356,19 @@ export function PassengerInfoForm({
                             </CancelBookingButton>
                         </div>
                     ) : (
-                        <Button variant="outline" onClick={onCancel} className="flex-1">
+                        <Button 
+                            variant="outline" 
+                            onClick={onCancel} 
+                            className="flex-1 h-11 rounded-xl font-semibold border-gray-100 hover:bg-gray-50 transition-all text-xs"
+                        >
                             Quay lại
                         </Button>
                     )}
 
-                    <Button onClick={handleSubmit} className="flex-1">
+                    <Button 
+                        onClick={handleSubmit} 
+                        className="flex-1 h-11 bg-[#802222] hover:bg-rose-900 text-white rounded-xl font-semibold shadow-lg shadow-rose-900/10 transition-all hover:scale-[1.02] active:scale-[0.98] border-none text-xs"
+                    >
                         {submitLabel}
                     </Button>
                 </div>

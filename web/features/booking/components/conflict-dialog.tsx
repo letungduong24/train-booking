@@ -1,5 +1,6 @@
 "use client"
 
+import { AlertCircle } from "lucide-react"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -27,17 +28,18 @@ export function ConflictDialog({
 }: ConflictDialogProps) {
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
-            <AlertDialogContent>
+            <AlertDialogContent className="rounded-[2.5rem] border-none shadow-2xl p-8">
                 <AlertDialogHeader>
-                    <AlertDialogTitle className="text-destructive font-bold flex items-center gap-2">
+                    <AlertDialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 uppercase tracking-tight flex items-center gap-3">
+                        <AlertCircle className="h-6 w-6" />
                         {title}
                     </AlertDialogTitle>
-                    <AlertDialogDescription className="text-base text-foreground">
+                    <AlertDialogDescription className="text-base font-medium text-muted-foreground pt-4">
                         {description}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogAction onClick={onConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                <AlertDialogFooter className="mt-8">
+                    <AlertDialogAction onClick={onConfirm} className="bg-[#802222] hover:bg-rose-900 text-white rounded-2xl h-12 px-8 font-bold uppercase tracking-widest text-[10px] border-none shadow-xl shadow-rose-900/20">
                         Đã hiểu
                     </AlertDialogAction>
                 </AlertDialogFooter>

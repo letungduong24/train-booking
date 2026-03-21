@@ -56,18 +56,18 @@ export default function HistoryPage() {
     };
 
     return (
-        <div className="container mx-auto py-8 px-4">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <div className="flex flex-1 flex-col gap-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Lịch sử đặt vé</h1>
-                    <p className="text-muted-foreground mt-1">Quản lý và theo dõi các chuyến đi của bạn</p>
+                    <h1 className="text-3xl font-bold text-[#802222] dark:text-rose-400 mb-1 tracking-tight">Lịch sử đặt vé</h1>
+                    <p className="text-muted-foreground text-base font-medium opacity-80">Quản lý và theo dõi các chuyến đi của bạn</p>
                 </div>
 
-                <div className="relative w-full md:w-[300px]">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <div className="relative w-full md:w-[320px] group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-[#802222] transition-colors" />
                     <Input
                         placeholder="Tìm theo mã vé, tên tàu..."
-                        className="pl-9"
+                        className="pl-11 pr-4 h-12 rounded-2xl border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm focus:ring-2 focus:ring-[#802222]/10 transition-all font-medium"
                         value={search}
                         onChange={handleSearchChange}
                     />
@@ -75,10 +75,25 @@ export default function HistoryPage() {
             </div>
 
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-6">
-                    <TabsTrigger value="PAID">Thành công</TabsTrigger>
-                    <TabsTrigger value="PENDING">Chờ thanh toán</TabsTrigger>
-                    <TabsTrigger value="CANCELLED">Đã hủy</TabsTrigger>
+                <TabsList className="inline-flex h-12 items-center justify-center rounded-2xl bg-gray-100/50 dark:bg-zinc-800/50 p-1 text-muted-foreground mb-6 border border-gray-100 dark:border-zinc-800">
+                    <TabsTrigger 
+                        value="PAID" 
+                        className="rounded-xl px-6 py-2 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-[#802222] transition-all"
+                    >
+                        Thành công
+                    </TabsTrigger>
+                    <TabsTrigger 
+                        value="PENDING" 
+                        className="rounded-xl px-6 py-2 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-[#802222] transition-all"
+                    >
+                        Chờ thanh toán
+                    </TabsTrigger>
+                    <TabsTrigger 
+                        value="CANCELLED" 
+                        className="rounded-xl px-6 py-2 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-[#802222] transition-all"
+                    >
+                        Đã hủy
+                    </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value={activeTab} className="mt-0">
@@ -89,14 +104,21 @@ export default function HistoryPage() {
                             ))}
                         </div>
                     ) : bookings.length === 0 ? (
-                        <div className="text-center py-20 border-2 border-dashed rounded-lg bg-muted/10">
-                            <div className="mx-auto h-12 w-12 text-muted-foreground/50 mb-3">
-                                <Search className="h-12 w-12" />
+                        <div className="flex flex-col items-center justify-center py-24 bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-gray-100 dark:border-zinc-800 shadow-xl shadow-gray-100/50 dark:shadow-none">
+                            <div className="w-24 h-24 rounded-full bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center mb-6 text-[#802222] opacity-20">
+                                <Search className="h-10 w-10" />
                             </div>
-                            <h3 className="text-lg font-medium">Không tìm thấy đơn hàng nào</h3>
-                            <p className="text-muted-foreground mt-1 max-w-sm mx-auto">
-                                {search ? 'Thử thay đổi từ khóa tìm kiếm của bạn.' : 'Bạn chưa có đơn hàng nào trong danh mục này.'}
+                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Không tìm thấy đơn hàng</h3>
+                            <p className="text-muted-foreground mt-2 max-w-sm mx-auto font-medium text-center opacity-60">
+                                {search ? 'Thử thay đổi từ khóa tìm kiếm của bạn.' : 'Bạn hiện chưa có đơn hàng nào trong danh mục này.'}
                             </p>
+                            <Button
+                                variant="outline"
+                                onClick={() => { setSearch(''); setActiveTab('PAID'); }}
+                                className="mt-8 rounded-2xl px-8 font-medium text-sm"
+                            >
+                                Quay lại trang đầu
+                            </Button>
                         </div>
                     ) : (
                         <>
@@ -107,25 +129,31 @@ export default function HistoryPage() {
                             </div>
 
                             {meta && meta.totalPages > 1 && (
-                                <div className="flex items-center justify-center gap-2 mt-8">
+                                <div className="flex items-center justify-center gap-4 mt-12 bg-white dark:bg-zinc-900 p-4 rounded-[2rem] border border-gray-100 dark:border-zinc-800 shadow-lg shadow-gray-100/50 dark:shadow-none w-fit mx-auto">
                                     <Button
-                                        variant="outline"
-                                        size="sm"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-10 w-10 rounded-xl hover:bg-rose-50 hover:text-[#802222]"
                                         onClick={() => handlePageChange(page - 1)}
                                         disabled={page <= 1}
                                     >
-                                        <ChevronLeft className="h-4 w-4 mr-1" /> Trước
+                                        <ChevronLeft className="h-5 w-5" />
                                     </Button>
-                                    <div className="flex items-center gap-1 mx-2">
-                                        <span className="text-sm font-medium">Trang {meta.page} / {meta.totalPages}</span>
+                                    
+                                    <div className="px-6 py-2 bg-gray-50 dark:bg-zinc-800 rounded-xl">
+                                        <span className="text-xs font-medium text-muted-foreground">
+                                            Trang <span className="text-[#802222] font-semibold">{meta.page}</span> / {meta.totalPages}
+                                        </span>
                                     </div>
+
                                     <Button
-                                        variant="outline"
-                                        size="sm"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-10 w-10 rounded-xl hover:bg-rose-50 hover:text-[#802222]"
                                         onClick={() => handlePageChange(page + 1)}
                                         disabled={page >= meta.totalPages}
                                     >
-                                        Sau <ChevronRight className="h-4 w-4 ml-1" />
+                                        <ChevronRight className="h-5 w-5" />
                                     </Button>
                                 </div>
                             )}

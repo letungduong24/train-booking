@@ -27,9 +27,20 @@ interface RouteMapProps {
         toStationId: string;
     }
     pathCoordinates?: [number, number][][] | null;
+    selectedFromStationId?: string;
+    selectedToStationId?: string;
+    onStationClick?: (stationId: string) => void;
 }
 
-export function RouteMap({ stations, className, highlightSegment, pathCoordinates }: RouteMapProps) {
+export function RouteMap({
+    stations,
+    className,
+    highlightSegment,
+    pathCoordinates,
+    selectedFromStationId,
+    selectedToStationId,
+    onStationClick,
+}: RouteMapProps) {
     // Filter valid stations first
     const validStations = stations.filter(s => s.station && s.station.longitude && s.station.latitude);
 
@@ -103,17 +114,17 @@ export function RouteMap({ stations, className, highlightSegment, pathCoordinate
                     <MapLineLayer
                         id="route-path"
                         data={pathGeoJson}
-                        color="#4285F4"
+                        color="#802222"
                         width={4}
-                        opacity={0.9}
+                        opacity={0.8}
                     />
                 ) : fallbackGeoJson ? (
                     <MapLineLayer
                         id="route-path-fallback"
                         data={fallbackGeoJson as any}
-                        color="#4285F4"
+                        color="#802222"
                         width={3}
-                        opacity={0.6}
+                        opacity={0.5}
                     />
                 ) : null}
 
@@ -123,17 +134,25 @@ export function RouteMap({ stations, className, highlightSegment, pathCoordinate
                     const isHighlighted = highlightSegment
                         ? (item.stationId === highlightSegment.fromStationId || item.stationId === highlightSegment.toStationId)
                         : false;
+                    const isSelectedFrom = item.stationId === selectedFromStationId;
+                    const isSelectedTo = item.stationId === selectedToStationId;
+
+                    const isActive = isSelectedFrom || isSelectedTo || isHighlighted;
 
                     return (
                         <MapMarker
                             key={`${item.stationId}`}
                             longitude={item.station!.longitude}
                             latitude={item.station!.latitude}
+                            onClick={() => onStationClick?.(item.stationId)}
                         >
                             <MarkerContent>
-                                <div className={`size-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-primary-foreground text-xs font-bold transition-all ${isHighlighted ? 'bg-primary scale-125 z-10' : 'bg-primary/80'
-                                    }`}>
-                                    {isHighlighted ? (
+                                <div className={`size-6 rounded-full border-2 border-white shadow-xl flex items-center justify-center text-white text-[10px] font-black transition-all ${isActive ? 'bg-[#802222] scale-125 z-10' : 'bg-rose-900/40'} ${onStationClick ? 'cursor-pointer hover:scale-150' : ''}`}>
+                                    {isSelectedFrom ? (
+                                        'A'
+                                    ) : isSelectedTo ? (
+                                        'B'
+                                    ) : isHighlighted ? (
                                         item.stationId === highlightSegment?.fromStationId ? 'A' : 'B'
                                     ) : (
                                         index + 1

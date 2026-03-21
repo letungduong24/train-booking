@@ -45,8 +45,8 @@ export function BookingTimer({ expiresAt, onExpire }: BookingTimerProps) {
     }
 
     return (
-        <div className="flex items-center gap-1.5 font-mono text-orange-600 font-bold">
-            <Clock className="h-4 w-4" />
+        <div className="flex items-center gap-2 px-4 py-2 bg-white shadow-md border border-rose-100/50 rounded-full font-mono text-[#802222] font-bold text-sm">
+            <Clock className="h-4 w-4 animate-pulse fill-[#802222]/10" />
             <span>
                 {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
             </span>

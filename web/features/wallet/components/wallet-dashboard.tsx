@@ -5,7 +5,7 @@ import { useWallet } from "../hooks/use-wallet"
 import { useQueryClient } from "@tanstack/react-query"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Loader2, Wallet, ArrowUpCircle, ArrowDownCircle, History, ShieldCheck, Plus } from "lucide-react"
+import { Loader2, Wallet, ArrowUpCircle, ArrowDownCircle, History, ShieldCheck, CreditCard, Plus } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
 import { WithdrawDialog } from "./withdraw-dialog"
 import { SetupPinDialog } from "./setup-pin-dialog"
@@ -37,10 +37,10 @@ export function WalletDashboard() {
         if (depositStatus === 'success') {
             queryClient.invalidateQueries({ queryKey: ['wallet'] })
             toast.success(`Nạp tiền thành công! +${formatCurrency(amount ? Number(amount) : 0)}`)
-            router.replace('/user/wallet') // Clear params
+            router.replace('/dashboard/wallet') // Clear params
         } else if (depositStatus === 'failed') {
             toast.error('Nạp tiền thất bại hoặc bị hủy.')
-            router.replace('/user/wallet')
+            router.replace('/dashboard/wallet')
         }
     }, [searchParams, router, queryClient])
 
@@ -51,113 +51,116 @@ export function WalletDashboard() {
     if (!wallet) return null
 
     return (
-        <div className="space-y-6">
-            <div>
+        <div className="space-y-8">
+            <div className="">
                 {/* Balance Card */}
-                <Card className="bg-linear-to-br from-primary/10 via-primary/5 to-background border-primary/20 shadow-sm relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4 opacity-10">
-                        <Wallet className="w-32 h-32" />
-                    </div>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">
-                            Số dư khả dụng
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-4xl font-bold tracking-tight text-primary">
+                <div className="relative rounded-[1.5rem] overflow-hidden bg-gradient-to-br from-[#802222] to-rose-900 shadow-xl p-8 text-white group border border-rose-800/20">
+                    <div className="z-10 relative">
+                        <p className="text-xs font-medium mb-2 opacity-80 text-rose-100">Số dư khả dụng</p>
+                        <div className="text-4xl font-bold mb-6 tracking-tight tabular-nums">
                             {formatCurrency(wallet.balance)}
                         </div>
-                        <div className="flex gap-2 mt-6">
+                        <div className="flex flex-wrap gap-3 mt-auto">
                             <Button
                                 onClick={() => setShowDeposit(true)}
-                                className="gap-2"
+                                className="bg-white text-[#802222] hover:bg-rose-50 font-medium text-sm px-5 py-5 rounded-[1.2rem] transition-all shadow-lg shadow-rose-950/20 hover:scale-105 active:scale-95"
                             >
-                                <Plus className="w-4 h-4" />
+                                <Plus className="w-4 h-4 mr-2" />
                                 Nạp tiền
                             </Button>
                             <Button
                                 variant="outline"
                                 onClick={() => setShowWithdraw(true)}
                                 disabled={wallet.balance < 10000}
-                                className="gap-2"
+                                className="bg-rose-950/30 text-white border-white/20 hover:bg-rose-900/50 font-medium text-sm px-5 py-5 rounded-[1.2rem] transition-all hover:scale-105 active:scale-95 disabled:opacity-40"
                             >
-                                <ArrowUpCircle className="w-4 h-4" />
+                                <ArrowUpCircle className="w-4 h-4 mr-2" />
                                 Rút tiền
                             </Button>
                             {!wallet.hasPin ? (
-                                <Button variant="outline" onClick={() => setShowSetupPin(true)} className="gap-2 border-orange-500 text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/30">
-                                    <ShieldCheck className="w-4 h-4" />
+                                <Button 
+                                    onClick={() => setShowSetupPin(true)} 
+                                    className="bg-amber-500 hover:bg-amber-600 text-white font-medium text-sm px-5 py-5 rounded-[1.2rem] transition-all shadow-lg shadow-amber-950/20 hover:scale-105 active:scale-95"
+                                >
+                                    <ShieldCheck className="w-4 h-4 mr-2" />
                                     Thiết lập mã PIN
                                 </Button>
                             ) : (
-                                <Button variant="ghost" disabled className="gap-2 text-muted-foreground">
-                                    <ShieldCheck className="w-4 h-4" />
-                                    Đã bảo vệ bằng PIN
-                                </Button>
+                                <div className="flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/10 text-white/80">
+                                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                                    <span className="text-sm font-medium">Đã bảo vệ bằng PIN</span>
+                                </div>
                             )}
                         </div>
                         {!wallet.hasPin && (
-                            <p className="text-xs text-orange-600 mt-2 font-medium">
-                                * Bạn cần thiết lập mã PIN để thanh toán
-                            </p>
+                            <div className="mt-3 flex items-center gap-2 text-rose-200/80 animate-pulse">
+                                <Plus className="w-3.5 h-3.5 rotate-45" />
+                                <p className="text-xs font-medium">
+                                    Bạn cần thiết lập mã PIN để có thể thực hiện thanh toán
+                                </p>
+                            </div>
                         )}
-                    </CardContent>
-                </Card>
+                    </div>
+                    
+                    {/* Decorative elements */}
+                    <div className="absolute right-0 top-0 w-1/3 h-full bg-white/5 skew-x-[-20deg] translate-x-12 -z-0" />
+                    <Wallet className="absolute -right-8 -bottom-8 w-48 h-48 opacity-[0.05] -rotate-12 group-hover:scale-110 transition-transform duration-700" />
+                </div>
             </div>
 
             {/* Transactions */}
-            <Card>
-                <CardHeader>
-                    <div className="flex items-center justify-between">
-                        <div className="space-y-1">
-                            <CardTitle>Lịch sử giao dịch</CardTitle>
-                            <CardDescription>20 giao dịch gần nhất của bạn</CardDescription>
-                        </div>
-                        <History className="w-4 h-4 text-muted-foreground" />
+            <div className="bg-white dark:bg-zinc-900 rounded-[1.5rem] p-6 shadow-xl shadow-gray-100/50 dark:shadow-none border border-gray-100 dark:border-zinc-800 overflow-hidden">
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 className="text-base font-semibold text-gray-900 dark:text-white">Lịch sử giao dịch</h3>
+                        <p className="text-xs font-medium text-muted-foreground mt-1">20 giao dịch gần đây của bạn</p>
                     </div>
-                </CardHeader>
-                <CardContent>
-                    <ScrollArea className="h-[400px] pr-4">
-                        <div className="space-y-4">
-                            {wallet.transactions.length === 0 ? (
-                                <div className="text-center py-10 text-muted-foreground">
-                                    Chưa có giao dịch nào
-                                </div>
-                            ) : (
-                                wallet.transactions.map((tx) => (
-                                    <div key={tx.id} className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-accent/5 transition-colors">
-                                        <div className="flex items-center gap-3">
-                                            <div className={`p-2 rounded-full ${tx.amount > 0
-                                                ? 'bg-green-100 text-green-600 dark:bg-green-900/30'
-                                                : 'bg-red-100 text-red-600 dark:bg-red-900/30'
-                                                }`}>
-                                                {tx.amount > 0 ? <ArrowDownCircle className="w-5 h-5" /> : <ArrowUpCircle className="w-5 h-5" />}
-                                            </div>
-                                            <div>
-                                                <div className="font-medium flex items-center gap-2">
-                                                    {tx.description || getTxTitle(tx.type)}
-                                                    {tx.paymentMethod && tx.type === 'PAYMENT' && (
-                                                        <Badge variant="secondary" className="text-xs">
-                                                            {tx.paymentMethod}
-                                                        </Badge>
-                                                    )}
-                                                    <StatusBadge status={tx.status} />
-                                                </div>
-                                                <div className="text-xs text-muted-foreground">
-                                                    {format(new Date(tx.createdAt), 'PP pp', { locale: vi })}
-                                                </div>
-                                            </div>
+                </div>
+                
+                <ScrollArea className="max-h-[600px] pr-4 -mr-4">
+                    <div className="space-y-3">
+                        {wallet.transactions.length === 0 ? (
+                            <div className="text-center py-16 bg-gray-50/30 dark:bg-zinc-800/20 rounded-[1.5rem] border-2 border-dashed border-gray-100 dark:border-zinc-800">
+                                <p className="text-sm font-medium text-muted-foreground opacity-60">Chưa có giao dịch nào</p>
+                            </div>
+                        ) : (
+                            wallet.transactions.map((tx) => (
+                                <div key={tx.id} className="group flex items-center justify-between p-4 rounded-2xl border border-gray-50 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:shadow-md hover:shadow-gray-100 dark:hover:shadow-none transition-all hover:-translate-y-0.5">
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${tx.amount > 0
+                                            ? 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white'
+                                            : 'bg-rose-50 text-rose-600 group-hover:bg-rose-600 group-hover:text-white'
+                                            }`}>
+                                            {tx.amount > 0 ? <ArrowDownCircle className="w-5 h-5" /> : <ArrowUpCircle className="w-5 h-5" />}
                                         </div>
-                                        <div className={`font-bold ${tx.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                            {tx.amount > 0 ? '+' : ''}{formatCurrency(tx.amount)}
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-0.5">
+                                                <span className="font-medium text-sm text-gray-900 dark:text-white">
+                                                    {tx.description || getTxTitle(tx.type)}
+                                                </span>
+                                                <StatusBadge status={tx.status} />
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs font-medium text-muted-foreground">
+                                                    {format(new Date(tx.createdAt), 'HH:mm • dd/MM/yyyy', { locale: vi })}
+                                                </span>
+                                                {tx.paymentMethod && tx.type === 'PAYMENT' && (
+                                                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-gray-100 dark:bg-zinc-800 text-gray-500">
+                                                        {tx.paymentMethod}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                ))
-                            )}
-                        </div>
-                    </ScrollArea>
-                </CardContent>
-            </Card>
+                                    <div className={`text-base font-bold tabular-nums transition-transform group-hover:scale-110 ${tx.amount > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                        {tx.amount > 0 ? '+' : ''}{formatCurrency(tx.amount)}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </ScrollArea>
+            </div>
 
             <WithdrawDialog open={showWithdraw} onOpenChange={setShowWithdraw} maxAmount={wallet.balance} />
             <SetupPinDialog open={showSetupPin} onOpenChange={setShowSetupPin} />
@@ -168,21 +171,32 @@ export function WalletDashboard() {
 
 function getTxTitle(type: string) {
     switch (type) {
-        case 'DEPOSIT': return 'Nạp tiền';
-        case 'WITHDRAW': return 'Rút tiền';
-        case 'PAYMENT': return 'Thanh toán vé';
-        case 'REFUND': return 'Hoàn tiền';
+        case 'DEPOSIT': return 'Nạp tiền vào ví';
+        case 'WITHDRAW': return 'Rút tiền từ ví';
+        case 'PAYMENT': return 'Thanh toán vé tàu';
+        case 'REFUND': return 'Hoàn tiền vé tàu';
         default: return 'Giao dịch';
     }
 }
 
 function StatusBadge({ status }: { status: string }) {
-    switch (status) {
-        case 'COMPLETED': return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Thành công</Badge>;
-        case 'PENDING': return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">Đang xử lý</Badge>;
-        case 'FAILED': return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Thất bại</Badge>;
-        default: return <Badge variant="outline">{status}</Badge>;
-    }
+    const getStyles = () => {
+        switch (status) {
+            case 'COMPLETED': return { bg: 'bg-emerald-50 text-emerald-600', dot: 'bg-emerald-500', label: 'Thành công' };
+            case 'PENDING': return { bg: 'bg-amber-50 text-amber-600', dot: 'bg-amber-500', label: 'Đang xử lý' };
+            case 'FAILED': return { bg: 'bg-rose-50 text-rose-600', dot: 'bg-rose-500', label: 'Thất bại' };
+            default: return { bg: 'bg-gray-50 text-gray-600', dot: 'bg-gray-500', label: status };
+        }
+    };
+    const styles = getStyles();
+    return (
+        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border-none shadow-sm ${styles.bg}`}>
+            <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${status === 'PENDING' ? 'animate-pulse' : ''} ${styles.dot}`} />
+            <span className="text-[10px] font-medium leading-none">
+                {styles.label}
+            </span>
+        </div>
+    );
 }
 
 function WalletSkeleton() {

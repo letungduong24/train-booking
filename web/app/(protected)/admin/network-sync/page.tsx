@@ -105,7 +105,7 @@ export default function NetworkSyncPage() {
     };
 
     return (
-        <div className="flex flex-col flex-1 h-[calc(100vh-4rem)] p-4 md:p-8 pt-6 space-y-4">
+        <div className="flex flex-col flex-1 h-[calc(100vh-4rem)] gap-6">
             <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-bold tracking-tight">Đồng bộ Mạng lưới (Network Sync)</h2>
             </div>

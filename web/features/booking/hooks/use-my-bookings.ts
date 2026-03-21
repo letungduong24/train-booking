@@ -61,3 +61,13 @@ export const useMyBookings = (params: UseMyBookingsParams) => {
         },
     });
 };
+
+export const useMyActiveTrips = () => {
+    return useQuery({
+        queryKey: ['my-active-trips'],
+        queryFn: async () => {
+            const response = await apiClient.get('/bookings/my-active-trips');
+            return response.data as Booking[];
+        },
+    });
+};

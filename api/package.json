@@ -34,8 +34,6 @@
     "@nestjs/schedule": "^6.1.0",
     "@nestjs/throttler": "^6.5.0",
     "@nestjs/websockets": "^11.1.12",
-    "@prisma/adapter-pg": "7.4.2",
-    "@prisma/client": "7.4.2",
     "@turf/helpers": "7.3.4",
     "@turf/turf": "7.3.4",
     "@types/passport-google-oauth20": "^2.0.17",
