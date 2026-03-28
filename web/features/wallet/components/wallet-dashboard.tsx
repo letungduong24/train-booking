@@ -17,6 +17,7 @@ import { format } from "date-fns"
 import { vi } from "date-fns/locale"
 import { useSearchParams, useRouter } from "next/navigation"
 import { toast } from "sonner"
+import apiClient from "@/lib/api-client"
 
 export function WalletDashboard() {
     const { wallet, isLoading } = useWallet()
@@ -24,12 +25,28 @@ export function WalletDashboard() {
     const [showSetupPin, setShowSetupPin] = useState(false)
     const [showDeposit, setShowDeposit] = useState(false)
     const [selectedPendingSession, setSelectedPendingSession] = useState<{url: string, expiresAt: string, transactionId: string, amount: number} | null>(null)
+    const [isSendingForgotPin, setIsSendingForgotPin] = useState(false)
 
     // Check for payment callback params
     const searchParams = useSearchParams()
     const router = useRouter()
 
     const queryClient = useQueryClient()
+
+    const handleForgotPin = async () => {
+        try {
+            setIsSendingForgotPin(true);
+            const loadingToast = toast.loading("Đang gửi yêu cầu khôi phục...");
+            await apiClient.post('/wallet/forgot-pin');
+            toast.dismiss(loadingToast);
+            toast.success("Một email khôi phục đã được gửi!");
+        } catch (error: any) {
+            toast.dismiss();
+            toast.error(error.response?.data?.message || "Không thể gửi yêu cầu.");
+        } finally {
+            setIsSendingForgotPin(false);
+        }
+    }
 
     useEffect(() => {
         const depositStatus = searchParams.get('deposit')
@@ -87,9 +104,18 @@ export function WalletDashboard() {
                                     Thiết lập mã PIN
                                 </Button>
                             ) : (
-                                <div className="flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/10 text-white/80">
-                                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                                    <span className="text-sm font-medium">Đã bảo vệ bằng PIN</span>
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/10 text-white/80">
+                                        <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                                        <span className="text-sm font-medium">Đã bảo vệ bằng PIN</span>
+                                    </div>
+                                    <button 
+                                        onClick={handleForgotPin}
+                                        disabled={isSendingForgotPin}
+                                        className="text-[10px] font-bold text-rose-200/60 hover:text-white transition-colors text-left ml-1 disabled:opacity-50"
+                                    >
+                                        Quên mã PIN?
+                                    </button>
                                 </div>
                             )}
                         </div>

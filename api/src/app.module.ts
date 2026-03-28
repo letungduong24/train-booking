@@ -22,6 +22,7 @@ import { WalletModule } from './modules/wallet/wallet.module';
 import { ChatbotModule } from './modules/chatbot/chatbot.module';
 import { GeojsonModule } from './modules/geojson/geojson.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     }),
     GeojsonModule,
     DashboardModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -5,6 +5,7 @@ import {
     SidebarInset,
     SidebarProvider,
 } from "@/components/ui/sidebar"
+import { VerificationBanner } from "@/components/verification-banner"
 
 export default function ProtectedLayout({
     children,

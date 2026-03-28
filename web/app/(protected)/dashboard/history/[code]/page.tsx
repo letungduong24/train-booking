@@ -129,14 +129,10 @@ export default function BookingDetailPage() {
                                 </div>
                             </div>
                             
-                            {trip.status === 'IN_PROGRESS' ? (
+                            {trip.status === 'IN_PROGRESS' && (
                                 <Badge className="bg-[#e6f7ef] hover:bg-[#e6f7ef] text-[#00a651] border-none px-3 py-1.5 rounded-full font-medium text-[11px] flex gap-2 items-center">
                                     <span className="w-1.5 h-1.5 rounded-full bg-[#00a651] animate-pulse" />
                                     Đang chạy
-                                </Badge>
-                            ) : (
-                                <Badge className={`${getStatusClasses(status)} border-none px-3 py-1.5 rounded-full font-medium text-[11px]`}>
-                                    {getStatusLabel(status)}
                                 </Badge>
                             )}
                         </div>
@@ -175,26 +171,6 @@ export default function BookingDetailPage() {
                                     {actualArrival.format('HH:mm')}
                                 </span>
                             </div>
-                        </div>
-
-                        {/* Footer */}
-                        <Separator className="bg-gray-50 dark:bg-zinc-800/50 mb-6" />
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground">
-                                    <Wifi className="h-4 w-4 opacity-50" />
-                                    <span>Wifi Free</span>
-                                </div>
-                                <div className="w-[1px] h-3 bg-gray-200" />
-                                <div className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground">
-                                    <Calendar className="h-4 w-4 opacity-50" />
-                                    <span>{actualDeparture.format('DD / MM / YYYY')}</span>
-                                </div>
-                            </div>
-                            
-                            <Button variant="secondary" className="bg-rose-50 hover:bg-rose-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-[#802222] dark:text-rose-400 font-medium text-xs px-8 rounded-full h-10 border-none shadow-sm transition-all hover:scale-105 active:scale-95">
-                                Chi tiết vé
-                            </Button>
                         </div>
 
                         {/* Decorative background element */}

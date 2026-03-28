@@ -8,7 +8,7 @@ interface SocketState {
     disconnect: () => void;
 }
 
-const URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000";
 
 export const useSocketStore = create<SocketState>((set, get) => ({
     socket: null,

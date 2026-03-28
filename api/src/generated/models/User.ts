@@ -44,6 +44,13 @@ export type UserMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   role: $Enums.UserRole | null
+  isEmailVerified: boolean | null
+  verificationToken: string | null
+  verificationTokenExpires: Date | null
+  passwordResetToken: string | null
+  passwordResetTokenExpires: Date | null
+  walletPinResetToken: string | null
+  walletPinResetTokenExpires: Date | null
   balance: number | null
   walletPin: string | null
 }
@@ -58,6 +65,13 @@ export type UserMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   role: $Enums.UserRole | null
+  isEmailVerified: boolean | null
+  verificationToken: string | null
+  verificationTokenExpires: Date | null
+  passwordResetToken: string | null
+  passwordResetTokenExpires: Date | null
+  walletPinResetToken: string | null
+  walletPinResetTokenExpires: Date | null
   balance: number | null
   walletPin: string | null
 }
@@ -72,6 +86,13 @@ export type UserCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   role: number
+  isEmailVerified: number
+  verificationToken: number
+  verificationTokenExpires: number
+  passwordResetToken: number
+  passwordResetTokenExpires: number
+  walletPinResetToken: number
+  walletPinResetTokenExpires: number
   balance: number
   walletPin: number
   _all: number
@@ -96,6 +117,13 @@ export type UserMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   role?: true
+  isEmailVerified?: true
+  verificationToken?: true
+  verificationTokenExpires?: true
+  passwordResetToken?: true
+  passwordResetTokenExpires?: true
+  walletPinResetToken?: true
+  walletPinResetTokenExpires?: true
   balance?: true
   walletPin?: true
 }
@@ -110,6 +138,13 @@ export type UserMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   role?: true
+  isEmailVerified?: true
+  verificationToken?: true
+  verificationTokenExpires?: true
+  passwordResetToken?: true
+  passwordResetTokenExpires?: true
+  walletPinResetToken?: true
+  walletPinResetTokenExpires?: true
   balance?: true
   walletPin?: true
 }
@@ -124,6 +159,13 @@ export type UserCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   role?: true
+  isEmailVerified?: true
+  verificationToken?: true
+  verificationTokenExpires?: true
+  passwordResetToken?: true
+  passwordResetTokenExpires?: true
+  walletPinResetToken?: true
+  walletPinResetTokenExpires?: true
   balance?: true
   walletPin?: true
   _all?: true
@@ -225,6 +267,13 @@ export type UserGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   role: $Enums.UserRole
+  isEmailVerified: boolean
+  verificationToken: string | null
+  verificationTokenExpires: Date | null
+  passwordResetToken: string | null
+  passwordResetTokenExpires: Date | null
+  walletPinResetToken: string | null
+  walletPinResetTokenExpires: Date | null
   balance: number
   walletPin: string | null
   _count: UserCountAggregateOutputType | null
@@ -262,6 +311,13 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFilter<"User"> | boolean
+  verificationToken?: Prisma.StringNullableFilter<"User"> | string | null
+  verificationTokenExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  passwordResetToken?: Prisma.StringNullableFilter<"User"> | string | null
+  passwordResetTokenExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  walletPinResetToken?: Prisma.StringNullableFilter<"User"> | string | null
+  walletPinResetTokenExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   balance?: Prisma.FloatFilter<"User"> | number
   walletPin?: Prisma.StringNullableFilter<"User"> | string | null
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
@@ -279,6 +335,13 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  isEmailVerified?: Prisma.SortOrder
+  verificationToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  verificationTokenExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordResetToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordResetTokenExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  walletPinResetToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  walletPinResetTokenExpires?: Prisma.SortOrderInput | Prisma.SortOrder
   balance?: Prisma.SortOrder
   walletPin?: Prisma.SortOrderInput | Prisma.SortOrder
   refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
@@ -290,6 +353,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   email?: string
   googleId?: string
+  verificationToken?: string
+  passwordResetToken?: string
+  walletPinResetToken?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
@@ -299,12 +365,16 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFilter<"User"> | boolean
+  verificationTokenExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  passwordResetTokenExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  walletPinResetTokenExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   balance?: Prisma.FloatFilter<"User"> | number
   walletPin?: Prisma.StringNullableFilter<"User"> | string | null
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
   bookings?: Prisma.BookingListRelationFilter
   transactions?: Prisma.TransactionListRelationFilter
-}, "id" | "email" | "googleId">
+}, "id" | "email" | "googleId" | "verificationToken" | "passwordResetToken" | "walletPinResetToken">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -316,6 +386,13 @@ export type UserOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  isEmailVerified?: Prisma.SortOrder
+  verificationToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  verificationTokenExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordResetToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  passwordResetTokenExpires?: Prisma.SortOrderInput | Prisma.SortOrder
+  walletPinResetToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  walletPinResetTokenExpires?: Prisma.SortOrderInput | Prisma.SortOrder
   balance?: Prisma.SortOrder
   walletPin?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -338,6 +415,13 @@ export type UserScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  verificationToken?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  verificationTokenExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  passwordResetToken?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  passwordResetTokenExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  walletPinResetToken?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  walletPinResetTokenExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   balance?: Prisma.FloatWithAggregatesFilter<"User"> | number
   walletPin?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
 }
@@ -352,6 +436,13 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
@@ -369,6 +460,13 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -386,6 +484,13 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
@@ -403,6 +508,13 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -420,6 +532,13 @@ export type UserCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
 }
@@ -434,6 +553,13 @@ export type UserUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -448,6 +574,13 @@ export type UserUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -462,6 +595,13 @@ export type UserCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  isEmailVerified?: Prisma.SortOrder
+  verificationToken?: Prisma.SortOrder
+  verificationTokenExpires?: Prisma.SortOrder
+  passwordResetToken?: Prisma.SortOrder
+  passwordResetTokenExpires?: Prisma.SortOrder
+  walletPinResetToken?: Prisma.SortOrder
+  walletPinResetTokenExpires?: Prisma.SortOrder
   balance?: Prisma.SortOrder
   walletPin?: Prisma.SortOrder
 }
@@ -480,6 +620,13 @@ export type UserMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  isEmailVerified?: Prisma.SortOrder
+  verificationToken?: Prisma.SortOrder
+  verificationTokenExpires?: Prisma.SortOrder
+  passwordResetToken?: Prisma.SortOrder
+  passwordResetTokenExpires?: Prisma.SortOrder
+  walletPinResetToken?: Prisma.SortOrder
+  walletPinResetTokenExpires?: Prisma.SortOrder
   balance?: Prisma.SortOrder
   walletPin?: Prisma.SortOrder
 }
@@ -494,6 +641,13 @@ export type UserMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  isEmailVerified?: Prisma.SortOrder
+  verificationToken?: Prisma.SortOrder
+  verificationTokenExpires?: Prisma.SortOrder
+  passwordResetToken?: Prisma.SortOrder
+  passwordResetTokenExpires?: Prisma.SortOrder
+  walletPinResetToken?: Prisma.SortOrder
+  walletPinResetTokenExpires?: Prisma.SortOrder
   balance?: Prisma.SortOrder
   walletPin?: Prisma.SortOrder
 }
@@ -526,6 +680,14 @@ export type DateTimeFieldUpdateOperationsInput = {
 
 export type EnumUserRoleFieldUpdateOperationsInput = {
   set?: $Enums.UserRole
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type FloatFieldUpdateOperationsInput = {
@@ -590,6 +752,13 @@ export type UserCreateWithoutRefreshTokensInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
   bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
@@ -606,6 +775,13 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
@@ -638,6 +814,13 @@ export type UserUpdateWithoutRefreshTokensInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
@@ -654,6 +837,13 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
@@ -670,6 +860,13 @@ export type UserCreateWithoutTransactionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
@@ -686,6 +883,13 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -718,6 +922,13 @@ export type UserUpdateWithoutTransactionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
@@ -734,6 +945,13 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -750,6 +968,13 @@ export type UserCreateWithoutBookingsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
@@ -766,6 +991,13 @@ export type UserUncheckedCreateWithoutBookingsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -798,6 +1030,13 @@ export type UserUpdateWithoutBookingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
@@ -814,6 +1053,13 @@ export type UserUncheckedUpdateWithoutBookingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -879,6 +1125,13 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   role?: boolean
+  isEmailVerified?: boolean
+  verificationToken?: boolean
+  verificationTokenExpires?: boolean
+  passwordResetToken?: boolean
+  passwordResetTokenExpires?: boolean
+  walletPinResetToken?: boolean
+  walletPinResetTokenExpires?: boolean
   balance?: boolean
   walletPin?: boolean
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
@@ -897,6 +1150,13 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdAt?: boolean
   updatedAt?: boolean
   role?: boolean
+  isEmailVerified?: boolean
+  verificationToken?: boolean
+  verificationTokenExpires?: boolean
+  passwordResetToken?: boolean
+  passwordResetTokenExpires?: boolean
+  walletPinResetToken?: boolean
+  walletPinResetTokenExpires?: boolean
   balance?: boolean
   walletPin?: boolean
 }, ExtArgs["result"]["user"]>
@@ -911,6 +1171,13 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdAt?: boolean
   updatedAt?: boolean
   role?: boolean
+  isEmailVerified?: boolean
+  verificationToken?: boolean
+  verificationTokenExpires?: boolean
+  passwordResetToken?: boolean
+  passwordResetTokenExpires?: boolean
+  walletPinResetToken?: boolean
+  walletPinResetTokenExpires?: boolean
   balance?: boolean
   walletPin?: boolean
 }, ExtArgs["result"]["user"]>
@@ -925,11 +1192,18 @@ export type UserSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   role?: boolean
+  isEmailVerified?: boolean
+  verificationToken?: boolean
+  verificationTokenExpires?: boolean
+  passwordResetToken?: boolean
+  passwordResetTokenExpires?: boolean
+  walletPinResetToken?: boolean
+  walletPinResetTokenExpires?: boolean
   balance?: boolean
   walletPin?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profilePic" | "email" | "password" | "name" | "googleId" | "createdAt" | "updatedAt" | "role" | "balance" | "walletPin", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profilePic" | "email" | "password" | "name" | "googleId" | "createdAt" | "updatedAt" | "role" | "isEmailVerified" | "verificationToken" | "verificationTokenExpires" | "passwordResetToken" | "passwordResetTokenExpires" | "walletPinResetToken" | "walletPinResetTokenExpires" | "balance" | "walletPin", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
   bookings?: boolean | Prisma.User$bookingsArgs<ExtArgs>
@@ -956,6 +1230,13 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     createdAt: Date
     updatedAt: Date
     role: $Enums.UserRole
+    isEmailVerified: boolean
+    verificationToken: string | null
+    verificationTokenExpires: Date | null
+    passwordResetToken: string | null
+    passwordResetTokenExpires: Date | null
+    walletPinResetToken: string | null
+    walletPinResetTokenExpires: Date | null
     balance: number
     walletPin: string | null
   }, ExtArgs["result"]["user"]>
@@ -1393,6 +1674,13 @@ export interface UserFieldRefs {
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly role: Prisma.FieldRef<"User", 'UserRole'>
+  readonly isEmailVerified: Prisma.FieldRef<"User", 'Boolean'>
+  readonly verificationToken: Prisma.FieldRef<"User", 'String'>
+  readonly verificationTokenExpires: Prisma.FieldRef<"User", 'DateTime'>
+  readonly passwordResetToken: Prisma.FieldRef<"User", 'String'>
+  readonly passwordResetTokenExpires: Prisma.FieldRef<"User", 'DateTime'>
+  readonly walletPinResetToken: Prisma.FieldRef<"User", 'String'>
+  readonly walletPinResetTokenExpires: Prisma.FieldRef<"User", 'DateTime'>
   readonly balance: Prisma.FieldRef<"User", 'Float'>
   readonly walletPin: Prisma.FieldRef<"User", 'String'>
 }

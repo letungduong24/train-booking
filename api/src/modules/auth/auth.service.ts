@@ -12,6 +12,8 @@ import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Prisma } from '../../generated/client';
+import { MailService } from '../mail/mail.service';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +21,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private mailService: MailService,
   ) { }
 
   async register(registerDto: RegisterDto, res: Response) {
@@ -28,46 +31,163 @@ export class AuthService {
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
 
+      // Generate verification token
+      const verificationToken = randomBytes(32).toString('hex');
+      const verificationTokenExpires = new Date();
+      verificationTokenExpires.setHours(verificationTokenExpires.getHours() + 24);
+
       // Create user
       const user = await this.prisma.user.create({
         data: {
           email,
           password: hashedPassword,
           name,
+          verificationToken,
+          verificationTokenExpires,
         },
       });
+
+      // Send verification email
+      await this.mailService.sendVerificationEmail(email, verificationToken);
 
       // Generate tokens
       const tokens = await this.generateTokens(user.id, user.email);
 
-      // Set access token as httpOnly cookie
-      res.cookie('accessToken', tokens.accessToken, {
-        httpOnly: true,
-        secure: this.configService.get('NODE_ENV') === 'production',
-        sameSite: 'strict',
-        maxAge: 15 * 60 * 1000, // 15 minutes
-      });
-
-      // Set refresh token as httpOnly cookie
-      res.cookie('refreshToken', tokens.refreshToken, {
-        httpOnly: true,
-        secure: this.configService.get('NODE_ENV') === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      });
+      // Set cookies
+      this.setTokenCookies(res, tokens);
 
       const { password: _password, ...rest } = user;
 
       return rest;
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        // P2002: Unique constraint violation
         if (e.code === 'P2002') {
           throw new ConflictException('Email này đã được sử dụng');
         }
       }
       throw e;
     }
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user || !user.password) {
+      // Don't leak if email exists or if it's a social account
+      return { message: 'Nếu email tồn tại, một liên kết khôi phục đã được gửi.' };
+    }
+
+    const token = randomBytes(32).toString('hex');
+    const expires = new Date();
+    expires.setHours(expires.getHours() + 1);
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordResetToken: token,
+        passwordResetTokenExpires: expires,
+      },
+    });
+
+    await this.mailService.sendForgotPasswordEmail(email, token);
+    return { message: 'Nếu email tồn tại, một liên kết khôi phục đã được gửi.' };
+  }
+
+  async resetPassword(dto: { token: string; password: string }) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        passwordResetToken: dto.token,
+        passwordResetTokenExpires: { gte: new Date() },
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Mã khôi phục không hợp lệ hoặc đã hết hạn');
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        passwordResetToken: null,
+        passwordResetTokenExpires: null,
+      },
+    });
+
+    return { message: 'Đặt lại mật khẩu thành công' };
+  }
+
+  async verifyEmail(token: string) {
+    console.log('[DEBUG] Verifying token:', token);
+    const user = await this.prisma.user.findFirst({
+      where: {
+        verificationToken: token,
+      },
+    });
+
+    if (!user) {
+      console.log('[DEBUG] No user found for token:', token);
+      throw new BadRequestException('Mã xác thực không hợp lệ hoặc đã hết hạn');
+    }
+
+    console.log('[DEBUG] Found user:', user.email, 'Verification status:', user.isEmailVerified);
+    console.log('[DEBUG] Token expires at:', user.verificationTokenExpires, 'Now:', new Date());
+
+    if (user.verificationTokenExpires && user.verificationTokenExpires < new Date()) {
+      console.log('[DEBUG] Token expired');
+      throw new BadRequestException('Mã xác thực đã hết hạn');
+    }
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        isEmailVerified: true,
+        verificationToken: null,
+        verificationTokenExpires: null,
+      },
+    });
+
+    console.log('[DEBUG] Verification success for:', user.email);
+    return { message: 'Xác thực email thành công' };
+  }
+
+  async resendVerification(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user || user.isEmailVerified) {
+      throw new BadRequestException('Người dùng không tồn tại hoặc đã xác thực');
+    }
+
+    const token = randomBytes(32).toString('hex');
+    const expires = new Date();
+    expires.setHours(expires.getHours() + 24);
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        verificationToken: token,
+        verificationTokenExpires: expires,
+      },
+    });
+
+    await this.mailService.sendVerificationEmail(user.email, token);
+    return { message: 'Mã xác thực mới đã được gửi vào email của bạn' };
+  }
+
+  private setTokenCookies(res: Response, tokens: { accessToken: string; refreshToken: string }) {
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: true,
+      secure: this.configService.get('NODE_ENV') === 'production',
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: this.configService.get('NODE_ENV') === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
   }
 
   async login(loginDto: LoginDto, res: Response) {
@@ -316,7 +436,11 @@ export class AuthService {
         // Link Google account to existing email-based account
         user = await this.prisma.user.update({
           where: { id: user.id },
-          data: { googleId, profilePic: profilePic ?? user.profilePic },
+          data: { 
+            googleId, 
+            profilePic: profilePic ?? user.profilePic,
+            isEmailVerified: true,
+          },
         });
       } else {
         // Create a new user
@@ -327,6 +451,7 @@ export class AuthService {
             googleId,
             profilePic,
             password: null,
+            isEmailVerified: true,
           },
         });
       }

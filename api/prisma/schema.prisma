@@ -27,7 +27,19 @@ model User {
   updatedAt     DateTime       @updatedAt
   refreshTokens RefreshToken[]
   bookings      Booking[]
+  // Role & Permissions
   role          UserRole       @default(USER)
+
+  // Verification & Security
+  isEmailVerified           Boolean   @default(false)
+  verificationToken        String?   @unique
+  verificationTokenExpires DateTime?
+  
+  passwordResetToken       String?   @unique
+  passwordResetTokenExpires DateTime?
+  
+  walletPinResetToken      String?   @unique
+  walletPinResetTokenExpires DateTime?
 
   // Wallet info
   balance      Float         @default(0)
@@ -293,7 +305,7 @@ enum BookingStatus {
 
 model Booking {
   id         String        @id @default(uuid())
-  code       String        @unique // Mã đặt chỗ (VNR-YYYYMMDD-XXXX)
+  code       String        @unique // Mã đặt chỗ (RAILFLOW-YYYYMMDD-XXXX)
   tripId     String
   trip       Trip          @relation(fields: [tripId], references: [id])
   userId     String? // Có thể null nếu user chưa đăng nhập (nhưng ở đây mình làm required login)

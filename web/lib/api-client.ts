@@ -2,7 +2,7 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { timeSync } from './time-sync';
 
 const apiClient = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9000',
     headers: {
         'Content-Type': 'application/json',
     },

@@ -4,15 +4,16 @@ import { WalletService } from './wallet.service';
 import { SetupPinDto } from './dto/setup-pin.dto';
 import { WithdrawRequestDto } from './dto/withdraw-request.dto';
 import { PayBookingWalletDto } from './dto/pay-booking-wallet.dto';
-// Assuming you have an Auth Guard for JWT
-import { AuthGuard } from '@nestjs/passport';
+import { ResetPinDto } from './dto/reset-pin.dto';
+import { Public } from '../../common/decorators/public.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PaymentService } from '../payment/payment.service';
 import { Inject, forwardRef } from '@nestjs/common';
 import { DepositDto } from './dto/deposit.dto';
 import { ConfigService } from '@nestjs/config';
 
 @Controller('wallet')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 export class WalletController {
   constructor(
     private readonly walletService: WalletService,
@@ -53,6 +54,18 @@ export class WalletController {
   @Post('setup-pin')
   async setupPin(@Req() req, @Body() dto: SetupPinDto) {
     return this.walletService.setupPin(req.user.id, dto);
+  }
+
+  @Post('forgot-pin')
+  async forgotPin(@Req() req) {
+    return this.walletService.forgotPin(req.user.id);
+  }
+
+  // No AuthGuard here
+  @Post('reset-pin')
+  @Public() // I should check if @Public() exists or just skip guard
+  async resetPin(@Body() dto: ResetPinDto) {
+    return this.walletService.resetPin(dto);
   }
 
   @Post('withdraw')

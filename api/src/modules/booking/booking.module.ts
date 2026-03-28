@@ -10,6 +10,7 @@ import { BookingGateway } from './booking.gateway';
 
 import { WalletModule } from '../wallet/wallet.module';
 import { TripModule } from '../trip/trip.module';
+import { TicketModule } from '../ticket/ticket.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { TripModule } from '../trip/trip.module';
     forwardRef(() => WalletModule),
     PricingModule,
     TripModule,
+    TicketModule,
     BullModule.registerQueue({
       name: 'booking',
     }),

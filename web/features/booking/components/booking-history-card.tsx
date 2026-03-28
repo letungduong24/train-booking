@@ -70,47 +70,50 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
         <div 
             className="group relative bg-white dark:bg-zinc-900 rounded-[1.25rem] p-4 shadow-xl shadow-rose-900/5 dark:shadow-none border border-gray-100 dark:border-zinc-800 transition-all overflow-hidden"
         >
-            <div className="flex justify-between items-start mb-4 relative z-10">
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-[#802222] flex items-center justify-center text-white shrink-0 shadow-sm">
-                        <Train className="h-4 w-4" />
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-2 mb-0.5">
-                            <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">{booking.trip.route.name}</h3>
-                            <Badge variant="outline" className="font-mono text-[8px] h-3.5 px-1 opacity-40 border-gray-300">
-                                {booking.code}
-                            </Badge>
-                        </div>
-                        <p className="text-[10px] font-medium text-muted-foreground leading-none">
-                            Tàu {booking.trip.train.code}
-                        </p>
-                    </div>
-                </div>
+            {/* Header Row: Code & Status */}
+            <div className="flex justify-between items-center mb-4 relative z-10">
+                <Badge variant="outline" className="font-mono text-[10px] h-6 px-3 bg-gray-50/50 dark:bg-zinc-800/30 border-gray-200 dark:border-zinc-700 text-muted-foreground/70 rounded-full">
+                    {booking.code}
+                </Badge>
                 
-                <div className="flex flex-col items-end gap-1.5">
-                    {(() => {
-                        const styles = getStatusStyles(booking.status);
-                        return (
-                            <div className={cn(
-                                "flex items-center gap-1.5 px-2.5 py-1 rounded-full border-none",
-                                styles.bg
-                            )}>
-                                <div className={cn("w-1.5 h-1.5 rounded-full shrink-0", styles.dot)} />
-                                <span className={cn("text-[10px] font-medium leading-none")}>
-                                    {getStatusLabel(booking.status)}
-                                </span>
-                            </div>
-                        );
-                    })()}
+                <div className="flex items-center gap-2">
                     {booking.status === 'PENDING' && (
-                        <div className="scale-75 origin-right translate-y-0.5 opacity-80">
+                        <div className="scale-90 origin-right opacity-90">
                             <BookingTimer expiresAt={booking.expiresAt} onExpire={() => {
                                 queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
                                 router.refresh();
                             }} />
                         </div>
                     )}
+                    {(() => {
+                        const styles = getStatusStyles(booking.status);
+                        return (
+                            <div className={cn(
+                                "flex items-center gap-1.5 px-3 py-1 rounded-full border-none shadow-sm",
+                                styles.bg
+                            )}>
+                                <div className={cn("w-1.5 h-1.5 rounded-full shrink-0", styles.dot)} />
+                                <span className={cn("text-[10px] font-bold uppercase tracking-wider leading-none")}>
+                                    {getStatusLabel(booking.status)}
+                                </span>
+                            </div>
+                        );
+                    })()}
+                </div>
+            </div>
+
+            {/* Content Row: Icon, Route, Train */}
+            <div className="flex items-center gap-3 mb-6 relative z-10 px-1">
+                <div className="w-10 h-10 rounded-[0.85rem] bg-[#802222] flex items-center justify-center text-white shrink-0 shadow-sm">
+                    <Train className="h-5 w-5" />
+                </div>
+                <div className="min-w-0">
+                    <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-tight mb-0.5 truncate">
+                        {booking.trip.route.name}
+                    </h3>
+                    <p className="text-xs font-bold text-muted-foreground/80 leading-none">
+                        Tàu {booking.trip.train.code}
+                    </p>
                 </div>
             </div>
 

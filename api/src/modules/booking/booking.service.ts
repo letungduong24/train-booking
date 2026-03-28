@@ -27,6 +27,8 @@ import {
 
 import { BookingGateway } from './booking.gateway';
 import { TripService } from '../trip/trip.service';
+import { MailService } from '../mail/mail.service';
+import { TicketService } from '../ticket/ticket.service';
 
 @Injectable()
 export class BookingService {
@@ -44,6 +46,8 @@ export class BookingService {
     @Inject(forwardRef(() => WalletService))
     private readonly walletService: WalletService,
     private readonly tripService: TripService,
+    private readonly mailService: MailService,
+    private readonly ticketService: TicketService,
   ) {}
 
   async triggerStatsUpdate(tripId: string) {
@@ -195,7 +199,7 @@ export class BookingService {
     }
 
     // 3. Tạo Đơn đặt chỗ (lưu metadata, chưa tạo vé chi tiết)
-    const bookingCode = `VNR-${dayjs().format('YYYYMMDD')}-${Math.floor(Math.random() * 10000)}`;
+    const bookingCode = `RAILFLOW-${dayjs().format('YYYYMMDD')}-${Math.floor(Math.random() * 10000)}`;
 
     const booking = await this.prisma.booking.create({
       data: {
@@ -427,6 +431,13 @@ export class BookingService {
         },
       },
       include: {
+        user: true,
+        trip: {
+          include: {
+            train: true,
+            route: true,
+          },
+        },
         tickets: {
           include: {
             seat: {
@@ -438,6 +449,29 @@ export class BookingService {
         },
       },
     });
+
+    // Gửi email biên lai kèm vé PDF
+    if (updatedBooking.user?.email) {
+      try {
+        const pdfBuffer = await this.ticketService.generateBookingTicketsPDF(
+          updatedBooking,
+        );
+        await this.mailService.sendBookingReceipt(
+          updatedBooking.user.email,
+          updatedBooking,
+          pdfBuffer,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Lỗi khi gửi email biên lai/vé cho ${bookingCode}: ${error.message}`,
+        );
+        // Nếu lỗi tạo PDF, vẫn cố gửi email biên lai không đính kèm (dự phòng)
+        await this.mailService.sendBookingReceipt(
+          updatedBooking.user.email,
+          updatedBooking,
+        ).catch(() => {});
+      }
+    }
 
     // Xóa lock Redis và thông báo release
     if (metadata.tripId && metadata.passengers) {
@@ -621,7 +655,7 @@ export class BookingService {
     }
 
     // 3. Redis Lock Check (Optimistic Locking)
-    const bookingCode = `VNR-${dayjs().format('YYYYMMDD')}-${Math.floor(Math.random() * 10000)}`;
+    const bookingCode = `RAILFLOW-${dayjs().format('YYYYMMDD')}-${Math.floor(Math.random() * 10000)}`;
     const acquiredLocks: string[] = [];
 
     const lockTimeMin =

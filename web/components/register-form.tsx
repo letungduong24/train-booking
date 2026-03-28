@@ -24,8 +24,7 @@ import { registerSchema, type RegisterFormData } from "@/lib/schemas/auth.schema
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/lib/store/auth.store"
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+import apiClient from "@/lib/api-client"
 
 export function RegisterForm({
     className,
@@ -77,7 +76,7 @@ export function RegisterForm({
                                     variant="outline"
                                     type="button"
                                     className="w-full h-12 rounded-2xl border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 font-semibold transition-all duration-300"
-                                    onClick={() => { window.location.href = `${API_URL}/auth/google`; }}
+                                    onClick={() => { window.location.href = `${apiClient.defaults.baseURL}/auth/google`; }}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="mr-2 h-5 w-5">
                                         <path

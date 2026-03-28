@@ -1,4 +1,5 @@
 import { NavbarProvider } from '@/components/navbar-provider';
+import { VerificationBanner } from '@/components/verification-banner';
 
 export default function PublicLayout({
     children,
@@ -7,6 +8,7 @@ export default function PublicLayout({
 }) {
     return (
         <div className="font-sans">
+            <VerificationBanner />
             <NavbarProvider>{children}</NavbarProvider>
         </div>
     );

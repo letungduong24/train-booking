@@ -16,6 +16,8 @@ import { TransactionType, TransactionStatus } from '../../generated/client';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { ConfigService } from '@nestjs/config';
+import { MailService } from '../mail/mail.service';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class WalletService {
@@ -27,7 +29,54 @@ export class WalletService {
     @Inject(forwardRef(() => BookingService))
     private readonly bookingService: BookingService,
     @InjectQueue('wallet-deposit') private readonly walletDepositQueue: Queue,
+    private readonly mailService: MailService,
   ) {}
+
+  async forgotPin(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new BadRequestException('User not found');
+
+    const token = randomBytes(32).toString('hex');
+    const expires = new Date();
+    expires.setHours(expires.getHours() + 1);
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        walletPinResetToken: token,
+        walletPinResetTokenExpires: expires,
+      },
+    });
+
+    await this.mailService.sendForgotPinEmail(user.email, token);
+    return { message: 'Một liên kết khôi phục mã PIN đã được gửi vào email của bạn.' };
+  }
+
+  async resetPin(dto: { token: string; pin: string }) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        walletPinResetToken: dto.token,
+        walletPinResetTokenExpires: { gte: new Date() },
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Mã khôi phục không hợp lệ hoặc đã hết hạn');
+    }
+
+    const hashedPin = await bcrypt.hash(dto.pin, 10);
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        walletPin: hashedPin,
+        walletPinResetToken: null,
+        walletPinResetTokenExpires: null,
+      },
+    });
+
+    return { message: 'Đặt lại mã PIN thành công' };
+  }
 
   async setupPin(userId: string, dto: SetupPinDto) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
