@@ -82,15 +82,15 @@ export function CreateCoachDialog({ trainId }: CreateCoachDialogProps) {
                     Thêm toa
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>Thêm toa mới</DialogTitle>
-                    <DialogDescription>
+            <DialogContent className="max-w-xl rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
+                <DialogHeader className="p-8 pb-4">
+                    <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Thêm toa mới</DialogTitle>
+                    <DialogDescription className="text-xs font-medium text-muted-foreground/50">
                         Chọn loại toa. Tên và thứ tự sẽ được tự động tạo.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="px-8 pb-8 space-y-4">
                         <FormField
                             control={form.control}
                             name="templateId"
@@ -126,8 +126,8 @@ export function CreateCoachDialog({ trainId }: CreateCoachDialogProps) {
                                 </FormItem>
                             )}
                         />
-                        <DialogFooter>
-                            <Button type="submit" disabled={createCoach.isPending}>
+                        <DialogFooter className="pt-4">
+                            <Button type="submit" disabled={createCoach.isPending} className="w-full bg-[#802222] hover:bg-rose-900 text-white rounded-full h-11 font-bold shadow-lg shadow-rose-900/20">
                                 {createCoach.isPending ? (
                                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                                 ) : "Tạo toa"}

@@ -72,34 +72,35 @@ export function AdminSeatDetailDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>Quản lý ghế {seat.name}</DialogTitle>
-                    <DialogDescription>
+            <DialogContent className="max-w-md rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:hidden">
+                <DialogHeader className="p-6 pb-2">
+                    <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Quản lý ghế {seat.name}</DialogTitle>
+                    <DialogDescription className="text-xs font-medium text-muted-foreground/50">
                         Điều chỉnh thông tin và trạng thái của ghế/giường.
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="grid gap-4 py-4">
+                <div className="px-6 pb-6 space-y-6">
                     {/* Status Display */}
-                    <div className="flex items-center justify-between">
-                        <Label>Trạng thái hiện tại</Label>
+                    <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-800 shadow-sm">
+                        <Label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider ml-1">Trạng thái hiện tại</Label>
                         <Badge variant={seat.status === 'AVAILABLE' ? 'default' : 'secondary'} className={cn(
-                            seat.status === 'AVAILABLE' && "bg-green-500 hover:bg-green-600",
-                            seat.status === 'DISABLED' && "bg-muted hover:bg-muted/80 text-muted-foreground",
+                            "rounded-full px-3 py-1 text-[10px] font-bold border-none",
+                            seat.status === 'AVAILABLE' && "bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20",
+                            seat.status === 'DISABLED' && "bg-zinc-200 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-400",
                         )}>
-                            {seat.status === 'DISABLED' ? 'Đã vô hiệu hóa' : 'Hoạt động'}
+                            {seat.status === 'DISABLED' ? 'Đã vô hiệu hóa' : 'Đang hoạt động'}
                         </Badge>
                     </div>
 
                     {/* Lock/Unlock Action */}
-                    <div className="grid gap-2 border-t pt-4 mt-2">
-                        <Label className="mb-2">Thao tác nhanh</Label>
-                        <div className="flex flex-col gap-2">
+                    <div className="space-y-3">
+                        <Label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider ml-1">Thao tác nhanh</Label>
+                        <div className="flex flex-col gap-3">
                             {isDisabled ? (
                                 <Button
                                     variant="outline"
-                                    className="w-full text-green-600 border-green-200 dark:border-green-800 hover:bg-green-500/10 hover:text-green-700 dark:hover:text-green-400"
+                                    className="w-full h-12 rounded-xl text-emerald-600 border-emerald-100 dark:border-emerald-900/20 bg-emerald-50/30 dark:bg-emerald-900/10 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all font-bold shadow-sm"
                                     onClick={handleDisableToggle}
                                     disabled={updateSeat.isPending}
                                 >
@@ -109,12 +110,12 @@ export function AdminSeatDetailDialog({
                             ) : (
                                 <Button
                                     variant="outline"
-                                    className="w-full text-red-600 border-red-200 dark:border-destructive/50 hover:bg-destructive/10 hover:text-red-700 dark:hover:text-red-400"
+                                    className="w-full h-12 rounded-xl text-rose-600 border-rose-100 dark:border-rose-900/20 bg-rose-50/30 dark:bg-rose-900/10 hover:bg-[#802222] hover:text-white hover:border-[#802222] transition-all font-bold shadow-sm"
                                     onClick={handleDisableToggle}
                                     disabled={isBooked || updateSeat.isPending}
                                 >
                                     <Lock className="w-4 h-4 mr-2" />
-                                    Khóa ghế (Disable)
+                                    Khóa ghế (Vô hiệu hóa)
                                 </Button>
                             )}
 
@@ -127,12 +128,6 @@ export function AdminSeatDetailDialog({
                         </div>
                     </div>
                 </div>
-
-                <DialogFooter>
-                    <Button variant="ghost" onClick={() => onOpenChange(false)}>
-                        Đóng
-                    </Button>
-                </DialogFooter>
             </DialogContent>
         </Dialog>
     )

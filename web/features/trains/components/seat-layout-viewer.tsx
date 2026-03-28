@@ -96,8 +96,8 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
             </div>
 
             {/* Seat Grid */}
-            <div className="relative">
-                <div className="border rounded-lg p-4 bg-muted/20">
+            <div className="relative w-full overflow-x-auto">
+                <div className="w-fit min-w-full">
                     {/* Mobile: Vertical layout (rows stacked) */}
                     <div className="md:hidden">
                         <div
@@ -128,7 +128,6 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                             style={{ gridRow: rowIndex + 1, gridColumn: 2 }}
                                         >
                                             {rowSeats.slice(0, 2).map((seat) => {
-                                                // For Admin: Only DISABLED counts as 'unavailable'
                                                 const displayStatus = isAdmin
                                                     ? (seat.status === 'DISABLED' ? 'DISABLED' : 'AVAILABLE')
                                                     : seat.status;
@@ -139,9 +138,9 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && (seat.status !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
                                                         className={cn(
-                                                            "flex-1 aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 min-w-0 border",
+                                                            "flex-1 flex flex-col items-center justify-center rounded-xl transition-all py-3 min-w-0 border shadow-sm",
                                                             selectedSeats.includes(seat.id)
-                                                                ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
+                                                                ? "bg-[#802222] text-white hover:bg-rose-900 border-transparent shadow-rose-900/20"
                                                                 : getSeatStatusColor(displayStatus, isAdmin)
                                                         )}
                                                         title={`Ghế ${seat.name} - ${getSeatStatusLabel(seat.status, isAdmin)}`}
@@ -152,7 +151,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                         {!isAdmin && (seat.status === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-muted-foreground"
+                                                                selectedSeats.includes(seat.id) ? "text-rose-100" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(seat.price)}
                                                             </span>
@@ -167,7 +166,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                             className="flex items-center justify-center w-8"
                                             style={{ gridRow: rowIndex + 1, gridColumn: 3 }}
                                         >
-                                            <div className="h-full w-px bg-border" />
+                                            <div className="h-full w-px bg-border/60" />
                                         </div>
 
                                         {/* Right seats (columns 2-3) */}
@@ -185,9 +184,9 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && (seat.status !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
                                                         className={cn(
-                                                            "flex-1 aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 min-w-0 border",
+                                                            "flex-1 flex flex-col items-center justify-center rounded-xl transition-all py-3 min-w-0 border shadow-sm",
                                                             selectedSeats.includes(seat.id)
-                                                                ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
+                                                                ? "bg-[#802222] text-white hover:bg-rose-900 border-transparent shadow-rose-900/20"
                                                                 : getSeatStatusColor(displayStatus, isAdmin)
                                                         )}
                                                         title={`Ghế ${seat.name} - ${getSeatStatusLabel(seat.status, isAdmin)}`}
@@ -198,7 +197,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                         {!isAdmin && (seat.status === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-muted-foreground"
+                                                                selectedSeats.includes(seat.id) ? "text-rose-100" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(seat.price)}
                                                             </span>
@@ -214,12 +213,12 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                     </div>
 
                     {/* Desktop: Horizontal layout (columns scroll horizontally) */}
-                    <div className="hidden md:block w-full overflow-x-auto pb-2">
+                    <div className="hidden md:block w-full pb-2">
                         <div
                             className="grid gap-2 min-w-max"
                             style={{
                                 gridTemplateRows: 'auto 1fr auto 1fr',
-                                gridTemplateColumns: `repeat(${totalRows}, minmax(60px, 80px))`
+                                gridTemplateColumns: `repeat(${totalRows}, minmax(48px, 64px))`
                             }}
                         >
                             {Array.from({ length: totalRows }).map((_, rowIndex) => {
@@ -252,9 +251,9 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && (seat.status !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
                                                         className={cn(
-                                                            "aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 border",
+                                                            "h-16 flex flex-col items-center justify-center rounded-xl transition-all p-1 border shadow-sm",
                                                             selectedSeats.includes(seat.id)
-                                                                ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
+                                                                ? "bg-[#802222] text-white hover:bg-rose-900 border-transparent shadow-rose-900/20"
                                                                 : getSeatStatusColor(displayStatus, isAdmin)
                                                         )}
                                                         title={`Ghế ${seat.name} - ${getSeatStatusLabel(seat.status, isAdmin)}`}
@@ -265,7 +264,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                         {!isAdmin && (seat.status === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-muted-foreground"
+                                                                selectedSeats.includes(seat.id) ? "text-rose-100" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(seat.price)}
                                                             </span>
@@ -280,7 +279,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                             className="flex items-center justify-center h-8"
                                             style={{ gridColumn: rowIndex + 1, gridRow: 3 }}
                                         >
-                                            <div className="w-full h-px bg-border" />
+                                            <div className="w-full h-px bg-border/60" />
                                         </div>
 
                                         {/* Right seats (now bottom seats) */}
@@ -298,9 +297,9 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && (seat.status !== 'AVAILABLE' && !selectedSeats.includes(seat.id))}
                                                         className={cn(
-                                                            "aspect-square flex flex-col items-center justify-center rounded transition-all p-0.5 border",
+                                                            "h-16 flex flex-col items-center justify-center rounded-xl transition-all p-1 border shadow-sm",
                                                             selectedSeats.includes(seat.id)
-                                                                ? "bg-blue-500 text-white hover:bg-blue-600 border-transparent shadow-md"
+                                                                ? "bg-[#802222] text-white hover:bg-rose-900 border-transparent shadow-rose-900/20"
                                                                 : getSeatStatusColor(displayStatus, isAdmin)
                                                         )}
                                                         title={`Ghế ${seat.name} - ${getSeatStatusLabel(seat.status, isAdmin)}`}
@@ -311,7 +310,7 @@ export function SeatLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdm
                                                         {!isAdmin && (seat.status === 'AVAILABLE' || selectedSeats.includes(seat.id)) && (
                                                             <span className={cn(
                                                                 "text-[10px] font-medium leading-none mt-0.5",
-                                                                selectedSeats.includes(seat.id) ? "text-blue-100" : "text-muted-foreground"
+                                                                selectedSeats.includes(seat.id) ? "text-rose-100" : "text-muted-foreground"
                                                             )}>
                                                                 {formatPrice(seat.price)}
                                                             </span>

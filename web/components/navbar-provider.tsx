@@ -73,7 +73,10 @@ export function NavbarProvider({ children }: NavbarProviderProps) {
         }
     };
 
-    if (pathname !== '/') {
+    const authRoutes = ['/login', '/register'];
+    const isAuthRoute = authRoutes.includes(pathname);
+
+    if (pathname !== '/' && !isAuthRoute) {
         return <div className="flex-1 flex flex-col">{children}</div>;
     }
 

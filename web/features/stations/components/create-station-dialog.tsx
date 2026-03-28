@@ -57,76 +57,82 @@ export function CreateStationDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>
-                    <IconPlus className="mr-2 h-4 w-4" /> Tạo trạm
+                <Button className="bg-[#802222] hover:bg-rose-900 text-white rounded-xl h-11 font-bold shadow-lg shadow-rose-900/20 px-6 transition-all active:scale-95 hover:scale-[1.02]">
+                    <IconPlus className="mr-2 h-5 w-5" /> Thêm trạm mới
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>Thêm trạm mới</DialogTitle>
-                    <DialogDescription>
-                        Nhập thông tin chi tiết cho trạm mới. Nhấn lưu để hoàn tất.
+            <DialogContent className="max-w-[425px] rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:hidden">
+                <DialogHeader className="p-6 pb-2">
+                    <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Thêm Trạm mới</DialogTitle>
+                    <DialogDescription className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest pt-1">
+                        Nhập thông tin tọa độ và định danh cho trạm dừng mới
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Tên trạm</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Ví dụ: Bến xe Mỹ Đình" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                        <div className="px-6 space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider ml-1">Tên trạm dừng</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Ví dụ: Ga Hà Nội" className="h-11 rounded-xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="latitude"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Vĩ độ</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="number"
-                                            step="any"
-                                            placeholder="21.0285"
-                                            {...field}
-                                            onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="latitude"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider ml-1">Vĩ độ</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    step="any"
+                                                    placeholder="21.0285"
+                                                    className="h-11 rounded-xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800"
+                                                    {...field}
+                                                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                        <FormField
-                            control={form.control}
-                            name="longitude"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Kinh độ</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="number"
-                                            step="any"
-                                            placeholder="105.8542"
-                                            {...field}
-                                            onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                <FormField
+                                    control={form.control}
+                                    name="longitude"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider ml-1">Kinh độ</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    step="any"
+                                                    placeholder="105.8542"
+                                                    className="h-11 rounded-xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800"
+                                                    {...field}
+                                                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        </div>
 
-                        <DialogFooter>
-                            <Button type="submit" disabled={createStation.isPending}>
-                                {createStation.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+                        <DialogFooter className="p-6 pt-2">
+                            <Button type="submit" disabled={createStation.isPending} className="w-full bg-[#802222] hover:bg-rose-900 text-white rounded-xl h-12 font-bold shadow-lg shadow-rose-900/20 px-6 transition-all active:scale-95 hover:scale-[1.02]">
+                                {createStation.isPending ? "Đang xử lý..." : "Lưu trạm mới"}
                             </Button>
                         </DialogFooter>
                     </form>

@@ -43,7 +43,7 @@ export function SiteHeader() {
   };
 
   return (
-    <header className={`flex h-(--header-height) shrink-0 items-center border-b border-gray-100 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md sticky top-0 z-30 transition-all ease-linear`}>
+    <header className={`flex h-(--header-height) shrink-0 items-center border-b border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-950 backdrop-blur-md sticky top-0 z-40 transition-all ease-linear`}>
       <div className="flex w-full items-center gap-4 px-4 lg:px-6">
         <div className="flex items-center gap-2">
           <SidebarTrigger className="-ml-1" />
@@ -53,24 +53,9 @@ export function SiteHeader() {
           />
         </div>
 
-        {/* Search Bar */}
-        <div className="hidden lg:flex relative group max-w-sm w-full ml-2">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 group-focus-within:text-[#802222] transition-colors">
-            <IconSearch className="size-4" />
-          </div>
-          <Input 
-            placeholder="Tìm kiếm hành trình, vé..." 
-            className="w-full pl-10 pr-16 h-10 rounded-xl bg-zinc-50 dark:bg-zinc-900 border-none focus-visible:ring-1 focus-visible:ring-rose-500/20 text-sm transition-all"
-          />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-white dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 shadow-sm pointer-events-none">
-            <IconCommand className="size-3 text-muted-foreground/40" />
-            <span className="text-[10px] font-bold text-muted-foreground/60">K</span>
-          </div>
-        </div>
-
         <div className="ml-auto flex items-center gap-3">
           {/* Action Icons */}
-          <div className="hidden sm:flex items-center gap-2 mr-2">
+          <div className="flex items-center gap-2 mr-2">
             <GlobalChatbot />
             <button className="size-9 flex items-center justify-center rounded-xl bg-zinc-50 dark:bg-zinc-900 text-muted-foreground/60 hover:text-[#802222] hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-all border border-transparent hover:border-rose-100 dark:hover:border-rose-900/20 relative">
               <IconBell className="size-5" />

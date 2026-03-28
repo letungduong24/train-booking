@@ -101,27 +101,31 @@ export function OperationPanel({ trip }: OperationPanelProps) {
                             </div>
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Thông báo trễ chuyến</DialogTitle>
-                            <DialogDescription>
+                    <DialogContent className="max-w-md rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
+                        <DialogHeader className="p-8 pb-4">
+                            <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight flex items-center gap-2">
+                                <Clock className="w-5 h-5 opacity-40" />
+                                Thông báo trễ chuyến
+                            </DialogTitle>
+                            <DialogDescription className="text-xs font-medium text-muted-foreground/50">
                                 Hệ thống sẽ cập nhật giờ khởi hành và thông báo cho hành khách.
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="space-y-4 py-4">
+                        <div className="px-8 pb-4 space-y-4">
                             <div className="space-y-2">
-                                <Label>Số phút trễ</Label>
+                                <Label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider ml-1">Số phút trễ</Label>
                                 <Input
                                     type="number"
                                     placeholder="Ví dụ: 30"
                                     value={delayMinutes}
                                     onChange={(e) => setDelayMinutes(e.target.value)}
+                                    className="h-12 rounded-xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800"
                                 />
                             </div>
                         </div>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsDelayOpen(false)}>Hủy</Button>
-                            <Button onClick={handleDelay} disabled={isPending}>Xác nhận</Button>
+                        <DialogFooter className="p-8 pt-2 gap-3">
+                            <Button variant="ghost" onClick={() => setIsDelayOpen(false)} className="rounded-xl font-medium">Hủy</Button>
+                            <Button onClick={handleDelay} disabled={isPending} className="bg-[#802222] hover:bg-rose-900 text-white rounded-xl h-11 font-bold shadow-lg shadow-rose-900/20 px-8">Xác nhận</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
@@ -137,29 +141,30 @@ export function OperationPanel({ trip }: OperationPanelProps) {
                             </div>
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle className="text-red-600 flex items-center gap-2">
-                                <AlertTriangle className="h-5 w-5" />
+                    <DialogContent className="max-w-md rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
+                        <DialogHeader className="p-8 pb-4 text-center sm:text-left">
+                            <DialogTitle className="text-xl font-bold text-red-600 dark:text-red-400 tracking-tight flex items-center gap-2">
+                                <AlertTriangle className="w-5 h-5 opacity-40" />
                                 Xác nhận hủy chuyến
                             </DialogTitle>
-                            <DialogDescription>
+                            <DialogDescription className="text-xs font-medium text-muted-foreground/50">
                                 Hành động này không thể hoàn tác. Tất cả vé đã bán sẽ bị hủy và hoàn tiền.
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="space-y-4 py-4">
+                        <div className="px-8 pb-4 space-y-4">
                             <div className="space-y-2">
-                                <Label>Lý do hủy (để gửi mail cho khách)</Label>
+                                <Label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider ml-1">Lý do hủy (để gửi mail cho khách)</Label>
                                 <Textarea
                                     placeholder="Ví dụ: Sự cố kỹ thuật..."
                                     value={cancelReason}
                                     onChange={(e) => setCancelReason(e.target.value)}
+                                    className="rounded-xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800 min-h-[100px]"
                                 />
                             </div>
                         </div>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsCancelOpen(false)}>Thôi</Button>
-                            <Button variant="destructive" onClick={handleCancel} disabled={isPending}>Hủy chuyến ngay</Button>
+                        <DialogFooter className="p-8 pt-2 gap-3">
+                            <Button variant="ghost" onClick={() => setIsCancelOpen(false)} className="rounded-xl font-medium">Thôi</Button>
+                            <Button variant="destructive" onClick={handleCancel} disabled={isPending} className="rounded-xl h-11 font-bold shadow-lg shadow-red-900/20 px-8">Hủy chuyến ngay</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>

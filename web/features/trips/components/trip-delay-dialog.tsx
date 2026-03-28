@@ -86,21 +86,22 @@ export function TripDelayDialog({ trip, onSuccess }: TripDelayDialogProps) {
           Set Delay
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent className="max-w-md rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
+        <DialogHeader className="p-8 pb-4">
+          <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight flex items-center gap-2">
+            <Clock className="w-5 h-5 opacity-40" />
             {isScheduled ? "Delay Khởi Hành" : "Delay Kết Thúc"}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-xs font-medium text-muted-foreground/50">
             {isScheduled
-              ? "Delay cả thời gian khởi hành và kết thúc"
-              : "Chỉ delay thời gian kết thúc (tàu đang chạy)"}
+              ? "Cập nhật thời gian khởi hành và kết thúc dự kiến"
+              : "Chỉ cập nhật thời gian kết thúc dự kiến (tàu đang chạy)"}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
+        <div className="px-8 pb-4 space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="delay">Số phút delay</Label>
+            <Label htmlFor="delay" className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider ml-1">Số phút delay</Label>
             <Input
               id="delay"
               type="number"
@@ -108,37 +109,42 @@ export function TripDelayDialog({ trip, onSuccess }: TripDelayDialogProps) {
               value={delayMinutes}
               onChange={(e) => setDelayMinutes(Number(e.target.value))}
               placeholder="Nhập số phút"
+              className="h-12 rounded-xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800 focus:ring-rose-500/20"
             />
           </div>
 
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Khởi hành gốc:</span>
-              <span>{dayjs(trip.departureTime).format("HH:mm DD/MM/YYYY")}</span>
+          <div className="space-y-3 p-4 rounded-2xl bg-gray-50/50 dark:bg-zinc-900/10 border border-gray-100 dark:border-zinc-800/50">
+            <div className="space-y-1">
+              <div className="flex justify-between text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">
+                <span>Khởi hành gốc</span>
+                <span className="text-zinc-400">{dayjs(trip.departureTime).format("HH:mm DD/MM/YYYY")}</span>
+              </div>
+              <div className="flex justify-between items-center pt-0.5">
+                <span className="text-xs font-bold text-[#802222]/60 dark:text-rose-400/60">Khởi hành mới</span>
+                <span className="text-sm font-bold text-[#802222] dark:text-rose-400">{actualDeparture}</span>
+              </div>
             </div>
-            <div className="flex justify-between font-medium">
-              <span>Khởi hành thực tế:</span>
-              <span className="text-primary">{actualDeparture}</span>
-            </div>
-          </div>
 
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Kết thúc gốc:</span>
-              <span>{dayjs(trip.endTime).format("HH:mm DD/MM/YYYY")}</span>
-            </div>
-            <div className="flex justify-between font-medium">
-              <span>Kết thúc thực tế:</span>
-              <span className="text-primary">{actualEnd}</span>
+            <div className="h-px bg-zinc-200/50 dark:bg-zinc-800/50" />
+
+            <div className="space-y-1">
+              <div className="flex justify-between text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">
+                <span>Kết thúc gốc</span>
+                <span className="text-zinc-400">{dayjs(trip.endTime).format("HH:mm DD/MM/YYYY")}</span>
+              </div>
+              <div className="flex justify-between items-center pt-0.5">
+                <span className="text-xs font-bold text-[#802222]/60 dark:text-rose-400/60">Kết thúc mới</span>
+                <span className="text-sm font-bold text-[#802222] dark:text-rose-400">{actualEnd}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
+        <DialogFooter className="p-8 pt-2 gap-3">
+          <Button variant="ghost" onClick={() => setOpen(false)} className="rounded-xl font-medium">
             Hủy
           </Button>
-          <Button onClick={handleSubmit} disabled={loading || delayMinutes === 0}>
+          <Button onClick={handleSubmit} disabled={loading || delayMinutes === 0} className="bg-[#802222] hover:bg-rose-900 text-white rounded-xl h-11 font-bold shadow-lg shadow-rose-900/20 px-8">
             {loading ? "Đang xử lý..." : "Xác nhận"}
           </Button>
         </DialogFooter>

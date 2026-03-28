@@ -65,4 +65,7 @@ export class CreateRouteDto {
   @ValidateNested({ each: true })
   @Type(() => RouteStationInput)
   stations?: RouteStationInput[];
+
+  @IsOptional()
+  pathCoordinates?: any;
 }

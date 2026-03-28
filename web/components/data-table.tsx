@@ -412,40 +412,40 @@ export function DataTable({
         </Label>
         <Select defaultValue="outline">
           <SelectTrigger
-            className="flex w-fit @4xl/main:hidden"
+            className="flex h-10 rounded-2xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800 w-fit @4xl/main:hidden"
             size="sm"
             id="view-selector"
           >
             <SelectValue placeholder="Select a view" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="outline">Outline</SelectItem>
-            <SelectItem value="past-performance">Past Performance</SelectItem>
-            <SelectItem value="key-personnel">Key Personnel</SelectItem>
-            <SelectItem value="focus-documents">Focus Documents</SelectItem>
+          <SelectContent className="rounded-2xl border-gray-100 dark:border-zinc-800 shadow-2xl">
+            <SelectItem value="outline" className="rounded-xl">Outline</SelectItem>
+            <SelectItem value="past-performance" className="rounded-xl">Past Performance</SelectItem>
+            <SelectItem value="key-personnel" className="rounded-xl">Key Personnel</SelectItem>
+            <SelectItem value="focus-documents" className="rounded-xl">Focus Documents</SelectItem>
           </SelectContent>
         </Select>
-        <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
-          <TabsTrigger value="outline">Outline</TabsTrigger>
-          <TabsTrigger value="past-performance">
-            Past Performance <Badge variant="secondary">3</Badge>
+        <TabsList className="bg-gray-100/50 dark:bg-zinc-800/50 p-1 rounded-[1.25rem] border border-gray-200/50 dark:border-zinc-700/50 hidden @4xl/main:flex">
+          <TabsTrigger value="outline" className="rounded-xl px-6 py-2 data-[state=active]:bg-[#802222] data-[state=active]:text-white data-[state=active]:shadow-lg shadow-rose-900/20 duration-300">Outline</TabsTrigger>
+          <TabsTrigger value="past-performance" className="rounded-xl px-6 py-2 data-[state=active]:bg-[#802222] data-[state=active]:text-white data-[state=active]:shadow-lg shadow-rose-900/20 duration-300">
+            Past Performance <Badge variant="secondary" className="ml-2 bg-white/20 text-inherit border-none size-5 p-0 flex items-center justify-center rounded-full text-[10px]">3</Badge>
           </TabsTrigger>
-          <TabsTrigger value="key-personnel">
-            Key Personnel <Badge variant="secondary">2</Badge>
+          <TabsTrigger value="key-personnel" className="rounded-xl px-6 py-2 data-[state=active]:bg-[#802222] data-[state=active]:text-white data-[state=active]:shadow-lg shadow-rose-900/20 duration-300">
+            Key Personnel <Badge variant="secondary" className="ml-2 bg-white/20 text-inherit border-none size-5 p-0 flex items-center justify-center rounded-full text-[10px]">2</Badge>
           </TabsTrigger>
-          <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
+          <TabsTrigger value="focus-documents" className="rounded-xl px-6 py-2 data-[state=active]:bg-[#802222] data-[state=active]:text-white data-[state=active]:shadow-lg shadow-rose-900/20 duration-300">Focus Documents</TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <IconLayoutColumns />
-                <span className="hidden lg:inline">Customize Columns</span>
+              <Button variant="outline" size="sm" className="h-10 rounded-2xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all duration-300 group">
+                <IconLayoutColumns className="size-4 group-hover:text-[#802222]" />
+                <span className="hidden lg:inline font-bold text-xs text-zinc-600 dark:text-zinc-400">Columns</span>
                 <span className="lg:hidden">Columns</span>
-                <IconChevronDown />
+                <IconChevronDown className="size-4 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-56 rounded-2xl border-gray-100 dark:border-zinc-800 shadow-2xl">
               {table
                 .getAllColumns()
                 .filter(
@@ -457,7 +457,7 @@ export function DataTable({
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
-                      className="capitalize"
+                      className="capitalize rounded-xl"
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) =>
                         column.toggleVisibility(!!value)
@@ -469,9 +469,9 @@ export function DataTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm">
-            <IconPlus />
-            <span className="hidden lg:inline">Add Section</span>
+          <Button variant="outline" size="sm" className="h-10 rounded-2xl bg-[#802222] text-white hover:bg-rose-900 border-none shadow-lg shadow-rose-900/20 transition-all duration-300 hover:scale-[1.02] active:scale-95 group">
+            <IconPlus className="size-4" />
+            <span className="hidden lg:inline font-bold text-xs">Thêm mục</span>
           </Button>
         </div>
       </div>
@@ -479,7 +479,7 @@ export function DataTable({
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
-        <div className="overflow-hidden rounded-lg border">
+        <div className="overflow-hidden rounded-[2rem] border border-gray-100 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm shadow-xl shadow-rose-900/[0.02]">
           <DndContext
             collisionDetection={closestCenter}
             modifiers={[restrictToVerticalAxis]}
@@ -488,12 +488,12 @@ export function DataTable({
             id={sortableId}
           >
             <Table>
-              <TableHeader className="bg-muted sticky top-0 z-10">
+              <TableHeader className="bg-gray-50/50 dark:bg-zinc-800/50 sticky top-0 z-10 transition-colors duration-300">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
+                  <TableRow key={headerGroup.id} className="border-gray-100 dark:border-zinc-800 hover:bg-transparent">
                     {headerGroup.headers.map((header) => {
                       return (
-                        <TableHead key={header.id} colSpan={header.colSpan}>
+                        <TableHead key={header.id} colSpan={header.colSpan} className="h-12 text-[10px] font-semibold text-muted-foreground/50 py-4">
                           {header.isPlaceholder
                             ? null
                             : flexRender(
@@ -520,7 +520,7 @@ export function DataTable({
                   <TableRow>
                     <TableCell
                       colSpan={columns.length}
-                      className="h-24 text-center"
+                      className="h-24 text-center text-sm font-medium text-muted-foreground"
                     >
                       No results.
                     </TableCell>
@@ -530,15 +530,15 @@ export function DataTable({
             </Table>
           </DndContext>
         </div>
-        <div className="flex items-center justify-between px-4">
-          <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
+        <div className="flex items-center justify-between px-4 pt-4">
+          <div className="text-[10px] font-medium text-muted-foreground/40 hidden flex-1 lg:flex">
             {table.getFilteredSelectedRowModel().rows.length} of{" "}
             {table.getFilteredRowModel().rows.length} row(s) selected.
           </div>
           <div className="flex w-full items-center gap-8 lg:w-fit">
-            <div className="hidden items-center gap-2 lg:flex">
-              <Label htmlFor="rows-per-page" className="text-sm font-medium">
-                Rows per page
+            <div className="hidden items-center gap-3 lg:flex">
+              <Label htmlFor="rows-per-page" className="text-[10px] font-semibold text-muted-foreground/50">
+                Hàng trên trang
               </Label>
               <Select
                 value={`${table.getState().pagination.pageSize}`}
@@ -546,57 +546,57 @@ export function DataTable({
                   table.setPageSize(Number(value))
                 }}
               >
-                <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+                <SelectTrigger size="sm" className="w-20 h-9 rounded-xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800 font-bold text-xs" id="rows-per-page">
                   <SelectValue
                     placeholder={table.getState().pagination.pageSize}
                   />
                 </SelectTrigger>
-                <SelectContent side="top">
+                <SelectContent side="top" className="rounded-xl border-gray-100 dark:border-zinc-800 shadow-2xl">
                   {[10, 20, 30, 40, 50].map((pageSize) => (
-                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                    <SelectItem key={pageSize} value={`${pageSize}`} className="rounded-lg">
                       {pageSize}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex w-fit items-center justify-center text-sm font-medium">
-              Page {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
+            <div className="flex w-fit items-center justify-center text-[11px] font-medium text-zinc-500 dark:text-zinc-500 tracking-tight">
+              Trang <span className="mx-1 text-zinc-900 dark:text-white font-bold">{table.getState().pagination.pageIndex + 1}</span> /{" "}
+              <span className="ml-1 text-zinc-900 dark:text-white font-bold">{table.getPageCount()}</span>
             </div>
             <div className="ml-auto flex items-center gap-2 lg:ml-0">
               <Button
                 variant="outline"
-                className="hidden h-8 w-8 p-0 lg:flex"
+                className="hidden h-9 w-9 rounded-xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800 hover:text-[#802222] transition-colors p-0 lg:flex"
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to first page</span>
-                <IconChevronsLeft />
+                <IconChevronsLeft className="size-4" />
               </Button>
               <Button
                 variant="outline"
-                className="size-8"
+                className="h-9 w-9 rounded-xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800 hover:text-[#802222] transition-colors"
                 size="icon"
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to previous page</span>
-                <IconChevronLeft />
+                <IconChevronLeft className="size-4" />
               </Button>
               <Button
                 variant="outline"
-                className="size-8"
+                className="h-9 w-9 rounded-xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800 hover:text-[#802222] transition-colors"
                 size="icon"
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
               >
                 <span className="sr-only">Go to next page</span>
-                <IconChevronRight />
+                <IconChevronRight className="size-4" />
               </Button>
               <Button
                 variant="outline"
-                className="hidden size-8 lg:flex"
+                className="hidden h-9 w-9 rounded-xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800 hover:text-[#802222] transition-colors lg:flex"
                 size="icon"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}

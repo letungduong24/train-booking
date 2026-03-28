@@ -1,16 +1,12 @@
 import { RoutesTable } from "@/features/routes/components/routes-table"
-import { SyncGeojsonModal } from "@/features/routes/components/sync-geojson-modal"
 
 export default function RoutesPage() {
     return (
-        <div className="flex flex-1 flex-col gap-6">
+        <div className="flex flex-1 flex-col gap-6 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Quản lý tuyến đường</h1>
-                    <p className="text-muted-foreground">Danh sách và quản lý các tuyến đường trong hệ thống.</p>
-                </div>
-                <div>
-                    <SyncGeojsonModal />
+                    <h2 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Quản lý Tuyến đường</h2>
+                    <p className="text-sm text-muted-foreground mt-1 font-medium italic opacity-60">Thiết lập lộ trình, trạm dừng và cấu hình vận hành hệ thống</p>
                 </div>
             </div>
 

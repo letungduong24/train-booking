@@ -35,8 +35,9 @@ export const createRouteSchema = routeSchema.omit({
     status: z.string().optional(), // Make status optional since backend sets default
     durationMinutes: z.number(),
     turnaroundMinutes: z.number(),
-    basePricePerKm: z.number().default(1000),
-    stationFee: z.number().default(0),
+    totalDistanceKm: z.number(),
+    basePricePerKm: z.number(),
+    stationFee: z.number(),
     stations: z.array(z.object({
         id: z.string(),
         name: z.string(),

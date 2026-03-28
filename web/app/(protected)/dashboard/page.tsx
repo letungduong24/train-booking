@@ -52,12 +52,39 @@ export default function DashboardPage() {
                             Chúc {user?.name?.split(' ')[0] || 'bạn'} một ngày <br/>
                             hành trình <span className="text-rose-200">tuyệt vời!</span>
                         </h1>
-                        <Button 
-                            asChild 
-                            className="bg-white text-[#802222] hover:bg-rose-50 font-medium text-sm h-10 px-6 rounded-xl transition-all shadow-md shadow-rose-950/10 hover:scale-105 active:scale-95"
-                        >
-                            <Link href="/dashboard/history">Xem hành trình</Link>
-                        </Button>
+                        <div className="flex flex-wrap gap-4">
+                            <Button 
+                                asChild 
+                                className="bg-white text-[#802222] hover:bg-rose-50 font-bold text-sm h-12 px-8 rounded-2xl transition-all shadow-lg shadow-rose-950/20 hover:scale-[1.03] active:scale-95 border-none"
+                            >
+                                <Link href="/dashboard/booking" className="flex items-center gap-2">
+                                    <Ticket className="h-4 w-4" />
+                                    Đặt vé ngay
+                                </Link>
+                            </Button>
+                            
+                            <Button 
+                                variant="outline"
+                                asChild 
+                                className="bg-white/10 hover:bg-white/20 border-white/20 text-white font-semibold text-sm h-12 px-6 rounded-2xl transition-all backdrop-blur-md hover:scale-[1.03] active:scale-95"
+                            >
+                                <Link href="/dashboard/wallet" className="flex items-center gap-2">
+                                    <Wallet className="h-4 w-4" />
+                                    Ví tiền
+                                </Link>
+                            </Button>
+
+                            <Button 
+                                variant="outline"
+                                asChild 
+                                className="bg-white/10 hover:bg-white/20 border-white/20 text-white font-semibold text-sm h-12 px-6 rounded-2xl transition-all backdrop-blur-md hover:scale-[1.03] active:scale-95"
+                            >
+                                <Link href="/dashboard/history" className="flex items-center gap-2">
+                                    <History className="h-4 w-4" />
+                                    Lịch sử
+                                </Link>
+                            </Button>
+                        </div>
                     </div>
                     
                     {/* Decorative elements */}
@@ -132,12 +159,12 @@ export default function DashboardPage() {
             {/* Section 3: Main Grid (Trips & Transactions) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Side: Recent Trips with Tabs (8 cols) */}
-                <div className="lg:col-span-8">
-                    <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 shadow-sm shadow-gray-100/50 dark:shadow-none border border-gray-100 dark:border-zinc-800">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                            <div>
-                                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Chuyến đi của bạn</h2>
-                                <p className="text-xs font-medium text-muted-foreground">Theo dõi hành trình và đơn hàng</p>
+                <div className="lg:col-span-6">
+                    <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-[2rem] p-6 shadow-xl shadow-rose-900/[0.03] border border-gray-100 dark:border-zinc-800">
+                        <div className="flex flex-row items-center justify-between gap-4 pb-2 mb-6 relative z-10">
+                            <div className="space-y-1">
+                                <h2 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Chuyến đi của bạn</h2>
+                                <p className="text-[10px] font-medium text-muted-foreground/50">Theo dõi hành trình và đơn hàng</p>
                             </div>
                             <Button variant="outline" size="sm" asChild className="rounded-xl px-4 border-gray-200 text-[#802222] font-medium text-xs h-8 hover:bg-rose-50 hover:border-rose-200 transition-all">
                                 <Link href="/dashboard/history">Lịch sử</Link>
@@ -212,37 +239,13 @@ export default function DashboardPage() {
                 </div>
 
             {/* Right Side: Quick Actions & Transactions (4 cols) */}
-                <div className="lg:col-span-4 space-y-6">
-                    {/* Quick Actions */}
-                    <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 shadow-sm shadow-gray-100/50 dark:shadow-none border border-gray-100 dark:border-zinc-800">
-                        <div className="mb-6">
-                            <h3 className="text-base font-semibold text-gray-900 dark:text-white">Thao tác nhanh</h3>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                            <Link href="/dashboard/booking" className="flex flex-col items-center justify-center gap-3 p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl hover:bg-gray-100 dark:hover:bg-zinc-700 transition-all border border-gray-100 dark:border-zinc-800 group group shadow-sm">
-                                <Ticket className="h-5 w-5 text-gray-500 group-hover:text-[#802222] transition-colors duration-300" />
-                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-[#802222] transition-colors">Đặt vé</span>
-                            </Link>
-                            <Link href="/dashboard/wallet" className="flex flex-col items-center justify-center gap-3 p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl hover:bg-gray-100 dark:hover:bg-zinc-700 transition-all border border-gray-100 dark:border-zinc-800 group shadow-sm">
-                                <CreditCard className="h-5 w-5 text-gray-500 group-hover:text-[#802222] transition-colors duration-300" />
-                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-[#802222] transition-colors">Ví tiền</span>
-                            </Link>
-                            <Link href="/dashboard/history" className="flex flex-col items-center justify-center gap-3 p-4 bg-gray-50 dark:bg-zinc-800 rounded-2xl hover:bg-gray-100 dark:hover:bg-zinc-700 transition-all border border-gray-100 dark:border-zinc-800 group shadow-sm">
-                                <History className="h-5 w-5 text-gray-500 group-hover:text-[#802222] transition-colors duration-300" />
-                                <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-[#802222] transition-colors">Lịch sử</span>
-                            </Link>
-                            <Link href="#" className="flex flex-col items-center justify-center gap-3 p-4 bg-gray-50/50 dark:bg-zinc-800/50 rounded-2xl opacity-40 cursor-not-allowed border border-gray-100 dark:border-zinc-800 shadow-sm transition-all">
-                                <Heart className="h-5 w-5 text-gray-400" />
-                                <span className="text-xs font-medium text-gray-400">Ưu đãi</span>
-                            </Link>
-                        </div>
-                    </div>
-
+                <div className="lg:col-span-6 space-y-6">
                     {/* Recent Transactions */}
-                    <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 shadow-sm shadow-gray-100/50 dark:shadow-none border border-gray-100 dark:border-zinc-800 overflow-hidden">
-                        <div className="flex items-center justify-between mb-6">
-                            <div>
-                                <h3 className="text-base font-semibold text-gray-900 dark:text-white">Giao dịch</h3>
+                    <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-[2rem] p-6 shadow-xl shadow-rose-900/[0.03] border border-gray-100 dark:border-zinc-800 overflow-hidden">
+                        <div className="flex flex-row items-center justify-between gap-4 pb-2 mb-6 relative z-10">
+                            <div className="space-y-1">
+                                <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Giao dịch</h3>
+                                <p className="text-[10px] font-medium text-muted-foreground/50">Các hoạt động tài chính gần đây</p>
                             </div>
                             <Button variant="ghost" size="sm" asChild className="h-8 px-3 text-xs font-medium text-[#802222] hover:bg-rose-50 rounded-xl">
                                 <Link href="/dashboard/wallet">Tất cả</Link>
@@ -265,17 +268,6 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* FAB Quick Action */}
-            <Link 
-                href="/dashboard/booking" 
-                className="fixed bottom-10 right-10 w-20 h-20 bg-gradient-to-br from-[#802222] to-rose-900 text-white rounded-[2rem] shadow-2xl shadow-rose-900/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-50 group border-4 border-white dark:border-zinc-800"
-                title="Đặt vé mới"
-            >
-                <Ticket className="h-8 w-8 transition-transform group-hover:rotate-12 duration-300" />
-                <span className="absolute right-24 bg-[#802222] text-white px-5 py-3 rounded-2xl text-xs font-medium opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap pointer-events-none shadow-2xl translate-x-4 group-hover:translate-x-0">
-                    Đặt vé mới ngay
-                </span>
-            </Link>
         </div>
     );
 }

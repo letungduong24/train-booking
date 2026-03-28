@@ -82,15 +82,15 @@ export function CreateTripDialog() {
                         <Plus className="mr-2 h-4 w-4" /> Thêm chuyến đi
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
-                    <DialogHeader>
-                        <DialogTitle>Thêm chuyến đi mới</DialogTitle>
-                        <DialogDescription>
+                <DialogContent className="max-w-xl rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
+                    <DialogHeader className="p-8 pb-4">
+                        <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Thêm chuyến đi mới</DialogTitle>
+                        <DialogDescription className="text-xs font-medium text-muted-foreground/50">
                             Nhập thông tin cho chuyến đi mới.
                         </DialogDescription>
                     </DialogHeader>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="px-8 pb-8 space-y-4">
                             <FormField
                                 control={form.control}
                                 name="routeId"
@@ -158,8 +158,8 @@ export function CreateTripDialog() {
                                     </FormItem>
                                 )}
                             />
-                            <DialogFooter>
-                                <Button type="submit" disabled={createTrip.isPending}>
+                            <DialogFooter className="pt-4">
+                                <Button type="submit" disabled={createTrip.isPending} className="w-full bg-[#802222] hover:bg-rose-900 text-white rounded-full h-11 font-bold shadow-lg shadow-rose-900/20">
                                     {createTrip.isPending ? "Đang tạo..." : "Tạo chuyến đi"}
                                 </Button>
                             </DialogFooter>

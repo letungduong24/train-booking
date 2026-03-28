@@ -206,29 +206,28 @@ export function StationsTable() {
                     setFilters(prev => ({ ...prev, page: prev.page - 1 }))
                 }}
             />
-            <div className="flex items-center py-4 gap-2">
+            <div className="flex items-center py-4 gap-4">
                 <div className="relative flex-1 max-w-sm">
-                    <IconSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <IconSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                     <Input
                         placeholder="Tìm kiếm trạm..."
                         value={searchValue}
                         onChange={(event) => setSearchValue(event.target.value)}
-                        className="pl-8"
+                        className="h-11 rounded-2xl bg-white dark:bg-zinc-900 border-rose-100/50 dark:border-zinc-800 focus-visible:ring-[#802222]/20 pl-11 text-sm transition-all"
                     />
                 </div>
-
                 <div className="ml-auto">
                     <CreateStationDialog />
                 </div>
             </div>
-            <div className="rounded-md border">
+            <div className="rounded-[2.5rem] bg-white dark:bg-zinc-900 overflow-hidden border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015]">
                 <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-rose-50/20 dark:bg-zinc-800/20">
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
+                            <TableRow key={headerGroup.id} className="hover:bg-transparent border-none h-16">
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead key={header.id} className="text-xs font-bold uppercase tracking-widest text-[#802222]/50 first:pl-8 last:pr-8">
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -249,14 +248,14 @@ export function StationsTable() {
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
-                                    className="cursor-pointer hover:bg-muted/50"
+                                    className="cursor-pointer hover:bg-rose-50/10 border-none transition-all h-16"
                                     onClick={() => {
                                         setSelectedStationId(row.original.id)
                                         setDetailOpen(true)
                                     }}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell key={cell.id} className="first:pl-8 last:pr-8">
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext()

@@ -27,6 +27,7 @@ interface BedLayoutViewerProps {
 
 
 export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = [], isAdmin = false, tripId, onSeatsForceDeselected, isSubmitting = false, highlightedSeatIds = [], focusedSeatId = null, coachName, onSearchPassenger }: BedLayoutViewerProps) {
+
     const lastScrolledSeatId = useRef<string | null>(null)
 
     // Scroll to focused seat
@@ -103,13 +104,18 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
     }, [lockedSeatIds, selectedSeats, onSeatsForceDeselected, isSubmitting]);
 
     return (
-        <div className="space-y-4 w-full min-w-0 overflow-hidden">
+        <div className="space-y-4 w-full min-w-0 p-1">
             {/* Header */}
             <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">
-                        {coachName && `${coachName} - `}{totalRows} khoang × {tiers} tầng
-                    </h3>
+                    <div>
+                        <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">
+                            {coachName}
+                        </h3>
+                        <p className="text-[13px] font-medium text-muted-foreground mt-1">
+                            {template.name}
+                        </p>
+                    </div>
                     <div className="flex items-center gap-3">
                         {isAdmin && onSearchPassenger && (
                             <Button
@@ -135,24 +141,26 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
 
                 {/* Stats - Only show in User mode */}
                 {!isAdmin && (
-                    <div className="flex gap-4 text-sm bg-muted/20 rounded-lg w-full">
-                        <div>
-                            <span className="text-muted-foreground">Tổng số giường:</span>{' '}
-                            <span className="font-semibold">{seats.length}</span>
-                        </div>
-                        <div>
-                            <span className="text-muted-foreground">Còn trống:</span>{' '}
-                            <span className="font-semibold text-green-600">
-                                {seats.filter(s => s.bookingStatus === 'AVAILABLE' && !lockedSeatIds.includes(s.id)).length}
-                            </span>
-                        </div>
-                        <div>
-                            <span className="text-muted-foreground">Đã đặt:</span>{' '}
-                            <span className="font-semibold text-red-600">
-                                {seats.filter(s => s.bookingStatus === 'BOOKED').length}
-                            </span>
-                        </div>
+                <div className="flex gap-4 text-sm bg-white dark:bg-zinc-900/50 rounded-2xl w-full p-4 px-6 border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.03]">
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Tổng số giường</span>
+                        <span className="font-bold text-rose-600 dark:text-rose-400">{seats.length}</span>
                     </div>
+                    <div className="w-px bg-gray-100 dark:bg-zinc-800 mx-2" />
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Còn trống</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                            {seats.filter(s => s.bookingStatus === 'AVAILABLE' && !lockedSeatIds.includes(s.id)).length}
+                        </span>
+                    </div>
+                    <div className="w-px bg-gray-100 dark:bg-zinc-800 mx-2" />
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Đã đặt</span>
+                        <span className="font-bold text-rose-600 dark:text-rose-400">
+                            {seats.filter(s => s.bookingStatus === 'BOOKED').length}
+                        </span>
+                    </div>
+                </div>
                 )}
             </div>
 
@@ -160,43 +168,43 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
             <div className="flex flex-wrap gap-4 text-xs">
                 {/* User Booking Legend - Show for Admin too for consistency */}
                 <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full border border-secondary" />
+                    <div className="w-4 h-4 rounded-full border border-emerald-500" />
                     <span>{isAdmin ? 'Hoạt động (Trống)' : 'Còn trống'}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center" />
+                    <div className="w-4 h-4 rounded-full bg-zinc-800 text-white flex items-center justify-center shadow-lg" />
                     <span>Đã chọn</span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full bg-primary/50 border border-primary" />
+                    <div className="w-4 h-4 rounded-full bg-rose-600 border border-rose-600 shadow-rose-500/30 shadow-md" />
                     <span>Đã đặt</span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full bg-[#E5BA41] border border-[#E5BA41]" />
+                    <div className="w-4 h-4 rounded-full bg-yellow-500 border border-yellow-500 shadow-yellow-500/30 shadow-md" />
                     <span>Đang giữ chỗ</span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full bg-gray-300 dark:bg-muted" />
+                    <div className="w-4 h-4 rounded-full bg-gray-400 dark:bg-gray-600" />
                     <span>{isAdmin ? 'Đã vô hiệu hóa' : 'Không thể mua'}</span>
                 </div>
             </div>
 
             {/* Compartments - Horizontal scroll wrapper */}
-            <div className="space-y-6 w-full overflow-x-auto p-1">
-                <div className="w-fit min-w-full space-y-6">
+            <div className="space-y-2 w-full overflow-x-auto p-1">
+                <div className="w-fit min-w-full space-y-4">
                     {Array.from({ length: totalRows }).map((_, compartmentIndex) => {
                         // Lọc tất cả giường trong khoang này
                         const compartmentBeds = seats.filter(s => s.rowIndex === compartmentIndex)
 
                         return (
-                            <div key={compartmentIndex} className="border rounded-lg p-4 bg-muted/20 w-fit min-w-full">
+                            <div key={compartmentIndex} className="w-fit min-w-full p-2">
                                 {/* Compartment header */}
-                                <div className="text-sm font-semibold mb-3 text-center text-muted-foreground">
+                                <div className="text-[11px] font-bold mb-1 text-center text-muted-foreground uppercase tracking-widest opacity-50">
                                     Khoang {compartmentIndex + 1}
                                 </div>
 
                                 {/* Tiers (from top to bottom) */}
-                                <div className="space-y-2">
+                                <div className="space-y-1">
                                     {Array.from({ length: tiers }).reverse().map((_, reversedIndex) => {
                                         const tierIndex = tiers - reversedIndex - 1
                                         const tierNumber = tierIndex + 1
@@ -214,11 +222,11 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                                                             onClick={() => onSeatClick(leftBed)}
                                                             disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(leftBed.id)}
                                                             className={cn(
-                                                                "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
-                                                                focusedSeatId === leftBed.id && "ring-4 ring-primary ring-offset-2 animate-pulse z-20",
-                                                                highlightedSeatIds.includes(leftBed.id) && "ring-2 ring-primary/50 z-10",
+                                                                "h-10 flex items-center justify-center rounded-lg transition-all font-semibold text-xs border shadow-sm",
+                                                                focusedSeatId === leftBed.id && "ring-4 ring-[#802222] ring-offset-2 animate-pulse z-20",
+                                                                highlightedSeatIds.includes(leftBed.id) && "ring-2 ring-[#802222]/50 z-10",
                                                                 selectedSeats.includes(leftBed.id)
-                                                                    ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-md"
+                                                                    ? "bg-zinc-900 text-white hover:bg-zinc-800 border-transparent shadow-zinc-500/20"
                                                                     : getSeatStatusColor(displayStatus, isAdmin)
                                                             )}
                                                             id={`seat-${leftBed.id}`}
@@ -254,11 +262,11 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                                                             onClick={() => onSeatClick(rightBed)}
                                                             disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(rightBed.id)}
                                                             className={cn(
-                                                                "h-12 flex items-center justify-center rounded transition-all font-semibold text-sm border",
-                                                                focusedSeatId === rightBed.id && "ring-4 ring-primary ring-offset-2 animate-pulse z-20",
-                                                                highlightedSeatIds.includes(rightBed.id) && "ring-2 ring-primary/50 z-10",
+                                                                "h-10 flex items-center justify-center rounded-lg transition-all font-semibold text-xs border shadow-sm",
+                                                                focusedSeatId === rightBed.id && "ring-4 ring-[#802222] ring-offset-2 animate-pulse z-20",
+                                                                highlightedSeatIds.includes(rightBed.id) && "ring-2 ring-[#802222]/50 z-10",
                                                                 selectedSeats.includes(rightBed.id)
-                                                                    ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-md"
+                                                                    ? "bg-zinc-900 text-white hover:bg-zinc-800 border-transparent shadow-zinc-500/20"
                                                                     : getSeatStatusColor(displayStatus, isAdmin)
                                                             )}
                                                             id={`seat-${rightBed.id}`}

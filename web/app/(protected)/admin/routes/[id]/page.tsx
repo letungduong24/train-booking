@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { vi } from "date-fns/locale"
 import { toast } from "sonner"
-import { Trash2, Plus, GripVertical, Save, ArrowLeft, RefreshCw } from "lucide-react"
+import { Trash2, Plus, GripVertical, Save, ArrowLeft, RefreshCw, Map as MapIcon } from "lucide-react"
 import {
     DndContext,
     closestCenter,
@@ -66,12 +66,12 @@ function SortableRow({ id, station, onDelete, routeId, onSuccess }: any) {
     };
 
     return (
-        <TableRow ref={setNodeRef} style={style}>
-            <TableCell>
+        <TableRow ref={setNodeRef} style={style} className="hover:bg-rose-50/10 border-none transition-colors h-16">
+            <TableCell className="pl-6">
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="cursor-grab touch-none"
+                    className="cursor-grab touch-none hover:bg-rose-50 rounded-lg text-[#802222]/30"
                     style={{ touchAction: 'none' }}
                     {...attributes}
                     {...listeners}
@@ -79,25 +79,32 @@ function SortableRow({ id, station, onDelete, routeId, onSuccess }: any) {
                     <GripVertical className="h-4 w-4" />
                 </Button>
             </TableCell>
-            <TableCell>{station.index + 1}</TableCell>
-            <TableCell className="font-medium">{station.station?.name || "Unknown"}</TableCell>
-            <TableCell>{station.station?.latitude}</TableCell>
-            <TableCell>{station.station?.longitude}</TableCell>
-            <TableCell>{station.distanceFromStart}</TableCell>
-            <TableCell className="flex gap-2">
-                <EditRouteStationDialog
-                    routeId={routeId}
-                    station={station}
-                    onSuccess={onSuccess}
-                />
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive hover:bg-destructive/10"
-                    onClick={() => onDelete(station.stationId)}
-                >
-                    <Trash2 className="h-4 w-4" />
-                </Button>
+            <TableCell className="font-bold text-zinc-500 tabular-nums">{station.index + 1}</TableCell>
+            <TableCell>
+                <div className="flex flex-col">
+                    <span className="font-bold text-zinc-800 dark:text-zinc-200">{station.station?.name || "Unknown"}</span>
+                </div>
+            </TableCell>
+            <TableCell className="text-zinc-500 font-medium tabular-nums text-xs">
+                <div>{station.station?.latitude.toFixed(4)}, {station.station?.longitude.toFixed(4)}</div>
+            </TableCell>
+            <TableCell className="font-black text-[#802222] tabular-nums">{station.distanceFromStart} <span className="text-[10px] opacity-40">km</span></TableCell>
+            <TableCell className="pr-6">
+                <div className="flex justify-end gap-1">
+                    <EditRouteStationDialog
+                        routeId={routeId}
+                        station={station}
+                        onSuccess={onSuccess}
+                    />
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-[#802222]/30 hover:text-destructive hover:bg-destructive/10 rounded-lg"
+                        onClick={() => onDelete(station.stationId)}
+                    >
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
+                </div>
             </TableCell>
         </TableRow>
     );
@@ -198,13 +205,157 @@ export default function RouteDetailPage() {
     if (isError || !route) return <div>Route not found</div>
 
     return (
+        <div className="flex flex-1 flex-col gap-6 animate-in fade-in duration-500">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="icon" onClick={handleBack} className="rounded-full hover:bg-rose-50 hover:text-[#802222]">
+                        <ArrowLeft className="h-5 w-5" />
+                    </Button>
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Chi tiết tuyến đường</h1>
+                        <p className="text-sm text-muted-foreground mt-1 font-medium italic opacity-60">{route.name}</p>
+                    </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleRecalculatePath}
+                        className="rounded-xl border-gray-100 dark:border-zinc-800 hover:bg-rose-50 font-bold"
+                        title="Tính lại đường đi theo đường ray"
+                    >
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Tính lại đường
+                    </Button>
+                    <EditRouteDialog route={route} />
+                    <DeleteRouteAlert
+                        route={route}
+                        onSuccess={handleRouteDeleted}
+                        currentPage={1}
+                        totalItems={1}
+                        itemsPerPage={10}
+                        itemsOnCurrentPage={1}
+                        onNavigateToPreviousPage={() => { }}
+                    />
+                </div>
+            </div>
 
-        <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            <div className="flex items-center gap-4">
-                <Button variant="outline" size="icon" onClick={handleBack}>
-                    <ArrowLeft className="h-4 w-4" />
-                </Button>
-                <h1 className="text-2xl font-bold tracking-tight">Chi tiết tuyến đường</h1>
+            {/* New Horizontal Route Metrics Bar */}
+            <div className="rounded-[2.5rem] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015] p-6 relative group">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:items-center lg:justify-between gap-8 px-4">
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-900/10 text-[#802222] dark:text-rose-400">
+                            <MapIcon className="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h4 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Thông số tuyến</h4>
+                            <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest mt-1">Thông tin vận hành thực tế</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-12 flex-1 lg:justify-end">
+                        <div className="space-y-1">
+                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Trạng thái</span>
+                            <Badge variant={getRouteStatusColor(route.status)} className="rounded-lg px-3 py-1 text-[10px] font-bold">
+                                {translateRouteStatus(route.status)}
+                            </Badge>
+                        </div>
+                        
+                        <div className="space-y-0.5 sm:border-l sm:border-gray-50 sm:dark:border-zinc-800/50 sm:pl-8 lg:pl-12">
+                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Thời gian chạy</span>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-2xl font-black text-[#802222] tabular-nums tracking-tighter">
+                                    {Math.floor(route.durationMinutes / 60)}<span className="text-xs font-bold opacity-40 ml-0.5">h</span> {route.durationMinutes % 60}
+                                </span>
+                                <span className="text-xs font-bold text-[#802222]/40 tracking-tighter uppercase">phút</span>
+                            </div>
+                        </div>
+
+                        <div className="space-y-0.5 sm:border-l sm:border-gray-50 sm:dark:border-zinc-800/50 sm:pl-8 lg:pl-12">
+                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Cự ly ước tính</span>
+                            <div className="flex items-baseline gap-1">
+                                <span className="text-2xl font-black text-[#802222] tabular-nums tracking-tighter">
+                                    {items.length > 0 ? items[items.length - 1].distanceFromStart : 0}
+                                </span>
+                                <span className="text-xs font-bold text-[#802222]/40 tracking-tighter uppercase">km</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Full-width Map Card */}
+            <div className="rounded-[2.5rem] overflow-hidden bg-white dark:bg-zinc-950 border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015] min-h-[500px] relative group">
+                <RouteMap stations={items} pathCoordinates={route.pathCoordinates} />
+                <div className="absolute top-6 left-6 z-10">
+                    <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-100 dark:border-zinc-800 shadow-sm flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-[#802222] animate-pulse" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#802222]/80">Trực quan lộ trình</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Full-width Stations Table */}
+            <div className="space-y-4">
+                <div className="flex items-center justify-between px-2">
+                    <h3 className="text-2xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Hành trình chi tiết</h3>
+                    <div className="flex gap-2">
+                        {hasChanged && (
+                            <Button onClick={handleSaveOrder} size="sm" variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 rounded-xl font-bold">
+                                <Save className="mr-2 h-4 w-4" /> Lưu thứ tự
+                            </Button>
+                        )}
+                        <Button onClick={() => setCreateOpen(true)} size="sm" className="bg-[#802222] hover:bg-rose-900 text-white rounded-xl font-bold px-6">
+                            <Plus className="mr-2 h-4 w-4" /> Thêm trạm dừng
+                        </Button>
+                    </div>
+                </div>
+
+                <div className="rounded-[2.5rem] border-none bg-white dark:bg-zinc-900 overflow-hidden shadow-none">
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <Table>
+                            <TableHeader className="bg-rose-50/20 dark:bg-zinc-800/20">
+                                <TableRow className="hover:bg-transparent border-none h-16">
+                                    <TableHead className="w-[60px]"></TableHead>
+                                    <TableHead className="w-[80px] text-xs font-bold uppercase tracking-widest text-[#802222]/50 pl-6">TT</TableHead>
+                                    <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50">Tên ga dừng</TableHead>
+                                    <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50">Tọa độ địa lý</TableHead>
+                                    <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50">Cự ly từ ga đầu</TableHead>
+                                    <TableHead className="w-[120px] pr-6 text-right">Thao tác</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                <SortableContext
+                                    items={items.map(i => i.stationId)}
+                                    strategy={verticalListSortingStrategy}
+                                >
+                                    {items.length > 0 ? (
+                                        items.map((item: any) => (
+                                            <SortableRow
+                                                key={item.stationId}
+                                                id={item.stationId}
+                                                station={item}
+                                                onDelete={handleRemoveStation}
+                                                routeId={routeId}
+                                                onSuccess={() => queryClient.invalidateQueries({ queryKey: ['route', routeId] })}
+                                            />
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={6} className="text-center py-20 text-muted-foreground italic">
+                                                Chưa có dữ liệu hành trình.
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </SortableContext>
+                            </TableBody>
+                        </Table>
+                    </DndContext>
+                </div>
             </div>
 
             <AddStationDialog
@@ -222,136 +373,6 @@ export default function RouteDetailPage() {
                 onOpenChange={setConfirmReorderOpen}
                 onSuccess={handleSuccessReorder}
             />
-
-            <div className="flex-1 space-y-6">
-                {/* Header Section */}
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between border-b pb-4 gap-4">
-                    <div>
-                        <h2 className="text-3xl font-bold tracking-tight">{route.name}</h2>
-                        <p className="text-muted-foreground mt-1">
-                            Quản lý danh sách trạm dừng
-                        </p>
-                    </div>
-                    <div className="flex gap-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleRecalculatePath}
-                            title="Tính lại đường đi theo đường ray"
-                        >
-                            <RefreshCw className="h-4 w-4 mr-1" />
-                            Tính lại đường
-                        </Button>
-                        <EditRouteDialog route={route} />
-                        <DeleteRouteAlert
-                            route={route}
-                            onSuccess={handleRouteDeleted}
-                            currentPage={1}
-                            totalItems={1}
-                            itemsPerPage={10}
-                            itemsOnCurrentPage={1}
-                            onNavigateToPreviousPage={() => { }}
-                        />
-                    </div>
-                </div>
-
-                {/* Route Info */}
-                <div className="flex flex-wrap justify-between gap-4 border p-4 rounded-md bg-muted/20">
-                    <div className="flex items-center gap-2">
-                        <span className="font-semibold">Trạng thái:</span>
-                        <Badge variant={getRouteStatusColor(route.status)}>{translateRouteStatus(route.status)}</Badge>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <span className="font-semibold">Ngày tạo:</span>
-                        <span>{format(new Date(route.createdAt), "dd/MM/yyyy HH:mm", { locale: vi })}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <span className="font-semibold">Thời gian chạy:</span>
-                        <span>{Math.floor(route.durationMinutes / 60)}g{route.durationMinutes % 60 > 0 ? ` ${route.durationMinutes % 60}p` : ''}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <span className="font-semibold">Nghỉ quay đầu:</span>
-                        <span>{Math.floor(route.turnaroundMinutes / 60)}g{route.turnaroundMinutes % 60 > 0 ? ` ${route.turnaroundMinutes % 60}p` : ''}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <span className="font-semibold">Giá/km:</span>
-                        <span className="font-medium">{route.basePricePerKm.toLocaleString('vi-VN')} đ</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <span className="font-semibold">Phí bến:</span>
-                        <span className="font-medium">{route.stationFee.toLocaleString('vi-VN')} đ</span>
-                    </div>
-                </div>
-
-                {/* Map */}
-                <div className="rounded-md border overflow-hidden mt-6 mb-6">
-                    <RouteMap stations={items} pathCoordinates={route.pathCoordinates} />
-                </div>
-
-                {/* Stations Table */}
-                <div>
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold">Danh sách trạm</h3>
-                        <div className="flex gap-2">
-                            {hasChanged && (
-                                <Button onClick={handleSaveOrder} size="sm" variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
-                                    <Save className="mr-2 h-4 w-4" /> Lưu thứ tự
-                                </Button>
-                            )}
-                            <Button onClick={() => setCreateOpen(true)} size="sm">
-                                <Plus className="mr-2 h-4 w-4" /> Thêm trạm
-                            </Button>
-                        </div>
-                    </div>
-                    <div className="rounded-md border">
-                        <DndContext
-                            sensors={sensors}
-                            collisionDetection={closestCenter}
-                            onDragEnd={handleDragEnd}
-                        >
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="w-[30px]"></TableHead>
-                                        <TableHead className="w-[50px]">TT</TableHead>
-                                        <TableHead>Tên trạm</TableHead>
-                                        <TableHead>Vĩ độ</TableHead>
-                                        <TableHead>Kinh độ</TableHead>
-                                        <TableHead>Khoảng cách (km)</TableHead>
-                                        <TableHead className="w-[50px]"></TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    <SortableContext
-                                        items={items.map(i => i.stationId)}
-                                        strategy={verticalListSortingStrategy}
-                                    >
-                                        {items.length > 0 ? (
-                                            items.map((item: any, index: number) => (
-                                                <SortableRow
-                                                    key={item.stationId}
-                                                    id={item.stationId}
-                                                    station={item}
-                                                    onDelete={handleRemoveStation}
-                                                    routeId={routeId}
-                                                    onSuccess={() => queryClient.invalidateQueries({ queryKey: ['route', routeId] })}
-                                                />
-                                            ))
-                                        ) : (
-                                            <TableRow>
-                                                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                                                    Chưa có trạm nào. Nhấn "Thêm trạm" để bắt đầu.
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
-                                    </SortableContext>
-                                </TableBody>
-                            </Table>
-                        </DndContext>
-                    </div>
-                </div>
-            </div>
         </div>
-
     )
 }

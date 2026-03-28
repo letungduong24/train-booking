@@ -21,7 +21,7 @@ export class RouteService {
       const route = await tx.route.create({
         data: {
           ...rest,
-          status: (status as RouteStatus) || RouteStatus.DRAFT,
+          status: (status?.toUpperCase() as any) || RouteStatus.DRAFT,
         },
       });
       createdRouteId = route.id;

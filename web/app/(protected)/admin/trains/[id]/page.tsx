@@ -18,8 +18,12 @@ import { EditTrainDialog } from "@/features/trains/components/edit-train-dialog"
 import { DeleteTrainAlert } from "@/features/trains/components/delete-train-alert"
 import { SortableCoachItem } from "@/features/trains/components/sortable-coach-item"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { ArrowLeft, Settings, TrainFront, Loader2, Edit, Trash2 } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 import {
     DndContext,
@@ -38,16 +42,6 @@ import {
     horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
-// Icons
-import {
-    ArrowLeft,
-    Edit,
-    Trash2,
-    Settings,
-    TrainFront,
-    Loader2
-} from "lucide-react"
-import { Skeleton } from "@/components/ui/skeleton"
 
 export default function AdminTrainDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params)
@@ -189,154 +183,181 @@ export default function AdminTrainDetailPage({ params }: { params: Promise<{ id:
 
     return (
 
-        <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+        <div className="flex flex-1 flex-col gap-6 animate-in fade-in duration-700">
             {/* 1. Header & Actions */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" onClick={handleBack} className="shrink-0">
+                    <Button variant="ghost" size="icon" onClick={handleBack} className="rounded-full hover:bg-rose-50 hover:text-[#802222]">
                         <ArrowLeft className="w-5 h-5" />
                     </Button>
                     <div>
                         <div className="flex items-center gap-2">
-                            <h1 className="text-xl font-bold flex items-center gap-2">
-                                <TrainFront className="w-5 h-5 text-primary" />
+                            <h1 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">
                                 {train.code}
                             </h1>
-                            <span className={cn(
-                                "px-2 py-0.5 rounded-full text-xs font-medium",
-                                train.status === 'ACTIVE' ? "bg-green-500/10 text-green-600 border border-green-200 dark:border-green-800" : "bg-muted text-muted-foreground border border-border"
+                            <Badge variant={train.status === 'ACTIVE' ? 'default' : 'secondary'} className={cn(
+                                "rounded-full px-3 py-0.5 text-[10px] font-bold border-none shadow-sm",
+                                train.status === 'ACTIVE' ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/20" : "bg-zinc-200 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-400"
                             )}>
-                                {train.status === 'ACTIVE' ? 'Hoạt động' : train.status}
-                            </span>
+                                {train.status === 'ACTIVE' ? 'Hoạt động' : 'Tạm dừng'}
+                            </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className="text-sm text-muted-foreground mt-1 font-medium italic opacity-60">
                             {train.name}
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                     <EditTrainDialog train={train} />
                     <DeleteTrainAlert train={train} />
                 </div>
             </div>
 
-            {/* 2. Main Content Area */}
-            <div className="space-y-6">
-
-                {/* 2.1 Coach Management Header */}
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h2 className="text-lg font-semibold flex items-center gap-2">
-                            <Settings className="w-5 h-5" />
-                            Quản lý Toa & Ghế
-                        </h2>
-                        <p className="text-sm text-muted-foreground">
-                            Chọn toa để xem và quản lý trạng thái các ghế.
-                        </p>
-                    </div>
-                    <CreateCoachDialog trainId={id} />
-                </div>
-
-                {/* 2.2 Coach Navigation with Drag and Drop */}
-                <div className="grid grid-cols-1 w-full">
-                    <div className="overflow-x-auto">
-                        <div className="flex items-center gap-4 pb-2">
-                            {/* Train Engine */}
-                            <div className="shrink-0 relative flex items-center justify-center ps-7 pe-4 py-2 md:py-3 bg-primary text-primary-foreground font-bold text-sm self-stretch min-w-[120px] max-w-[120px]"
-                                style={{
-                                    clipPath: 'polygon(46% 0, 100% 0, 100% 100%, 0% 100%)'
-                                }}>
-                                {train.code}
-                            </div>
-
-                            {/* Sortable Coaches */}
-                            <DndContext
-                                sensors={sensors}
-                                collisionDetection={closestCenter}
-                                onDragEnd={handleDragEnd}
-                                modifiers={[restrictToHorizontalAxis]}
-                            >
-                                <SortableContext
-                                    items={coaches.map(c => c.id)}
-                                    strategy={horizontalListSortingStrategy}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        {coaches.map((coach) => (
-                                            <SortableCoachItem
-                                                key={coach.id}
-                                                coach={coach}
-                                                isSelected={coach.id === selectedCoachId}
-                                                onSelect={setSelectedCoachId}
-                                            />
-                                        ))}
-                                    </div>
-                                </SortableContext>
-                            </DndContext>
+            {/* 2. Main Premium Management Card */}
+            <Card className="rounded-[2.5rem] border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl relative group overflow-hidden">
+                <CardHeader className="p-6 pb-2 relative z-10">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Quản lý Toa & Ghế</CardTitle>
+                            <CardDescription className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest mt-1">
+                                Thiết lập thứ tự toa và điều chỉnh trạng thái ghế/giường
+                            </CardDescription>
                         </div>
+                        <CreateCoachDialog trainId={id} />
                     </div>
-                </div>
+                </CardHeader>
+                
+                <CardContent className="p-6 relative z-10">
+                    <div className="space-y-8">
+                        {/* 2.2 Coach Navigation with Drag and Drop */}
+                        <div className="w-full overflow-x-auto pb-4">
+                            <div className="flex items-center min-w-max">
+                                {/* Train Engine */}
+                                <div className="relative flex items-center justify-center ps-7 pe-4 py-2 md:py-3 bg-[#802222] text-white font-bold text-sm self-stretch min-w-[120px] max-w-[120px]"
+                                    style={{
+                                        clipPath: 'polygon(46% 0, 100% 0, 100% 100%, 0% 100%)'
+                                    }}>
+                                    <TrainFront className="mr-2 h-4 w-4" />
+                                    {train.code}
+                                </div>
 
-                {/* 2.3 Seat/Bed Layout Viewer (Admin Mode) */}
-                <div className="grid grid-cols-1 w-full border rounded-lg p-6 bg-card shadow-sm">
-                    {selectedCoach && (
-                        <>
-                            <div className="flex flex-col gap-4 mb-6 pb-4 border-b">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h3 className="font-semibold text-lg">{selectedCoach.name}</h3>
-                                        <p className="text-sm text-muted-foreground">
-                                            Loại: {selectedCoach.template.name} ({selectedCoach.template.code})
-                                        </p>
-                                    </div>
-                                    <div className="flex flex-col items-end gap-2 text-right">
-                                        <div className="flex items-center gap-2">
-                                            <ToggleCoachStatusButton coach={selectedCoach} />
-                                            <DeleteCoachAlert coach={selectedCoach} />
+                                {/* Rail Track after Engine */}
+                                <div className="flex flex-col gap-1.5 flex-none w-8 items-center justify-center">
+                                    <div className="h-0.5 w-full bg-muted-foreground/20"></div>
+                                    <div className="h-0.5 w-full bg-muted-foreground/20"></div>
+                                </div>
+
+                                {/* Sortable Coaches */}
+                                <DndContext
+                                    sensors={sensors}
+                                    collisionDetection={closestCenter}
+                                    onDragEnd={handleDragEnd}
+                                    modifiers={[restrictToHorizontalAxis]}
+                                >
+                                    <SortableContext
+                                        items={coaches.map(c => c.id)}
+                                        strategy={horizontalListSortingStrategy}
+                                    >
+                                        <div className="flex items-center">
+                                            {coaches.map((coach, index) => (
+                                                <React.Fragment key={coach.id}>
+                                                    <SortableCoachItem
+                                                        coach={coach}
+                                                        isSelected={coach.id === selectedCoachId}
+                                                        onSelect={setSelectedCoachId}
+                                                    />
+                                                    {/* Rail Track Separator */}
+                                                    {index < coaches.length - 1 && (
+                                                        <div className="flex flex-col gap-1.5 flex-none w-8 items-center justify-center">
+                                                            <div className="h-0.5 w-full bg-muted-foreground/20"></div>
+                                                            <div className="h-0.5 w-full bg-muted-foreground/20"></div>
+                                                        </div>
+                                                    )}
+                                                </React.Fragment>
+                                            ))}
                                         </div>
-                                        {selectedCoachDetail && (
-                                            <div className="text-xs font-medium text-muted-foreground">
-                                                {selectedCoachDetail.seats.length} {selectedCoachDetail.template.layout === 'SEAT' ? 'ghế' : 'giường'}
+                                    </SortableContext>
+                                </DndContext>
+                            </div>
+                        </div>
+
+                        {/* 2.3 Seat/Bed Layout Viewer Area */}
+                        <div className="min-h-[400px]">
+                            {selectedCoach ? (
+                                <div className="space-y-6">
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-gray-100 dark:border-zinc-800">
+                                        <div className="flex items-center gap-4">
+                                            <div className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-900/10 text-[#802222] dark:text-rose-400">
+                                                <Settings className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">{selectedCoach.name}</h3>
+                                                <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest mt-1">
+                                                    Loại: {selectedCoach.template.name} ({selectedCoach.template.code})
+                                                </p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex flex-col items-end mr-2">
+                                                {selectedCoachDetail && (
+                                                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest leading-none mb-1">
+                                                        {selectedCoachDetail.seats.length} {selectedCoachDetail.template.layout === 'SEAT' ? 'ghế' : 'giường'}
+                                                    </span>
+                                                )}
+                                                <div className="flex items-center gap-2">
+                                                    <ToggleCoachStatusButton coach={selectedCoach} />
+                                                    <DeleteCoachAlert coach={selectedCoach} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Render appropriate viewer based on coach type */}
+                                    <div className="py-2">
+                                        {isLoadingCoachDetail ? (
+                                            <div className="flex items-center justify-center py-20">
+                                                <Loader2 className="h-8 w-8 animate-spin text-[#802222]/40" />
+                                            </div>
+                                        ) : selectedCoachDetail ? (
+                                            selectedCoachDetail.template.layout === 'SEAT' ? (
+                                                <SeatLayoutViewer
+                                                    coach={selectedCoachDetail}
+                                                    onSeatClick={handleSeatClick}
+                                                    selectedSeats={[]}
+                                                    isAdmin={true}
+                                                />
+                                            ) : (
+                                                <BedLayoutViewer
+                                                    coach={selectedCoachDetail}
+                                                    onSeatClick={handleSeatClick}
+                                                    selectedSeats={[]}
+                                                    isAdmin={true}
+                                                />
+                                            )
+                                        ) : (
+                                            <div className="flex items-center justify-center py-12">
+                                                <div className="text-muted-foreground font-medium italic opacity-40">Chọn một toa để xem chi tiết sơ đồ</div>
                                             </div>
                                         )}
                                     </div>
                                 </div>
-                            </div>
-
-                            {/* Render appropriate viewer based on coach type */}
-                            {isLoadingCoachDetail ? (
-                                <div className="space-y-6">
-                                    <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
-                                        {Array.from({ length: 12 }).map((_, i) => (
-                                            <Skeleton key={i} className="h-12 w-full" />
-                                        ))}
-                                    </div>
-                                </div>
-                            ) : selectedCoachDetail ? (
-                                selectedCoachDetail.template.layout === 'SEAT' ? (
-                                    <SeatLayoutViewer
-                                        coach={selectedCoachDetail}
-                                        onSeatClick={handleSeatClick}
-                                        selectedSeats={[]}
-                                        isAdmin={true}
-                                    />
-                                ) : (
-                                    <BedLayoutViewer
-                                        coach={selectedCoachDetail}
-                                        onSeatClick={handleSeatClick}
-                                        selectedSeats={[]}
-                                        isAdmin={true}
-                                    />
-                                )
                             ) : (
-                                <div className="flex items-center justify-center py-12">
-                                    <div className="text-muted-foreground">Chọn một toa để xem chi tiết</div>
+                                <div className="flex flex-col items-center justify-center py-32 rounded-[2rem] border-2 border-dashed border-gray-100 dark:border-zinc-800">
+                                    <div className="p-4 rounded-full bg-gray-50 dark:bg-zinc-900 text-zinc-300 dark:text-zinc-700 mb-4">
+                                        <Settings className="w-8 h-8" />
+                                    </div>
+                                    <p className="text-sm font-bold text-zinc-400 uppercase tracking-widest">Vui lòng chọn toa để xem sơ đồ</p>
                                 </div>
                             )}
-                        </>
-                    )}
-                </div>
-            </div>
+                        </div>
+                    </div>
+                </CardContent>
+                
+                <div className="absolute -right-12 -top-12 w-48 h-48 bg-rose-100/30 dark:bg-rose-900/10 rounded-full blur-3xl z-0" />
+                <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-rose-100/20 dark:bg-rose-900/5 rounded-full blur-3xl z-0" />
+            </Card>
 
             {/* Admin Seat Detail Dialog */}
             <AdminSeatDetailDialog

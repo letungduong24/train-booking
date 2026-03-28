@@ -105,13 +105,15 @@ export default function HistoryPage() {
                         </div>
                     ) : bookings.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-24 bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-gray-100 dark:border-zinc-800 shadow-xl shadow-gray-100/50 dark:shadow-none">
-                            <div className="w-24 h-24 rounded-full bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center mb-6 text-[#802222] opacity-20">
+                            <div className="w-20 h-20 rounded-2xl bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center mb-6 text-[#802222] opacity-40">
                                 <Search className="h-10 w-10" />
                             </div>
-                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Không tìm thấy đơn hàng</h3>
-                            <p className="text-muted-foreground mt-2 max-w-sm mx-auto font-medium text-center opacity-60">
-                                {search ? 'Thử thay đổi từ khóa tìm kiếm của bạn.' : 'Bạn hiện chưa có đơn hàng nào trong danh mục này.'}
-                            </p>
+                            <div className="text-center space-y-2 mb-8">
+                                <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Không tìm thấy đơn hàng</h3>
+                                <p className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-widest">
+                                    {search ? 'Thử thay đổi từ khóa tìm kiếm của bạn' : 'Bạn hiện chưa có đơn hàng nào'}
+                                </p>
+                            </div>
                             <Button
                                 variant="outline"
                                 onClick={() => { setSearch(''); setActiveTab('PAID'); }}

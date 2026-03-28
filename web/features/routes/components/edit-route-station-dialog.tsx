@@ -84,23 +84,23 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
                     <IconEdit className="h-4 w-4" aria-hidden="true" />
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>Sửa thông tin trạm</DialogTitle>
-                    <DialogDescription>
+            <DialogContent className="max-w-[425px] rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
+                <DialogHeader className="p-8 pb-4">
+                    <DialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Sửa thông tin trạm</DialogTitle>
+                    <DialogDescription className="text-sm font-medium text-muted-foreground/50">
                         Cập nhật thông tin trạm trong tuyến đường này.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="px-8 space-y-5">
                         <FormField
                             control={form.control}
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Tên trạm</FormLabel>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Tên trạm</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Tên trạm..." {...field} />
+                                        <Input placeholder="Tên trạm..." className="h-11 rounded-xl bg-gray-50/50 border-gray-100" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -112,9 +112,9 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
                                 name="latitude"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Vĩ độ</FormLabel>
+                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Vĩ độ</FormLabel>
                                         <FormControl>
-                                            <Input type="number" step="any" {...field} />
+                                            <Input type="number" step="any" className="h-11 rounded-xl bg-gray-50/50 border-gray-100" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -125,9 +125,9 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
                                 name="longitude"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Kinh độ</FormLabel>
+                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Kinh độ</FormLabel>
                                         <FormControl>
-                                            <Input type="number" step="any" {...field} />
+                                            <Input type="number" step="any" className="h-11 rounded-xl bg-gray-50/50 border-gray-100" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -139,16 +139,16 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
                             name="distanceFromStart"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Khoảng cách từ trạm đầu (km)</FormLabel>
+                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Khoảng cách từ trạm đầu (km)</FormLabel>
                                     <FormControl>
-                                        <Input type="number" step="0.1" {...field} />
+                                        <Input type="number" step="0.1" className="h-11 rounded-xl bg-gray-50/50 border-gray-100" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        <DialogFooter>
-                            <Button type="submit" disabled={updateRouteStation.isPending}>
+                        <DialogFooter className="py-8">
+                            <Button type="submit" disabled={updateRouteStation.isPending} className="w-full bg-[#802222] hover:bg-rose-900 text-white rounded-xl h-12 font-bold shadow-lg shadow-rose-900/20">
                                 {updateRouteStation.isPending ? "Đang lưu..." : "Lưu thay đổi"}
                             </Button>
                         </DialogFooter>

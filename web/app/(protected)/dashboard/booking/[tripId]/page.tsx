@@ -271,16 +271,16 @@ export default function TripDetailPage() {
                 <>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-24 lg:pb-0">
                         <div className="lg:col-span-2 space-y-6">
-                            <div className="bg-white dark:bg-zinc-900 rounded-[2rem] p-6 shadow-xl shadow-gray-100 border border-gray-100 dark:border-zinc-800">
-                                <div className="mb-6">
-                                    <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400">Chọn chỗ</h3>
-                                    <p className="text-[11px] font-medium text-muted-foreground mt-1">
-                                        Chọn toa và chỗ ngồi/giường của bạn
-                                    </p>
+                            <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-[2.5rem] p-6 shadow-xl shadow-rose-900/[0.03] border border-gray-100 dark:border-zinc-800">
+                                <div className="flex flex-row items-center justify-between gap-4 pb-2 mb-6 relative z-10">
+                                    <div className="space-y-1">
+                                        <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Chọn chỗ</h3>
+                                        <p className="text-[10px] font-medium text-muted-foreground/50">Chọn toa và chỗ ngồi/giường của bạn</p>
+                                    </div>
                                 </div>
                                 <div>
                                     {/* Coach Navigation */}
-                                    <div className="mb-8 p-1 bg-gray-50/50 dark:bg-zinc-800/50 rounded-2xl">
+                                    <div className="mb-0 p-1 bg-transparent dark:bg-transparent">
                                         <BookingCoachNavigationBar
                                             coaches={trip.train.coaches}
                                             selectedCoachId={selectedCoachId}
@@ -290,8 +290,8 @@ export default function TripDetailPage() {
                                     </div>
 
                                     {!selectedCoachId ? (
-                                        <div className="py-12 text-center text-muted-foreground border-2 border-dashed border-gray-100 rounded-[1.5rem] bg-gray-50/30">
-                                            <p className="text-sm font-medium opacity-50">Vui lòng chọn toa để xem sơ đồ chỗ ngồi</p>
+                                        <div className="py-24 text-center text-muted-foreground border-2 border-dashed border-gray-100 rounded-[1.5rem] bg-gray-50/30">
+                                            <p className="text-sm font-medium opacity-50 uppercase tracking-widest">Vui lòng chọn toa để xem sơ đồ chỗ ngồi</p>
                                         </div>
                                     ) : isCoachLoading ? (
                                         <div className="space-y-6">
@@ -307,11 +307,12 @@ export default function TripDetailPage() {
                                             </div>
                                         </div>
                                     ) : coachWithPrices ? (
-                                        <div className="bg-gray-50/30 dark:bg-zinc-800/30 rounded-[1.5rem] p-4 border border-gray-50 dark:border-zinc-800">
+                                        <div className="py-2">
                                             {coachWithPrices.template.layout === 'SEAT' ? (
                                                 <SeatLayoutViewer
                                                     seats={coachWithPrices.seats}
                                                     template={coachWithPrices.template}
+                                                    coachName={trip.train.coaches.find(c => c.id === selectedCoachId)?.name}
                                                     selectedSeats={selectedSeats.map((s) => s.id)}
                                                     onSeatClick={handleSeatToggle}
                                                     tripId={tripId}
@@ -322,6 +323,7 @@ export default function TripDetailPage() {
                                                 <BedLayoutViewer
                                                     seats={coachWithPrices.seats}
                                                     template={coachWithPrices.template}
+                                                    coachName={trip.train.coaches.find(c => c.id === selectedCoachId)?.name}
                                                     selectedSeats={selectedSeats.map((s) => s.id)}
                                                     onSeatClick={handleSeatToggle}
                                                     tripId={tripId}
@@ -341,14 +343,15 @@ export default function TripDetailPage() {
                             <div className="sticky top-6 space-y-4">
                                 {/* Route Map */}
                                 {trip.route.stations && trip.route.stations.length > 0 && (
-                                    <div className="bg-white dark:bg-zinc-900 rounded-[2rem] p-5 shadow-xl shadow-gray-100 dark:shadow-none border border-gray-100 dark:border-zinc-800 overflow-hidden group">
-                                        <div className="flex items-center gap-3 mb-5">
-                                            <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-[#802222] dark:text-rose-400">
-                                                <MapPin className="h-4 w-4" />
+                                    <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-[2rem] p-5 shadow-xl shadow-rose-900/[0.03] border border-gray-100 dark:border-zinc-800 overflow-hidden group">
+                                        <div className="flex flex-row items-center justify-between gap-3 mb-5 relative z-10">
+                                            <div className="space-y-1">
+                                                <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Lộ trình</h3>
+                                                <p className="text-[10px] font-medium text-muted-foreground/50">Hành trình chi tiết</p>
                                             </div>
-                                            <h3 className="text-sm font-semibold text-[#802222] dark:text-rose-400">
-                                                LỘ TRÌNH
-                                            </h3>
+                                            <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-[#802222] dark:text-rose-400">
+                                                <MapPin className="h-3.5 w-3.5" />
+                                            </div>
                                         </div>
                                         <div className="rounded-[1.2rem] overflow-hidden border border-gray-50 dark:border-zinc-800 h-[220px]">
                                             <RouteMap

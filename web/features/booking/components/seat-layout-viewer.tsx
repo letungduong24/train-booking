@@ -96,13 +96,18 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
     }, [lockedSeatIds, selectedSeats, onSeatsForceDeselected, isSubmitting]);
 
     return (
-        <div className="space-y-4 w-full min-w-0 overflow-hidden">
+        <div className="space-y-4 w-full min-w-0 p-1">
             {/* Header */}
             <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">
-                        {coachName && `${coachName} - `}{template.name}
-                    </h3>
+                    <div>
+                        <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">
+                            {coachName}
+                        </h3>
+                        <p className="text-[13px] font-medium text-muted-foreground mt-1">
+                            {template.name}
+                        </p>
+                    </div>
                     <div className="flex items-center gap-3">
                         {isAdmin && onSearchPassenger && (
                             <Button
@@ -110,6 +115,7 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                 size="sm"
                                 onClick={onSearchPassenger}
                                 className="h-8 gap-2"
+                                data-search-passenger="true"
                             >
                                 <Users className="h-4 w-4" />
                                 <span className="hidden sm:inline">Tìm hành khách</span>
@@ -128,24 +134,26 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
 
                 {/* Stats - Only show in User mode */}
                 {!isAdmin && (
-                    <div className="flex gap-4 text-sm bg-muted/20 rounded-lg w-full p-3">
-                        <div>
-                            <span className="text-muted-foreground">Tổng số ghế:</span>{' '}
-                            <span className="font-semibold">{seats.length}</span>
-                        </div>
-                        <div>
-                            <span className="text-muted-foreground">Còn trống:</span>{' '}
-                            <span className="font-semibold text-green-600">
-                                {seats.filter(s => s.bookingStatus === 'AVAILABLE' && !lockedSeatIds.includes(s.id)).length}
-                            </span>
-                        </div>
-                        <div>
-                            <span className="text-muted-foreground">Đã đặt:</span>{' '}
-                            <span className="font-semibold text-red-600">
-                                {seats.filter(s => s.bookingStatus === 'BOOKED').length}
-                            </span>
-                        </div>
+                <div className="flex gap-4 text-sm bg-white dark:bg-zinc-900/50 rounded-2xl w-full p-4 px-6 border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.03]">
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Tổng số ghế</span>
+                        <span className="font-bold text-rose-600 dark:text-rose-400">{seats.length}</span>
                     </div>
+                    <div className="w-px bg-gray-100 dark:bg-zinc-800 mx-2" />
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Còn trống</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                            {seats.filter(s => s.bookingStatus === 'AVAILABLE' && !lockedSeatIds.includes(s.id)).length}
+                        </span>
+                    </div>
+                    <div className="w-px bg-gray-100 dark:bg-zinc-800 mx-2" />
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Đã đặt</span>
+                        <span className="font-bold text-rose-600 dark:text-rose-400">
+                            {seats.filter(s => s.bookingStatus === 'BOOKED').length}
+                        </span>
+                    </div>
+                </div>
                 )}
             </div>
 
@@ -153,30 +161,30 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
             <div className="flex flex-wrap gap-4 text-xs">
                 {/* User Booking Legend - Show for Admin too for consistency */}
                 <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full border border-secondary" />
+                    <div className="w-4 h-4 rounded-full border border-emerald-500" />
                     <span>{isAdmin ? 'Hoạt động (Trống)' : 'Còn trống'}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center" />
+                    <div className="w-4 h-4 rounded-full bg-zinc-800 text-white flex items-center justify-center shadow-lg" />
                     <span>Đã chọn</span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full bg-primary/50 border border-primary" />
+                    <div className="w-4 h-4 rounded-full bg-rose-600 border border-rose-600 shadow-rose-500/30 shadow-md" />
                     <span>Đã đặt</span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full bg-[#E5BA41] border border-[#E5BA41]" />
+                    <div className="w-4 h-4 rounded-full bg-yellow-500 border border-yellow-500 shadow-yellow-500/30 shadow-md" />
                     <span>Đang giữ chỗ</span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full bg-gray-300 dark:bg-muted" />
+                    <div className="w-4 h-4 rounded-full bg-gray-400 dark:bg-gray-600" />
                     <span>{isAdmin ? 'Đã vô hiệu hóa' : 'Không thể mua'}</span>
                 </div>
             </div>
 
             {/* Seat Grid */}
-            <div className="relative w-full overflow-x-auto p-1">
-                <div className="border rounded-lg p-4 bg-muted/20 w-fit min-w-full">
+            <div className="relative w-full overflow-x-auto">
+                <div className="w-fit min-w-full">
                     {/* Mobile: Vertical layout (rows stacked) */}
                     <div className="md:hidden">
                         <div
@@ -216,12 +224,12 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
-                                                            "flex-1 flex flex-col items-center justify-center rounded-md transition-all py-2 min-w-0 border",
+                                                            "flex-1 flex flex-col items-center justify-center rounded-lg transition-all py-1.5 min-w-0 border shadow-sm aspect-square w-14 h-14 md:w-16 md:h-16",
                                                             selectedSeats.includes(seat.id)
-                                                                ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-sm"
+                                                                ? "bg-zinc-900 text-white hover:bg-zinc-800 border-transparent shadow-zinc-500/20"
                                                                 : getSeatStatusColor(displayStatus, isAdmin),
-                                                            focusedSeatId === seat.id && "ring-4 ring-primary ring-offset-2 animate-pulse",
-                                                            highlightedSeatIds.includes(seat.id) && "ring-2 ring-primary/50"
+                                                            focusedSeatId === seat.id && "ring-4 ring-[#802222] ring-offset-2 animate-pulse",
+                                                            highlightedSeatIds.includes(seat.id) && "ring-2 ring-[#802222]/50"
                                                         )}
                                                         title={`Ghế ${seat.name}`}
                                                     >
@@ -264,12 +272,12 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
-                                                            "flex-1 flex flex-col items-center justify-center rounded-md transition-all py-2 min-w-0 border",
+                                                            "flex-1 flex flex-col items-center justify-center rounded-lg transition-all py-1.5 min-w-0 border shadow-sm aspect-square w-14 h-14 md:w-16 md:h-16",
                                                             selectedSeats.includes(seat.id)
-                                                                ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-sm"
+                                                                ? "bg-zinc-900 text-white hover:bg-zinc-800 border-transparent shadow-zinc-500/20"
                                                                 : getSeatStatusColor(displayStatus, isAdmin),
-                                                            focusedSeatId === seat.id && "ring-4 ring-primary ring-offset-2 animate-pulse",
-                                                            highlightedSeatIds.includes(seat.id) && "ring-2 ring-primary/50"
+                                                            focusedSeatId === seat.id && "ring-4 ring-[#802222] ring-offset-2 animate-pulse",
+                                                            highlightedSeatIds.includes(seat.id) && "ring-2 ring-[#802222]/50"
                                                         )}
                                                         title={`Ghế ${seat.name}`}
                                                     >
@@ -333,12 +341,12 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
-                                                            "h-14 flex flex-col items-center justify-center rounded-md transition-all p-0.5 border",
+                                                            "w-14 h-14 md:w-16 md:h-16 flex flex-col items-center justify-center rounded-lg transition-all p-1 border shadow-sm aspect-square",
                                                             selectedSeats.includes(seat.id)
-                                                                ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-sm"
+                                                                ? "bg-zinc-900 text-white hover:bg-zinc-800 border-transparent shadow-zinc-500/20"
                                                                 : getSeatStatusColor(displayStatus, isAdmin),
-                                                            focusedSeatId === seat.id && "ring-4 ring-primary ring-offset-2 animate-pulse",
-                                                            highlightedSeatIds.includes(seat.id) && "ring-2 ring-primary/50"
+                                                            focusedSeatId === seat.id && "ring-4 ring-[#802222] ring-offset-2 animate-pulse",
+                                                            highlightedSeatIds.includes(seat.id) && "ring-2 ring-[#802222]/50"
                                                         )}
                                                         title={`Ghế ${seat.name} - ${getSeatStatusLabel(seat.status, isAdmin)}`}
                                                     >
@@ -381,12 +389,12 @@ export function SeatLayoutViewer({ seats, template, onSeatClick, selectedSeats =
                                                         onClick={() => onSeatClick(seat)}
                                                         disabled={!isAdmin && displayStatus !== 'AVAILABLE' && !selectedSeats.includes(seat.id)}
                                                         className={cn(
-                                                            "h-14 flex flex-col items-center justify-center rounded-md transition-all p-0.5 border",
+                                                            "w-14 h-14 md:w-16 md:h-16 flex flex-col items-center justify-center rounded-lg transition-all p-1 border shadow-sm aspect-square",
                                                             selectedSeats.includes(seat.id)
-                                                                ? "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-transparent shadow-sm"
+                                                                ? "bg-zinc-900 text-white hover:bg-zinc-800 border-transparent shadow-zinc-500/20"
                                                                 : getSeatStatusColor(displayStatus, isAdmin),
-                                                            focusedSeatId === seat.id && "ring-4 ring-primary ring-offset-2 animate-pulse",
-                                                            highlightedSeatIds.includes(seat.id) && "ring-2 ring-primary/50"
+                                                            focusedSeatId === seat.id && "ring-4 ring-[#802222] ring-offset-2 animate-pulse",
+                                                            highlightedSeatIds.includes(seat.id) && "ring-2 ring-[#802222]/50"
                                                         )}
                                                         title={`Ghế ${seat.name} - ${getSeatStatusLabel(seat.status, isAdmin)}`}
                                                     >

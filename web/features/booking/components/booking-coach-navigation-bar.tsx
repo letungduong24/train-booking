@@ -30,7 +30,7 @@ export function BookingCoachNavigationBar({
         <div className="w-full overflow-x-auto pb-4">
             <div className="flex items-center min-w-max">
                 {/* Train Engine */}
-                <div className="relative flex items-center justify-center ps-7 pe-4 py-2 md:py-3 bg-primary text-primary-foreground font-bold text-sm self-stretch min-w-[120px] max-w-[120px]"
+                <div className="relative flex items-center justify-center ps-7 pe-4 py-2 md:py-3 bg-[#802222] text-white font-bold text-sm self-stretch min-w-[120px] max-w-[120px]"
                     style={{
                         clipPath: 'polygon(46% 0, 100% 0, 100% 100%, 0% 100%)'
                     }}>
@@ -53,10 +53,10 @@ export function BookingCoachNavigationBar({
                             <button
                                 onClick={() => onCoachSelect(coach.id)}
                                 className={cn(
-                                    "flex flex-col items-center justify-center gap-2 p-2 md:p-3 rounded-lg border-2 transition-all min-w-[100px]",
+                                    "flex flex-col items-center justify-center gap-2 p-3 rounded-2xl border-2 transition-all duration-300 min-w-[110px] group",
                                     isSelected
-                                        ? "border-primary bg-primary/10 shadow-md"
-                                        : "border-border hover:border-primary/50 hover:bg-accent"
+                                        ? "border-[#802222] bg-rose-50/50 dark:bg-rose-950/20 shadow-lg shadow-rose-900/10"
+                                        : "border-gray-100 dark:border-zinc-800 hover:border-rose-200 dark:hover:border-rose-900/50 hover:bg-rose-50/30 dark:hover:bg-rose-950/10"
                                 )}
                             >
                                 <div className="flex flex-col items-center gap-1">

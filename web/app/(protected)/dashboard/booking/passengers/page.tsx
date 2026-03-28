@@ -115,8 +115,11 @@ function PassengersPageContent() {
         return (
             <div className="container mx-auto py-8">
                 <Card>
-                    <CardHeader>
-                        <CardTitle className="text-red-600">Đơn hàng đã bị hủy</CardTitle>
+                    <CardHeader className="flex flex-row items-center justify-between gap-4 pb-2 p-6 relative z-10 text-center">
+                        <div className="space-y-1 mx-auto">
+                            <CardTitle className="text-xl font-bold text-red-600 dark:text-red-400 tracking-tight leading-none">Đơn hàng đã bị hủy</CardTitle>
+                            <CardDescription className="text-[10px] font-medium text-muted-foreground/50">Yêu cầu không còn hiệu lực</CardDescription>
+                        </div>
                     </CardHeader>
                     <CardContent className="py-4 text-center text-muted-foreground">
                         <p>Bạn đã hủy đơn hàng này. Vui lòng quay lại trang chủ để đặt vé mới.</p>
@@ -197,20 +200,20 @@ function PassengersPageContent() {
                 Quay lại
             </Button>
 
-            <div className="bg-white dark:bg-zinc-900 rounded-[1.5rem] p-5 shadow-lg shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-zinc-800 relative overflow-hidden group mb-8">
-                <div className="flex justify-between items-start mb-5 relative z-10">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-[#802222] dark:text-rose-400">
+            <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-[2rem] p-5 shadow-xl shadow-rose-900/[0.03] border border-gray-100 dark:border-zinc-800 relative overflow-hidden group mb-8">
+                <div className="flex flex-row items-center justify-between gap-4 pb-2 p-5 relative z-10 mb-2">
+                    <div className="space-y-1">
+                        <h2 className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Tóm tắt chuyến đi</h2>
+                        <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest">Thông tin đặt vé của bạn</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <Badge variant="outline" className="border-[#802222]/20 text-[#802222] dark:text-rose-400 font-medium px-3 py-1 rounded-full text-[11px]">
+                            Tàu {trip.train.code}
+                        </Badge>
+                        <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-[#802222] dark:text-rose-400">
                             <MapPin className="h-5 w-5" />
                         </div>
-                        <div>
-                            <p className="text-[11px] font-medium text-muted-foreground mb-1">Tóm tắt chuyến đi</p>
-                            <h2 className="text-xl font-bold text-[#802222] dark:text-rose-400 leading-none">{trip.route.name}</h2>
-                        </div>
                     </div>
-                    <Badge variant="outline" className="border-[#802222]/20 text-[#802222] dark:text-rose-400 font-medium px-3 py-1 rounded-full text-[11px]">
-                        Tàu {trip.train.code}
-                    </Badge>
                 </div>
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 relative z-10">

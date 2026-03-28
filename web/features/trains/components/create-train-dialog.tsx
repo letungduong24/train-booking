@@ -62,19 +62,19 @@ export function CreateTrainDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>
-                    <Plus className="mr-2 h-4 w-4" /> Thêm tàu
+                <Button className="bg-[#802222] hover:bg-rose-900 text-white rounded-xl h-11 font-bold border-none shadow-lg shadow-rose-900/20 px-6 transition-all active:scale-95 hover:scale-[1.02]">
+                    <Plus className="mr-2 h-5 w-5" /> Thêm tàu mới
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>Thêm tàu mới</DialogTitle>
-                    <DialogDescription>
+            <DialogContent className="max-w-xl rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
+                <DialogHeader className="p-8 pb-4">
+                    <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Thêm tàu mới</DialogTitle>
+                    <DialogDescription className="text-xs font-medium text-muted-foreground/50">
                         Nhập thông tin cho tàu mới. Mã tàu phải là duy nhất.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="px-8 pb-8 space-y-4">
                         <FormField
                             control={form.control}
                             name="code"
@@ -114,8 +114,8 @@ export function CreateTrainDialog() {
                                 </FormItem>
                             )}
                         />
-                        <DialogFooter>
-                            <Button type="submit" disabled={createTrain.isPending}>
+                        <DialogFooter className="pt-4">
+                            <Button type="submit" disabled={createTrain.isPending} className="w-full bg-[#802222] hover:bg-rose-900 text-white rounded-full h-11 font-bold shadow-lg shadow-rose-900/20">
                                 {createTrain.isPending ? "Đang tạo..." : "Tạo tàu"}
                             </Button>
                         </DialogFooter>

@@ -75,49 +75,59 @@ export default function ProfilePage() {
 
     return (
         <div className="container mx-auto py-8 px-4 max-w-2xl">
-            <h1 className="text-2xl font-bold mb-6">Thông tin cá nhân</h1>
+            <div className="flex flex-row items-center justify-between gap-4 pb-2 mb-8 relative z-10 px-4">
+                <div className="space-y-1">
+                    <h1 className="text-3xl font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Thông tin cá nhân</h1>
+                    <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest">Quản lý tài khoản của bạn</p>
+                </div>
+            </div>
 
-            <div className="bg-card p-6 rounded-lg shadow-sm border">
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Email</label>
-                            <Input value={user?.email || ''} disabled className="bg-muted" />
-                        </div>
+            <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-xl shadow-rose-900/[0.03] border border-gray-100 dark:border-zinc-800 relative overflow-hidden group">
+                {/* Decorative background element */}
+                <div className="absolute -right-16 -top-16 w-48 h-48 bg-rose-100/30 dark:bg-rose-900/10 rounded-full blur-3xl z-0" />
+                
+                <div className="relative z-10">
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Email</label>
+                                <Input value={user?.email || ''} disabled className="bg-muted" />
+                            </div>
 
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Họ và tên</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Nhập họ tên của bạn" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Họ và tên</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Nhập họ tên của bạn" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Mật khẩu mới (Bỏ trống nếu không đổi)</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" placeholder="******" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Mật khẩu mới (Bỏ trống nếu không đổi)</FormLabel>
+                                        <FormControl>
+                                            <Input type="password" placeholder="******" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <Button type="submit" disabled={isLoading}>
-                            {isLoading ? 'Đang cập nhật...' : 'Cập nhật'}
-                        </Button>
-                    </form>
-                </Form>
+                            <Button type="submit" disabled={isLoading}>
+                                {isLoading ? 'Đang cập nhật...' : 'Cập nhật'}
+                            </Button>
+                        </form>
+                    </Form>
+                </div>
             </div>
         </div>
     );

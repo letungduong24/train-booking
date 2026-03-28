@@ -71,15 +71,15 @@ export function EditCoachDialog({ coach }: EditCoachDialogProps) {
                     Sửa toa
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>Sửa thông tin toa</DialogTitle>
-                    <DialogDescription>
+            <DialogContent className="sm:max-w-[425px] rounded-[2.5rem] border-none shadow-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl p-0 overflow-hidden">
+                <DialogHeader className="p-8 pb-4">
+                    <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Sửa thông tin toa</DialogTitle>
+                    <DialogDescription className="text-xs font-medium text-muted-foreground/50">
                         Cập nhật tên hoặc thứ tự của toa. Template không thể thay đổi.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="px-8 pb-8 space-y-4">
                         <FormField
                             control={form.control}
                             name="name"
@@ -115,8 +115,8 @@ export function EditCoachDialog({ coach }: EditCoachDialogProps) {
                             <p><strong>Loại toa:</strong> {coach.template.name} ({coach.template.code})</p>
                             <p className="text-xs mt-1">Template không thể thay đổi sau khi tạo</p>
                         </div>
-                        <DialogFooter>
-                            <Button type="submit" disabled={updateCoach.isPending}>
+                        <DialogFooter className="pt-4">
+                            <Button type="submit" disabled={updateCoach.isPending} className="w-full bg-[#802222] hover:bg-rose-900 text-white rounded-full h-11 font-bold shadow-lg shadow-rose-900/20">
                                 {updateCoach.isPending ? "Đang cập nhật..." : "Cập nhật"}
                             </Button>
                         </DialogFooter>

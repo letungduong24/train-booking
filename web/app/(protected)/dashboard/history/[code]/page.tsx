@@ -213,7 +213,7 @@ export default function BookingDetailPage() {
                         </div>
                         <div className="rounded-[1.5rem] overflow-hidden border border-gray-50 dark:border-zinc-800 h-[300px]">
                             <RouteMap
-                                stations={trip.route.stations}
+                                stations={stations}
                                 className="h-full"
                                 highlightSegment={{
                                     fromStationId: fromStation?.stationId || '',

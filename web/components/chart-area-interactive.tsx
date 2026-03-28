@@ -132,11 +132,11 @@ const chartConfig = {
   },
   desktop: {
     label: "Desktop",
-    color: "var(--primary)",
+    color: "#802222",
   },
   mobile: {
     label: "Mobile",
-    color: "var(--primary)",
+    color: "#f43f5e",
   },
 } satisfies ChartConfig
 
@@ -165,15 +165,16 @@ export function ChartAreaInteractive() {
   })
 
   return (
-    <Card className="@container/card">
-      <CardHeader>
-        <CardTitle>Total Visitors</CardTitle>
-        <CardDescription>
-          <span className="hidden @[540px]/card:block">
-            Total for the last 3 months
-          </span>
-          <span className="@[540px]/card:hidden">Last 3 months</span>
-        </CardDescription>
+    <Card className="rounded-[2rem] border-gray-100 dark:border-zinc-800 shadow-xl shadow-rose-900/[0.03] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl relative overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between gap-4 pb-2 p-6 relative z-10">
+        <div className="space-y-1">
+          <CardTitle className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">
+            Tổng lượt truy cập
+          </CardTitle>
+          <CardDescription className="text-[10px] font-medium text-muted-foreground/50">
+            Tổng quan dữ liệu thời gian thực
+          </CardDescription>
+        </div>
         <CardAction>
           <ToggleGroup
             type="single"
@@ -188,27 +189,27 @@ export function ChartAreaInteractive() {
           </ToggleGroup>
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger
-              className="flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
+              className="flex w-40 h-10 rounded-2xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
               size="sm"
               aria-label="Select a value"
             >
               <SelectValue placeholder="Last 3 months" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl">
-              <SelectItem value="90d" className="rounded-lg">
+            <SelectContent className="rounded-2xl border-gray-100 dark:border-zinc-800 shadow-2xl">
+              <SelectItem value="90d" className="rounded-xl">
                 Last 3 months
               </SelectItem>
-              <SelectItem value="30d" className="rounded-lg">
+              <SelectItem value="30d" className="rounded-xl">
                 Last 30 days
               </SelectItem>
-              <SelectItem value="7d" className="rounded-lg">
+              <SelectItem value="7d" className="rounded-xl">
                 Last 7 days
               </SelectItem>
             </SelectContent>
           </Select>
         </CardAction>
       </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+      <CardContent className="p-6 pt-0 relative z-10">
         <ChartContainer
           config={chartConfig}
           className="aspect-auto h-[250px] w-full"

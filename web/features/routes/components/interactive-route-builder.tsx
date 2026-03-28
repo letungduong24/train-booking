@@ -96,12 +96,12 @@ export function InteractiveRouteBuilder({ value = [], onChange }: InteractiveRou
 
 
     if (isLoading) {
-        return <Skeleton className="w-full h-[400px] rounded-md" />
+        return <Skeleton className="w-full h-[400px] rounded-[1.5rem]" />
     }
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="relative w-full h-[500px] rounded-md overflow-hidden border">
+            <div className="relative w-full h-[400px] rounded-[1.5rem] overflow-hidden border border-gray-100 shadow-sm">
                 <Map
                     center={[105.8542, 21.0285]}
                     zoom={5}
@@ -125,7 +125,7 @@ export function InteractiveRouteBuilder({ value = [], onChange }: InteractiveRou
                         <MapLineLayer
                             id="route-preview-lines"
                             data={currentPathGeoJson}
-                            color="#3b82f6" // blue-500
+                            color="#802222" // Rose primary
                             width={4}
                             opacity={1}
                         />
@@ -144,11 +144,11 @@ export function InteractiveRouteBuilder({ value = [], onChange }: InteractiveRou
                             >
                                 <MarkerContent className="group cursor-pointer" onClick={() => handleStationClick(station)}>
                                     <div className={`relative flex items-center justify-center rounded-full border-2 shadow-sm transition-all ${isSelected
-                                        ? "h-6 w-6 border-white bg-blue-600 z-50 scale-125"
-                                        : "h-3 w-3 border-white bg-slate-400 hover:bg-slate-600 hover:scale-150"
+                                        ? "h-6 w-6 border-white bg-[#802222] z-50 scale-125 shadow-lg shadow-rose-900/40"
+                                        : "h-3 w-3 border-white bg-slate-300 hover:bg-rose-400 hover:scale-150"
                                         }`}>
                                         {isSelected && (
-                                            <span className="text-[10px] font-bold text-white">{selectionIndex + 1}</span>
+                                            <span className="text-[10px] font-black text-white">{selectionIndex + 1}</span>
                                         )}
                                     </div>
                                 </MarkerContent>
@@ -162,22 +162,22 @@ export function InteractiveRouteBuilder({ value = [], onChange }: InteractiveRou
             </div>
 
             {/* Selected Route summary */}
-            <div className="flex flex-col gap-2 p-3 bg-muted/50 rounded-md border min-h-[80px]">
-                <span className="text-sm font-semibold flex items-center text-muted-foreground">
-                    <IconMapPin className="w-4 h-4 mr-1" />
+            <div className="p-6 bg-gray-50/20 dark:bg-zinc-900/20 rounded-[1.5rem] border border-gray-100 dark:border-zinc-800 space-y-4 min-h-[80px]">
+                <div className="flex items-center gap-3 text-[#802222] dark:text-rose-400 font-bold tracking-wider opacity-80">
+                    <IconMapPin className="w-4 h-4" />
                     Lộ trình đã chọn ({value.length} trạm)
-                </span>
+                </div>
                 {value.length === 0 ? (
-                    <span className="text-sm text-muted-foreground italic">Vui lòng chọn các ga trên bản đồ theo thứ tự tuyến đường</span>
+                    <span className="text-sm text-muted-foreground/60 italic ml-6">Vui lòng chọn các ga trên bản đồ theo thứ tự tuyến đường</span>
                 ) : (
-                    <div className="flex flex-wrap gap-2 mt-1">
+                    <div className="flex flex-wrap gap-2 mt-2 ml-1">
                         {value.map((station, index) => (
                             <div key={station.id} className="flex items-center">
-                                <Badge variant="secondary" className="pl-1 pr-2 py-1 flex items-center gap-1 bg-white border border-blue-200">
-                                    <div className="flex bg-blue-500 text-white rounded-full w-5 h-5 items-center justify-center text-xs font-bold">
+                                <Badge variant="secondary" className="pl-1 pr-2 py-1 flex items-center gap-2 bg-white border border-rose-100 text-zinc-800 rounded-xl shadow-sm hover:border-rose-200 transition-colors">
+                                    <div className="flex bg-[#802222] text-white rounded-lg w-5 h-5 items-center justify-center text-[10px] font-black">
                                         {index + 1}
                                     </div>
-                                    {station.name}
+                                    <span className="font-semibold">{station.name}</span>
                                     <button
                                         type="button"
                                         onClick={() => handleStationClick(station)}
@@ -195,9 +195,9 @@ export function InteractiveRouteBuilder({ value = [], onChange }: InteractiveRou
                 )}
             </div>
             {value.length > 0 && (
-                <div className="flex justify-end">
-                    <Button variant="ghost" size="sm" onClick={() => onChange?.([])} className="text-red-500 hover:text-red-600 hover:bg-red-50">
-                        Xóa toàn bộ lộ trình
+                <div className="flex pt-2">
+                    <Button variant="ghost" size="sm" onClick={() => onChange?.([])} className="w-full text-rose-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl h-10 font-bold border border-rose-100/50 transition-all">
+                        Xóa toàn bộ lộ trình hiện có
                     </Button>
                 </div>
             )}

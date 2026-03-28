@@ -50,41 +50,31 @@ export const BookingSummary = React.memo(({
                             </span>
                         </div>
 
-                        <ScrollArea className="max-h-[300px] pr-4">
-                            <div className="space-y-4">
-                                {selectedSeats.map((seat) => (
-                                    <div key={seat.id} className="flex items-center justify-between group p-3 rounded-2xl bg-gray-50/50 hover:bg-white hover:shadow-md transition-all">
-                                        <div>
-                                            <p className="font-semibold text-sm text-[#802222]">{getSeatName(seat.name, seat.type)}</p>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <span className="font-medium text-sm text-gray-900 dark:text-white">
-                                                {seat.price.toLocaleString('vi-VN')} ₫
-                                            </span>
+                        <div className="relative overflow-hidden rounded-2xl border border-gray-100/50 dark:border-zinc-800/50 bg-gray-50/30">
+                            <ScrollArea className="h-[280px] w-full">
+                                <div className="p-4 space-y-3">
+                                    {selectedSeats.map((seat) => (
+                                        <div key={seat.id} className="flex items-center justify-between group p-3 rounded-xl bg-white shadow-sm border border-gray-100/50 transition-all">
+                                            <div className="flex-1 min-w-0 pr-2">
+                                                <p className="font-bold text-sm text-[#802222] truncate">{getSeatName(seat.name, seat.type)}</p>
+                                            </div>
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-6 w-6 rounded-full hover:bg-red-50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                className="h-7 w-7 rounded-full hover:bg-red-50 hover:text-red-500 text-muted-foreground/30 hover:text-red-600 transition-all flex-shrink-0"
                                                 onClick={() => onRemoveSeat(seat.id)}
                                             >
-                                                <X className="h-3 w-3" />
+                                                <X className="h-4 w-4" />
                                             </Button>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </ScrollArea>
+                                    ))}
+                                </div>
+                            </ScrollArea>
+                        </div>
 
-                        <Separator className="bg-gray-100 dark:bg-zinc-800/50" />
-
-                        <div className="space-y-3">
-                            <div className="flex justify-between items-center text-sm">
-                                <span className="text-xs font-medium text-muted-foreground">Tạm tính</span>
-                                <span className="font-medium text-gray-600 dark:text-gray-400">{totalPrice.toLocaleString('vi-VN')} ₫</span>
-                            </div>
-                            
-                            <div className="flex justify-between items-center pt-2">
-                                <span className="text-sm font-semibold text-[#802222]">Tổng cộng</span>
+                        <div className="pt-2 space-y-4">
+                            <div className="flex justify-between items-center bg-[#802222]/[0.02] p-4 rounded-2xl border border-[#802222]/5">
+                                <span className="text-sm font-semibold text-[#802222]/60">Tổng cộng</span>
                                 <span className="text-xl font-bold text-[#802222] dark:text-rose-400 tabular-nums">
                                     {totalPrice.toLocaleString('vi-VN')} ₫
                                 </span>

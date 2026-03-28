@@ -70,36 +70,42 @@ export function EditStationDialog({ routeId, station, open, onOpenChange, onSucc
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[500px]">
-                <DialogHeader>
-                    <DialogTitle>Sửa thông tin trạm</DialogTitle>
-                    <DialogDescription>
-                        Cập nhật thông tin trạm và khoảng cách.
+            <DialogContent className="max-w-[500px] rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
+                <DialogHeader className="p-8 pb-4">
+                    <DialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Sửa thông tin trạm</DialogTitle>
+                    <DialogDescription className="text-sm font-medium text-muted-foreground/50">
+                        Cập nhật thông tin trạm và khoảng cách trong danh mục.
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right">Tên trạm</Label>
-                        <Input className="col-span-3" value={name} onChange={(e) => setName(e.target.value)} />
+                <div className="px-8 space-y-6">
+                    <div className="space-y-2">
+                        <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Tên trạm</Label>
+                        <Input 
+                            className="h-11 rounded-xl bg-gray-50/50 border-gray-100" 
+                            value={name} 
+                            onChange={(e) => setName(e.target.value)} 
+                        />
                     </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right">Vĩ độ</Label>
-                        <Input className="col-span-3" type="number" step="any" value={lat} onChange={(e) => setLat(e.target.value)} />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right">Kinh độ</Label>
-                        <Input className="col-span-3" type="number" step="any" value={long} onChange={(e) => setLong(e.target.value)} />
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Vĩ độ</Label>
+                            <Input className="h-11 rounded-xl bg-gray-50/50 border-gray-100" type="number" step="any" value={lat} onChange={(e) => setLat(e.target.value)} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Kinh độ</Label>
+                            <Input className="h-11 rounded-xl bg-gray-50/50 border-gray-100" type="number" step="any" value={long} onChange={(e) => setLong(e.target.value)} />
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label className="text-right">Khoảng cách</Label>
-                        <Input className="col-span-3" type="number" step="0.1" value={distance} onChange={(e) => setDistance(e.target.value)} placeholder="km" />
+                    <div className="space-y-2">
+                        <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Khoảng cách từ ga đầu (km)</Label>
+                        <Input className="h-11 rounded-xl bg-gray-50/50 border-gray-100" type="number" step="0.1" value={distance} onChange={(e) => setDistance(e.target.value)} placeholder="0.0" />
                     </div>
                 </div>
 
-                <DialogFooter>
-                    <Button onClick={handleSubmit} disabled={loading}>
+                <DialogFooter className="p-8">
+                    <Button onClick={handleSubmit} disabled={loading} className="w-full bg-[#802222] hover:bg-rose-900 text-white rounded-xl h-12 font-bold shadow-lg shadow-rose-900/20">
                         {loading ? "Đang xử lý..." : "Lưu thay đổi"}
                     </Button>
                 </DialogFooter>

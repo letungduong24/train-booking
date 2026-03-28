@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
-export default function PublicPaymentResultRedirect() {
+function PaymentResultRedirectContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -25,5 +25,20 @@ export default function PublicPaymentResultRedirect() {
                 Đang chuyển hướng đến kết quả thanh toán...
             </p>
         </div>
+    );
+}
+
+export default function PublicPaymentResultRedirect() {
+    return (
+        <Suspense fallback={
+            <div className="flex h-[60vh] flex-col items-center justify-center gap-4">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-muted-foreground font-medium animate-pulse">
+                    Đang tải...
+                </p>
+            </div>
+        }>
+            <PaymentResultRedirectContent />
+        </Suspense>
     );
 }

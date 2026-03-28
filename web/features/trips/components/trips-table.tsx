@@ -17,6 +17,7 @@ import { Trip } from "@/lib/schemas/trip.schema"
 import { TripStatusBadge } from "@/lib/utils/trip-status"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Plus } from "lucide-react"
 import {
     Table,
     TableBody,
@@ -253,28 +254,33 @@ export function TripsTable() {
 
     return (
         <div className="w-full">
-            <div className="flex items-center py-4 gap-2">
+            <div className="flex items-center py-4 gap-4">
                 <div className="relative flex-1 max-w-sm">
-                    <IconSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <IconSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                     <Input
                         placeholder="Tìm kiếm chuyến đi..."
                         value={searchValue}
                         onChange={(event) => setSearchValue(event.target.value)}
-                        className="pl-8"
+                        className="h-11 rounded-2xl bg-white dark:bg-zinc-900 border-rose-100/50 dark:border-zinc-800 focus-visible:ring-[#802222]/20 pl-11 text-sm transition-all"
                     />
                 </div>
                 <div className="ml-auto">
-                    <CreateTripDialog />
+                    <Button 
+                        onClick={() => router.push('/admin/trips/create')} 
+                        className="bg-[#802222] hover:bg-rose-900 text-white rounded-xl h-11 font-bold border-none shadow-lg shadow-rose-900/20 px-6 transition-all active:scale-95 hover:scale-[1.02]"
+                    >
+                        <Plus className="mr-2 h-5 w-5" /> Thêm chuyến đi
+                    </Button>
                 </div>
             </div>
-            <div className="rounded-md border">
+            <div className="rounded-[2.5rem] bg-white dark:bg-zinc-900 overflow-hidden border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015]">
                 <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-rose-50/20 dark:bg-zinc-800/20">
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
+                            <TableRow key={headerGroup.id} className="hover:bg-transparent border-none h-16">
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead key={header.id} className="text-xs font-bold uppercase tracking-widest text-[#802222]/50 first:pl-8 last:pr-8">
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -295,11 +301,11 @@ export function TripsTable() {
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
-                                    className="cursor-pointer hover:bg-muted/50"
+                                    className="cursor-pointer hover:bg-rose-50/10 border-none transition-all h-16"
                                     onClick={() => router.push(`/admin/trips/${row.original.id}`)}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell key={cell.id} className="first:pl-8 last:pr-8">
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext()
@@ -346,16 +352,32 @@ export function TripsTable() {
             </div>
 
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Xác nhận xóa</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Bạn có chắc chắn muốn xóa chuyến đi này? Hành động này không thể hoàn tác.
+                <AlertDialogContent className="max-w-md rounded-[2.5rem] border-none shadow-none bg-white dark:bg-zinc-950 p-0 overflow-hidden">
+                    <AlertDialogHeader className="p-8 pb-4">
+                        <AlertDialogTitle className="text-xl font-bold text-red-600 dark:text-red-400 tracking-tight flex items-center gap-2">
+                            <IconTrash className="w-5 h-5 opacity-40" />
+                            Xác nhận xóa chuyến
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="text-xs font-medium text-muted-foreground/50 leading-relaxed">
+                            Bạn có chắc chắn muốn xóa chuyến đi này? 
+                            <br />
+                            <br />
+                            <span className="p-3 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 text-red-600 dark:text-red-400 font-bold flex items-start gap-2">
+                                <span>⚠️</span>
+                                <span>Cảnh báo: Toàn bộ dữ liệu vé và lịch trình liên quan sẽ bị xóa vĩnh viễn.</span>
+                            </span>
+                            <br />
+                            Hành động này không thể hoàn tác.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Hủy</AlertDialogCancel>
-                        <AlertDialogAction onClick={confirmDelete}>Xóa</AlertDialogAction>
+                    <AlertDialogFooter className="p-8 pt-2 gap-3">
+                        <AlertDialogCancel className="rounded-xl font-medium border-none hover:bg-zinc-100 dark:hover:bg-zinc-800">Hủy</AlertDialogCancel>
+                        <AlertDialogAction 
+                            onClick={confirmDelete} 
+                            className="bg-red-600 hover:bg-red-700 text-white rounded-xl h-11 font-bold border-none shadow-none px-8"
+                        >
+                            Xác nhận xóa
+                        </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>

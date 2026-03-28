@@ -51,15 +51,15 @@ export function DeleteTrainAlert({ train }: DeleteTrainAlertProps) {
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Bạn có chắc chắn muốn xóa?</AlertDialogTitle>
+                    <AlertDialogTitle>Xác nhận xóa tàu</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Hành động này không thể hoàn tác. Tàu <span className="font-medium text-foreground">{train.code} - {train.name}</span> sẽ bị xóa vĩnh viễn khỏi hệ thống.
+                        Hành động này không thể hoàn tác. Tàu <span className="font-bold text-zinc-900 dark:text-zinc-100">{train.code} - {train.name}</span> sẽ bị xóa vĩnh viễn khỏi hệ thống.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Hủy</AlertDialogCancel>
                     <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                        {deleteTrain.isPending ? "Đang xóa..." : "Xóa"}
+                        {deleteTrain.isPending ? "Đang xóa..." : "Xóa vĩnh viễn"}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

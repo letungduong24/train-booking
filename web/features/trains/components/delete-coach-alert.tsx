@@ -45,9 +45,9 @@ export function DeleteCoachAlert({ coach }: DeleteCoachAlertProps) {
                 <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 px-2 text-[10px] text-destructive hover:text-destructive hover:bg-destructive/10"
+                    className="h-8 px-4 rounded-full text-[11px] font-bold text-destructive hover:text-destructive hover:bg-red-50 dark:hover:bg-red-950/20 border border-transparent hover:border-red-100 dark:hover:border-red-900/30 transition-all"
                 >
-                    <Trash2 className="w-3 h-3 mr-1" />
+                    <Trash2 className="w-3.5 h-3.5 mr-1.5" />
                     Xóa toa
                 </Button>
             </AlertDialogTrigger>
@@ -55,19 +55,13 @@ export function DeleteCoachAlert({ coach }: DeleteCoachAlertProps) {
                 <AlertDialogHeader>
                     <AlertDialogTitle>Xác nhận xóa toa</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Bạn có chắc chắn muốn xóa <strong>{coach.name}</strong> không?
-                        <br />
-                        <br />
-                        <span className="text-destructive font-medium">
-                            ⚠️ Cảnh báo: Tất cả ghế/giường trong toa này sẽ bị xóa vĩnh viễn.
-                        </span>
-                        <br />
-                        Hành động này không thể hoàn tác.
+                        Bạn có chắc chắn muốn xóa <span className="font-bold text-zinc-900 dark:text-zinc-100">{coach.name}</span> không?
+                        Hành động này không thể hoàn tác và tất cả ghế/giường trong toa sẽ bị xóa.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Hủy</AlertDialogCancel>
-                    <AlertDialogAction
+                    <AlertDialogAction 
                         onClick={handleDelete}
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         disabled={deleteCoach.isPending}

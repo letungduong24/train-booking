@@ -109,11 +109,11 @@ export function WalletDashboard() {
             </div>
 
             {/* Transactions */}
-            <div className="bg-white dark:bg-zinc-900 rounded-[1.5rem] p-6 shadow-xl shadow-gray-100/50 dark:shadow-none border border-gray-100 dark:border-zinc-800 overflow-hidden">
-                <div className="flex items-center justify-between mb-6">
-                    <div>
-                        <h3 className="text-base font-semibold text-gray-900 dark:text-white">Lịch sử giao dịch</h3>
-                        <p className="text-xs font-medium text-muted-foreground mt-1">20 giao dịch gần đây của bạn</p>
+            <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-[2rem] p-6 shadow-xl shadow-rose-900/[0.03] border border-gray-100 dark:border-zinc-800 overflow-hidden">
+                <div className="flex flex-row items-center justify-between gap-4 pb-2 mb-6 relative z-10">
+                    <div className="space-y-1">
+                        <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Lịch sử giao dịch</h3>
+                        <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest">20 giao dịch gần đây của bạn</p>
                     </div>
                 </div>
                 

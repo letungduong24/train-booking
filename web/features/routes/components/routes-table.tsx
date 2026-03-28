@@ -18,6 +18,7 @@ import { useRoutes } from "@/features/routes/hooks/use-routes"
 import { translateRouteStatus, getRouteStatusColor } from "@/lib/utils/route-status"
 import { Button } from "@/components/ui/button"
 import { CreateRouteDialog } from "./create-route-dialog"
+import { Plus } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import {
     Table,
@@ -273,29 +274,30 @@ export function RoutesTable() {
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center py-4 gap-2">
+            <div className="flex items-center py-4 gap-4">
                 <div className="relative flex-1 max-w-sm">
-                    <IconSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <IconSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                     <Input
-                        placeholder="Tìm kiếm tuyến đường…"
+                        placeholder="Tìm kiếm tuyến đường..."
                         value={searchValue}
                         onChange={(event) => setSearchValue(event.target.value)}
-                        className="pl-8"
+                        className="h-11 rounded-2xl bg-white dark:bg-zinc-900 border-rose-100/50 dark:border-zinc-800 focus-visible:ring-[#802222]/20 pl-11 text-sm transition-all"
                     />
                 </div>
-
                 <div className="ml-auto">
-                    <CreateRouteDialog />
+                    <Button onClick={() => router.push('/admin/routes/create')} className="bg-[#802222] hover:bg-rose-900 text-white rounded-xl h-11 font-bold border-none shadow-lg shadow-rose-900/20 px-6 transition-all active:scale-95 hover:scale-[1.02]">
+                        <IconPlus className="mr-2 h-5 w-5" /> Thêm tuyến đường
+                    </Button>
                 </div>
             </div>
-            <div className="rounded-md border">
+            <div className="rounded-[2.5rem] bg-white dark:bg-zinc-900 overflow-hidden border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015]">
                 <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-rose-50/20 dark:bg-zinc-800/20">
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
+                            <TableRow key={headerGroup.id} className="hover:bg-transparent border-none h-16">
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead key={header.id} className="text-xs font-bold uppercase tracking-widest text-[#802222]/50 first:pl-8 last:pr-8">
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -320,11 +322,11 @@ export function RoutesTable() {
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
-                                    className="cursor-pointer hover:bg-muted/50"
+                                    className="cursor-pointer hover:bg-rose-50/10 border-none transition-colors h-16"
                                     onClick={() => router.push(`/admin/routes/${row.original.id}`)}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell key={cell.id} className="first:pl-8 last:pr-8">
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext()
