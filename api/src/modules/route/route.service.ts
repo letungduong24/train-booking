@@ -144,7 +144,7 @@ export class RouteService {
   }
 
   async removeStation(routeId: string, stationId: string) {
-    return this.prisma.$transaction(async (tx) => {
+    await this.prisma.$transaction(async (tx) => {
       // 1. Get the index of the station being removed
       const stationToRemove = await tx.routeStation.findFirst({
         where: { routeId, stationId },
@@ -162,7 +162,6 @@ export class RouteService {
       });
 
       // 3. Reindex all stations with index > removedIndex
-      // Decrement their index by 1 to fill the gap
       await tx.routeStation.updateMany({
         where: {
           routeId,
@@ -172,14 +171,6 @@ export class RouteService {
           index: { decrement: 1 },
         },
       });
-
-      const reindexedCount = await tx.routeStation.count({ where: { routeId } });
-
-      return {
-        success: true,
-        removedIndex,
-        reindexedCount,
-      };
     });
 
     // calculatePathCoordinates runs OUTSIDE the transaction
@@ -191,35 +182,30 @@ export class RouteService {
     routeId: string,
     dto: { stations: { stationId: string; distanceFromStart: number }[] },
   ) {
-    return this.prisma.$transaction(async (tx) => {
+    await this.prisma.$transaction(async (tx) => {
       // 1. Delete all existing stations for this route
       await tx.routeStation.deleteMany({
         where: { routeId },
       });
 
       // 2. Create new stations with derived indices
-      // We use Promise.all to create them.
-      // Note: If distinct stationIds are required, the DTO validation or logic should handle it.
-      // Assuming dto.stations is unique by stationId.
-
       const creates = dto.stations.map((item, index) =>
         tx.routeStation.create({
           data: {
             routeId,
             stationId: item.stationId,
             index: index, // derived from array order
-            distanceFromStart: item.distanceFromStart,
+            distanceFromStart: 0, // Reset to 0, will be recalculated
           },
         }),
       );
 
-      const result = await Promise.all(creates);
-      return result;
+      await Promise.all(creates);
     });
 
-    // calculatePathCoordinates runs OUTSIDE the transaction
+    // calculatePathCoordinates runs OUTSIDE the transaction to ensure correct distance calculation
     await this.calculatePathCoordinates(routeId);
-    return [];
+    return { success: true };
   }
 
   async getAvailableStations(

@@ -23,6 +23,7 @@ export function WalletDashboard() {
     const [showWithdraw, setShowWithdraw] = useState(false)
     const [showSetupPin, setShowSetupPin] = useState(false)
     const [showDeposit, setShowDeposit] = useState(false)
+    const [selectedPendingSession, setSelectedPendingSession] = useState<{url: string, expiresAt: string, transactionId: string, amount: number} | null>(null)
 
     // Check for payment callback params
     const searchParams = useSearchParams()
@@ -125,7 +126,29 @@ export function WalletDashboard() {
                             </div>
                         ) : (
                             wallet.transactions.map((tx) => (
-                                <div key={tx.id} className="group flex items-center justify-between p-4 rounded-2xl border border-gray-50 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:shadow-md hover:shadow-gray-100 dark:hover:shadow-none transition-all hover:-translate-y-0.5">
+                                <div 
+                                    key={tx.id} 
+                                    className={`group flex items-center justify-between p-4 rounded-2xl border bg-white dark:bg-zinc-900 transition-all ${
+                                        tx.status === 'PENDING' && tx.type === 'DEPOSIT' 
+                                        ? 'cursor-pointer border-amber-200 hover:border-amber-300 dark:border-amber-900/50 hover:bg-amber-50/30' 
+                                        : 'border-gray-50 dark:border-zinc-800 hover:shadow-md hover:shadow-gray-100 dark:hover:shadow-none hover:-translate-y-0.5'
+                                    }`}
+                                    onClick={() => {
+                                        if (tx.status === 'PENDING' && tx.type === 'DEPOSIT' && tx.vnpayUrl && tx.expiresAt) {
+                                            if (new Date(tx.expiresAt) > new Date()) {
+                                                setSelectedPendingSession({
+                                                    url: tx.vnpayUrl,
+                                                    expiresAt: tx.expiresAt,
+                                                    transactionId: tx.id,
+                                                    amount: tx.amount
+                                                })
+                                                setShowDeposit(true)
+                                            } else {
+                                                 toast.error("Giao dịch này đã hết hạn.");
+                                            }
+                                        }
+                                    }}
+                                >
                                     <div className="flex items-center gap-3">
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${tx.amount > 0
                                             ? 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white'
@@ -164,7 +187,14 @@ export function WalletDashboard() {
 
             <WithdrawDialog open={showWithdraw} onOpenChange={setShowWithdraw} maxAmount={wallet.balance} />
             <SetupPinDialog open={showSetupPin} onOpenChange={setShowSetupPin} />
-            <DepositDialog open={showDeposit} onOpenChange={setShowDeposit} />
+            <DepositDialog 
+                open={showDeposit} 
+                onOpenChange={(open) => {
+                    setShowDeposit(open)
+                    if (!open) setSelectedPendingSession(null)
+                }} 
+                existingSession={selectedPendingSession}
+            />
         </div>
     )
 }

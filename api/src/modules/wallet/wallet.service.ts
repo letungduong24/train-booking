@@ -4,6 +4,7 @@ import {
   Inject,
   forwardRef,
   UnauthorizedException,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -12,13 +13,20 @@ import { WithdrawRequestDto } from './dto/withdraw-request.dto';
 import { PayBookingWalletDto } from './dto/pay-booking-wallet.dto';
 import { BookingService } from '../booking/booking.service';
 import { TransactionType, TransactionStatus } from '../../generated/client';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class WalletService {
+  private readonly logger = new Logger(WalletService.name);
+
   constructor(
     private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
     @Inject(forwardRef(() => BookingService))
     private readonly bookingService: BookingService,
+    @InjectQueue('wallet-deposit') private readonly walletDepositQueue: Queue,
   ) {}
 
   async setupPin(userId: string, dto: SetupPinDto) {
@@ -285,6 +293,16 @@ export class WalletService {
         description: `Nạp tiền vào ví`,
       },
     });
+
+    const timeoutMinutes = this.configService.get<number>('DEPOSIT_TIMEOUT_MINUTES') || 5;
+    const timeoutMs = timeoutMinutes * 60 * 1000;
+
+    await this.walletDepositQueue.add(
+      'expire-deposit',
+      { transactionId: transaction.id },
+      { delay: timeoutMs },
+    );
+
     return transaction;
   }
 
@@ -293,7 +311,7 @@ export class WalletService {
       where: { id: transactionId },
     });
     if (!transaction) return;
-    if (transaction.status === 'COMPLETED') return; // Already processed
+    if (transaction.status !== 'PENDING') return; // Already processed or failed
 
     await this.prisma.$transaction(async (tx) => {
       await tx.user.update({
@@ -306,5 +324,49 @@ export class WalletService {
         data: { status: 'COMPLETED' },
       });
     });
+  }
+
+  async handleDepositExpiration(transactionId: string) {
+    const transaction = await this.prisma.transaction.findUnique({
+      where: { id: transactionId },
+    });
+
+    if (!transaction || transaction.status !== 'PENDING') {
+      return;
+    }
+
+    await this.prisma.transaction.update({
+      where: { id: transactionId },
+      data: {
+        status: 'FAILED',
+        description: transaction.description + ' (Hết hạn nạp tiền)',
+      },
+    });
+    
+    this.logger.log(`Deposit transaction ${transactionId} expired and set to FAILED`);
+  }
+
+  async cancelDeposit(userId: string, transactionId: string) {
+    const transaction = await this.prisma.transaction.findUnique({
+      where: { id: transactionId },
+    });
+
+    if (!transaction || transaction.userId !== userId) {
+      throw new BadRequestException('Không tìm thấy giao dịch');
+    }
+
+    if (transaction.status !== 'PENDING') {
+      throw new BadRequestException('Không thể hủy giao dịch đã xử lý');
+    }
+
+    await this.prisma.transaction.update({
+      where: { id: transactionId },
+      data: {
+        status: 'FAILED',
+        description: transaction.description + ' (Người dùng hủy)',
+      },
+    });
+
+    return { message: 'Đã hủy giao dịch nạp tiền' };
   }
 }

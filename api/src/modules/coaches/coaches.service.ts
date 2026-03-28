@@ -273,6 +273,7 @@ export class CoachesService {
         seatId: true,
         passengerName: true,
         passengerId: true,
+        price: true, // Use the actual paid price
       },
     });
 
@@ -281,19 +282,24 @@ export class CoachesService {
 
     // Calculate price for each seat and add bookingStatus
     const seatsWithPrices = coach.seats.map((seat) => {
-      const price = this.pricingService.calculateSeatPrice({
-        route: {
-          basePricePerKm: trip.route.basePricePerKm,
-          stationFee: trip.route.stationFee,
-        },
-        coachTemplate: {
-          coachMultiplier: coach.template.coachMultiplier,
-          tierMultipliers: coach.template.tierMultipliers,
-        },
-        seatTier: seat.tier,
-        fromStationDistance: fromStation.distanceFromStart,
-        toStationDistance: toStation.distanceFromStart,
-      });
+      const bookedTicket = bookedSeatInfo.get(seat.id);
+      
+      // If booked, use the actual price paid for the ticket. Otherwise, calculate current price.
+      const price = bookedTicket 
+        ? bookedTicket.price 
+        : this.pricingService.calculateSeatPrice({
+            route: {
+              basePricePerKm: trip.route.basePricePerKm,
+              stationFee: trip.route.stationFee,
+            },
+            coachTemplate: {
+              coachMultiplier: coach.template.coachMultiplier,
+              tierMultipliers: coach.template.tierMultipliers,
+            },
+            seatTier: seat.tier,
+            fromStationDistance: fromStation.distanceFromStart,
+            toStationDistance: toStation.distanceFromStart,
+          });
 
       // Determine booking status
       let bookingStatus: string;

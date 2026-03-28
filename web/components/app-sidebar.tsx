@@ -11,6 +11,7 @@ import {
   IconHome,
   IconCreditCard,
   IconMap,
+  IconWorld,
   type Icon,
 } from "@tabler/icons-react"
 
@@ -117,6 +118,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   // Add cross-navigation
   const crossNav: any[] = [];
+  
+  crossNav.push({
+    title: "Về trang chủ",
+    url: "/",
+    icon: IconWorld,
+  });
+
   if (isAdminUser) {
     if (isAdminView) {
       crossNav.push({

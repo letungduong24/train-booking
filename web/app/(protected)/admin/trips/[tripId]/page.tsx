@@ -52,7 +52,10 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
                             <span className="text-[10px] font-bold uppercase tracking-wider">Doanh thu dự kiến</span>
                         </div>
                         <div className="text-2xl font-bold text-[#802222] dark:text-rose-400 tabular-nums">
-                            {formatCurrency(stats?.revenue || 0)}
+                            {formatCurrency(stats?.expectedRevenue || 0)}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground opacity-60">
+                            Thực tế: {formatCurrency(stats?.actualRevenue || 0)}
                         </div>
                     </div>
 
@@ -62,7 +65,10 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
                             <span className="text-[10px] font-bold uppercase tracking-wider">Tỷ lệ lấp đầy</span>
                         </div>
                         <div className="text-2xl font-bold text-zinc-800 dark:text-zinc-200 tabular-nums">
-                            {stats?.occupancy || 0}%
+                            {stats?.totalOccupancy || 0}%
+                        </div>
+                        <div className="text-[10px] text-muted-foreground opacity-60">
+                            Đã thanh toán: {stats?.occupancy || 0}%
                         </div>
                     </div>
 
@@ -74,6 +80,9 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
                         <div className="text-2xl font-bold text-emerald-600 tabular-nums">
                             {stats?.ticketsSold || 0}
                         </div>
+                        <div className="text-[10px] text-muted-foreground opacity-60">
+                            Xác thực từ hệ thống
+                        </div>
                     </div>
 
                     <div className="space-y-2">
@@ -83,6 +92,9 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
                         </div>
                         <div className="text-2xl font-bold text-amber-500 tabular-nums">
                             {stats?.ticketsPending || 0}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground opacity-60">
+                            Chờ thanh toán
                         </div>
                     </div>
                 </div>

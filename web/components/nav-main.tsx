@@ -27,7 +27,7 @@ export function NavMain({
       <SidebarGroupContent className="flex flex-col gap-1">
         <SidebarMenu className="gap-1.5 px-2">
           {items.map((item) => {
-            const isActive = pathname === item.url || (item.url !== '/dashboard' && item.url !== '/admin' && pathname?.startsWith(item.url));
+            const isActive = pathname === item.url || (item.url !== '/' && item.url !== '/dashboard' && item.url !== '/admin' && pathname?.startsWith(item.url));
             
             return (
               <SidebarMenuItem key={item.title} className="relative group/item">

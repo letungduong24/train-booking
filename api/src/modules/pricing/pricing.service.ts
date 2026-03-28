@@ -39,17 +39,25 @@ export class PricingService {
     const tierMultiplier = tierMultipliers[seatTier.toString()] || 1.0;
 
     // Tính giá cơ bản theo công thức
+    // Đảm bảo basePricePerKm không bị 0 hoặc âm (mặc định 1000 nếu không có)
+    const basePricePerKm = route.basePricePerKm || 1000;
+    
     const basePrice =
       distance *
-      route.basePricePerKm *
+      basePricePerKm *
       coachTemplate.coachMultiplier *
       tierMultiplier;
-    const priceBeforeDiscount = route.stationFee + basePrice;
+    
+    const priceBeforeDiscount = (route.stationFee || 0) + basePrice;
 
     // Áp dụng giảm giá theo đối tượng
     const finalPrice = priceBeforeDiscount * (1 - discountRate);
 
-    // Làm tròn số
+    // Làm tròn số và đảm bảo giá tối thiểu (ví dụ 10,000 VND) nếu quãng đường > 0
+    if (distance > 0 && finalPrice < 10000) {
+        return 10000;
+    }
+
     return Math.round(finalPrice);
   }
 }

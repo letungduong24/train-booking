@@ -557,46 +557,67 @@ export class TripService {
       0,
     );
 
-    // 2. Calculate Revenue & Tickets Sold (Confirmed Tickets)
-    const tickets = await this.prisma.ticket.findMany({
-      where: { tripId: id },
-      select: { price: true },
-    });
-
-    const ticketsSold = tickets.length;
-    const revenue = tickets.reduce((sum, t) => sum + t.price, 0);
-
-    // 3. Calculate Pending Tickets (from Pending Bookings)
-    // We need to look at PENDING bookings and count seats
-    const pendingBookings = await this.prisma.booking.findMany({
+    // 2. Aggregate Booking Data (Real-time from Bookings)
+    const bookings = await this.prisma.booking.findMany({
       where: {
         tripId: id,
-        status: 'PENDING',
+        status: { in: ['PAID', 'PENDING'] },
       },
       select: {
+        status: true,
+        totalPrice: true,
         metadata: true,
+        _count: {
+          select: { tickets: true }
+        }
       },
     });
 
+    let actualRevenue = 0;
+    let pendingRevenue = 0;
+    let ticketsSold = 0;
     let ticketsPending = 0;
-    for (const booking of pendingBookings) {
-      if (!booking.metadata) continue;
-      const meta = booking.metadata as any;
-      if (meta.seatIds && Array.isArray(meta.seatIds)) {
-        ticketsPending += meta.seatIds.length;
-      } else if (meta.passengers && Array.isArray(meta.passengers)) {
-        ticketsPending += meta.passengers.length;
+
+    for (const booking of bookings) {
+      if (booking.status === 'PAID') {
+        actualRevenue += booking.totalPrice;
+        // Count tickets if they exist, otherwise fallback to metadata if tickets aren't created yet
+        ticketsSold += (booking._count.tickets > 0) 
+          ? booking._count.tickets 
+          : this.countSeatsInMetadata(booking.metadata);
+      } else if (booking.status === 'PENDING') {
+        pendingRevenue += booking.totalPrice;
+        ticketsPending += this.countSeatsInMetadata(booking.metadata);
       }
     }
 
-    const occupancy =
-      totalSeats > 0 ? Math.round((ticketsSold / totalSeats) * 100) : 0;
+    const expectedRevenue = actualRevenue + pendingRevenue;
+    const occupancy = totalSeats > 0 ? Math.round((ticketsSold / totalSeats) * 100) : 0;
+    const totalOccupancy = totalSeats > 0 ? Math.round(((ticketsSold + ticketsPending) / totalSeats) * 100) : 0;
 
     return {
-      revenue,
+      revenue: actualRevenue, // Keep for backward compatibility if needed, but UI should migrate
+      actualRevenue,
+      expectedRevenue,
       ticketsSold,
       ticketsPending,
-      occupancy,
+      occupancy, // Paid occupancy
+      totalOccupancy, // Reserved (Paid + Pending) occupancy
+      totalSeats,
     };
+  }
+
+  private countSeatsInMetadata(metadata: any): number {
+    if (!metadata) return 0;
+    if (metadata.seatIds && Array.isArray(metadata.seatIds)) {
+      return metadata.seatIds.length;
+    }
+    if (metadata.passengers && Array.isArray(metadata.passengers)) {
+      return metadata.passengers.length;
+    }
+    if (metadata.seatSelections && Array.isArray(metadata.seatSelections)) {
+        return metadata.seatSelections.length;
+    }
+    return 0;
   }
 }

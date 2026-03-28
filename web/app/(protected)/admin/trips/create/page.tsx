@@ -78,8 +78,8 @@ export default function CreateTripPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl">
-                <div className="lg:col-span-2">
+            <div className="w-full">
+                <div>
                     <Card className="rounded-[2.5rem] border-none shadow-2xl shadow-rose-900/[0.03] bg-white dark:bg-zinc-950 overflow-hidden">
                         <CardHeader className="p-8 pb-4">
                             <CardTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Chi tiết chuyến đi</CardTitle>
@@ -177,75 +177,6 @@ export default function CreateTripPage() {
                                     </div>
                                 </form>
                             </Form>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                <div className="space-y-6">
-                    <Card className="rounded-[2rem] border-gray-100 dark:border-zinc-800 shadow-xl shadow-rose-900/[0.03] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl transition-all hover:shadow-rose-900/5">
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-bold text-[#802222]/60 uppercase tracking-widest inline-flex items-center gap-2">
-                                <MapPin className="h-4 w-4" /> Tuyến đường
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            {selectedRoute ? (
-                                <div className="space-y-2">
-                                    <p className="text-lg font-bold text-zinc-800">{selectedRoute.name}</p>
-                                    <div className="p-3 rounded-xl bg-muted/30 text-xs font-medium text-muted-foreground italic leading-relaxed">
-                                        {selectedRoute.stations?.length || 0} ga dừng | {Math.floor(selectedRoute.durationMinutes / 60)}g {selectedRoute.durationMinutes % 60}p hành trình
-                                    </div>
-                                </div>
-                            ) : (
-                                <p className="text-sm text-muted-foreground italic">Chưa có tuyến đường được chọn</p>
-                            )}
-                        </CardContent>
-                    </Card>
-
-                    <Card className="rounded-[2rem] border-none shadow-none bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl transition-all hover:bg-rose-50/10">
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-bold text-[#802222]/60 uppercase tracking-widest inline-flex items-center gap-2">
-                                <TrainIcon className="h-4 w-4" /> Phương tiện
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            {selectedTrain ? (
-                                <div className="space-y-2">
-                                    <p className="text-lg font-bold text-zinc-800">{selectedTrain.code}</p>
-                                    <p className="text-sm font-medium text-muted-foreground">{selectedTrain.name}</p>
-                                    <div className="p-3 rounded-xl bg-muted/30 text-xs font-medium text-muted-foreground italic leading-relaxed">
-                                        {selectedTrain.coaches?.length || 0} toa tàu | Sức chứa tối đa đạt tiêu chuẩn
-                                    </div>
-                                </div>
-                            ) : (
-                                <p className="text-sm text-muted-foreground italic">Chưa có đoàn tàu được chọn</p>
-                            )}
-                        </CardContent>
-                    </Card>
-
-                    <Card className="rounded-[2rem] border-gray-100 dark:border-zinc-800 shadow-xl shadow-rose-900/[0.03] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl transition-all hover:shadow-rose-900/5">
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-bold text-[#802222]/60 uppercase tracking-widest inline-flex items-center gap-2">
-                                <Calendar className="h-4 w-4" /> Thời điểm
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-sm font-medium text-muted-foreground">
-                                {form.watch("departureTime") ? (
-                                    <span className="text-lg font-bold text-zinc-800">
-                                        {new Date(form.watch("departureTime")).toLocaleString('vi-VN', {
-                                            weekday: 'long',
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}
-                                    </span>
-                                ) : (
-                                    <span className="italic opacity-60">Chưa thiết lập giờ chạy</span>
-                                )}
-                            </p>
                         </CardContent>
                     </Card>
                 </div>

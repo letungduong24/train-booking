@@ -17,6 +17,8 @@ export interface Transaction {
     bankName?: string;
     bankAccount?: string;
     accountName?: string;
+    vnpayUrl?: string;
+    expiresAt?: string;
 }
 
 export interface WalletInfo {
@@ -51,19 +53,31 @@ export function useWallet() {
 
     const depositMutation = useMutation({
         mutationFn: async (amount: number) => {
-            return apiClient.post<{ url: string }>('/wallet/deposit', { amount });
+            return apiClient.post<{ url: string, transactionId: string, expiresAt: string }>('/wallet/deposit', { amount });
         },
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['wallet'] });
-            window.location.href = data.data.url;
         },
         onError: (error: any) => {
             toast.error(error.response?.data?.message || 'Lỗi khi tạo yêu cầu nạp tiền');
         }
     });
 
+    const cancelDepositMutation = useMutation({
+        mutationFn: async (transactionId: string) => {
+            return apiClient.post(`/wallet/deposit/${transactionId}/cancel`);
+        },
+        onSuccess: () => {
+            toast.success('Đã hủy giao dịch nạp tiền');
+            queryClient.invalidateQueries({ queryKey: ['wallet'] });
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.message || 'Lỗi khi hủy giao dịch');
+        }
+    });
+
     const withdrawMutation = useMutation({
-        mutationFn: async (data: { amount: number, bankName: string, bankAccount: string, accountName: string }) => {
+        mutationFn: async (data: { amount: number, pin: string, bankName: string, bankAccount: string, accountName: string }) => {
             return apiClient.post('/wallet/withdraw', data);
         },
         onSuccess: () => {
@@ -83,7 +97,9 @@ export function useWallet() {
         isSettingPin: setupPinMutation.isPending,
         withdraw: withdrawMutation.mutate,
         isWithdrawing: withdrawMutation.isPending,
-        deposit: depositMutation.mutate,
-        isDepositing: depositMutation.isPending
+        depositAsync: depositMutation.mutateAsync,
+        isDepositing: depositMutation.isPending,
+        cancelDeposit: cancelDepositMutation.mutate,
+        isCancelingDeposit: cancelDepositMutation.isPending,
     };
 }

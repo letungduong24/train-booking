@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req, Param } from '@nestjs/common';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { WalletService } from './wallet.service';
 import { SetupPinDto } from './dto/setup-pin.dto';
@@ -9,6 +9,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { PaymentService } from '../payment/payment.service';
 import { Inject, forwardRef } from '@nestjs/common';
 import { DepositDto } from './dto/deposit.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('wallet')
 @UseGuards(AuthGuard('jwt'))
@@ -17,11 +18,34 @@ export class WalletController {
     private readonly walletService: WalletService,
     @Inject(forwardRef(() => PaymentService))
     private readonly paymentService: PaymentService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Get('info')
   async getWalletInfo(@Req() req) {
-    return this.walletService.getWalletInfo(req.user.id);
+    const info = await this.walletService.getWalletInfo(req.user.id);
+    const timeoutMinutes = this.configService.get<number>('DEPOSIT_TIMEOUT_MINUTES') || 5;
+
+    const mappedTransactions = info.transactions.map((tx) => {
+      if (tx.type === 'DEPOSIT' && tx.status === 'PENDING') {
+        const url = this.paymentService.createPaymentUrl({
+          amount: tx.amount,
+          bankCode: undefined, // Let user choose
+          language: 'vn',
+          orderId: tx.id,
+          orderInfo: `Nap tien vi`,
+          ipAddr: req.ip || '127.0.0.1',
+        });
+        const expiresAt = new Date(tx.createdAt.getTime() + timeoutMinutes * 60 * 1000).toISOString();
+        return { ...tx, vnpayUrl: url, expiresAt };
+      }
+      return tx;
+    });
+
+    return {
+      ...info,
+      transactions: mappedTransactions,
+    };
   }
 
   @UseGuards(ThrottlerGuard)
@@ -61,6 +85,17 @@ export class WalletController {
       ipAddr: req.ip || '127.0.0.1',
     });
 
-    return { url };
+    const timeoutMinutes = this.configService.get<number>('DEPOSIT_TIMEOUT_MINUTES') || 5;
+
+    return { 
+      url, 
+      transactionId: transaction.id,
+      expiresAt: new Date(Date.now() + timeoutMinutes * 60 * 1000).toISOString()
+    };
+  }
+
+  @Post('deposit/:id/cancel')
+  async cancelDeposit(@Req() req, @Param('id') transactionId: string) {
+    return this.walletService.cancelDeposit(req.user.id, transactionId);
   }
 }
