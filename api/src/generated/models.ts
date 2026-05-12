@@ -11,6 +11,7 @@
 export type * from './models/User.js'
 export type * from './models/RefreshToken.js'
 export type * from './models/Transaction.js'
+export type * from './models/Network.js'
 export type * from './models/Station.js'
 export type * from './models/Route.js'
 export type * from './models/RailwayLine.js'

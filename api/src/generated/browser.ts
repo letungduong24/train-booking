@@ -33,6 +33,11 @@ export type RefreshToken = Prisma.RefreshTokenModel
  */
 export type Transaction = Prisma.TransactionModel
 /**
+ * Model Network
+ * 
+ */
+export type Network = Prisma.NetworkModel
+/**
  * Model Station
  * 
  */

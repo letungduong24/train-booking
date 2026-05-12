@@ -28,6 +28,14 @@ class RouteStationInput {
 }
 
 export class CreateRouteDto {
+  @IsOptional()
+  @IsString()
+  networkId?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  code: string;
+
   @IsNotEmpty()
   @IsString()
   name: string;

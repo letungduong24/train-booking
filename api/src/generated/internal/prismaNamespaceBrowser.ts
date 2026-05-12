@@ -54,6 +54,7 @@ export const ModelName = {
   User: 'User',
   RefreshToken: 'RefreshToken',
   Transaction: 'Transaction',
+  Network: 'Network',
   Station: 'Station',
   Route: 'Route',
   RailwayLine: 'RailwayLine',
@@ -88,6 +89,7 @@ export const UserScalarFieldEnum = {
   id: 'id',
   profilePic: 'profilePic',
   email: 'email',
+  phone: 'phone',
   password: 'password',
   name: 'name',
   googleId: 'googleId',
@@ -102,7 +104,8 @@ export const UserScalarFieldEnum = {
   walletPinResetToken: 'walletPinResetToken',
   walletPinResetTokenExpires: 'walletPinResetTokenExpires',
   balance: 'balance',
-  walletPin: 'walletPin'
+  walletPin: 'walletPin',
+  isBanned: 'isBanned'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -138,11 +141,24 @@ export const TransactionScalarFieldEnum = {
 export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
 
 
+export const NetworkScalarFieldEnum = {
+  id: 'id',
+  version: 'version',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NetworkScalarFieldEnum = (typeof NetworkScalarFieldEnum)[keyof typeof NetworkScalarFieldEnum]
+
+
 export const StationScalarFieldEnum = {
   id: 'id',
+  code: 'code',
   name: 'name',
   latitude: 'latitude',
   longitude: 'longitude',
+  networkId: 'networkId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -152,6 +168,9 @@ export type StationScalarFieldEnum = (typeof StationScalarFieldEnum)[keyof typeo
 
 export const RouteScalarFieldEnum = {
   id: 'id',
+  code: 'code',
+  version: 'version',
+  networkId: 'networkId',
   name: 'name',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -171,6 +190,7 @@ export const RailwayLineScalarFieldEnum = {
   id: 'id',
   name: 'name',
   pathCoordinates: 'pathCoordinates',
+  networkId: 'networkId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -273,6 +293,9 @@ export const BookingScalarFieldEnum = {
   code: 'code',
   tripId: 'tripId',
   userId: 'userId',
+  contactName: 'contactName',
+  contactPhone: 'contactPhone',
+  contactEmail: 'contactEmail',
   status: 'status',
   totalPrice: 'totalPrice',
   metadata: 'metadata',

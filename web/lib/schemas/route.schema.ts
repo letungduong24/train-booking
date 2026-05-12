@@ -13,6 +13,9 @@ export const routeStationSchema = z.object({
 
 export const routeSchema = z.object({
     id: z.string(),
+    code: z.string(),
+    version: z.number().optional(),
+    networkId: z.string().optional(),
     name: z.string().min(1, "Required"),
     status: z.string(),
     durationMinutes: z.number().default(0),
@@ -28,10 +31,13 @@ export const routeSchema = z.object({
 
 export const createRouteSchema = routeSchema.omit({
     id: true,
+    version: true,
     createdAt: true,
     updatedAt: true,
     stations: true,
 }).extend({
+    code: z.string().min(1, "Mã tuyến không được để trống"),
+    networkId: z.string().optional(),
     status: z.string().optional(), // Make status optional since backend sets default
     durationMinutes: z.number(),
     turnaroundMinutes: z.number(),
@@ -40,9 +46,9 @@ export const createRouteSchema = routeSchema.omit({
     stationFee: z.number(),
     stations: z.array(z.object({
         id: z.string(),
-        name: z.string(),
-        latitude: z.number(),
-        longitude: z.number(),
+        name: z.string().optional(),
+        latitude: z.number().optional(),
+        longitude: z.number().optional(),
     })).optional(),
 });
 

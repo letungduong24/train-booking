@@ -9,25 +9,14 @@ import { Prisma } from '../../generated/client';
 export class StationService {
   constructor(private prisma: PrismaService) { }
 
-  async create(createStationDto: CreateStationDto) {
-    const existing = await this.prisma.station.findFirst({
-      where: { name: createStationDto.name },
-    });
-    if (existing) {
-      throw new ConflictException('Tên trạm đã tồn tại');
-    }
-    return this.prisma.station.create({
-      data: createStationDto,
-    });
-  }
-
   async findAll(query: FilterStationDto) {
-    const { page = 1, limit = 10, skip, take, search, all } = query;
+    const { page = 1, limit = 10, skip, take, search, all, networkId } = query;
 
     const where: Prisma.StationWhereInput = {
       ...(search && {
         name: { contains: search, mode: 'insensitive' },
       }),
+      ...(networkId && { networkId }),
     };
 
     const [data, total] = await Promise.all([
@@ -55,19 +44,6 @@ export class StationService {
 
   findOne(id: string) {
     return this.prisma.station.findUnique({
-      where: { id },
-    });
-  }
-
-  update(id: string, updateStationDto: UpdateStationDto) {
-    return this.prisma.station.update({
-      where: { id },
-      data: updateStationDto,
-    });
-  }
-
-  remove(id: string) {
-    return this.prisma.station.delete({
       where: { id },
     });
   }

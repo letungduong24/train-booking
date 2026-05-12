@@ -38,27 +38,33 @@ export type StationSumAggregateOutputType = {
 
 export type StationMinAggregateOutputType = {
   id: string | null
+  code: string | null
   name: string | null
   latitude: number | null
   longitude: number | null
+  networkId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type StationMaxAggregateOutputType = {
   id: string | null
+  code: string | null
   name: string | null
   latitude: number | null
   longitude: number | null
+  networkId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type StationCountAggregateOutputType = {
   id: number
+  code: number
   name: number
   latitude: number
   longitude: number
+  networkId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -77,27 +83,33 @@ export type StationSumAggregateInputType = {
 
 export type StationMinAggregateInputType = {
   id?: true
+  code?: true
   name?: true
   latitude?: true
   longitude?: true
+  networkId?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type StationMaxAggregateInputType = {
   id?: true
+  code?: true
   name?: true
   latitude?: true
   longitude?: true
+  networkId?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type StationCountAggregateInputType = {
   id?: true
+  code?: true
   name?: true
   latitude?: true
   longitude?: true
+  networkId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -191,9 +203,11 @@ export type StationGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type StationGroupByOutputType = {
   id: string
+  code: string
   name: string
   latitude: number
   longitude: number
+  networkId: string
   createdAt: Date
   updatedAt: Date
   _count: StationCountAggregateOutputType | null
@@ -223,42 +237,54 @@ export type StationWhereInput = {
   OR?: Prisma.StationWhereInput[]
   NOT?: Prisma.StationWhereInput | Prisma.StationWhereInput[]
   id?: Prisma.StringFilter<"Station"> | string
+  code?: Prisma.StringFilter<"Station"> | string
   name?: Prisma.StringFilter<"Station"> | string
   latitude?: Prisma.FloatFilter<"Station"> | number
   longitude?: Prisma.FloatFilter<"Station"> | number
+  networkId?: Prisma.StringFilter<"Station"> | string
   createdAt?: Prisma.DateTimeFilter<"Station"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Station"> | Date | string
+  network?: Prisma.XOR<Prisma.NetworkScalarRelationFilter, Prisma.NetworkWhereInput>
   routes?: Prisma.RouteStationListRelationFilter
 }
 
 export type StationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
+  networkId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  network?: Prisma.NetworkOrderByWithRelationInput
   routes?: Prisma.RouteStationOrderByRelationAggregateInput
 }
 
 export type StationWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  code_networkId?: Prisma.StationCodeNetworkIdCompoundUniqueInput
   AND?: Prisma.StationWhereInput | Prisma.StationWhereInput[]
   OR?: Prisma.StationWhereInput[]
   NOT?: Prisma.StationWhereInput | Prisma.StationWhereInput[]
+  code?: Prisma.StringFilter<"Station"> | string
   name?: Prisma.StringFilter<"Station"> | string
   latitude?: Prisma.FloatFilter<"Station"> | number
   longitude?: Prisma.FloatFilter<"Station"> | number
+  networkId?: Prisma.StringFilter<"Station"> | string
   createdAt?: Prisma.DateTimeFilter<"Station"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Station"> | Date | string
+  network?: Prisma.XOR<Prisma.NetworkScalarRelationFilter, Prisma.NetworkWhereInput>
   routes?: Prisma.RouteStationListRelationFilter
-}, "id">
+}, "id" | "code_networkId">
 
 export type StationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
+  networkId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.StationCountOrderByAggregateInput
@@ -273,28 +299,34 @@ export type StationScalarWhereWithAggregatesInput = {
   OR?: Prisma.StationScalarWhereWithAggregatesInput[]
   NOT?: Prisma.StationScalarWhereWithAggregatesInput | Prisma.StationScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Station"> | string
+  code?: Prisma.StringWithAggregatesFilter<"Station"> | string
   name?: Prisma.StringWithAggregatesFilter<"Station"> | string
   latitude?: Prisma.FloatWithAggregatesFilter<"Station"> | number
   longitude?: Prisma.FloatWithAggregatesFilter<"Station"> | number
+  networkId?: Prisma.StringWithAggregatesFilter<"Station"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Station"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Station"> | Date | string
 }
 
 export type StationCreateInput = {
   id?: string
+  code: string
   name: string
   latitude: number
   longitude: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  network: Prisma.NetworkCreateNestedOneWithoutStationsInput
   routes?: Prisma.RouteStationCreateNestedManyWithoutStationInput
 }
 
 export type StationUncheckedCreateInput = {
   id?: string
+  code: string
   name: string
   latitude: number
   longitude: number
+  networkId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   routes?: Prisma.RouteStationUncheckedCreateNestedManyWithoutStationInput
@@ -302,19 +334,23 @@ export type StationUncheckedCreateInput = {
 
 export type StationUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   latitude?: Prisma.FloatFieldUpdateOperationsInput | number
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  network?: Prisma.NetworkUpdateOneRequiredWithoutStationsNestedInput
   routes?: Prisma.RouteStationUpdateManyWithoutStationNestedInput
 }
 
 export type StationUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   latitude?: Prisma.FloatFieldUpdateOperationsInput | number
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
+  networkId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   routes?: Prisma.RouteStationUncheckedUpdateManyWithoutStationNestedInput
@@ -322,15 +358,18 @@ export type StationUncheckedUpdateInput = {
 
 export type StationCreateManyInput = {
   id?: string
+  code: string
   name: string
   latitude: number
   longitude: number
+  networkId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type StationUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   latitude?: Prisma.FloatFieldUpdateOperationsInput | number
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -340,18 +379,37 @@ export type StationUpdateManyMutationInput = {
 
 export type StationUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   latitude?: Prisma.FloatFieldUpdateOperationsInput | number
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
+  networkId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type StationListRelationFilter = {
+  every?: Prisma.StationWhereInput
+  some?: Prisma.StationWhereInput
+  none?: Prisma.StationWhereInput
+}
+
+export type StationOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type StationCodeNetworkIdCompoundUniqueInput = {
+  code: string
+  networkId: string
+}
+
 export type StationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
+  networkId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -363,18 +421,22 @@ export type StationAvgOrderByAggregateInput = {
 
 export type StationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
+  networkId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type StationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   latitude?: Prisma.SortOrder
   longitude?: Prisma.SortOrder
+  networkId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -387,6 +449,48 @@ export type StationSumOrderByAggregateInput = {
 export type StationScalarRelationFilter = {
   is?: Prisma.StationWhereInput
   isNot?: Prisma.StationWhereInput
+}
+
+export type StationCreateNestedManyWithoutNetworkInput = {
+  create?: Prisma.XOR<Prisma.StationCreateWithoutNetworkInput, Prisma.StationUncheckedCreateWithoutNetworkInput> | Prisma.StationCreateWithoutNetworkInput[] | Prisma.StationUncheckedCreateWithoutNetworkInput[]
+  connectOrCreate?: Prisma.StationCreateOrConnectWithoutNetworkInput | Prisma.StationCreateOrConnectWithoutNetworkInput[]
+  createMany?: Prisma.StationCreateManyNetworkInputEnvelope
+  connect?: Prisma.StationWhereUniqueInput | Prisma.StationWhereUniqueInput[]
+}
+
+export type StationUncheckedCreateNestedManyWithoutNetworkInput = {
+  create?: Prisma.XOR<Prisma.StationCreateWithoutNetworkInput, Prisma.StationUncheckedCreateWithoutNetworkInput> | Prisma.StationCreateWithoutNetworkInput[] | Prisma.StationUncheckedCreateWithoutNetworkInput[]
+  connectOrCreate?: Prisma.StationCreateOrConnectWithoutNetworkInput | Prisma.StationCreateOrConnectWithoutNetworkInput[]
+  createMany?: Prisma.StationCreateManyNetworkInputEnvelope
+  connect?: Prisma.StationWhereUniqueInput | Prisma.StationWhereUniqueInput[]
+}
+
+export type StationUpdateManyWithoutNetworkNestedInput = {
+  create?: Prisma.XOR<Prisma.StationCreateWithoutNetworkInput, Prisma.StationUncheckedCreateWithoutNetworkInput> | Prisma.StationCreateWithoutNetworkInput[] | Prisma.StationUncheckedCreateWithoutNetworkInput[]
+  connectOrCreate?: Prisma.StationCreateOrConnectWithoutNetworkInput | Prisma.StationCreateOrConnectWithoutNetworkInput[]
+  upsert?: Prisma.StationUpsertWithWhereUniqueWithoutNetworkInput | Prisma.StationUpsertWithWhereUniqueWithoutNetworkInput[]
+  createMany?: Prisma.StationCreateManyNetworkInputEnvelope
+  set?: Prisma.StationWhereUniqueInput | Prisma.StationWhereUniqueInput[]
+  disconnect?: Prisma.StationWhereUniqueInput | Prisma.StationWhereUniqueInput[]
+  delete?: Prisma.StationWhereUniqueInput | Prisma.StationWhereUniqueInput[]
+  connect?: Prisma.StationWhereUniqueInput | Prisma.StationWhereUniqueInput[]
+  update?: Prisma.StationUpdateWithWhereUniqueWithoutNetworkInput | Prisma.StationUpdateWithWhereUniqueWithoutNetworkInput[]
+  updateMany?: Prisma.StationUpdateManyWithWhereWithoutNetworkInput | Prisma.StationUpdateManyWithWhereWithoutNetworkInput[]
+  deleteMany?: Prisma.StationScalarWhereInput | Prisma.StationScalarWhereInput[]
+}
+
+export type StationUncheckedUpdateManyWithoutNetworkNestedInput = {
+  create?: Prisma.XOR<Prisma.StationCreateWithoutNetworkInput, Prisma.StationUncheckedCreateWithoutNetworkInput> | Prisma.StationCreateWithoutNetworkInput[] | Prisma.StationUncheckedCreateWithoutNetworkInput[]
+  connectOrCreate?: Prisma.StationCreateOrConnectWithoutNetworkInput | Prisma.StationCreateOrConnectWithoutNetworkInput[]
+  upsert?: Prisma.StationUpsertWithWhereUniqueWithoutNetworkInput | Prisma.StationUpsertWithWhereUniqueWithoutNetworkInput[]
+  createMany?: Prisma.StationCreateManyNetworkInputEnvelope
+  set?: Prisma.StationWhereUniqueInput | Prisma.StationWhereUniqueInput[]
+  disconnect?: Prisma.StationWhereUniqueInput | Prisma.StationWhereUniqueInput[]
+  delete?: Prisma.StationWhereUniqueInput | Prisma.StationWhereUniqueInput[]
+  connect?: Prisma.StationWhereUniqueInput | Prisma.StationWhereUniqueInput[]
+  update?: Prisma.StationUpdateWithWhereUniqueWithoutNetworkInput | Prisma.StationUpdateWithWhereUniqueWithoutNetworkInput[]
+  updateMany?: Prisma.StationUpdateManyWithWhereWithoutNetworkInput | Prisma.StationUpdateManyWithWhereWithoutNetworkInput[]
+  deleteMany?: Prisma.StationScalarWhereInput | Prisma.StationScalarWhereInput[]
 }
 
 export type StationCreateNestedOneWithoutRoutesInput = {
@@ -403,20 +507,86 @@ export type StationUpdateOneRequiredWithoutRoutesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StationUpdateToOneWithWhereWithoutRoutesInput, Prisma.StationUpdateWithoutRoutesInput>, Prisma.StationUncheckedUpdateWithoutRoutesInput>
 }
 
-export type StationCreateWithoutRoutesInput = {
+export type StationCreateWithoutNetworkInput = {
   id?: string
+  code: string
   name: string
   latitude: number
   longitude: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  routes?: Prisma.RouteStationCreateNestedManyWithoutStationInput
+}
+
+export type StationUncheckedCreateWithoutNetworkInput = {
+  id?: string
+  code: string
+  name: string
+  latitude: number
+  longitude: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  routes?: Prisma.RouteStationUncheckedCreateNestedManyWithoutStationInput
+}
+
+export type StationCreateOrConnectWithoutNetworkInput = {
+  where: Prisma.StationWhereUniqueInput
+  create: Prisma.XOR<Prisma.StationCreateWithoutNetworkInput, Prisma.StationUncheckedCreateWithoutNetworkInput>
+}
+
+export type StationCreateManyNetworkInputEnvelope = {
+  data: Prisma.StationCreateManyNetworkInput | Prisma.StationCreateManyNetworkInput[]
+  skipDuplicates?: boolean
+}
+
+export type StationUpsertWithWhereUniqueWithoutNetworkInput = {
+  where: Prisma.StationWhereUniqueInput
+  update: Prisma.XOR<Prisma.StationUpdateWithoutNetworkInput, Prisma.StationUncheckedUpdateWithoutNetworkInput>
+  create: Prisma.XOR<Prisma.StationCreateWithoutNetworkInput, Prisma.StationUncheckedCreateWithoutNetworkInput>
+}
+
+export type StationUpdateWithWhereUniqueWithoutNetworkInput = {
+  where: Prisma.StationWhereUniqueInput
+  data: Prisma.XOR<Prisma.StationUpdateWithoutNetworkInput, Prisma.StationUncheckedUpdateWithoutNetworkInput>
+}
+
+export type StationUpdateManyWithWhereWithoutNetworkInput = {
+  where: Prisma.StationScalarWhereInput
+  data: Prisma.XOR<Prisma.StationUpdateManyMutationInput, Prisma.StationUncheckedUpdateManyWithoutNetworkInput>
+}
+
+export type StationScalarWhereInput = {
+  AND?: Prisma.StationScalarWhereInput | Prisma.StationScalarWhereInput[]
+  OR?: Prisma.StationScalarWhereInput[]
+  NOT?: Prisma.StationScalarWhereInput | Prisma.StationScalarWhereInput[]
+  id?: Prisma.StringFilter<"Station"> | string
+  code?: Prisma.StringFilter<"Station"> | string
+  name?: Prisma.StringFilter<"Station"> | string
+  latitude?: Prisma.FloatFilter<"Station"> | number
+  longitude?: Prisma.FloatFilter<"Station"> | number
+  networkId?: Prisma.StringFilter<"Station"> | string
+  createdAt?: Prisma.DateTimeFilter<"Station"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Station"> | Date | string
+}
+
+export type StationCreateWithoutRoutesInput = {
+  id?: string
+  code: string
+  name: string
+  latitude: number
+  longitude: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  network: Prisma.NetworkCreateNestedOneWithoutStationsInput
 }
 
 export type StationUncheckedCreateWithoutRoutesInput = {
   id?: string
+  code: string
   name: string
   latitude: number
   longitude: number
+  networkId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -439,15 +609,61 @@ export type StationUpdateToOneWithWhereWithoutRoutesInput = {
 
 export type StationUpdateWithoutRoutesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   latitude?: Prisma.FloatFieldUpdateOperationsInput | number
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  network?: Prisma.NetworkUpdateOneRequiredWithoutStationsNestedInput
 }
 
 export type StationUncheckedUpdateWithoutRoutesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.FloatFieldUpdateOperationsInput | number
+  longitude?: Prisma.FloatFieldUpdateOperationsInput | number
+  networkId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type StationCreateManyNetworkInput = {
+  id?: string
+  code: string
+  name: string
+  latitude: number
+  longitude: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type StationUpdateWithoutNetworkInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.FloatFieldUpdateOperationsInput | number
+  longitude?: Prisma.FloatFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  routes?: Prisma.RouteStationUpdateManyWithoutStationNestedInput
+}
+
+export type StationUncheckedUpdateWithoutNetworkInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.FloatFieldUpdateOperationsInput | number
+  longitude?: Prisma.FloatFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  routes?: Prisma.RouteStationUncheckedUpdateManyWithoutStationNestedInput
+}
+
+export type StationUncheckedUpdateManyWithoutNetworkInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   latitude?: Prisma.FloatFieldUpdateOperationsInput | number
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -488,60 +704,79 @@ export type StationCountOutputTypeCountRoutesArgs<ExtArgs extends runtime.Types.
 
 export type StationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  code?: boolean
   name?: boolean
   latitude?: boolean
   longitude?: boolean
+  networkId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  network?: boolean | Prisma.NetworkDefaultArgs<ExtArgs>
   routes?: boolean | Prisma.Station$routesArgs<ExtArgs>
   _count?: boolean | Prisma.StationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["station"]>
 
 export type StationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  code?: boolean
   name?: boolean
   latitude?: boolean
   longitude?: boolean
+  networkId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  network?: boolean | Prisma.NetworkDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["station"]>
 
 export type StationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  code?: boolean
   name?: boolean
   latitude?: boolean
   longitude?: boolean
+  networkId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  network?: boolean | Prisma.NetworkDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["station"]>
 
 export type StationSelectScalar = {
   id?: boolean
+  code?: boolean
   name?: boolean
   latitude?: boolean
   longitude?: boolean
+  networkId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type StationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "latitude" | "longitude" | "createdAt" | "updatedAt", ExtArgs["result"]["station"]>
+export type StationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "latitude" | "longitude" | "networkId" | "createdAt" | "updatedAt", ExtArgs["result"]["station"]>
 export type StationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  network?: boolean | Prisma.NetworkDefaultArgs<ExtArgs>
   routes?: boolean | Prisma.Station$routesArgs<ExtArgs>
   _count?: boolean | Prisma.StationCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type StationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type StationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type StationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  network?: boolean | Prisma.NetworkDefaultArgs<ExtArgs>
+}
+export type StationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  network?: boolean | Prisma.NetworkDefaultArgs<ExtArgs>
+}
 
 export type $StationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Station"
   objects: {
+    network: Prisma.$NetworkPayload<ExtArgs>
     routes: Prisma.$RouteStationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    code: string
     name: string
     latitude: number
     longitude: number
+    networkId: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["station"]>
@@ -938,6 +1173,7 @@ readonly fields: StationFieldRefs;
  */
 export interface Prisma__StationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  network<T extends Prisma.NetworkDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.NetworkDefaultArgs<ExtArgs>>): Prisma.Prisma__NetworkClient<runtime.Types.Result.GetResult<Prisma.$NetworkPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   routes<T extends Prisma.Station$routesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Station$routesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RouteStationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -969,9 +1205,11 @@ export interface Prisma__StationClient<T, Null = never, ExtArgs extends runtime.
  */
 export interface StationFieldRefs {
   readonly id: Prisma.FieldRef<"Station", 'String'>
+  readonly code: Prisma.FieldRef<"Station", 'String'>
   readonly name: Prisma.FieldRef<"Station", 'String'>
   readonly latitude: Prisma.FieldRef<"Station", 'Float'>
   readonly longitude: Prisma.FieldRef<"Station", 'Float'>
+  readonly networkId: Prisma.FieldRef<"Station", 'String'>
   readonly createdAt: Prisma.FieldRef<"Station", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Station", 'DateTime'>
 }
@@ -1223,6 +1461,10 @@ export type StationCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    */
   data: Prisma.StationCreateManyInput | Prisma.StationCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StationIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1293,6 +1535,10 @@ export type StationUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many Stations to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StationIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

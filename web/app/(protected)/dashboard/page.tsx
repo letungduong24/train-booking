@@ -42,7 +42,7 @@ export default function DashboardPage() {
     });
 
     return (
-        <div className="flex flex-1 flex-col gap-8 pb-10">
+        <div className="flex flex-1 flex-col gap-4">
             {/* Section 1: Welcome Banner */}
             <section className="">
                 <div className="relative rounded-[2rem] overflow-hidden bg-gradient-to-br from-[#802222] to-rose-900 shadow-xl flex items-center p-8 text-white group border border-rose-800/20">
@@ -107,8 +107,8 @@ export default function DashboardPage() {
                     <p className="text-[11px] text-muted-foreground font-medium relative z-10">Chuyến đang chạy</p>
                     
                     {/* Decorative backgrounds */}
-                    <div className="absolute -right-16 -top-16 w-40 h-40 bg-rose-100/30 dark:bg-rose-950/10 rounded-full blur-3xl z-0" />
-                    <div className="absolute -left-16 -bottom-16 w-32 h-32 bg-rose-100/20 dark:bg-rose-950/5 rounded-full blur-3xl z-0" />
+                    <div className="absolute -right-16 -top-16 w-48 h-48 bg-rose-100/30 dark:bg-rose-900/10 rounded-full blur-3xl z-0" />
+                    <div className="absolute -left-16 -bottom-16 w-48 h-48 bg-rose-100/20 dark:bg-rose-900/5 rounded-full blur-3xl z-0" />
                 </div>
 
                 <div className="bg-white dark:bg-zinc-900 rounded-[1.25rem] p-5 shadow-xl shadow-rose-900/5 transition-all hover:scale-[1.01] border border-gray-100 dark:border-zinc-800 relative overflow-hidden group">
@@ -122,8 +122,8 @@ export default function DashboardPage() {
                     <p className="text-[11px] text-muted-foreground font-medium relative z-10">Chuyến sắp tới</p>
 
                     {/* Decorative backgrounds */}
-                    <div className="absolute -right-16 -top-16 w-40 h-40 bg-rose-100/30 dark:bg-rose-950/10 rounded-full blur-3xl z-0" />
-                    <div className="absolute -left-16 -bottom-16 w-32 h-32 bg-rose-100/20 dark:bg-rose-950/5 rounded-full blur-3xl z-0" />
+                    <div className="absolute -right-16 -top-16 w-48 h-48 bg-rose-100/30 dark:bg-rose-900/10 rounded-full blur-3xl z-0" />
+                    <div className="absolute -left-16 -bottom-16 w-48 h-48 bg-rose-100/20 dark:bg-rose-900/5 rounded-full blur-3xl z-0" />
                 </div>
 
                 <div className="bg-white dark:bg-zinc-900 rounded-[1.25rem] p-5 shadow-xl shadow-rose-900/5 transition-all hover:scale-[1.01] border border-gray-100 dark:border-zinc-800 relative overflow-hidden group">
@@ -137,8 +137,8 @@ export default function DashboardPage() {
                     <p className="text-[11px] text-muted-foreground font-medium relative z-10">Chờ thanh toán</p>
 
                     {/* Decorative backgrounds */}
-                    <div className="absolute -right-16 -top-16 w-40 h-40 bg-rose-100/30 dark:bg-rose-950/10 rounded-full blur-3xl z-0" />
-                    <div className="absolute -left-16 -bottom-16 w-32 h-32 bg-rose-100/20 dark:bg-rose-950/5 rounded-full blur-3xl z-0" />
+                    <div className="absolute -right-16 -top-16 w-48 h-48 bg-rose-100/30 dark:bg-rose-900/10 rounded-full blur-3xl z-0" />
+                    <div className="absolute -left-16 -bottom-16 w-48 h-48 bg-rose-100/20 dark:bg-rose-900/5 rounded-full blur-3xl z-0" />
                 </div>
 
                 <div className="bg-gradient-to-br from-[#802222] to-rose-900 text-white rounded-2xl p-5 shadow-lg shadow-rose-950/10 relative overflow-hidden group transition-all hover:scale-[1.02]">
@@ -157,7 +157,7 @@ export default function DashboardPage() {
             </section>
 
             {/* Section 3: Main Grid (Trips & Transactions) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                 {/* Left Side: Recent Trips with Tabs (8 cols) */}
                 <div className="lg:col-span-6">
                     <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-[2rem] p-6 shadow-xl shadow-rose-900/[0.03] border border-gray-100 dark:border-zinc-800">
@@ -172,14 +172,14 @@ export default function DashboardPage() {
                         </div>
 
                         <Tabs defaultValue="active" className="w-full">
-                            <TabsList className="inline-flex h-12 items-center justify-center rounded-2xl bg-gray-100/50 dark:bg-zinc-800/50 p-1 text-muted-foreground mb-6 border border-gray-100 dark:border-zinc-800 w-full sm:w-auto">
-                                <TabsTrigger value="active" className="rounded-xl px-6 py-2 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-[#802222] transition-all">
+                            <TabsList className="flex sm:inline-flex w-full sm:w-auto h-12 items-center justify-start rounded-2xl bg-gray-100/50 dark:bg-zinc-800/50 p-1 text-muted-foreground mb-6 border border-gray-100 dark:border-zinc-800 max-w-full overflow-x-auto hide-scrollbar">
+                                <TabsTrigger value="active" className="rounded-xl px-4 sm:px-6 py-2 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-[#802222] transition-all whitespace-nowrap flex-none">
                                     Đang chạy ({activeTrips.length})
                                 </TabsTrigger>
-                                <TabsTrigger value="upcoming" className="rounded-xl px-6 py-2 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-[#802222] transition-all">
+                                <TabsTrigger value="upcoming" className="rounded-xl px-4 sm:px-6 py-2 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-[#802222] transition-all whitespace-nowrap flex-none">
                                     Sắp tới ({upcomingTrips.length})
                                 </TabsTrigger>
-                                <TabsTrigger value="pending" className="rounded-xl px-6 py-2 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-[#802222] transition-all">
+                                <TabsTrigger value="pending" className="rounded-xl px-4 sm:px-6 py-2 text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-zinc-900 data-[state=active]:text-[#802222] transition-all whitespace-nowrap flex-none">
                                     Chờ xử lý ({pendingBookings.length})
                                 </TabsTrigger>
                             </TabsList>

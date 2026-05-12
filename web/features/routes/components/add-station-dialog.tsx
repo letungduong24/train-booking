@@ -39,14 +39,13 @@ interface AddStationDialogProps {
     currentStationCount: number; // Number of stations currently in the route
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    onSuccess: () => void;
+    onSuccess: (stationData: { id: string, name: string, latitude: number, longitude: number }) => void;
 }
 
 const addStationSchema = z.object({
     name: z.string().min(1, "Tên trạm không được để trống"),
     latitude: z.number(),
     longitude: z.number(),
-    distanceFromStart: z.number().min(0),
 })
 
 export function AddStationDialog({ routeId, currentStationCount, open, onOpenChange, onSuccess }: AddStationDialogProps) {
@@ -54,7 +53,6 @@ export function AddStationDialog({ routeId, currentStationCount, open, onOpenCha
     const [loading, setLoading] = React.useState(false)
     const [searchValue, setSearchValue] = React.useState("")
     const [selectedStation, setSelectedStation] = React.useState<Station | null>(null)
-    const [distance, setDistance] = React.useState("")
     const [page, setPage] = React.useState(1)
 
     // Auto-calculate next index
@@ -75,7 +73,6 @@ export function AddStationDialog({ routeId, currentStationCount, open, onOpenCha
             name: "",
             latitude: 0,
             longitude: 0,
-            distanceFromStart: 0,
         },
     })
 
@@ -102,19 +99,16 @@ export function AddStationDialog({ routeId, currentStationCount, open, onOpenCha
                 return
             }
 
-            // 2. Add to Route
-            await apiClient.post(`/route/${routeId}/stations`, {
-                stationId: stationId,
-                index: nextIndex,
-                distanceFromStart: values.distanceFromStart
-            })
-
             // 3. Invalidate queries
-            queryClient.invalidateQueries({ queryKey: ['routes'] })
             queryClient.invalidateQueries({ queryKey: ['available-stations'] })
 
             toast.success("Thêm trạm thành công")
-            onSuccess()
+            onSuccess({
+                id: stationId,
+                name: values.name,
+                latitude: values.latitude,
+                longitude: values.longitude
+            })
             onOpenChange(false)
             form.reset()
 
@@ -130,28 +124,23 @@ export function AddStationDialog({ routeId, currentStationCount, open, onOpenCha
     }
 
     const handleSelectAndAdd = async () => {
-        if (!selectedStation || !distance) {
-            toast.error("Vui lòng chọn trạm và nhập đầy đủ thông tin")
+        if (!selectedStation) {
+            toast.error("Vui lòng chọn trạm")
             return
         }
 
         try {
             setLoading(true)
-            await apiClient.post(`/route/${routeId}/stations`, {
-                stationId: selectedStation.id,
-                index: nextIndex,
-                distanceFromStart: parseFloat(distance)
-            })
-
-            // Invalidate queries
-            queryClient.invalidateQueries({ queryKey: ['routes'] })
-            queryClient.invalidateQueries({ queryKey: ['available-stations'] })
 
             toast.success("Thêm trạm thành công")
-            onSuccess()
+            onSuccess({
+                id: selectedStation.id,
+                name: selectedStation.name,
+                latitude: selectedStation.latitude,
+                longitude: selectedStation.longitude
+            })
             onOpenChange(false)
             setSelectedStation(null)
-            setDistance("")
 
         } catch (error: any) {
             if (error.response && error.response.status === 409) {
@@ -209,16 +198,6 @@ export function AddStationDialog({ routeId, currentStationCount, open, onOpenCha
                                         step="any"
                                         {...form.register("longitude", { valueAsNumber: true })}
                                         placeholder="105.8542"
-                                    />
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label className="text-right text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Cự ly (km)</Label>
-                                    <Input
-                                        className="col-span-3 h-11 rounded-xl bg-gray-50/50 border-gray-100"
-                                        type="number"
-                                        step="0.1"
-                                        {...form.register("distanceFromStart", { valueAsNumber: true })}
-                                        placeholder="0.0"
                                     />
                                 </div>
                             </div>
@@ -326,17 +305,6 @@ export function AddStationDialog({ routeId, currentStationCount, open, onOpenCha
                                             <p className="text-xs font-medium text-rose-900/50 mt-1">Trạm số {nextIndex + 1} trong tuyến</p>
                                         </div>
                                         <Badge variant="outline" className="bg-white border-rose-200 text-[#802222] rounded-lg px-2 py-0.5">Sẵn sàng</Badge>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase tracking-wider text-rose-900/50">Khoảng cách từ ga đầu (km)</Label>
-                                        <Input
-                                            type="number"
-                                            step="0.1"
-                                            value={distance}
-                                            onChange={(e) => setDistance(e.target.value)}
-                                            placeholder="0.0"
-                                            className="h-11 rounded-xl bg-white border-rose-100 focus-visible:ring-rose-500"
-                                        />
                                     </div>
                                 </div>
                             )}

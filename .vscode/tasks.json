@@ -1,0 +1,10 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "drafting",
+			"type": "shell",
+			"command": "echo \"Drafting content\""
+		}
+	]
+}

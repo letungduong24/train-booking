@@ -22,12 +22,12 @@ export function RecentBookingsTable({ data }: RecentBookingsTableProps) {
       <Table>
         <TableHeader className="bg-gray-50/50 dark:bg-zinc-800/50">
           <TableRow className="border-gray-100 dark:border-zinc-800 hover:bg-transparent">
-            <TableHead className="font-bold text-[#802222] dark:text-rose-400">Mã đặt chỗ</TableHead>
+            <TableHead className="font-bold text-[#802222] dark:text-rose-400 pl-6">Mã đặt chỗ</TableHead>
             <TableHead className="font-bold text-[#802222] dark:text-rose-400">Khách hàng</TableHead>
             <TableHead className="font-bold text-[#802222] dark:text-rose-400">Chuyến đi</TableHead>
             <TableHead className="font-bold text-[#802222] dark:text-rose-400">Ngày đặt</TableHead>
             <TableHead className="font-bold text-[#802222] dark:text-rose-400 text-right">Tổng tiền</TableHead>
-            <TableHead className="font-bold text-[#802222] dark:text-rose-400 text-center">Trạng thái</TableHead>
+            <TableHead className="font-bold text-[#802222] dark:text-rose-400 text-center pr-6">Trạng thái</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -40,7 +40,7 @@ export function RecentBookingsTable({ data }: RecentBookingsTableProps) {
           ) : (
             data.map((booking) => (
               <TableRow key={booking.id} className="border-gray-100 dark:border-zinc-800 hover:bg-rose-50/30 dark:hover:bg-rose-950/10 transition-colors">
-                <TableCell className="font-mono font-medium text-xs">{booking.code}</TableCell>
+                <TableCell className="font-mono font-medium text-xs pl-6">{booking.code}</TableCell>
                 <TableCell>
                   <div className="flex flex-col">
                     <span className="font-semibold text-sm">{booking.user?.name || "N/A"}</span>
@@ -56,7 +56,7 @@ export function RecentBookingsTable({ data }: RecentBookingsTableProps) {
                 <TableCell className="text-right font-bold text-rose-600 dark:text-rose-400">
                   {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(booking.totalPrice)}
                 </TableCell>
-                <TableCell className="text-center">
+                <TableCell className="text-center pr-6">
                   <Badge 
                     variant="outline" 
                     className={`rounded-full px-3 py-0.5 text-[10px] font-bold border-none ${

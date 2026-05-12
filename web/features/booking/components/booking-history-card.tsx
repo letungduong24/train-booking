@@ -71,7 +71,7 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
             className="group relative bg-white dark:bg-zinc-900 rounded-[1.25rem] p-4 shadow-xl shadow-rose-900/5 dark:shadow-none border border-gray-100 dark:border-zinc-800 transition-all overflow-hidden"
         >
             {/* Header Row: Code & Status */}
-            <div className="flex justify-between items-center mb-4 relative z-10">
+            <div className="flex flex-wrap justify-between items-center gap-2 mb-4 relative z-10">
                 <Badge variant="outline" className="font-mono text-[10px] h-6 px-3 bg-gray-50/50 dark:bg-zinc-800/30 border-gray-200 dark:border-zinc-700 text-muted-foreground/70 rounded-full">
                     {booking.code}
                 </Badge>
@@ -107,7 +107,7 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
                 <div className="w-10 h-10 rounded-[0.85rem] bg-[#802222] flex items-center justify-center text-white shrink-0 shadow-sm">
                     <Train className="h-5 w-5" />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                     <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-tight mb-0.5 truncate">
                         {booking.trip.route.name}
                     </h3>
@@ -119,7 +119,7 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
 
             <Separator className="bg-gray-50 dark:bg-zinc-800/50 mb-4" />
 
-            <div className="flex justify-between items-end mb-4">
+            <div className="flex flex-wrap justify-between items-start sm:items-end gap-3 mb-4">
                 <div className="flex gap-4">
                     <div className="flex flex-col">
                         <p className="text-[10px] font-medium text-muted-foreground opacity-70 leading-none">Khởi hành</p>
@@ -148,7 +148,7 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
                 </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
                 <Button
                     variant="default"
                     className="flex-1 bg-[#802222] hover:bg-rose-900 text-white font-medium text-xs rounded-full h-9 border-none shadow-md"

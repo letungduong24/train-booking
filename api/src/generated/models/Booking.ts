@@ -39,6 +39,9 @@ export type BookingMinAggregateOutputType = {
   code: string | null
   tripId: string | null
   userId: string | null
+  contactName: string | null
+  contactPhone: string | null
+  contactEmail: string | null
   status: $Enums.BookingStatus | null
   totalPrice: number | null
   createdAt: Date | null
@@ -50,6 +53,9 @@ export type BookingMaxAggregateOutputType = {
   code: string | null
   tripId: string | null
   userId: string | null
+  contactName: string | null
+  contactPhone: string | null
+  contactEmail: string | null
   status: $Enums.BookingStatus | null
   totalPrice: number | null
   createdAt: Date | null
@@ -61,6 +67,9 @@ export type BookingCountAggregateOutputType = {
   code: number
   tripId: number
   userId: number
+  contactName: number
+  contactPhone: number
+  contactEmail: number
   status: number
   totalPrice: number
   metadata: number
@@ -83,6 +92,9 @@ export type BookingMinAggregateInputType = {
   code?: true
   tripId?: true
   userId?: true
+  contactName?: true
+  contactPhone?: true
+  contactEmail?: true
   status?: true
   totalPrice?: true
   createdAt?: true
@@ -94,6 +106,9 @@ export type BookingMaxAggregateInputType = {
   code?: true
   tripId?: true
   userId?: true
+  contactName?: true
+  contactPhone?: true
+  contactEmail?: true
   status?: true
   totalPrice?: true
   createdAt?: true
@@ -105,6 +120,9 @@ export type BookingCountAggregateInputType = {
   code?: true
   tripId?: true
   userId?: true
+  contactName?: true
+  contactPhone?: true
+  contactEmail?: true
   status?: true
   totalPrice?: true
   metadata?: true
@@ -204,6 +222,9 @@ export type BookingGroupByOutputType = {
   code: string
   tripId: string
   userId: string | null
+  contactName: string | null
+  contactPhone: string | null
+  contactEmail: string | null
   status: $Enums.BookingStatus
   totalPrice: number
   metadata: runtime.JsonValue | null
@@ -239,6 +260,9 @@ export type BookingWhereInput = {
   code?: Prisma.StringFilter<"Booking"> | string
   tripId?: Prisma.StringFilter<"Booking"> | string
   userId?: Prisma.StringNullableFilter<"Booking"> | string | null
+  contactName?: Prisma.StringNullableFilter<"Booking"> | string | null
+  contactPhone?: Prisma.StringNullableFilter<"Booking"> | string | null
+  contactEmail?: Prisma.StringNullableFilter<"Booking"> | string | null
   status?: Prisma.EnumBookingStatusFilter<"Booking"> | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFilter<"Booking"> | number
   metadata?: Prisma.JsonNullableFilter<"Booking">
@@ -254,6 +278,9 @@ export type BookingOrderByWithRelationInput = {
   code?: Prisma.SortOrder
   tripId?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactName?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactPhone?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   totalPrice?: Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -272,6 +299,9 @@ export type BookingWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.BookingWhereInput | Prisma.BookingWhereInput[]
   tripId?: Prisma.StringFilter<"Booking"> | string
   userId?: Prisma.StringNullableFilter<"Booking"> | string | null
+  contactName?: Prisma.StringNullableFilter<"Booking"> | string | null
+  contactPhone?: Prisma.StringNullableFilter<"Booking"> | string | null
+  contactEmail?: Prisma.StringNullableFilter<"Booking"> | string | null
   status?: Prisma.EnumBookingStatusFilter<"Booking"> | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFilter<"Booking"> | number
   metadata?: Prisma.JsonNullableFilter<"Booking">
@@ -287,6 +317,9 @@ export type BookingOrderByWithAggregationInput = {
   code?: Prisma.SortOrder
   tripId?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactName?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactPhone?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   totalPrice?: Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -307,6 +340,9 @@ export type BookingScalarWhereWithAggregatesInput = {
   code?: Prisma.StringWithAggregatesFilter<"Booking"> | string
   tripId?: Prisma.StringWithAggregatesFilter<"Booking"> | string
   userId?: Prisma.StringNullableWithAggregatesFilter<"Booking"> | string | null
+  contactName?: Prisma.StringNullableWithAggregatesFilter<"Booking"> | string | null
+  contactPhone?: Prisma.StringNullableWithAggregatesFilter<"Booking"> | string | null
+  contactEmail?: Prisma.StringNullableWithAggregatesFilter<"Booking"> | string | null
   status?: Prisma.EnumBookingStatusWithAggregatesFilter<"Booking"> | $Enums.BookingStatus
   totalPrice?: Prisma.FloatWithAggregatesFilter<"Booking"> | number
   metadata?: Prisma.JsonNullableWithAggregatesFilter<"Booking">
@@ -317,6 +353,9 @@ export type BookingScalarWhereWithAggregatesInput = {
 export type BookingCreateInput = {
   id?: string
   code: string
+  contactName?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
   status?: $Enums.BookingStatus
   totalPrice: number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -332,6 +371,9 @@ export type BookingUncheckedCreateInput = {
   code: string
   tripId: string
   userId?: string | null
+  contactName?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
   status?: $Enums.BookingStatus
   totalPrice: number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -343,6 +385,9 @@ export type BookingUncheckedCreateInput = {
 export type BookingUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -358,6 +403,9 @@ export type BookingUncheckedUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   tripId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -371,6 +419,9 @@ export type BookingCreateManyInput = {
   code: string
   tripId: string
   userId?: string | null
+  contactName?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
   status?: $Enums.BookingStatus
   totalPrice: number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -381,6 +432,9 @@ export type BookingCreateManyInput = {
 export type BookingUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -393,6 +447,9 @@ export type BookingUncheckedUpdateManyInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   tripId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -415,6 +472,9 @@ export type BookingCountOrderByAggregateInput = {
   code?: Prisma.SortOrder
   tripId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  contactName?: Prisma.SortOrder
+  contactPhone?: Prisma.SortOrder
+  contactEmail?: Prisma.SortOrder
   status?: Prisma.SortOrder
   totalPrice?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
@@ -431,6 +491,9 @@ export type BookingMaxOrderByAggregateInput = {
   code?: Prisma.SortOrder
   tripId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  contactName?: Prisma.SortOrder
+  contactPhone?: Prisma.SortOrder
+  contactEmail?: Prisma.SortOrder
   status?: Prisma.SortOrder
   totalPrice?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -442,6 +505,9 @@ export type BookingMinOrderByAggregateInput = {
   code?: Prisma.SortOrder
   tripId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  contactName?: Prisma.SortOrder
+  contactPhone?: Prisma.SortOrder
+  contactEmail?: Prisma.SortOrder
   status?: Prisma.SortOrder
   totalPrice?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -562,6 +628,9 @@ export type BookingUpdateOneRequiredWithoutTicketsNestedInput = {
 export type BookingCreateWithoutUserInput = {
   id?: string
   code: string
+  contactName?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
   status?: $Enums.BookingStatus
   totalPrice: number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -575,6 +644,9 @@ export type BookingUncheckedCreateWithoutUserInput = {
   id?: string
   code: string
   tripId: string
+  contactName?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
   status?: $Enums.BookingStatus
   totalPrice: number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -617,6 +689,9 @@ export type BookingScalarWhereInput = {
   code?: Prisma.StringFilter<"Booking"> | string
   tripId?: Prisma.StringFilter<"Booking"> | string
   userId?: Prisma.StringNullableFilter<"Booking"> | string | null
+  contactName?: Prisma.StringNullableFilter<"Booking"> | string | null
+  contactPhone?: Prisma.StringNullableFilter<"Booking"> | string | null
+  contactEmail?: Prisma.StringNullableFilter<"Booking"> | string | null
   status?: Prisma.EnumBookingStatusFilter<"Booking"> | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFilter<"Booking"> | number
   metadata?: Prisma.JsonNullableFilter<"Booking">
@@ -627,6 +702,9 @@ export type BookingScalarWhereInput = {
 export type BookingCreateWithoutTripInput = {
   id?: string
   code: string
+  contactName?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
   status?: $Enums.BookingStatus
   totalPrice: number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -640,6 +718,9 @@ export type BookingUncheckedCreateWithoutTripInput = {
   id?: string
   code: string
   userId?: string | null
+  contactName?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
   status?: $Enums.BookingStatus
   totalPrice: number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -677,6 +758,9 @@ export type BookingUpdateManyWithWhereWithoutTripInput = {
 export type BookingCreateWithoutTicketsInput = {
   id?: string
   code: string
+  contactName?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
   status?: $Enums.BookingStatus
   totalPrice: number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -691,6 +775,9 @@ export type BookingUncheckedCreateWithoutTicketsInput = {
   code: string
   tripId: string
   userId?: string | null
+  contactName?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
   status?: $Enums.BookingStatus
   totalPrice: number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -717,6 +804,9 @@ export type BookingUpdateToOneWithWhereWithoutTicketsInput = {
 export type BookingUpdateWithoutTicketsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -731,6 +821,9 @@ export type BookingUncheckedUpdateWithoutTicketsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   tripId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -742,6 +835,9 @@ export type BookingCreateManyUserInput = {
   id?: string
   code: string
   tripId: string
+  contactName?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
   status?: $Enums.BookingStatus
   totalPrice: number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -752,6 +848,9 @@ export type BookingCreateManyUserInput = {
 export type BookingUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -765,6 +864,9 @@ export type BookingUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   tripId?: Prisma.StringFieldUpdateOperationsInput | string
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -777,6 +879,9 @@ export type BookingUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   tripId?: Prisma.StringFieldUpdateOperationsInput | string
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -788,6 +893,9 @@ export type BookingCreateManyTripInput = {
   id?: string
   code: string
   userId?: string | null
+  contactName?: string | null
+  contactPhone?: string | null
+  contactEmail?: string | null
   status?: $Enums.BookingStatus
   totalPrice: number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -798,6 +906,9 @@ export type BookingCreateManyTripInput = {
 export type BookingUpdateWithoutTripInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -811,6 +922,9 @@ export type BookingUncheckedUpdateWithoutTripInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -823,6 +937,9 @@ export type BookingUncheckedUpdateManyWithoutTripInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
   totalPrice?: Prisma.FloatFieldUpdateOperationsInput | number
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -866,6 +983,9 @@ export type BookingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   code?: boolean
   tripId?: boolean
   userId?: boolean
+  contactName?: boolean
+  contactPhone?: boolean
+  contactEmail?: boolean
   status?: boolean
   totalPrice?: boolean
   metadata?: boolean
@@ -882,6 +1002,9 @@ export type BookingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   code?: boolean
   tripId?: boolean
   userId?: boolean
+  contactName?: boolean
+  contactPhone?: boolean
+  contactEmail?: boolean
   status?: boolean
   totalPrice?: boolean
   metadata?: boolean
@@ -896,6 +1019,9 @@ export type BookingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   code?: boolean
   tripId?: boolean
   userId?: boolean
+  contactName?: boolean
+  contactPhone?: boolean
+  contactEmail?: boolean
   status?: boolean
   totalPrice?: boolean
   metadata?: boolean
@@ -910,6 +1036,9 @@ export type BookingSelectScalar = {
   code?: boolean
   tripId?: boolean
   userId?: boolean
+  contactName?: boolean
+  contactPhone?: boolean
+  contactEmail?: boolean
   status?: boolean
   totalPrice?: boolean
   metadata?: boolean
@@ -917,7 +1046,7 @@ export type BookingSelectScalar = {
   updatedAt?: boolean
 }
 
-export type BookingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "tripId" | "userId" | "status" | "totalPrice" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["booking"]>
+export type BookingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "tripId" | "userId" | "contactName" | "contactPhone" | "contactEmail" | "status" | "totalPrice" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["booking"]>
 export type BookingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   trip?: boolean | Prisma.TripDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Booking$userArgs<ExtArgs>
@@ -945,6 +1074,9 @@ export type $BookingPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     code: string
     tripId: string
     userId: string | null
+    contactName: string | null
+    contactPhone: string | null
+    contactEmail: string | null
     status: $Enums.BookingStatus
     totalPrice: number
     metadata: runtime.JsonValue | null
@@ -1380,6 +1512,9 @@ export interface BookingFieldRefs {
   readonly code: Prisma.FieldRef<"Booking", 'String'>
   readonly tripId: Prisma.FieldRef<"Booking", 'String'>
   readonly userId: Prisma.FieldRef<"Booking", 'String'>
+  readonly contactName: Prisma.FieldRef<"Booking", 'String'>
+  readonly contactPhone: Prisma.FieldRef<"Booking", 'String'>
+  readonly contactEmail: Prisma.FieldRef<"Booking", 'String'>
   readonly status: Prisma.FieldRef<"Booking", 'BookingStatus'>
   readonly totalPrice: Prisma.FieldRef<"Booking", 'Float'>
   readonly metadata: Prisma.FieldRef<"Booking", 'Json'>

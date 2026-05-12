@@ -38,4 +38,16 @@ export class CreateBookingDto {
 
   @IsString()
   toStationId: string;
+
+  @IsOptional()
+  @IsString()
+  contactName?: string;
+
+  @IsOptional()
+  @IsString()
+  contactPhone?: string;
+
+  @IsOptional()
+  @IsString()
+  contactEmail?: string;
 }

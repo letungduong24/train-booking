@@ -172,7 +172,6 @@ export default function CreateTripPage() {
                                     <div className="pt-6">
                                         <Button type="submit" disabled={createTrip.isPending} className="w-full bg-[#802222] hover:bg-rose-900 text-white rounded-[1.5rem] h-16 text-xl font-bold shadow-2xl shadow-rose-900/30 transition-all hover:scale-[1.01] active:scale-[0.98]">
                                             {createTrip.isPending ? "Đang thiết lập hành trình…" : "Tạo chuyến đi ngay"}
-                                            <Save className="ml-3 h-6 w-6" />
                                         </Button>
                                     </div>
                                 </form>

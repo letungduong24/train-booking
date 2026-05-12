@@ -27,6 +27,7 @@ export type AggregateRailwayLine = {
 export type RailwayLineMinAggregateOutputType = {
   id: string | null
   name: string | null
+  networkId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -34,6 +35,7 @@ export type RailwayLineMinAggregateOutputType = {
 export type RailwayLineMaxAggregateOutputType = {
   id: string | null
   name: string | null
+  networkId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -42,6 +44,7 @@ export type RailwayLineCountAggregateOutputType = {
   id: number
   name: number
   pathCoordinates: number
+  networkId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -51,6 +54,7 @@ export type RailwayLineCountAggregateOutputType = {
 export type RailwayLineMinAggregateInputType = {
   id?: true
   name?: true
+  networkId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -58,6 +62,7 @@ export type RailwayLineMinAggregateInputType = {
 export type RailwayLineMaxAggregateInputType = {
   id?: true
   name?: true
+  networkId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -66,6 +71,7 @@ export type RailwayLineCountAggregateInputType = {
   id?: true
   name?: true
   pathCoordinates?: true
+  networkId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -147,6 +153,7 @@ export type RailwayLineGroupByOutputType = {
   id: string
   name: string
   pathCoordinates: runtime.JsonValue
+  networkId: string
   createdAt: Date
   updatedAt: Date
   _count: RailwayLineCountAggregateOutputType | null
@@ -176,16 +183,20 @@ export type RailwayLineWhereInput = {
   id?: Prisma.StringFilter<"RailwayLine"> | string
   name?: Prisma.StringFilter<"RailwayLine"> | string
   pathCoordinates?: Prisma.JsonFilter<"RailwayLine">
+  networkId?: Prisma.StringFilter<"RailwayLine"> | string
   createdAt?: Prisma.DateTimeFilter<"RailwayLine"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RailwayLine"> | Date | string
+  network?: Prisma.XOR<Prisma.NetworkScalarRelationFilter, Prisma.NetworkWhereInput>
 }
 
 export type RailwayLineOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   pathCoordinates?: Prisma.SortOrder
+  networkId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  network?: Prisma.NetworkOrderByWithRelationInput
 }
 
 export type RailwayLineWhereUniqueInput = Prisma.AtLeast<{
@@ -195,14 +206,17 @@ export type RailwayLineWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.RailwayLineWhereInput | Prisma.RailwayLineWhereInput[]
   name?: Prisma.StringFilter<"RailwayLine"> | string
   pathCoordinates?: Prisma.JsonFilter<"RailwayLine">
+  networkId?: Prisma.StringFilter<"RailwayLine"> | string
   createdAt?: Prisma.DateTimeFilter<"RailwayLine"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RailwayLine"> | Date | string
+  network?: Prisma.XOR<Prisma.NetworkScalarRelationFilter, Prisma.NetworkWhereInput>
 }, "id">
 
 export type RailwayLineOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   pathCoordinates?: Prisma.SortOrder
+  networkId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.RailwayLineCountOrderByAggregateInput
@@ -217,6 +231,7 @@ export type RailwayLineScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"RailwayLine"> | string
   name?: Prisma.StringWithAggregatesFilter<"RailwayLine"> | string
   pathCoordinates?: Prisma.JsonWithAggregatesFilter<"RailwayLine">
+  networkId?: Prisma.StringWithAggregatesFilter<"RailwayLine"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"RailwayLine"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"RailwayLine"> | Date | string
 }
@@ -227,12 +242,14 @@ export type RailwayLineCreateInput = {
   pathCoordinates: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  network: Prisma.NetworkCreateNestedOneWithoutLinesInput
 }
 
 export type RailwayLineUncheckedCreateInput = {
   id?: string
   name: string
   pathCoordinates: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  networkId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -243,12 +260,14 @@ export type RailwayLineUpdateInput = {
   pathCoordinates?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  network?: Prisma.NetworkUpdateOneRequiredWithoutLinesNestedInput
 }
 
 export type RailwayLineUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pathCoordinates?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  networkId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -257,6 +276,7 @@ export type RailwayLineCreateManyInput = {
   id?: string
   name: string
   pathCoordinates: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  networkId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -273,14 +293,26 @@ export type RailwayLineUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pathCoordinates?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  networkId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RailwayLineListRelationFilter = {
+  every?: Prisma.RailwayLineWhereInput
+  some?: Prisma.RailwayLineWhereInput
+  none?: Prisma.RailwayLineWhereInput
+}
+
+export type RailwayLineOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type RailwayLineCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   pathCoordinates?: Prisma.SortOrder
+  networkId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -288,6 +320,7 @@ export type RailwayLineCountOrderByAggregateInput = {
 export type RailwayLineMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  networkId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -295,8 +328,137 @@ export type RailwayLineMaxOrderByAggregateInput = {
 export type RailwayLineMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  networkId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type RailwayLineCreateNestedManyWithoutNetworkInput = {
+  create?: Prisma.XOR<Prisma.RailwayLineCreateWithoutNetworkInput, Prisma.RailwayLineUncheckedCreateWithoutNetworkInput> | Prisma.RailwayLineCreateWithoutNetworkInput[] | Prisma.RailwayLineUncheckedCreateWithoutNetworkInput[]
+  connectOrCreate?: Prisma.RailwayLineCreateOrConnectWithoutNetworkInput | Prisma.RailwayLineCreateOrConnectWithoutNetworkInput[]
+  createMany?: Prisma.RailwayLineCreateManyNetworkInputEnvelope
+  connect?: Prisma.RailwayLineWhereUniqueInput | Prisma.RailwayLineWhereUniqueInput[]
+}
+
+export type RailwayLineUncheckedCreateNestedManyWithoutNetworkInput = {
+  create?: Prisma.XOR<Prisma.RailwayLineCreateWithoutNetworkInput, Prisma.RailwayLineUncheckedCreateWithoutNetworkInput> | Prisma.RailwayLineCreateWithoutNetworkInput[] | Prisma.RailwayLineUncheckedCreateWithoutNetworkInput[]
+  connectOrCreate?: Prisma.RailwayLineCreateOrConnectWithoutNetworkInput | Prisma.RailwayLineCreateOrConnectWithoutNetworkInput[]
+  createMany?: Prisma.RailwayLineCreateManyNetworkInputEnvelope
+  connect?: Prisma.RailwayLineWhereUniqueInput | Prisma.RailwayLineWhereUniqueInput[]
+}
+
+export type RailwayLineUpdateManyWithoutNetworkNestedInput = {
+  create?: Prisma.XOR<Prisma.RailwayLineCreateWithoutNetworkInput, Prisma.RailwayLineUncheckedCreateWithoutNetworkInput> | Prisma.RailwayLineCreateWithoutNetworkInput[] | Prisma.RailwayLineUncheckedCreateWithoutNetworkInput[]
+  connectOrCreate?: Prisma.RailwayLineCreateOrConnectWithoutNetworkInput | Prisma.RailwayLineCreateOrConnectWithoutNetworkInput[]
+  upsert?: Prisma.RailwayLineUpsertWithWhereUniqueWithoutNetworkInput | Prisma.RailwayLineUpsertWithWhereUniqueWithoutNetworkInput[]
+  createMany?: Prisma.RailwayLineCreateManyNetworkInputEnvelope
+  set?: Prisma.RailwayLineWhereUniqueInput | Prisma.RailwayLineWhereUniqueInput[]
+  disconnect?: Prisma.RailwayLineWhereUniqueInput | Prisma.RailwayLineWhereUniqueInput[]
+  delete?: Prisma.RailwayLineWhereUniqueInput | Prisma.RailwayLineWhereUniqueInput[]
+  connect?: Prisma.RailwayLineWhereUniqueInput | Prisma.RailwayLineWhereUniqueInput[]
+  update?: Prisma.RailwayLineUpdateWithWhereUniqueWithoutNetworkInput | Prisma.RailwayLineUpdateWithWhereUniqueWithoutNetworkInput[]
+  updateMany?: Prisma.RailwayLineUpdateManyWithWhereWithoutNetworkInput | Prisma.RailwayLineUpdateManyWithWhereWithoutNetworkInput[]
+  deleteMany?: Prisma.RailwayLineScalarWhereInput | Prisma.RailwayLineScalarWhereInput[]
+}
+
+export type RailwayLineUncheckedUpdateManyWithoutNetworkNestedInput = {
+  create?: Prisma.XOR<Prisma.RailwayLineCreateWithoutNetworkInput, Prisma.RailwayLineUncheckedCreateWithoutNetworkInput> | Prisma.RailwayLineCreateWithoutNetworkInput[] | Prisma.RailwayLineUncheckedCreateWithoutNetworkInput[]
+  connectOrCreate?: Prisma.RailwayLineCreateOrConnectWithoutNetworkInput | Prisma.RailwayLineCreateOrConnectWithoutNetworkInput[]
+  upsert?: Prisma.RailwayLineUpsertWithWhereUniqueWithoutNetworkInput | Prisma.RailwayLineUpsertWithWhereUniqueWithoutNetworkInput[]
+  createMany?: Prisma.RailwayLineCreateManyNetworkInputEnvelope
+  set?: Prisma.RailwayLineWhereUniqueInput | Prisma.RailwayLineWhereUniqueInput[]
+  disconnect?: Prisma.RailwayLineWhereUniqueInput | Prisma.RailwayLineWhereUniqueInput[]
+  delete?: Prisma.RailwayLineWhereUniqueInput | Prisma.RailwayLineWhereUniqueInput[]
+  connect?: Prisma.RailwayLineWhereUniqueInput | Prisma.RailwayLineWhereUniqueInput[]
+  update?: Prisma.RailwayLineUpdateWithWhereUniqueWithoutNetworkInput | Prisma.RailwayLineUpdateWithWhereUniqueWithoutNetworkInput[]
+  updateMany?: Prisma.RailwayLineUpdateManyWithWhereWithoutNetworkInput | Prisma.RailwayLineUpdateManyWithWhereWithoutNetworkInput[]
+  deleteMany?: Prisma.RailwayLineScalarWhereInput | Prisma.RailwayLineScalarWhereInput[]
+}
+
+export type RailwayLineCreateWithoutNetworkInput = {
+  id?: string
+  name: string
+  pathCoordinates: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RailwayLineUncheckedCreateWithoutNetworkInput = {
+  id?: string
+  name: string
+  pathCoordinates: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RailwayLineCreateOrConnectWithoutNetworkInput = {
+  where: Prisma.RailwayLineWhereUniqueInput
+  create: Prisma.XOR<Prisma.RailwayLineCreateWithoutNetworkInput, Prisma.RailwayLineUncheckedCreateWithoutNetworkInput>
+}
+
+export type RailwayLineCreateManyNetworkInputEnvelope = {
+  data: Prisma.RailwayLineCreateManyNetworkInput | Prisma.RailwayLineCreateManyNetworkInput[]
+  skipDuplicates?: boolean
+}
+
+export type RailwayLineUpsertWithWhereUniqueWithoutNetworkInput = {
+  where: Prisma.RailwayLineWhereUniqueInput
+  update: Prisma.XOR<Prisma.RailwayLineUpdateWithoutNetworkInput, Prisma.RailwayLineUncheckedUpdateWithoutNetworkInput>
+  create: Prisma.XOR<Prisma.RailwayLineCreateWithoutNetworkInput, Prisma.RailwayLineUncheckedCreateWithoutNetworkInput>
+}
+
+export type RailwayLineUpdateWithWhereUniqueWithoutNetworkInput = {
+  where: Prisma.RailwayLineWhereUniqueInput
+  data: Prisma.XOR<Prisma.RailwayLineUpdateWithoutNetworkInput, Prisma.RailwayLineUncheckedUpdateWithoutNetworkInput>
+}
+
+export type RailwayLineUpdateManyWithWhereWithoutNetworkInput = {
+  where: Prisma.RailwayLineScalarWhereInput
+  data: Prisma.XOR<Prisma.RailwayLineUpdateManyMutationInput, Prisma.RailwayLineUncheckedUpdateManyWithoutNetworkInput>
+}
+
+export type RailwayLineScalarWhereInput = {
+  AND?: Prisma.RailwayLineScalarWhereInput | Prisma.RailwayLineScalarWhereInput[]
+  OR?: Prisma.RailwayLineScalarWhereInput[]
+  NOT?: Prisma.RailwayLineScalarWhereInput | Prisma.RailwayLineScalarWhereInput[]
+  id?: Prisma.StringFilter<"RailwayLine"> | string
+  name?: Prisma.StringFilter<"RailwayLine"> | string
+  pathCoordinates?: Prisma.JsonFilter<"RailwayLine">
+  networkId?: Prisma.StringFilter<"RailwayLine"> | string
+  createdAt?: Prisma.DateTimeFilter<"RailwayLine"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"RailwayLine"> | Date | string
+}
+
+export type RailwayLineCreateManyNetworkInput = {
+  id?: string
+  name: string
+  pathCoordinates: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RailwayLineUpdateWithoutNetworkInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  pathCoordinates?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RailwayLineUncheckedUpdateWithoutNetworkInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  pathCoordinates?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RailwayLineUncheckedUpdateManyWithoutNetworkInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  pathCoordinates?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -305,43 +467,62 @@ export type RailwayLineSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   name?: boolean
   pathCoordinates?: boolean
+  networkId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  network?: boolean | Prisma.NetworkDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["railwayLine"]>
 
 export type RailwayLineSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   pathCoordinates?: boolean
+  networkId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  network?: boolean | Prisma.NetworkDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["railwayLine"]>
 
 export type RailwayLineSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   pathCoordinates?: boolean
+  networkId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  network?: boolean | Prisma.NetworkDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["railwayLine"]>
 
 export type RailwayLineSelectScalar = {
   id?: boolean
   name?: boolean
   pathCoordinates?: boolean
+  networkId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type RailwayLineOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "pathCoordinates" | "createdAt" | "updatedAt", ExtArgs["result"]["railwayLine"]>
+export type RailwayLineOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "pathCoordinates" | "networkId" | "createdAt" | "updatedAt", ExtArgs["result"]["railwayLine"]>
+export type RailwayLineInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  network?: boolean | Prisma.NetworkDefaultArgs<ExtArgs>
+}
+export type RailwayLineIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  network?: boolean | Prisma.NetworkDefaultArgs<ExtArgs>
+}
+export type RailwayLineIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  network?: boolean | Prisma.NetworkDefaultArgs<ExtArgs>
+}
 
 export type $RailwayLinePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "RailwayLine"
-  objects: {}
+  objects: {
+    network: Prisma.$NetworkPayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     pathCoordinates: runtime.JsonValue
+    networkId: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["railwayLine"]>
@@ -738,6 +919,7 @@ readonly fields: RailwayLineFieldRefs;
  */
 export interface Prisma__RailwayLineClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  network<T extends Prisma.NetworkDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.NetworkDefaultArgs<ExtArgs>>): Prisma.Prisma__NetworkClient<runtime.Types.Result.GetResult<Prisma.$NetworkPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -770,6 +952,7 @@ export interface RailwayLineFieldRefs {
   readonly id: Prisma.FieldRef<"RailwayLine", 'String'>
   readonly name: Prisma.FieldRef<"RailwayLine", 'String'>
   readonly pathCoordinates: Prisma.FieldRef<"RailwayLine", 'Json'>
+  readonly networkId: Prisma.FieldRef<"RailwayLine", 'String'>
   readonly createdAt: Prisma.FieldRef<"RailwayLine", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"RailwayLine", 'DateTime'>
 }
@@ -789,6 +972,10 @@ export type RailwayLineFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.RailwayLineOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RailwayLineInclude<ExtArgs> | null
+  /**
    * Filter, which RailwayLine to fetch.
    */
   where: Prisma.RailwayLineWhereUniqueInput
@@ -807,6 +994,10 @@ export type RailwayLineFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.RailwayLineOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RailwayLineInclude<ExtArgs> | null
+  /**
    * Filter, which RailwayLine to fetch.
    */
   where: Prisma.RailwayLineWhereUniqueInput
@@ -824,6 +1015,10 @@ export type RailwayLineFindFirstArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the RailwayLine
    */
   omit?: Prisma.RailwayLineOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RailwayLineInclude<ExtArgs> | null
   /**
    * Filter, which RailwayLine to fetch.
    */
@@ -873,6 +1068,10 @@ export type RailwayLineFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extens
    */
   omit?: Prisma.RailwayLineOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RailwayLineInclude<ExtArgs> | null
+  /**
    * Filter, which RailwayLine to fetch.
    */
   where?: Prisma.RailwayLineWhereInput
@@ -921,6 +1120,10 @@ export type RailwayLineFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   omit?: Prisma.RailwayLineOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RailwayLineInclude<ExtArgs> | null
+  /**
    * Filter, which RailwayLines to fetch.
    */
   where?: Prisma.RailwayLineWhereInput
@@ -964,6 +1167,10 @@ export type RailwayLineCreateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.RailwayLineOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RailwayLineInclude<ExtArgs> | null
+  /**
    * The data needed to create a RailwayLine.
    */
   data: Prisma.XOR<Prisma.RailwayLineCreateInput, Prisma.RailwayLineUncheckedCreateInput>
@@ -997,6 +1204,10 @@ export type RailwayLineCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    */
   data: Prisma.RailwayLineCreateManyInput | Prisma.RailwayLineCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RailwayLineIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1011,6 +1222,10 @@ export type RailwayLineUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the RailwayLine
    */
   omit?: Prisma.RailwayLineOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RailwayLineInclude<ExtArgs> | null
   /**
    * The data needed to update a RailwayLine.
    */
@@ -1063,6 +1278,10 @@ export type RailwayLineUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    * Limit how many RailwayLines to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RailwayLineIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1077,6 +1296,10 @@ export type RailwayLineUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the RailwayLine
    */
   omit?: Prisma.RailwayLineOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RailwayLineInclude<ExtArgs> | null
   /**
    * The filter to search for the RailwayLine to update in case it exists.
    */
@@ -1103,6 +1326,10 @@ export type RailwayLineDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the RailwayLine
    */
   omit?: Prisma.RailwayLineOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RailwayLineInclude<ExtArgs> | null
   /**
    * Filter which RailwayLine to delete.
    */
@@ -1135,4 +1362,8 @@ export type RailwayLineDefaultArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the RailwayLine
    */
   omit?: Prisma.RailwayLineOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RailwayLineInclude<ExtArgs> | null
 }

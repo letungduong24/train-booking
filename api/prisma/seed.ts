@@ -75,83 +75,6 @@ async function main() {
 
     console.log(`Created ${passengerGroups.length} passenger groups`);
 
-    // 1. Create 10 Stations (Real Vietnam Railway Stations)
-    console.log('Creating stations...');
-    const stations = await Promise.all([
-        prisma.station.create({
-            data: {
-                name: 'Ga Hà Nội',
-                latitude: 21.0245,
-                longitude: 105.8412,
-            },
-        }),
-        prisma.station.create({
-            data: {
-                name: 'Ga Vinh',
-                latitude: 18.6792,
-                longitude: 105.6811,
-            },
-        }),
-        prisma.station.create({
-            data: {
-                name: 'Ga Huế',
-                latitude: 16.4637,
-                longitude: 107.5909,
-            },
-        }),
-        prisma.station.create({
-            data: {
-                name: 'Ga Đà Nẵng',
-                latitude: 16.0544,
-                longitude: 108.2022,
-            },
-        }),
-        prisma.station.create({
-            data: {
-                name: 'Ga Quảng Ngãi',
-                latitude: 15.1214,
-                longitude: 108.8044,
-            },
-        }),
-        prisma.station.create({
-            data: {
-                name: 'Ga Nha Trang',
-                latitude: 12.2388,
-                longitude: 109.1967,
-            },
-        }),
-        prisma.station.create({
-            data: {
-                name: 'Ga Phan Thiết',
-                latitude: 10.9333,
-                longitude: 108.1000,
-            },
-        }),
-        prisma.station.create({
-            data: {
-                name: 'Ga Biên Hòa',
-                latitude: 10.9450,
-                longitude: 106.8200,
-            },
-        }),
-        prisma.station.create({
-            data: {
-                name: 'Ga Sài Gòn',
-                latitude: 10.7820,
-                longitude: 106.6770,
-            },
-        }),
-        prisma.station.create({
-            data: {
-                name: 'Ga Cần Thơ',
-                latitude: 10.0340,
-                longitude: 105.7880,
-            },
-        }),
-    ]);
-
-    console.log(`Created ${stations.length} stations`);
-
     // Route seeding has been temporarily removed because the schema was updated 
     // to separate physical RailwayLines from commercial Routes.
     // Routes will be created dynamically via the admin interface.
@@ -297,8 +220,6 @@ async function main() {
     console.log('');
     console.log('✅ Seed Summary:');
     console.log(`   - Passenger Groups: ${passengerGroups.length}`);
-    console.log(`   - Stations: ${stations.length}`);
-    console.log(`   - Routes: 5`);
     console.log(`   - Coach Templates: ${templates.length}`);
     console.log(`   - Users: ${users.length}`);
     console.log('');

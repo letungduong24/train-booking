@@ -13,14 +13,22 @@ export class RouteService {
   constructor(private readonly prisma: PrismaService) { }
 
   async create(createRouteDto: CreateRouteDto) {
-    const { stations, status, ...rest } = createRouteDto;
+    const { stations, status, networkId, ...rest } = createRouteDto;
 
     let createdRouteId: string;
 
     await this.prisma.$transaction(async (tx) => {
+      let activeNetworkId = networkId;
+      if (!activeNetworkId) {
+        const latest = await tx.network.findFirst({ orderBy: { version: 'desc' } });
+        if (!latest) throw new BadRequestException('No network available');
+        activeNetworkId = latest.id;
+      }
+
       const route = await tx.route.create({
         data: {
           ...rest,
+          networkId: activeNetworkId,
           status: (status?.toUpperCase() as any) || RouteStatus.DRAFT,
         },
       });
@@ -108,13 +116,138 @@ export class RouteService {
   }
 
   async update(id: string, updateRouteDto: UpdateRouteDto) {
-    const { status, stations, ...rest } = updateRouteDto;
-    return this.prisma.route.update({
-      where: { id },
-      data: {
-        ...rest,
-        ...(status && { status: status.toUpperCase() as RouteStatus }),
-      },
+    const { status, stations, networkId, ...rest } = updateRouteDto;
+    
+    return this.prisma.$transaction(async (tx) => {
+      const currentRoute = await tx.route.findUnique({
+        where: { id },
+        include: { stations: true }
+      });
+
+      if (!currentRoute) {
+        throw new BadRequestException('Route not found');
+      }
+
+      const newStatus = status ? status.toUpperCase() as RouteStatus : currentRoute.status;
+      const targetNetworkId = networkId || currentRoute.networkId;
+
+      // Validate NEW stations belong to targetNetworkId
+      if (stations && stations.length > 0) {
+        const stationIds = stations.map(s => s.id);
+        const uniqueStationIds = [...new Set(stationIds)];
+        
+        // Find which stations are newly added (not in current route)
+        const existingStationIds = new Set(currentRoute.stations.map(st => st.stationId));
+        const newStationIds = uniqueStationIds.filter(id => !existingStationIds.has(id));
+
+        if (newStationIds.length > 0) {
+          const validStations = await tx.station.count({
+            where: { id: { in: newStationIds }, networkId: targetNetworkId }
+          });
+          if (validStations !== newStationIds.length) {
+            throw new BadRequestException(`Some stations do not belong to the requested network. Valid: ${validStations}, Expected: ${newStationIds.length}`);
+          }
+        }
+      }
+
+      // Ensure we cannot revert from ACTIVE/INACTIVE back to DRAFT
+      if (currentRoute.status !== RouteStatus.DRAFT && newStatus === RouteStatus.DRAFT) {
+        throw new BadRequestException('Cannot revert an ACTIVE or INACTIVE route back to DRAFT.');
+      }
+
+      let targetRouteId = id;
+
+      // If the route is already ACTIVE, any update requires cloning it to preserve historical trips.
+      // Exception: changing its status to INACTIVE does not require a clone.
+      const requiresClone = currentRoute.status === RouteStatus.ACTIVE;
+
+      if (requiresClone && newStatus !== RouteStatus.INACTIVE) {
+        // Clone to version + 1
+        const clonedRoute = await tx.route.create({
+          data: {
+            ...rest,
+            code: currentRoute.code,
+            version: currentRoute.version + 1,
+            networkId: targetNetworkId,
+            name: rest.name || currentRoute.name,
+            durationMinutes: rest.durationMinutes ?? currentRoute.durationMinutes,
+            turnaroundMinutes: rest.turnaroundMinutes ?? currentRoute.turnaroundMinutes,
+            basePricePerKm: rest.basePricePerKm ?? currentRoute.basePricePerKm,
+            stationFee: rest.stationFee ?? currentRoute.stationFee,
+            totalDistanceKm: rest.totalDistanceKm ?? currentRoute.totalDistanceKm,
+            status: newStatus,
+          }
+        });
+
+        // Mark current as INACTIVE
+        await tx.route.update({
+          where: { id },
+          data: { status: RouteStatus.INACTIVE }
+        });
+
+        targetRouteId = clonedRoute.id;
+
+        // If stations are not explicitly provided in DTO, copy them from the old route
+        // ONLY IF we didn't change the networkId. If we changed the networkId, we CANNOT copy old stations.
+        if (!stations) {
+          if (targetNetworkId !== currentRoute.networkId) {
+            throw new BadRequestException('Must provide new stations when changing network.');
+          }
+          const creates = currentRoute.stations.map((st) =>
+            tx.routeStation.create({
+              data: {
+                routeId: targetRouteId,
+                stationId: st.stationId,
+                index: st.index,
+                distanceFromStart: st.distanceFromStart,
+              },
+            }),
+          );
+          await Promise.all(creates);
+        }
+      } else {
+        // Just update existing route
+        await tx.route.update({
+          where: { id: targetRouteId },
+          data: {
+            ...rest,
+            networkId: targetNetworkId,
+            status: newStatus,
+          },
+        });
+      }
+
+      // If stations were provided in DTO, we need to completely replace them
+      if (stations) {
+        // If we didn't clone, we need to clear existing stations
+        if (!requiresClone) {
+          await tx.routeStation.deleteMany({
+            where: { routeId: targetRouteId }
+          });
+        }
+
+        if (stations.length > 0) {
+          const creates = stations.map((st, index) =>
+            tx.routeStation.create({
+              data: {
+                routeId: targetRouteId,
+                stationId: st.id,
+                index,
+                distanceFromStart: 0, // Will be recalculated
+              },
+            }),
+          );
+          await Promise.all(creates);
+        }
+      }
+
+      return targetRouteId;
+    }).then(async (finalRouteId) => {
+      // Outside transaction: recalculate path if stations were provided
+      if (stations && stations.length >= 2) {
+        await this.calculatePathCoordinates(finalRouteId);
+      }
+      return this.findOne(finalRouteId);
     });
   }
 

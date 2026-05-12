@@ -66,7 +66,7 @@ export function SectionCards({ data }: SectionCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
       {stats.map((stat, i) => (
         <Card key={i} className="rounded-[2rem] border-gray-100 dark:border-zinc-800 shadow-xl shadow-rose-900/[0.03] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl group hover:scale-[1.02] transition-all duration-500 overflow-hidden relative">
           <CardHeader className="flex flex-row items-center justify-between pb-2 p-6 relative z-10">
@@ -94,8 +94,8 @@ export function SectionCards({ data }: SectionCardsProps) {
                 )}
             </div>
           </CardFooter>
-          <div className="absolute -right-8 -top-8 w-24 h-24 bg-rose-100/30 dark:bg-rose-900/10 rounded-full blur-2xl z-0" />
-          <div className="absolute -left-8 -bottom-8 w-24 h-24 bg-rose-100/20 dark:bg-rose-900/5 rounded-full blur-2xl z-0" />
+          <div className="absolute -right-16 -top-16 w-48 h-48 bg-rose-100/30 dark:bg-rose-900/10 rounded-full blur-3xl z-0" />
+          <div className="absolute -left-16 -bottom-16 w-48 h-48 bg-rose-100/20 dark:bg-rose-900/5 rounded-full blur-3xl z-0" />
         </Card>
       ))}
     </div>

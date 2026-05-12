@@ -12,6 +12,12 @@ interface StationWithFeature extends Station {
 export class GeojsonService {
     private readonly logger = new Logger(GeojsonService.name);
 
+    private generateCodeFromName(name: string): string {
+        const unaccent = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const initials = unaccent.split(/\s+/).map(w => w[0]?.toUpperCase() || '').join('');
+        return initials + Math.random().toString(36).substring(2, 5).toUpperCase();
+    }
+
     private stitchSegments(segments: Feature<LineString | MultiLineString>[]): number[][] {
         // Disabled aggressive stitching. Real OSM data often has disconnected branches,
         // and Turf supports picking nearest points directly from a MultiLineString.
@@ -28,10 +34,20 @@ export class GeojsonService {
             networkLinesProcessed: 0,
         };
 
-        // Wipe existing network. 
-        // Note: Thanks to onDelete: Cascade on RouteStation, this will remove the bindings between Routes and Stations without deleting the Routes themselves.
-        await this.prisma.station.deleteMany({});
-        await this.prisma.railwayLine.deleteMany({});
+        // 1. Determine new Network version
+        const lastNetwork = await this.prisma.network.findFirst({
+            orderBy: { version: 'desc' },
+        });
+        const newVersion = lastNetwork ? lastNetwork.version + 1 : 1;
+
+        const network = await this.prisma.network.create({
+            data: {
+                version: newVersion,
+                name: `Network v${newVersion} - ${new Date().toLocaleDateString('vi-VN')}`
+            }
+        });
+
+        this.logger.log(`Created new Network version ${newVersion} (ID: ${network.id})`);
 
         // 1. Process Stations
         const validStations = mapData.features.filter(
@@ -46,18 +62,17 @@ export class GeojsonService {
             const longitude = typeof _longitude === 'string' ? parseFloat(_longitude) : Number(_longitude);
             const latitude = typeof _latitude === 'string' ? parseFloat(_latitude) : Number(_latitude);
 
-            // Upsert station by name. Since name is not @unique, we use findFirst + create/update
-            let station = await this.prisma.station.findFirst({ where: { name } });
-            if (station) {
-                await this.prisma.station.update({
-                    where: { id: station.id },
-                    data: { latitude, longitude },
-                });
-            } else {
-                await this.prisma.station.create({
-                    data: { name, latitude, longitude },
-                });
-            }
+            // Create station attached to the new network
+            // We use the same code logic, but it's safe because unique is [code, networkId]
+            await this.prisma.station.create({
+                data: { 
+                    name, 
+                    code: this.generateCodeFromName(name),
+                    latitude, 
+                    longitude,
+                    networkId: network.id
+                },
+            });
             results.stationsProcessed++;
         }
         this.logger.log(`Processed ${results.stationsProcessed} stations.`);
@@ -89,11 +104,12 @@ export class GeojsonService {
                 continue;
             }
 
-            // Create RailwayLine in DB containing ALL distinct components as one large MultiLineString
+            // Create RailwayLine attached to the new network
             await this.prisma.railwayLine.create({
                 data: {
                     name: routeName,
                     pathCoordinates: allSegments,
+                    networkId: network.id
                 },
             });
             results.networkLinesProcessed++;
@@ -103,13 +119,33 @@ export class GeojsonService {
         return results;
     }
 
-    async getNetworkData() {
-        const stations = await this.prisma.station.findMany();
-        const lines = await this.prisma.railwayLine.findMany();
+    async getNetworkData(networkId?: string) {
+        // If networkId not provided, get the latest active network
+        let targetNetworkId = networkId;
+        if (!targetNetworkId) {
+            const latest = await this.prisma.network.findFirst({
+                orderBy: { version: 'desc' }
+            });
+            targetNetworkId = latest?.id;
+        }
+
+        if (!targetNetworkId) {
+            return { stations: [], lines: [] };
+        }
+
+        const stations = await this.prisma.station.findMany({ where: { networkId: targetNetworkId } });
+        const lines = await this.prisma.railwayLine.findMany({ where: { networkId: targetNetworkId } });
 
         return {
+            networkId: targetNetworkId,
             stations,
             lines,
         };
+    }
+
+    async getNetworks() {
+        return this.prisma.network.findMany({
+            orderBy: { version: 'desc' },
+        });
     }
 }

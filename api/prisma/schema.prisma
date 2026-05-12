@@ -20,6 +20,7 @@ model User {
   id            String         @id @default(uuid())
   profilePic    String?
   email         String         @unique
+  phone         String?        @unique
   password      String? // nullable để hỗ trợ Google OAuth (users không có mật khẩu)
   name          String?
   googleId      String?        @unique
@@ -31,20 +32,23 @@ model User {
   role          UserRole       @default(USER)
 
   // Verification & Security
-  isEmailVerified           Boolean   @default(false)
+  isEmailVerified          Boolean   @default(false)
   verificationToken        String?   @unique
   verificationTokenExpires DateTime?
-  
-  passwordResetToken       String?   @unique
+
+  passwordResetToken        String?   @unique
   passwordResetTokenExpires DateTime?
-  
-  walletPinResetToken      String?   @unique
+
+  walletPinResetToken        String?   @unique
   walletPinResetTokenExpires DateTime?
 
   // Wallet info
   balance      Float         @default(0)
   walletPin    String?
   transactions Transaction[]
+
+  // Admin Controls
+  isBanned Boolean @default(false)
 }
 
 model RefreshToken {
@@ -129,21 +133,43 @@ enum RouteStatus {
   INACTIVE
 }
 
+// Network Versioning
+model Network {
+  id        String        @id @default(uuid())
+  version   Int           @unique
+  name      String        // VD: "Bản đồ mạng lưới đường sắt T5/2026"
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  stations  Station[]
+  lines     RailwayLine[]
+  routes    Route[]
+}
+
 // Station
 // Station
 
 model Station {
   id        String         @id @default(uuid())
+  code      String
   name      String
   latitude  Float
   longitude Float
+  networkId String
+  network   Network        @relation(fields: [networkId], references: [id], onDelete: Cascade)
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   routes    RouteStation[]
+
+  @@unique([code, networkId])
 }
 
 model Route {
   id                String         @id @default(uuid())
+  code              String
+  version           Int            @default(1)
+  networkId         String
+  network           Network        @relation(fields: [networkId], references: [id])
   name              String
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
@@ -160,6 +186,8 @@ model Route {
 
   // Geographic visual path
   pathCoordinates Json? // Stores GeoJSON MultiLineString coordinates snapped from RailwayLine
+
+  @@unique([code, version])
 }
 
 // Physical infrastructure: the railway lines connecting stations
@@ -167,6 +195,8 @@ model RailwayLine {
   id              String   @id @default(uuid())
   name            String
   pathCoordinates Json // Stores GeoJSON MultiLineString coordinates
+  networkId       String
+  network         Network  @relation(fields: [networkId], references: [id], onDelete: Cascade)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -304,18 +334,21 @@ enum BookingStatus {
 }
 
 model Booking {
-  id         String        @id @default(uuid())
-  code       String        @unique // Mã đặt chỗ (RAILFLOW-YYYYMMDD-XXXX)
-  tripId     String
-  trip       Trip          @relation(fields: [tripId], references: [id])
-  userId     String? // Có thể null nếu user chưa đăng nhập (nhưng ở đây mình làm required login)
-  user       User?         @relation(fields: [userId], references: [id])
-  status     BookingStatus @default(PENDING) // Thay vì String
-  totalPrice Float
-  metadata   Json? // Lưu thông tin tạm: passenger details, seatIds, etc. trước khi thanh toán thành công
-  tickets    Ticket[]
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+  id           String        @id @default(uuid())
+  code         String        @unique // Mã đặt chỗ (RAILFLOW-YYYYMMDD-XXXX)
+  tripId       String
+  trip         Trip          @relation(fields: [tripId], references: [id])
+  userId       String? 
+  user         User?         @relation(fields: [userId], references: [id])
+  contactName  String?
+  contactPhone String?
+  contactEmail String?
+  status       BookingStatus @default(PENDING) // Thay vì String
+  totalPrice   Float
+  metadata     Json? 
+  tickets      Ticket[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   @@index([tripId])
   @@index([userId])

@@ -168,30 +168,6 @@ export function OperationPanel({ trip }: OperationPanelProps) {
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
-
-                <Button variant="outline" className="justify-start h-auto py-3">
-                    <CheckCircle className="h-5 w-5 mr-3 text-green-600" />
-                    <div className="text-left">
-                        <div className="font-semibold">Hoàn thành</div>
-                        <div className="text-xs text-muted-foreground">Force update trạng thái về bến</div>
-                    </div>
-                </Button>
-
-                <Button variant="outline" className="justify-start h-auto py-3" onClick={() => toast.success("Đang xuất file Excel...")}>
-                    <FileDown className="h-5 w-5 mr-3 text-blue-600" />
-                    <div className="text-left">
-                        <div className="font-semibold">Xuất danh sách</div>
-                        <div className="text-xs text-muted-foreground">Tải file Excel danh sách khách</div>
-                    </div>
-                </Button>
-
-                <Button variant="outline" className="justify-start h-auto py-3 col-span-1 md:col-span-2" onClick={() => toast.success("Đã gửi thông báo cho 350 khách")}>
-                    <Megaphone className="h-5 w-5 mr-3 text-purple-600" />
-                    <div className="text-left">
-                        <div className="font-semibold">Gửi thông báo</div>
-                        <div className="text-xs text-muted-foreground">Gửi SMS/Email/Noti cho toàn bộ khách</div>
-                    </div>
-                </Button>
             </div>
         </div>
     )

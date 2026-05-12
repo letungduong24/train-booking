@@ -38,6 +38,7 @@ export type UserMinAggregateOutputType = {
   id: string | null
   profilePic: string | null
   email: string | null
+  phone: string | null
   password: string | null
   name: string | null
   googleId: string | null
@@ -53,12 +54,14 @@ export type UserMinAggregateOutputType = {
   walletPinResetTokenExpires: Date | null
   balance: number | null
   walletPin: string | null
+  isBanned: boolean | null
 }
 
 export type UserMaxAggregateOutputType = {
   id: string | null
   profilePic: string | null
   email: string | null
+  phone: string | null
   password: string | null
   name: string | null
   googleId: string | null
@@ -74,12 +77,14 @@ export type UserMaxAggregateOutputType = {
   walletPinResetTokenExpires: Date | null
   balance: number | null
   walletPin: string | null
+  isBanned: boolean | null
 }
 
 export type UserCountAggregateOutputType = {
   id: number
   profilePic: number
   email: number
+  phone: number
   password: number
   name: number
   googleId: number
@@ -95,6 +100,7 @@ export type UserCountAggregateOutputType = {
   walletPinResetTokenExpires: number
   balance: number
   walletPin: number
+  isBanned: number
   _all: number
 }
 
@@ -111,6 +117,7 @@ export type UserMinAggregateInputType = {
   id?: true
   profilePic?: true
   email?: true
+  phone?: true
   password?: true
   name?: true
   googleId?: true
@@ -126,12 +133,14 @@ export type UserMinAggregateInputType = {
   walletPinResetTokenExpires?: true
   balance?: true
   walletPin?: true
+  isBanned?: true
 }
 
 export type UserMaxAggregateInputType = {
   id?: true
   profilePic?: true
   email?: true
+  phone?: true
   password?: true
   name?: true
   googleId?: true
@@ -147,12 +156,14 @@ export type UserMaxAggregateInputType = {
   walletPinResetTokenExpires?: true
   balance?: true
   walletPin?: true
+  isBanned?: true
 }
 
 export type UserCountAggregateInputType = {
   id?: true
   profilePic?: true
   email?: true
+  phone?: true
   password?: true
   name?: true
   googleId?: true
@@ -168,6 +179,7 @@ export type UserCountAggregateInputType = {
   walletPinResetTokenExpires?: true
   balance?: true
   walletPin?: true
+  isBanned?: true
   _all?: true
 }
 
@@ -261,6 +273,7 @@ export type UserGroupByOutputType = {
   id: string
   profilePic: string | null
   email: string
+  phone: string | null
   password: string | null
   name: string | null
   googleId: string | null
@@ -276,6 +289,7 @@ export type UserGroupByOutputType = {
   walletPinResetTokenExpires: Date | null
   balance: number
   walletPin: string | null
+  isBanned: boolean
   _count: UserCountAggregateOutputType | null
   _avg: UserAvgAggregateOutputType | null
   _sum: UserSumAggregateOutputType | null
@@ -305,6 +319,7 @@ export type UserWhereInput = {
   id?: Prisma.StringFilter<"User"> | string
   profilePic?: Prisma.StringNullableFilter<"User"> | string | null
   email?: Prisma.StringFilter<"User"> | string
+  phone?: Prisma.StringNullableFilter<"User"> | string | null
   password?: Prisma.StringNullableFilter<"User"> | string | null
   name?: Prisma.StringNullableFilter<"User"> | string | null
   googleId?: Prisma.StringNullableFilter<"User"> | string | null
@@ -320,6 +335,7 @@ export type UserWhereInput = {
   walletPinResetTokenExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   balance?: Prisma.FloatFilter<"User"> | number
   walletPin?: Prisma.StringNullableFilter<"User"> | string | null
+  isBanned?: Prisma.BoolFilter<"User"> | boolean
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
   bookings?: Prisma.BookingListRelationFilter
   transactions?: Prisma.TransactionListRelationFilter
@@ -329,6 +345,7 @@ export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   profilePic?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrder
+  phone?: Prisma.SortOrderInput | Prisma.SortOrder
   password?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrderInput | Prisma.SortOrder
   googleId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -344,6 +361,7 @@ export type UserOrderByWithRelationInput = {
   walletPinResetTokenExpires?: Prisma.SortOrderInput | Prisma.SortOrder
   balance?: Prisma.SortOrder
   walletPin?: Prisma.SortOrderInput | Prisma.SortOrder
+  isBanned?: Prisma.SortOrder
   refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
   bookings?: Prisma.BookingOrderByRelationAggregateInput
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
@@ -352,6 +370,7 @@ export type UserOrderByWithRelationInput = {
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   email?: string
+  phone?: string
   googleId?: string
   verificationToken?: string
   passwordResetToken?: string
@@ -371,15 +390,17 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   walletPinResetTokenExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   balance?: Prisma.FloatFilter<"User"> | number
   walletPin?: Prisma.StringNullableFilter<"User"> | string | null
+  isBanned?: Prisma.BoolFilter<"User"> | boolean
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
   bookings?: Prisma.BookingListRelationFilter
   transactions?: Prisma.TransactionListRelationFilter
-}, "id" | "email" | "googleId" | "verificationToken" | "passwordResetToken" | "walletPinResetToken">
+}, "id" | "email" | "phone" | "googleId" | "verificationToken" | "passwordResetToken" | "walletPinResetToken">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   profilePic?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrder
+  phone?: Prisma.SortOrderInput | Prisma.SortOrder
   password?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrderInput | Prisma.SortOrder
   googleId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -395,6 +416,7 @@ export type UserOrderByWithAggregationInput = {
   walletPinResetTokenExpires?: Prisma.SortOrderInput | Prisma.SortOrder
   balance?: Prisma.SortOrder
   walletPin?: Prisma.SortOrderInput | Prisma.SortOrder
+  isBanned?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
@@ -409,6 +431,7 @@ export type UserScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"User"> | string
   profilePic?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
+  phone?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   password?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   name?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   googleId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -424,12 +447,14 @@ export type UserScalarWhereWithAggregatesInput = {
   walletPinResetTokenExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   balance?: Prisma.FloatWithAggregatesFilter<"User"> | number
   walletPin?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  isBanned?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
 }
 
 export type UserCreateInput = {
   id?: string
   profilePic?: string | null
   email: string
+  phone?: string | null
   password?: string | null
   name?: string | null
   googleId?: string | null
@@ -445,6 +470,7 @@ export type UserCreateInput = {
   walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
+  isBanned?: boolean
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -454,6 +480,7 @@ export type UserUncheckedCreateInput = {
   id?: string
   profilePic?: string | null
   email: string
+  phone?: string | null
   password?: string | null
   name?: string | null
   googleId?: string | null
@@ -469,6 +496,7 @@ export type UserUncheckedCreateInput = {
   walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
+  isBanned?: boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -478,6 +506,7 @@ export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -493,6 +522,7 @@ export type UserUpdateInput = {
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -502,6 +532,7 @@ export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -517,6 +548,7 @@ export type UserUncheckedUpdateInput = {
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -526,6 +558,7 @@ export type UserCreateManyInput = {
   id?: string
   profilePic?: string | null
   email: string
+  phone?: string | null
   password?: string | null
   name?: string | null
   googleId?: string | null
@@ -541,12 +574,14 @@ export type UserCreateManyInput = {
   walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
+  isBanned?: boolean
 }
 
 export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -562,12 +597,14 @@ export type UserUpdateManyMutationInput = {
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -583,12 +620,14 @@ export type UserUncheckedUpdateManyInput = {
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   profilePic?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
   password?: Prisma.SortOrder
   name?: Prisma.SortOrder
   googleId?: Prisma.SortOrder
@@ -604,6 +643,7 @@ export type UserCountOrderByAggregateInput = {
   walletPinResetTokenExpires?: Prisma.SortOrder
   balance?: Prisma.SortOrder
   walletPin?: Prisma.SortOrder
+  isBanned?: Prisma.SortOrder
 }
 
 export type UserAvgOrderByAggregateInput = {
@@ -614,6 +654,7 @@ export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   profilePic?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
   password?: Prisma.SortOrder
   name?: Prisma.SortOrder
   googleId?: Prisma.SortOrder
@@ -629,12 +670,14 @@ export type UserMaxOrderByAggregateInput = {
   walletPinResetTokenExpires?: Prisma.SortOrder
   balance?: Prisma.SortOrder
   walletPin?: Prisma.SortOrder
+  isBanned?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   profilePic?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
   password?: Prisma.SortOrder
   name?: Prisma.SortOrder
   googleId?: Prisma.SortOrder
@@ -650,6 +693,7 @@ export type UserMinOrderByAggregateInput = {
   walletPinResetTokenExpires?: Prisma.SortOrder
   balance?: Prisma.SortOrder
   walletPin?: Prisma.SortOrder
+  isBanned?: Prisma.SortOrder
 }
 
 export type UserSumOrderByAggregateInput = {
@@ -746,6 +790,7 @@ export type UserCreateWithoutRefreshTokensInput = {
   id?: string
   profilePic?: string | null
   email: string
+  phone?: string | null
   password?: string | null
   name?: string | null
   googleId?: string | null
@@ -761,6 +806,7 @@ export type UserCreateWithoutRefreshTokensInput = {
   walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
+  isBanned?: boolean
   bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
 }
@@ -769,6 +815,7 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   id?: string
   profilePic?: string | null
   email: string
+  phone?: string | null
   password?: string | null
   name?: string | null
   googleId?: string | null
@@ -784,6 +831,7 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
+  isBanned?: boolean
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
 }
@@ -808,6 +856,7 @@ export type UserUpdateWithoutRefreshTokensInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -823,6 +872,7 @@ export type UserUpdateWithoutRefreshTokensInput = {
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
 }
@@ -831,6 +881,7 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -846,6 +897,7 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -854,6 +906,7 @@ export type UserCreateWithoutTransactionsInput = {
   id?: string
   profilePic?: string | null
   email: string
+  phone?: string | null
   password?: string | null
   name?: string | null
   googleId?: string | null
@@ -869,6 +922,7 @@ export type UserCreateWithoutTransactionsInput = {
   walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
+  isBanned?: boolean
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
 }
@@ -877,6 +931,7 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   id?: string
   profilePic?: string | null
   email: string
+  phone?: string | null
   password?: string | null
   name?: string | null
   googleId?: string | null
@@ -892,6 +947,7 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
+  isBanned?: boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
 }
@@ -916,6 +972,7 @@ export type UserUpdateWithoutTransactionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -931,6 +988,7 @@ export type UserUpdateWithoutTransactionsInput = {
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
 }
@@ -939,6 +997,7 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -954,6 +1013,7 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -962,6 +1022,7 @@ export type UserCreateWithoutBookingsInput = {
   id?: string
   profilePic?: string | null
   email: string
+  phone?: string | null
   password?: string | null
   name?: string | null
   googleId?: string | null
@@ -977,6 +1038,7 @@ export type UserCreateWithoutBookingsInput = {
   walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
+  isBanned?: boolean
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
 }
@@ -985,6 +1047,7 @@ export type UserUncheckedCreateWithoutBookingsInput = {
   id?: string
   profilePic?: string | null
   email: string
+  phone?: string | null
   password?: string | null
   name?: string | null
   googleId?: string | null
@@ -1000,6 +1063,7 @@ export type UserUncheckedCreateWithoutBookingsInput = {
   walletPinResetTokenExpires?: Date | string | null
   balance?: number
   walletPin?: string | null
+  isBanned?: boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
 }
@@ -1024,6 +1088,7 @@ export type UserUpdateWithoutBookingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1039,6 +1104,7 @@ export type UserUpdateWithoutBookingsInput = {
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
 }
@@ -1047,6 +1113,7 @@ export type UserUncheckedUpdateWithoutBookingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1062,6 +1129,7 @@ export type UserUncheckedUpdateWithoutBookingsInput = {
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   balance?: Prisma.FloatFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -1119,6 +1187,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   profilePic?: boolean
   email?: boolean
+  phone?: boolean
   password?: boolean
   name?: boolean
   googleId?: boolean
@@ -1134,6 +1203,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   walletPinResetTokenExpires?: boolean
   balance?: boolean
   walletPin?: boolean
+  isBanned?: boolean
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
   bookings?: boolean | Prisma.User$bookingsArgs<ExtArgs>
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
@@ -1144,6 +1214,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   profilePic?: boolean
   email?: boolean
+  phone?: boolean
   password?: boolean
   name?: boolean
   googleId?: boolean
@@ -1159,12 +1230,14 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   walletPinResetTokenExpires?: boolean
   balance?: boolean
   walletPin?: boolean
+  isBanned?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   profilePic?: boolean
   email?: boolean
+  phone?: boolean
   password?: boolean
   name?: boolean
   googleId?: boolean
@@ -1180,12 +1253,14 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   walletPinResetTokenExpires?: boolean
   balance?: boolean
   walletPin?: boolean
+  isBanned?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
   id?: boolean
   profilePic?: boolean
   email?: boolean
+  phone?: boolean
   password?: boolean
   name?: boolean
   googleId?: boolean
@@ -1201,9 +1276,10 @@ export type UserSelectScalar = {
   walletPinResetTokenExpires?: boolean
   balance?: boolean
   walletPin?: boolean
+  isBanned?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profilePic" | "email" | "password" | "name" | "googleId" | "createdAt" | "updatedAt" | "role" | "isEmailVerified" | "verificationToken" | "verificationTokenExpires" | "passwordResetToken" | "passwordResetTokenExpires" | "walletPinResetToken" | "walletPinResetTokenExpires" | "balance" | "walletPin", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profilePic" | "email" | "phone" | "password" | "name" | "googleId" | "createdAt" | "updatedAt" | "role" | "isEmailVerified" | "verificationToken" | "verificationTokenExpires" | "passwordResetToken" | "passwordResetTokenExpires" | "walletPinResetToken" | "walletPinResetTokenExpires" | "balance" | "walletPin" | "isBanned", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
   bookings?: boolean | Prisma.User$bookingsArgs<ExtArgs>
@@ -1224,6 +1300,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     id: string
     profilePic: string | null
     email: string
+    phone: string | null
     password: string | null
     name: string | null
     googleId: string | null
@@ -1239,6 +1316,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     walletPinResetTokenExpires: Date | null
     balance: number
     walletPin: string | null
+    isBanned: boolean
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1668,6 +1746,7 @@ export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'String'>
   readonly profilePic: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
+  readonly phone: Prisma.FieldRef<"User", 'String'>
   readonly password: Prisma.FieldRef<"User", 'String'>
   readonly name: Prisma.FieldRef<"User", 'String'>
   readonly googleId: Prisma.FieldRef<"User", 'String'>
@@ -1683,6 +1762,7 @@ export interface UserFieldRefs {
   readonly walletPinResetTokenExpires: Prisma.FieldRef<"User", 'DateTime'>
   readonly balance: Prisma.FieldRef<"User", 'Float'>
   readonly walletPin: Prisma.FieldRef<"User", 'String'>
+  readonly isBanned: Prisma.FieldRef<"User", 'Boolean'>
 }
     
 

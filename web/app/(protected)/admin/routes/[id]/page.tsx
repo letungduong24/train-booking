@@ -37,8 +37,8 @@ import {
 import { Button } from "@/components/ui/button"
 import apiClient from "@/lib/api-client"
 import { useRoute } from "@/features/routes/hooks/use-route"
+import { useUpdateRoute } from "@/features/routes/hooks/use-route-mutations"
 import { AddStationDialog } from "@/features/routes/components/add-station-dialog"
-import { ReorderConfirmDialog } from "@/features/routes/components/reorder-confirm-dialog"
 import { EditRouteDialog } from "@/features/routes/components/edit-route-dialog"
 import { DeleteRouteAlert } from "@/features/routes/components/delete-route-alert"
 import { translateRouteStatus, getRouteStatusColor } from "@/lib/utils/route-status"
@@ -119,9 +119,10 @@ export default function RouteDetailPage() {
     const { data: route, isLoading, isError } = useRoute(routeId)
 
     const [createOpen, setCreateOpen] = React.useState(false)
-    const [confirmReorderOpen, setConfirmReorderOpen] = React.useState(false)
     const [items, setItems] = React.useState<any[]>([])
     const [hasChanged, setHasChanged] = React.useState(false)
+    
+    const updateRoute = useUpdateRoute()
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -142,11 +143,10 @@ export default function RouteDetailPage() {
     );
 
     React.useEffect(() => {
-        if (route?.stations) {
+        if (route?.stations && !hasChanged) {
             setItems(route.stations)
-            setHasChanged(false)
         }
-    }, [route])
+    }, [route, hasChanged])
 
     const handleDragEnd = async (event: DragEndEvent) => {
         const { active, over } = event;
@@ -162,24 +162,43 @@ export default function RouteDetailPage() {
         }
     }
 
-    const handleRemoveStation = async (stationId: string) => {
-        if (!routeId) return
-        try {
-            await apiClient.delete(`/route/${routeId}/stations/${stationId}`)
-            toast.success("Xóa trạm thành công")
-            queryClient.invalidateQueries({ queryKey: ['route', routeId] })
-        } catch (error) {
-            toast.error("Xóa trạm thất bại")
-        }
+    const handleRemoveStation = (stationId: string) => {
+        setItems((prev) => prev.filter(s => s.stationId !== stationId))
+        setHasChanged(true)
     }
 
-    const handleSaveOrder = () => {
-        setConfirmReorderOpen(true)
+    const handleAddStationLocally = (stationData: { id: string, name: string, latitude: number, longitude: number }) => {
+        setItems(prev => [
+            ...prev,
+            {
+                routeId,
+                stationId: stationData.id,
+                index: prev.length,
+                distanceFromStart: 0,
+                station: stationData
+            }
+        ])
+        setHasChanged(true)
     }
 
-    const handleSuccessReorder = () => {
-        queryClient.invalidateQueries({ queryKey: ['route', routeId] })
-        setHasChanged(false)
+    const handleEditStationLocally = (updatedStation: any) => {
+        setItems(prev => prev.map(s => s.stationId === updatedStation.stationId ? updatedStation : s))
+        setHasChanged(true)
+    }
+
+    const handleSaveChanges = () => {
+        const payload = items.map(s => ({
+            id: s.stationId
+        }))
+        updateRoute.mutate({ id: routeId, data: { stations: payload } }, {
+            onSuccess: (newRoute) => {
+                setHasChanged(false)
+                // If it created a new version, redirect to it
+                if (newRoute.id !== routeId) {
+                    router.push(`/admin/routes/${newRoute.id}`)
+                }
+            }
+        })
     }
 
     const handleRecalculatePath = async () => {
@@ -205,7 +224,7 @@ export default function RouteDetailPage() {
     if (isError || !route) return <div>Route not found</div>
 
     return (
-        <div className="flex flex-1 flex-col gap-6 animate-in fade-in duration-500">
+        <div className="flex flex-1 flex-col gap-6 animate-in fade-in duration-500 pb-24">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" onClick={handleBack} className="rounded-full hover:bg-rose-50 hover:text-[#802222]">
@@ -300,11 +319,6 @@ export default function RouteDetailPage() {
                 <div className="flex items-center justify-between px-2">
                     <h3 className="text-2xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Hành trình chi tiết</h3>
                     <div className="flex gap-2">
-                        {hasChanged && (
-                            <Button onClick={handleSaveOrder} size="sm" variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 rounded-xl font-bold">
-                                <Save className="mr-2 h-4 w-4" /> Lưu thứ tự
-                            </Button>
-                        )}
                         <Button onClick={() => setCreateOpen(true)} size="sm" className="bg-[#802222] hover:bg-rose-900 text-white rounded-xl font-bold px-6">
                             <Plus className="mr-2 h-4 w-4" /> Thêm trạm dừng
                         </Button>
@@ -341,7 +355,7 @@ export default function RouteDetailPage() {
                                                 station={item}
                                                 onDelete={handleRemoveStation}
                                                 routeId={routeId}
-                                                onSuccess={() => queryClient.invalidateQueries({ queryKey: ['route', routeId] })}
+                                                onSuccess={handleEditStationLocally}
                                             />
                                         ))
                                     ) : (
@@ -363,16 +377,42 @@ export default function RouteDetailPage() {
                 currentStationCount={items.length}
                 open={createOpen}
                 onOpenChange={setCreateOpen}
-                onSuccess={() => queryClient.invalidateQueries({ queryKey: ['route', routeId] })}
+                onSuccess={handleAddStationLocally}
             />
 
-            <ReorderConfirmDialog
-                routeId={routeId}
-                stations={items}
-                open={confirmReorderOpen}
-                onOpenChange={setConfirmReorderOpen}
-                onSuccess={handleSuccessReorder}
-            />
+            {/* Floating Save Changes Bar */}
+            {hasChanged && (
+                <div className="fixed bottom-0 left-0 lg:left-64 right-0 p-4 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-t border-rose-100 dark:border-zinc-800 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-50 flex items-center justify-between px-8 animate-in slide-in-from-bottom-full duration-300">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center text-yellow-600 dark:text-yellow-500">
+                            <Save className="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h4 className="font-bold text-zinc-900 dark:text-white">Bạn có thay đổi chưa lưu</h4>
+                            <p className="text-xs font-medium text-muted-foreground">Nhấn lưu để áp dụng các thay đổi cho tuyến đường này</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="ghost"
+                            onClick={() => {
+                                setItems(route?.stations || [])
+                                setHasChanged(false)
+                            }}
+                            className="rounded-xl font-bold hover:bg-zinc-100"
+                        >
+                            Hủy bỏ
+                        </Button>
+                        <Button
+                            onClick={handleSaveChanges}
+                            disabled={updateRoute.isPending}
+                            className="bg-[#802222] hover:bg-rose-900 text-white rounded-xl font-bold px-8 shadow-lg shadow-rose-900/20"
+                        >
+                            {updateRoute.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+                        </Button>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

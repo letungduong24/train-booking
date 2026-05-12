@@ -29,6 +29,13 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { TableSkeleton } from "@/components/custom/table-skeleton"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 import { Route } from "@/lib/schemas/route.schema"
 
@@ -190,9 +197,11 @@ export function RoutesTable() {
         search?: string;
         sort?: string;
         order?: 'asc' | 'desc';
+        status?: string;
     }>({
         page: 1,
         limit: 10,
+        status: 'ACTIVE', // Mặc định chỉ hiển thị các tuyến đang hoạt động
     })
 
     // Use TanStack Query
@@ -284,6 +293,26 @@ export function RoutesTable() {
                         className="h-11 rounded-2xl bg-white dark:bg-zinc-900 border-rose-100/50 dark:border-zinc-800 focus-visible:ring-[#802222]/20 pl-11 text-sm transition-all"
                     />
                 </div>
+                <Select
+                    value={filters.status || "ALL"}
+                    onValueChange={(value) => {
+                        setFilters(prev => ({
+                            ...prev,
+                            status: value === "ALL" ? undefined : value,
+                            page: 1
+                        }))
+                    }}
+                >
+                    <SelectTrigger className="w-[180px] h-11 rounded-2xl bg-white dark:bg-zinc-900 border-rose-100/50 dark:border-zinc-800">
+                        <SelectValue placeholder="Trạng thái" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl border-rose-100/50">
+                        <SelectItem value="ALL" className="rounded-xl cursor-pointer">Tất cả trạng thái</SelectItem>
+                        <SelectItem value="ACTIVE" className="rounded-xl cursor-pointer">Đang hoạt động</SelectItem>
+                        <SelectItem value="INACTIVE" className="rounded-xl cursor-pointer">Phiên bản cũ</SelectItem>
+                        <SelectItem value="DRAFT" className="rounded-xl cursor-pointer">Bản nháp</SelectItem>
+                    </SelectContent>
+                </Select>
                 <div className="ml-auto">
                     <Button onClick={() => router.push('/admin/routes/create')} className="bg-[#802222] hover:bg-rose-900 text-white rounded-xl h-11 font-bold border-none shadow-lg shadow-rose-900/20 px-6 transition-all active:scale-95 hover:scale-[1.02]">
                         <IconPlus className="mr-2 h-5 w-5" /> Thêm tuyến đường

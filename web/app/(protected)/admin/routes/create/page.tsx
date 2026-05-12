@@ -29,6 +29,7 @@ export default function CreateRoutePage() {
     const form = useForm<CreateRouteInput>({
         resolver: zodResolver(createRouteSchema),
         defaultValues: {
+            code: "",
             name: "",
             durationMinutes: 0,
             turnaroundMinutes: 60,
@@ -78,14 +79,7 @@ export default function CreateRoutePage() {
                         onClick={handleBack}
                         className="rounded-xl border-gray-200 dark:border-zinc-800 hover:bg-zinc-50 font-bold px-6"
                     >
-                        Hủy bỏ
-                    </Button>
-                    <Button 
-                        onClick={form.handleSubmit(onSubmit)}
-                        className="bg-[#802222] hover:bg-rose-900 text-white rounded-xl font-bold px-8 shadow-lg shadow-rose-900/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                        disabled={createRoute.isPending}
-                    >
-                        {createRoute.isPending ? "Đang xử lý..." : "Lưu & Kích hoạt"}
+                        Quay lại
                     </Button>
                 </div>
             </div>
@@ -120,10 +114,25 @@ export default function CreateRoutePage() {
                                                         field.onChange(stations)
                                                         const stationsValue = stations || [];
                                                         if (stationsValue.length >= 2) {
-                                                            const newName = `${stationsValue[0].name} - ${stationsValue[stationsValue.length - 1].name}`;
+                                                            const startName = stationsValue[0].name;
+                                                            const endName = stationsValue[stationsValue.length - 1].name;
+                                                            const newName = `${startName} - ${endName}`;
+                                                            
+                                                            const generateCode = (str: string) => {
+                                                                // Remove accents, get first letters, uppercase
+                                                                const normalized = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
+                                                                return normalized.split(/\s+/).map(w => w[0]).join('').toUpperCase();
+                                                            };
+                                                            const newCode = `${generateCode(startName)}-${generateCode(endName)}`;
+
                                                             const currentName = form.getValues('name');
                                                             if (!currentName || currentName.includes(' - ')) {
                                                                 form.setValue('name', newName, { shouldValidate: true });
+                                                            }
+                                                            
+                                                            const currentCode = form.getValues('code');
+                                                            if (!currentCode || currentCode.includes('-')) {
+                                                                form.setValue('code', newCode, { shouldValidate: true });
                                                             }
                                                         }
 
@@ -162,25 +171,43 @@ export default function CreateRoutePage() {
 
                             <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 border-none shadow-none space-y-8">
                                 <div className="space-y-6">
-                                    <FormField
-                                        control={form.control as any}
-                                        name="name"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Tên hiển thị</FormLabel>
-                                                <FormControl>
-                                                    <Input 
-                                                        placeholder="VD: Hà Nội - Hải Phòng" 
-                                                        className="h-14 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border-none focus-visible:ring-1 focus-visible:ring-rose-200 text-lg font-bold text-zinc-800" 
-                                                        {...field} 
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-2 gap-4 items-start">
+                                        <FormField
+                                            control={form.control as any}
+                                            name="code"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Mã Tuyến</FormLabel>
+                                                    <FormControl>
+                                                        <Input 
+                                                            placeholder="VD: HN-HP" 
+                                                            className="h-14 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border-none focus-visible:ring-1 focus-visible:ring-rose-200 text-lg font-bold text-zinc-800 uppercase" 
+                                                            {...field} 
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control as any}
+                                            name="name"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Tên hiển thị</FormLabel>
+                                                    <FormControl>
+                                                        <Input 
+                                                            placeholder="VD: Hà Nội - Hải Phòng" 
+                                                            className="h-14 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border-none focus-visible:ring-1 focus-visible:ring-rose-200 text-lg font-bold text-zinc-800" 
+                                                            {...field} 
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4 items-start">
                                         <FormField
                                             control={form.control as any}
                                             name="durationMinutes"
@@ -230,7 +257,7 @@ export default function CreateRoutePage() {
                                                         <div className="relative">
                                                             <Input
                                                                 type="number"
-                                                                className="h-14 rounded-2xl bg-rose-50/20 dark:bg-rose-900/10 border-none focus-visible:ring-1 focus-visible:ring-rose-200 text-xl font-black text-[#802222]"
+                                                                className="h-14 rounded-2xl bg-rose-50/20 dark:bg-rose-900/10 border-none focus-visible:ring-1 focus-visible:ring-rose-200 text-xl font-black text-[#802222] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                                 {...field}
                                                                 onChange={(e) => field.onChange(+e.target.value)}
                                                             />
@@ -251,7 +278,7 @@ export default function CreateRoutePage() {
                                                         <div className="relative">
                                                             <Input
                                                                 type="number"
-                                                                className="h-14 rounded-2xl bg-rose-50/20 dark:bg-rose-900/10 border-none focus-visible:ring-1 focus-visible:ring-rose-200 text-xl font-black text-[#802222]"
+                                                                className="h-14 rounded-2xl bg-rose-50/20 dark:bg-rose-900/10 border-none focus-visible:ring-1 focus-visible:ring-rose-200 text-xl font-black text-[#802222] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                                 {...field}
                                                                 onChange={(e) => field.onChange(+e.target.value)}
                                                             />
@@ -264,13 +291,15 @@ export default function CreateRoutePage() {
                                         />
                                     </div>
                                 </div>
-                                
-                                <div className="pt-4">
-                                    <div className="p-4 rounded-2xl bg-blue-50/50 dark:bg-blue-900/10 border border-dashed border-blue-200/50">
-                                        <p className="text-[10px] font-medium text-blue-400 italic text-center leading-relaxed">
-                                            Mọi thay đổi cấu hình sẽ ảnh hưởng trực tiếp đến thuật toán tính giá vé của hệ thống.
-                                        </p>
-                                    </div>
+
+                                <div className="pt-2">
+                                    <Button 
+                                        onClick={form.handleSubmit(onSubmit)}
+                                        className="w-full h-14 bg-[#802222] hover:bg-rose-900 text-white rounded-2xl font-bold text-lg shadow-xl shadow-rose-900/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                        disabled={createRoute.isPending}
+                                    >
+                                        {createRoute.isPending ? "Đang xử lý..." : "Lưu & Kích hoạt Tuyến Đường"}
+                                    </Button>
                                 </div>
                             </div>
                         </div>

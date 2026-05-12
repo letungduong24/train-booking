@@ -30,7 +30,7 @@ import { updateRouteStationSchema, type UpdateRouteStationInput } from "@/lib/sc
 interface EditRouteStationDialogProps {
     routeId: string
     station: any // RouteStation & { station: Station }
-    onSuccess?: () => void
+    onSuccess?: (updatedStation: any) => void
 }
 
 export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRouteStationDialogProps) {
@@ -67,7 +67,16 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
         }, {
             onSuccess: () => {
                 setOpen(false)
-                onSuccess?.()
+                onSuccess?.({
+                    ...station,
+                    distanceFromStart: values.distanceFromStart,
+                    station: {
+                        ...station.station,
+                        name: values.name,
+                        latitude: values.latitude,
+                        longitude: values.longitude,
+                    }
+                })
             }
         })
     }

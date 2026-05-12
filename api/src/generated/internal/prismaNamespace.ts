@@ -387,6 +387,7 @@ export const ModelName = {
   User: 'User',
   RefreshToken: 'RefreshToken',
   Transaction: 'Transaction',
+  Network: 'Network',
   Station: 'Station',
   Route: 'Route',
   RailwayLine: 'RailwayLine',
@@ -414,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "refreshToken" | "transaction" | "station" | "route" | "railwayLine" | "routeStation" | "coachTemplate" | "train" | "coach" | "seat" | "trip" | "booking" | "passengerGroup" | "ticket"
+    modelProps: "user" | "refreshToken" | "transaction" | "network" | "station" | "route" | "railwayLine" | "routeStation" | "coachTemplate" | "train" | "coach" | "seat" | "trip" | "booking" | "passengerGroup" | "ticket"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -637,6 +638,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.TransactionCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.TransactionCountAggregateOutputType> | number
+        }
+      }
+    }
+    Network: {
+      payload: Prisma.$NetworkPayload<ExtArgs>
+      fields: Prisma.NetworkFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NetworkFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NetworkPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NetworkFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NetworkPayload>
+        }
+        findFirst: {
+          args: Prisma.NetworkFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NetworkPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NetworkFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NetworkPayload>
+        }
+        findMany: {
+          args: Prisma.NetworkFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NetworkPayload>[]
+        }
+        create: {
+          args: Prisma.NetworkCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NetworkPayload>
+        }
+        createMany: {
+          args: Prisma.NetworkCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NetworkCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NetworkPayload>[]
+        }
+        delete: {
+          args: Prisma.NetworkDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NetworkPayload>
+        }
+        update: {
+          args: Prisma.NetworkUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NetworkPayload>
+        }
+        deleteMany: {
+          args: Prisma.NetworkDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NetworkUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NetworkUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NetworkPayload>[]
+        }
+        upsert: {
+          args: Prisma.NetworkUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NetworkPayload>
+        }
+        aggregate: {
+          args: Prisma.NetworkAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNetwork>
+        }
+        groupBy: {
+          args: Prisma.NetworkGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NetworkGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NetworkCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NetworkCountAggregateOutputType> | number
         }
       }
     }
@@ -1571,6 +1646,7 @@ export const UserScalarFieldEnum = {
   id: 'id',
   profilePic: 'profilePic',
   email: 'email',
+  phone: 'phone',
   password: 'password',
   name: 'name',
   googleId: 'googleId',
@@ -1585,7 +1661,8 @@ export const UserScalarFieldEnum = {
   walletPinResetToken: 'walletPinResetToken',
   walletPinResetTokenExpires: 'walletPinResetTokenExpires',
   balance: 'balance',
-  walletPin: 'walletPin'
+  walletPin: 'walletPin',
+  isBanned: 'isBanned'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -1621,11 +1698,24 @@ export const TransactionScalarFieldEnum = {
 export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
 
 
+export const NetworkScalarFieldEnum = {
+  id: 'id',
+  version: 'version',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NetworkScalarFieldEnum = (typeof NetworkScalarFieldEnum)[keyof typeof NetworkScalarFieldEnum]
+
+
 export const StationScalarFieldEnum = {
   id: 'id',
+  code: 'code',
   name: 'name',
   latitude: 'latitude',
   longitude: 'longitude',
+  networkId: 'networkId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1635,6 +1725,9 @@ export type StationScalarFieldEnum = (typeof StationScalarFieldEnum)[keyof typeo
 
 export const RouteScalarFieldEnum = {
   id: 'id',
+  code: 'code',
+  version: 'version',
+  networkId: 'networkId',
   name: 'name',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -1654,6 +1747,7 @@ export const RailwayLineScalarFieldEnum = {
   id: 'id',
   name: 'name',
   pathCoordinates: 'pathCoordinates',
+  networkId: 'networkId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1756,6 +1850,9 @@ export const BookingScalarFieldEnum = {
   code: 'code',
   tripId: 'tripId',
   userId: 'userId',
+  contactName: 'contactName',
+  contactPhone: 'contactPhone',
+  contactEmail: 'contactEmail',
   status: 'status',
   totalPrice: 'totalPrice',
   metadata: 'metadata',
@@ -1945,20 +2042,6 @@ export type ListEnumTransactionStatusFieldRefInput<$PrismaModel> = FieldRefInput
 
 
 /**
- * Reference to a field of type 'RouteStatus'
- */
-export type EnumRouteStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RouteStatus'>
-    
-
-
-/**
- * Reference to a field of type 'RouteStatus[]'
- */
-export type ListEnumRouteStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RouteStatus[]'>
-    
-
-
-/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -1969,6 +2052,20 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RouteStatus'
+ */
+export type EnumRouteStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RouteStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'RouteStatus[]'
+ */
+export type ListEnumRouteStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RouteStatus[]'>
     
 
 
@@ -2181,6 +2278,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   refreshToken?: Prisma.RefreshTokenOmit
   transaction?: Prisma.TransactionOmit
+  network?: Prisma.NetworkOmit
   station?: Prisma.StationOmit
   route?: Prisma.RouteOmit
   railwayLine?: Prisma.RailwayLineOmit

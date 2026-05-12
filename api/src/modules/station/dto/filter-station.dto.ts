@@ -17,4 +17,8 @@ export class FilterStationDto extends PaginationDto {
   @IsOptional()
   @IsString()
   all?: string;
+
+  @IsOptional()
+  @IsString()
+  networkId?: string;
 }

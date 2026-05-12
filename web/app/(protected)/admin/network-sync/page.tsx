@@ -18,6 +18,13 @@ import {
     DialogTrigger,
     DialogFooter
 } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { vi } from "date-fns/locale";
 
 interface NetworkLine {
     id: string;
@@ -39,14 +46,26 @@ export default function NetworkSyncPage() {
     const [result, setResult] = useState<any>(null);
     const [geoJsonDialogOpen, setGeoJsonDialogOpen] = useState(false);
     const [jsonDataDialogOpen, setJsonDataDialogOpen] = useState(false);
+    const [openNetworkSelector, setOpenNetworkSelector] = useState(false);
 
-    const [network, setNetwork] = useState<{ stations: Station[], lines: NetworkLine[] } | null>(null);
+    const [network, setNetwork] = useState<{ networkId?: string, version?: number, createdAt?: string, stations: Station[], lines: NetworkLine[] } | null>(null);
     const [isLoadingNetwork, setIsLoadingNetwork] = useState(true);
+    const [networks, setNetworks] = useState<any[]>([]);
 
-    const fetchNetwork = async () => {
+    const fetchNetworksList = async () => {
+        try {
+            const response = await apiClient.get('/geojson/networks');
+            setNetworks(response.data.data);
+        } catch (error) {
+            console.error("Failed to load networks list:", error);
+        }
+    };
+
+    const fetchNetwork = async (networkId?: string) => {
         setIsLoadingNetwork(true);
         try {
-            const response = await apiClient.get('/geojson/network');
+            const url = networkId ? `/geojson/network?networkId=${networkId}` : '/geojson/network';
+            const response = await apiClient.get(url);
             setNetwork(response.data.data);
         } catch (error) {
             console.error("Failed to load network:", error);
@@ -57,6 +76,7 @@ export default function NetworkSyncPage() {
     };
 
     useEffect(() => {
+        fetchNetworksList();
         fetchNetwork();
     }, []);
 
@@ -107,6 +127,7 @@ export default function NetworkSyncPage() {
             toast.success("Đã xóa mạng lưới cũ và đồng bộ mạng lưới hiện tại thành công.");
             setGeoJsonDialogOpen(false);
             setMapFile(null);
+            fetchNetworksList();
             fetchNetwork(); // Refresh the map
         } catch (error: any) {
             console.error(error);
@@ -134,7 +155,54 @@ export default function NetworkSyncPage() {
                     <h2 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Đồng bộ Mạng lưới</h2>
                     <p className="text-sm text-muted-foreground mt-1 font-medium italic opacity-60">Quản lý cơ sở hạ tầng đường sắt và dữ liệu bản đồ lõi</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex items-center gap-3">
+                    <Popover open={openNetworkSelector} onOpenChange={setOpenNetworkSelector}>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={openNetworkSelector}
+                                className="w-[280px] justify-between h-11 bg-white dark:bg-zinc-900 border-gray-100 dark:border-zinc-800 rounded-xl font-bold text-sm"
+                            >
+                                <span className="truncate">
+                                    {network?.networkId 
+                                        ? `Version ${networks.find(n => n.id === network.networkId)?.version || ''} - ${format(new Date(networks.find(n => n.id === network.networkId)?.createdAt || new Date()), 'dd/MM/yyyy HH:mm')}`
+                                        : "Chọn phiên bản bản đồ"}
+                                </span>
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-40" />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[280px] p-0 rounded-2xl overflow-hidden border-gray-100 dark:border-zinc-800 shadow-2xl" align="end">
+                            <Command>
+                                <CommandInput placeholder="Tìm phiên bản..." className="h-11" />
+                                <CommandList>
+                                    <CommandEmpty>Không tìm thấy phiên bản nào.</CommandEmpty>
+                                    <CommandGroup>
+                                        {networks.map((n) => (
+                                            <CommandItem
+                                                key={n.id}
+                                                value={`Version ${n.version}`}
+                                                onSelect={() => {
+                                                    fetchNetwork(n.id);
+                                                    setOpenNetworkSelector(false);
+                                                }}
+                                                className="py-3 px-4 font-bold text-sm cursor-pointer"
+                                            >
+                                                <Check
+                                                    className={cn(
+                                                        "mr-2 h-4 w-4 text-[#802222]",
+                                                        network?.networkId === n.id ? "opacity-100" : "opacity-0"
+                                                    )}
+                                                />
+                                                Version {n.version} - <span className="font-medium text-muted-foreground ml-1">{format(new Date(n.createdAt), 'dd/MM/yyyy HH:mm')}</span>
+                                            </CommandItem>
+                                        ))}
+                                    </CommandGroup>
+                                </CommandList>
+                            </Command>
+                        </PopoverContent>
+                    </Popover>
+
                     <Dialog open={geoJsonDialogOpen} onOpenChange={setGeoJsonDialogOpen}>
                         <DialogTrigger asChild>
                             <Button className="bg-[#802222] hover:bg-rose-900 border-none rounded-xl h-11 font-bold shadow-lg shadow-rose-900/20 px-6 transition-all active:scale-95">
@@ -145,7 +213,7 @@ export default function NetworkSyncPage() {
                             <DialogHeader>
                                 <DialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Cập nhật mạng lưới (GEOJSON)</DialogTitle>
                                 <DialogDescription className="text-sm font-medium text-muted-foreground/50">
-                                    Thao tác này sẽ xóa toàn bộ hệ thống cũ để thay thế bằng dữ liệu mới.
+                                    Thao tác này sẽ tải lên dữ liệu bản đồ không gian và cập nhật phiên bản mới.
                                 </DialogDescription>
                             </DialogHeader>
                             <form onSubmit={handleSync} className="space-y-6 mt-4">
@@ -159,11 +227,7 @@ export default function NetworkSyncPage() {
                                         className="h-14 rounded-2xl bg-rose-50/10 border-rose-100/50 focus-visible:ring-[#802222]/20 text-lg transition-all flex items-center px-4 pt-3.5"
                                     />
                                 </div>
-                                <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20">
-                                    <p className="text-xs text-red-600 dark:text-red-400 font-bold leading-tight">
-                                        ⚠️ Cảnh báo: Toàn bộ dữ liệu trạm và đường ray lõi hiện tại sẽ bị xóa sạch và không thể khôi phục.
-                                    </p>
-                                </div>
+
                                 <DialogFooter>
                                     <Button type="submit" disabled={isLoading || !mapFile} className="w-full h-14 rounded-2xl bg-[#802222] text-white hover:bg-rose-900 border-none shadow-2xl shadow-rose-900/30 transition-all font-bold text-lg">
                                         {isLoading ? <Loader2 className="animate-spin" /> : "Xác nhận đồng bộ"}
