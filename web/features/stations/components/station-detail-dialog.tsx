@@ -12,8 +12,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { Station } from "@/lib/schemas/station.schema"
-import { EditStationDialog } from "./edit-station-dialog"
-import { DeleteStationAlert } from "./delete-station-alert"
+
 
 interface StationDetailDialogProps {
     station: Station | null;
@@ -49,18 +48,7 @@ export function StationDetailDialog({
                                 {station.name} • Cập nhật lúc {format(new Date(station.updatedAt || station.createdAt), "HH:mm dd/MM/yyyy", { locale: vi })}
                             </DialogDescription>
                         </div>
-                        <div className="flex gap-2">
-                            <EditStationDialog station={station} />
-                            <DeleteStationAlert
-                                station={station}
-                                currentPage={currentPage}
-                                totalItems={totalItems}
-                                itemsPerPage={itemsPerPage}
-                                itemsOnCurrentPage={itemsOnCurrentPage}
-                                onNavigateToPreviousPage={onNavigateToPreviousPage}
-                                onSuccess={() => onOpenChange(false)}
-                            />
-                        </div>
+
                     </div>
                 </DialogHeader>
 

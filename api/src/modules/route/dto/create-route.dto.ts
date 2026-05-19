@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsString,
   Min,
+  ArrayMinSize,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -32,11 +33,11 @@ export class CreateRouteDto {
   @IsString()
   networkId?: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Mã tuyến không được để trống' })
   @IsString()
   code: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Tên tuyến không được để trống' })
   @IsString()
   name: string;
 
@@ -44,35 +45,31 @@ export class CreateRouteDto {
   @IsString()
   status?: string;
 
-  @IsOptional()
   @IsInt()
-  @Min(0)
-  durationMinutes?: number;
+  @Min(1, { message: 'Thời gian chạy phải lớn hơn 0' })
+  durationMinutes: number;
 
-  @IsOptional()
   @IsInt()
-  @Min(0)
-  turnaroundMinutes?: number;
+  @Min(0, { message: 'Thời gian nghỉ không được âm' })
+  turnaroundMinutes: number;
 
-  @IsOptional()
   @IsNumber()
-  @Min(0)
-  basePricePerKm?: number;
+  @Min(1, { message: 'Giá cơ bản phải lớn hơn 0' })
+  basePricePerKm: number;
 
-  @IsOptional()
   @IsNumber()
-  @Min(0)
-  stationFee?: number;
+  @Min(0, { message: 'Phí bến không được âm' })
+  stationFee: number;
 
-  @IsOptional()
   @IsNumber()
-  @Min(0)
-  totalDistanceKm?: number;
+  @Min(0.1, { message: 'Quãng đường phải lớn hơn 0' })
+  totalDistanceKm: number;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'Danh sách ga dừng không được để trống' })
+  @ArrayMinSize(2, { message: 'Tuyến đường phải có ít nhất 2 ga dừng' })
   @ValidateNested({ each: true })
   @Type(() => RouteStationInput)
-  stations?: RouteStationInput[];
+  stations: RouteStationInput[];
 
   @IsOptional()
   pathCoordinates?: any;

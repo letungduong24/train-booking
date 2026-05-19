@@ -36,7 +36,7 @@ export function TripCard({ trip, className }: TripCardProps) {
     const minutes = durationMin % 60;
     const durationLabel = hours > 0 ? `${hours}h${minutes > 0 ? ` ${minutes}p` : ""}` : `${minutes}p`;
 
-    const bookingUrl = `/booking/${trip.tripId}?from=${trip.fromStationId}&to=${trip.toStationId}`;
+    const bookingUrl = `/dashboard/booking/${trip.tripId}?from=${trip.fromStationId}&to=${trip.toStationId}`;
 
     return (
         <div

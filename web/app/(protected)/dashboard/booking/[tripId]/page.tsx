@@ -48,7 +48,7 @@ export default function TripDetailPage() {
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isMobileMapOpen, setIsMobileMapOpen] = useState(false);
 
-    const { data: trip, isLoading: isTripLoading } = useTrip(tripId);
+    const { data: trip, isLoading: isTripLoading } = useTrip(tripId, fromStationId, toStationId);
 
     const { data: coachWithPrices, isLoading: isCoachLoading } = useCoachWithPrices(
         {
@@ -92,8 +92,8 @@ export default function TripDetailPage() {
         );
     }
 
-    const fromStation = trip.route.stations.find((rs: any) => rs.stationId === fromStationId);
-    const toStation = trip.route.stations.find((rs: any) => rs.stationId === toStationId);
+    const fromStation = trip.resolvedFrom || trip.route.stations.find((rs: any) => rs.stationId === fromStationId);
+    const toStation = trip.resolvedTo || trip.route.stations.find((rs: any) => rs.stationId === toStationId);
 
     const departureDate = trip.departureTime && fromStation
         ? addMinutes(new Date(trip.departureTime), fromStation.durationFromStart)

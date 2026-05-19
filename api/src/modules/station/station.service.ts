@@ -24,6 +24,7 @@ export class StationService {
         where,
         ...(all !== 'true' && { skip }),
         ...(all !== 'true' && { take }),
+        distinct: ['name'],
         orderBy: {
           [query.sort || 'createdAt']: query.order || 'desc',
         },

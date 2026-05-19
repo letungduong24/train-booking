@@ -48,9 +48,11 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
     const form = useForm({
         resolver: zodResolver(createRouteSchema),
         defaultValues: {
+            code: "",
             name: "",
             durationMinutes: 0,
             turnaroundMinutes: 60,
+            totalDistanceKm: 0,
             basePricePerKm: 1000,
             stationFee: 0,
             stations: [] as { id: string, name: string, latitude: number, longitude: number }[],
@@ -90,19 +92,36 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                         
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
-                                <FormField
-                                    control={form.control}
-                                    name="name"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Tên tuyến đường</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="Ví dụ: Hà Nội - Sài Gòn" className="h-14 rounded-2xl bg-rose-50/10 border-rose-100/50 focus-visible:ring-[#802222]/20 focus-visible:border-[#802222]/30 text-lg transition-all" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    <FormField
+                                        control={form.control}
+                                        name="code"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Mã tuyến đường</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="VD: HN-SG" className="h-14 rounded-2xl bg-rose-50/10 border-rose-100/50 focus-visible:ring-[#802222]/20 focus-visible:border-[#802222]/30 text-lg transition-all font-mono uppercase" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <div className="md:col-span-2">
+                                        <FormField
+                                            control={form.control}
+                                            name="name"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Tên tuyến đường</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="Ví dụ: Hà Nội - Sài Gòn" className="h-14 rounded-2xl bg-rose-50/10 border-rose-100/50 focus-visible:ring-[#802222]/20 focus-visible:border-[#802222]/30 text-lg transition-all" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                </div>
 
                                 {/* Interactive Station Picker UI */}
                                 <FormField
@@ -114,7 +133,12 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                                             <FormControl>
                                                 <div className="rounded-[1.5rem] overflow-hidden border border-gray-100 bg-white">
                                                     <InteractiveRouteBuilder
-                                                        value={field.value}
+                                                        value={(field.value || []).map(s => ({
+                                                            id: s.id,
+                                                            name: s.name || "",
+                                                            latitude: s.latitude || 0,
+                                                            longitude: s.longitude || 0
+                                                        }))}
                                                         onChange={(stations) => {
                                                             field.onChange(stations)
                                                             if (stations.length >= 2) {
@@ -138,9 +162,11 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                                                                     totalKm += turf.distance(a, b, { units: 'kilometers' });
                                                                 }
                                                                 const estimatedMinutes = Math.round(totalKm / 60 * 60);
-                                                                form.setValue('durationMinutes', estimatedMinutes)
+                                                                form.setValue('durationMinutes', estimatedMinutes, { shouldValidate: true })
+                                                                form.setValue('totalDistanceKm', +totalKm.toFixed(2), { shouldValidate: true })
                                                             } else {
-                                                                form.setValue('durationMinutes', 0)
+                                                                form.setValue('durationMinutes', 0, { shouldValidate: true })
+                                                                form.setValue('totalDistanceKm', 0, { shouldValidate: true })
                                                             }
                                                         }}
                                                     />

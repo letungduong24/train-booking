@@ -38,18 +38,18 @@ export const createRouteSchema = routeSchema.omit({
 }).extend({
     code: z.string().min(1, "Mã tuyến không được để trống"),
     networkId: z.string().optional(),
-    status: z.string().optional(), // Make status optional since backend sets default
-    durationMinutes: z.number(),
-    turnaroundMinutes: z.number(),
-    totalDistanceKm: z.number(),
-    basePricePerKm: z.number(),
-    stationFee: z.number(),
+    status: z.string().optional(),
+    durationMinutes: z.number().min(1, "Thời gian chạy phải lớn hơn 0"),
+    turnaroundMinutes: z.number().min(0, "Thời gian nghỉ không được âm"),
+    totalDistanceKm: z.number().min(0.1, "Quãng đường phải lớn hơn 0"),
+    basePricePerKm: z.number().min(1, "Giá cơ bản phải lớn hơn 0"),
+    stationFee: z.number().min(0, "Phí bến không được âm"),
     stations: z.array(z.object({
         id: z.string(),
         name: z.string().optional(),
         latitude: z.number().optional(),
         longitude: z.number().optional(),
-    })).optional(),
+    })).min(2, "Tuyến đường phải có ít nhất 2 ga dừng (Ga đi và Ga đến)"),
 });
 
 export const updateRouteSchema = createRouteSchema.partial();

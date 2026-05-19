@@ -183,7 +183,7 @@ export class TripService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, from?: string, to?: string) {
     const trip = await this.prisma.trip.findUnique({
       where: { id },
       include: {
@@ -228,7 +228,27 @@ export class TripService {
       throw new NotFoundException(`Trip #${id} không tồn tại`);
     }
 
-    return trip;
+    let resolvedFrom: any = null;
+    let resolvedTo: any = null;
+
+    if (from && to) {
+      const requestedStations = await this.prisma.station.findMany({
+        where: { id: { in: [from, to] } }
+      });
+      const fromReq = requestedStations.find(s => s.id === from);
+      const toReq = requestedStations.find(s => s.id === to);
+
+      if (fromReq && toReq && trip.route) {
+        resolvedFrom = trip.route.stations.find(rs => rs.station.name === fromReq.name) || null;
+        resolvedTo = trip.route.stations.find(rs => rs.station.name === toReq.name) || null;
+      }
+    }
+
+    return {
+      ...trip,
+      resolvedFrom,
+      resolvedTo,
+    };
   }
 
   async update(id: string, updateTripDto: UpdateTripDto) {
@@ -316,24 +336,36 @@ export class TripService {
   }
 
   async searchTrips(fromStationId: string, toStationId: string, date: string) {
-    // Step 1: Find all routes containing both stations
+    const fromStation = await this.prisma.station.findUnique({ where: { id: fromStationId } });
+    const toStation = await this.prisma.station.findUnique({ where: { id: toStationId } });
+
+    if (!fromStation || !toStation) {
+      return [];
+    }
+
+    // Step 1: Find all routes containing both stations by name (cross-network compatibility)
     const routes = await this.prisma.route.findMany({
       where: {
-        stations: {
-          some: {
-            stationId: fromStationId,
-          },
-        },
-        AND: {
-          stations: {
-            some: {
-              stationId: toStationId,
+        AND: [
+          {
+            stations: {
+              some: {
+                station: { name: fromStation.name },
+              },
             },
           },
-        },
+          {
+            stations: {
+              some: {
+                station: { name: toStation.name },
+              },
+            },
+          },
+        ],
       },
       include: {
         stations: {
+          include: { station: true },
           orderBy: {
             index: 'asc',
           },
@@ -344,13 +376,13 @@ export class TripService {
     // Step 2: Filter routes where fromStation.index < toStation.index (correct direction)
     const validRouteIds = routes
       .filter((route) => {
-        const fromStation = route.stations.find(
-          (rs) => rs.stationId === fromStationId,
+        const fromRS = route.stations.find(
+          (rs) => rs.station.name === fromStation.name,
         );
-        const toStation = route.stations.find(
-          (rs) => rs.stationId === toStationId,
+        const toRS = route.stations.find(
+          (rs) => rs.station.name === toStation.name,
         );
-        return fromStation && toStation && fromStation.index < toStation.index;
+        return fromRS && toRS && fromRS.index < toRS.index;
       })
       .map((route) => route.id);
 

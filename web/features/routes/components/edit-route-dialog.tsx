@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IconEdit } from "@tabler/icons-react"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -44,6 +45,7 @@ interface EditRouteDialogProps {
 export function EditRouteDialog({ route, onSuccess }: EditRouteDialogProps) {
     const [open, setOpen] = React.useState(false)
     const updateRoute = useUpdateRoute()
+    const router = useRouter()
 
     const form = useForm<UpdateRouteInput>({
         resolver: zodResolver(updateRouteSchema),
@@ -71,13 +73,12 @@ export function EditRouteDialog({ route, onSuccess }: EditRouteDialogProps) {
 
     async function onSubmit(values: UpdateRouteInput) {
         updateRoute.mutate({ id: route.id, data: values }, {
-            onSuccess: () => {
-                toast.success("Cập nhật tuyến đường thành công")
+            onSuccess: (newRoute) => {
                 setOpen(false)
                 onSuccess?.()
-            },
-            onError: (error) => {
-                toast.error(error.message || "Cập nhật tuyến đường thất bại")
+                if (newRoute && newRoute.id !== route.id) {
+                    router.push(`/admin/routes/${newRoute.id}`)
+                }
             }
         })
     }

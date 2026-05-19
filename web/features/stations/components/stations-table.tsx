@@ -216,9 +216,6 @@ export function StationsTable() {
                         className="h-11 rounded-2xl bg-white dark:bg-zinc-900 border-rose-100/50 dark:border-zinc-800 focus-visible:ring-[#802222]/20 pl-11 text-sm transition-all"
                     />
                 </div>
-                <div className="ml-auto">
-                    <CreateStationDialog />
-                </div>
             </div>
             <div className="rounded-[2.5rem] bg-white dark:bg-zinc-900 overflow-hidden border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015]">
                 <Table>

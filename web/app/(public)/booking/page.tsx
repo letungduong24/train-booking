@@ -115,8 +115,12 @@ function BookingPageContent() {
                                         key={trip.id} 
                                         className="group relative bg-white dark:bg-zinc-900 rounded-[2rem] p-6 shadow-xl shadow-gray-100 dark:shadow-none border border-gray-100 dark:border-zinc-800 transition-all hover:shadow-2xl hover:shadow-rose-900/10 cursor-pointer overflow-hidden mb-5"
                                         onClick={() => {
-                                            const prefix = user ? '/dashboard' : '';
-                                            router.push(`${prefix}/booking/${trip.id}?from=${searchParams.fromStationId}&to=${searchParams.toStationId}`);
+                                            if (!user) {
+                                                const callbackUrl = encodeURIComponent(`/dashboard/booking/${trip.id}?from=${searchParams.fromStationId}&to=${searchParams.toStationId}`);
+                                                router.push(`/login?callbackUrl=${callbackUrl}`);
+                                            } else {
+                                                router.push(`/dashboard/booking/${trip.id}?from=${searchParams.fromStationId}&to=${searchParams.toStationId}`);
+                                            }
                                         }}
                                     >
                                         <div className="flex flex-col md:flex-row justify-between items-stretch gap-6 relative z-10">

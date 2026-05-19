@@ -17,7 +17,7 @@ export class RouteService {
 
     let createdRouteId: string;
 
-    await this.prisma.$transaction(async (tx) => {
+    return this.prisma.$transaction(async (tx) => {
       let activeNetworkId = networkId;
       if (!activeNetworkId) {
         const latest = await tx.network.findFirst({ orderBy: { version: 'desc' } });
@@ -35,25 +35,45 @@ export class RouteService {
       createdRouteId = route.id;
 
       if (stations && stations.length > 0) {
-        const creates = stations.map((st, index) =>
-          tx.routeStation.create({
+        const stationIds = stations.map(s => s.id);
+        const dbStations = await tx.station.findMany({
+          where: { id: { in: stationIds } }
+        });
+        const stationMap = new Map(dbStations.map(s => [s.id, s]));
+
+        let cumulativeDistance = 0;
+        for (let i = 0; i < stations.length; i++) {
+          const st = stationMap.get(stations[i].id);
+          if (!st) throw new BadRequestException(`Station ${stations[i].id} not found`);
+
+          if (i > 0) {
+            const prev = stationMap.get(stations[i - 1].id)!;
+            const a = turf.point([prev.longitude, prev.latitude]);
+            const b = turf.point([st.longitude, st.latitude]);
+            cumulativeDistance += turf.distance(a, b, { units: 'kilometers' });
+          }
+
+          await tx.routeStation.create({
             data: {
               routeId: route.id,
               stationId: st.id,
-              index,
-              distanceFromStart: 0,
+              index: i,
+              distanceFromStart: +cumulativeDistance.toFixed(2),
             },
-          }),
-        );
-        await Promise.all(creates);
+          });
+        }
       }
-    });
 
-    // calculatePathCoordinates runs OUTSIDE the transaction to avoid P2028 timeout
-    if (stations && stations.length >= 2) {
-      await this.calculatePathCoordinates(createdRouteId!);
-    }
-    return this.findOne(createdRouteId!);
+      // Calculate path coordinates INSIDE transaction to ensure validity
+      // If this throws, the entire route creation rolls back.
+      if (stations && stations.length >= 2) {
+        await this.calculatePathCoordinates(createdRouteId, tx);
+      }
+
+      return this.findOne(createdRouteId, tx);
+    }, {
+      timeout: 30000 // Increase timeout to 30s for heavy BFS calculations
+    });
   }
 
   async findAll(query: FilterRouteDto) {
@@ -99,8 +119,8 @@ export class RouteService {
     };
   }
 
-  async findOne(id: string) {
-    return this.prisma.route.findUnique({
+  async findOne(id: string, tx: any = this.prisma) {
+    return tx.route.findUnique({
       where: { id },
       include: {
         stations: {
@@ -155,19 +175,29 @@ export class RouteService {
         throw new BadRequestException('Cannot revert an ACTIVE or INACTIVE route back to DRAFT.');
       }
 
+      // Find the latest version for this route code to ensure monotonic progression
+      const latestRoute = await tx.route.findFirst({
+        where: { code: currentRoute.code },
+        orderBy: { version: 'desc' }
+      });
+      const maxVersion = latestRoute ? latestRoute.version : currentRoute.version;
+
+      // We must clone to a new version progression if:
+      // 1. The route is currently ACTIVE (any update preserves its published history)
+      // 2. OR an old INACTIVE route is being activated (newStatus === ACTIVE), ensuring pure monotonic progression.
+      // Exception: purely deactivating an ACTIVE route (newStatus === INACTIVE) does not clone.
+      const requiresClone = (currentRoute.status === RouteStatus.ACTIVE && newStatus !== RouteStatus.INACTIVE) ||
+                            (currentRoute.status === RouteStatus.INACTIVE && newStatus === RouteStatus.ACTIVE);
+
       let targetRouteId = id;
 
-      // If the route is already ACTIVE, any update requires cloning it to preserve historical trips.
-      // Exception: changing its status to INACTIVE does not require a clone.
-      const requiresClone = currentRoute.status === RouteStatus.ACTIVE;
-
-      if (requiresClone && newStatus !== RouteStatus.INACTIVE) {
-        // Clone to version + 1
+      if (requiresClone) {
+        // Clone to maxVersion + 1
         const clonedRoute = await tx.route.create({
           data: {
             ...rest,
             code: currentRoute.code,
-            version: currentRoute.version + 1,
+            version: maxVersion + 1,
             networkId: targetNetworkId,
             name: rest.name || currentRoute.name,
             durationMinutes: rest.durationMinutes ?? currentRoute.durationMinutes,
@@ -179,16 +209,15 @@ export class RouteService {
           }
         });
 
-        // Mark current as INACTIVE
-        await tx.route.update({
-          where: { id },
+        // Ensure ALL other versions of this route code are transitioned to INACTIVE to guarantee unique active status
+        await tx.route.updateMany({
+          where: { code: currentRoute.code, id: { not: clonedRoute.id } },
           data: { status: RouteStatus.INACTIVE }
         });
 
         targetRouteId = clonedRoute.id;
 
         // If stations are not explicitly provided in DTO, copy them from the old route
-        // ONLY IF we didn't change the networkId. If we changed the networkId, we CANNOT copy old stations.
         if (!stations) {
           if (targetNetworkId !== currentRoute.networkId) {
             throw new BadRequestException('Must provide new stations when changing network.');
@@ -206,7 +235,7 @@ export class RouteService {
           await Promise.all(creates);
         }
       } else {
-        // Just update existing route
+        // Just update existing route in-place
         await tx.route.update({
           where: { id: targetRouteId },
           data: {
@@ -215,6 +244,14 @@ export class RouteService {
             status: newStatus,
           },
         });
+
+        // If this route is becoming ACTIVE, automatically mark all parallel versions as INACTIVE
+        if (newStatus === RouteStatus.ACTIVE) {
+          await tx.route.updateMany({
+            where: { code: currentRoute.code, id: { not: targetRouteId } },
+            data: { status: RouteStatus.INACTIVE }
+          });
+        }
       }
 
       // If stations were provided in DTO, we need to completely replace them
@@ -227,26 +264,55 @@ export class RouteService {
         }
 
         if (stations.length > 0) {
-          const creates = stations.map((st, index) =>
-            tx.routeStation.create({
+          const stationIds = stations.map(s => s.id);
+          const dbStations = await tx.station.findMany({
+            where: { id: { in: stationIds } }
+          });
+          const stationMap = new Map(dbStations.map(s => [s.id, s]));
+
+          let cumulativeDistance = 0;
+          for (let i = 0; i < stations.length; i++) {
+            const st = stationMap.get(stations[i].id);
+            if (!st) throw new BadRequestException(`Station ${stations[i].id} not found`);
+
+            if (i > 0) {
+              const prev = stationMap.get(stations[i - 1].id)!;
+              const a = turf.point([prev.longitude, prev.latitude]);
+              const b = turf.point([st.longitude, st.latitude]);
+              cumulativeDistance += turf.distance(a, b, { units: 'kilometers' });
+            }
+
+            await tx.routeStation.create({
               data: {
                 routeId: targetRouteId,
                 stationId: st.id,
-                index,
-                distanceFromStart: 0, // Will be recalculated
+                index: i,
+                distanceFromStart: +cumulativeDistance.toFixed(2),
               },
-            }),
-          );
-          await Promise.all(creates);
+            });
+          }
         }
       }
 
-      return targetRouteId;
-    }).then(async (finalRouteId) => {
-      // Outside transaction: recalculate path if stations were provided
+      // Recalculate path coordinates INSIDE transaction
+      // This ensures that any "invalid" path (e.g. straight line where no track exists)
+      // will trigger a rollback and prevent the update from being saved.
       if (stations && stations.length >= 2) {
-        await this.calculatePathCoordinates(finalRouteId);
+        await this.calculatePathCoordinates(targetRouteId, tx);
+      } else if (stations && stations.length < 2) {
+        // If someone updated to < 2 stations, it's invalid anyway but DTO should catch it.
+        // If it gets here, we clear the path.
+        await tx.route.update({
+          where: { id: targetRouteId },
+          data: { pathCoordinates: [] }
+        });
       }
+
+      return targetRouteId;
+    }, {
+      timeout: 30000 // Increase timeout to 30s
+    }).then(async (finalRouteId) => {
+      // Return final route info (findOne will use this.prisma here as it's outside)
       return this.findOne(finalRouteId);
     });
   }
@@ -356,9 +422,15 @@ export class RouteService {
 
     const usedStationIds = routeStations.map((rs) => rs.stationId);
 
+    const route = await this.prisma.route.findUnique({
+      where: { id: routeId },
+      select: { networkId: true }
+    });
+
     // Build where clause
     const where: Prisma.StationWhereInput = {
       id: { notIn: usedStationIds },
+      ...(route?.networkId && { networkId: route.networkId }),
       ...(search && {
         name: { contains: search, mode: 'insensitive' },
       }),

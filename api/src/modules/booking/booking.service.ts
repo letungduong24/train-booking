@@ -107,11 +107,17 @@ export class BookingService {
       );
     }
 
+    const requestedStations = await this.prisma.station.findMany({
+      where: { id: { in: [fromStationId, toStationId] } }
+    });
+    const fromReq = requestedStations.find(s => s.id === fromStationId);
+    const toReq = requestedStations.find(s => s.id === toStationId);
+
     const fromStation = trip.route.stations.find(
-      (s) => s.stationId === fromStationId,
+      (s) => s.station.name === fromReq?.name,
     );
     const toStation = trip.route.stations.find(
-      (s) => s.stationId === toStationId,
+      (s) => s.station.name === toReq?.name,
     );
 
     if (!fromStation || !toStation) {
@@ -632,11 +638,17 @@ export class BookingService {
       throw new BadRequestException('Không tìm thấy chuyến tàu');
     }
 
+    const requestedStations = await this.prisma.station.findMany({
+      where: { id: { in: [fromStationId, toStationId] } }
+    });
+    const fromReq = requestedStations.find(s => s.id === fromStationId);
+    const toReq = requestedStations.find(s => s.id === toStationId);
+
     const fromStation = trip.route.stations.find(
-      (s) => s.stationId === fromStationId,
+      (s) => s.station.name === fromReq?.name,
     );
     const toStation = trip.route.stations.find(
-      (s) => s.stationId === toStationId,
+      (s) => s.station.name === toReq?.name,
     );
 
     if (!fromStation || !toStation) {

@@ -51,12 +51,20 @@ export const useTrips = (filters: TripFilters) => {
     });
 };
 
-export const useTrip = (id: string) => {
+export const useTrip = (id: string, from?: string, to?: string) => {
     return useQuery({
-        queryKey: ['trips', id],
+        queryKey: ['trips', id, from, to],
         queryFn: async () => {
-            const response = await apiClient.get(`/trip/${id}`);
-            return response.data as import('@/lib/schemas/trip.schema').TripDetail;
+            const params = new URLSearchParams();
+            if (from) params.append('from', from);
+            if (to) params.append('to', to);
+            
+            const queryString = params.toString() ? `?${params.toString()}` : '';
+            const response = await apiClient.get(`/trip/${id}${queryString}`);
+            return response.data as import('@/lib/schemas/trip.schema').TripDetail & {
+                resolvedFrom?: any;
+                resolvedTo?: any;
+            };
         },
         enabled: !!id,
     });

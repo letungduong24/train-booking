@@ -234,6 +234,7 @@ export class CoachesService {
         route: {
           include: {
             stations: {
+              include: { station: true },
               orderBy: {
                 index: 'asc',
               },
@@ -247,16 +248,27 @@ export class CoachesService {
       throw new NotFoundException(`Trip or route not found`);
     }
 
-    // Find from and to stations
+    // Fetch requested stations to get their names (for cross-network version compatibility)
+    const requestedStations = await this.prisma.station.findMany({
+      where: { id: { in: [fromStationId, toStationId] } }
+    });
+    const fromRequested = requestedStations.find(s => s.id === fromStationId);
+    const toRequested = requestedStations.find(s => s.id === toStationId);
+
+    if (!fromRequested || !toRequested) {
+      throw new BadRequestException('Invalid requested station IDs');
+    }
+
+    // Find from and to stations by NAME to support network versioning
     const fromStation = trip.route.stations.find(
-      (rs) => rs.stationId === fromStationId,
+      (rs) => rs.station.name === fromRequested.name,
     );
     const toStation = trip.route.stations.find(
-      (rs) => rs.stationId === toStationId,
+      (rs) => rs.station.name === toRequested.name,
     );
 
     if (!fromStation || !toStation) {
-      throw new BadRequestException('Invalid station IDs');
+      throw new BadRequestException('Invalid station IDs for this route');
     }
 
     // Query all booked tickets for this trip that overlap with the requested segment

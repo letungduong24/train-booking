@@ -84,14 +84,17 @@ Trả lời súc tích bằng tiếng Việt. Không dùng markdown (**, *, #).`
             date: z.string().describe('Ngày khởi hành YYYY-MM-DD'),
           }),
           execute: async ({ fromStationId, toStationId, date }) => {
+            const fromStationReq = await this.prisma.station.findUnique({ where: { id: fromStationId } });
+            const toStationReq = await this.prisma.station.findUnique({ where: { id: toStationId } });
+            
             const trips = await this.tripService.searchTrips(fromStationId, toStationId, date);
             return {
               fromStationId,
               toStationId,
               date,
               trips: trips.map((trip) => {
-                const fromRS = trip.route.stations.find((rs: any) => rs.stationId === fromStationId);
-                const toRS = trip.route.stations.find((rs: any) => rs.stationId === toStationId);
+                const fromRS = trip.route.stations.find((rs: any) => rs.station?.name === fromStationReq?.name);
+                const toRS = trip.route.stations.find((rs: any) => rs.station?.name === toStationReq?.name);
                 const totalSeats = trip.train.coaches.reduce(
                   (sum: number, coach: any) => sum + (coach._count?.seats ?? 0), 0,
                 );
@@ -102,8 +105,8 @@ Trả lời súc tích bằng tiếng Việt. Không dùng markdown (**, *, #).`
                   departureTime: trip.departureTime,
                   fromStation: fromRS?.station?.name ?? '',
                   toStation: toRS?.station?.name ?? '',
-                  fromStationId,
-                  toStationId,
+                  fromStationId: fromRS?.stationId ?? fromStationId,
+                  toStationId: toRS?.stationId ?? toStationId,
                   durationFromStart: fromRS?.durationFromStart ?? 0,
                   durationToEnd: toRS?.durationFromStart ?? 0,
                   totalSeats,

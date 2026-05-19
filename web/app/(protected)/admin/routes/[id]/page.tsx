@@ -38,7 +38,7 @@ import { Button } from "@/components/ui/button"
 import apiClient from "@/lib/api-client"
 import { useRoute } from "@/features/routes/hooks/use-route"
 import { useUpdateRoute } from "@/features/routes/hooks/use-route-mutations"
-import { AddStationDialog } from "@/features/routes/components/add-station-dialog"
+import { useAvailableStations } from "@/features/routes/hooks/use-available-stations"
 import { EditRouteDialog } from "@/features/routes/components/edit-route-dialog"
 import { DeleteRouteAlert } from "@/features/routes/components/delete-route-alert"
 import { translateRouteStatus, getRouteStatusColor } from "@/lib/utils/route-status"
@@ -48,7 +48,7 @@ import { RouteMap } from "@/features/routes/components/route-map"
 import { RouteDetailSkeleton } from "@/features/routes/components/route-detail-skeleton"
 import { EditRouteStationDialog } from "@/features/routes/components/edit-route-station-dialog"
 
-function SortableRow({ id, station, onDelete, routeId, onSuccess }: any) {
+function SortableRow({ id, station, arrayIndex, onDelete, routeId, onSuccess }: any) {
     const {
         attributes,
         listeners,
@@ -79,7 +79,7 @@ function SortableRow({ id, station, onDelete, routeId, onSuccess }: any) {
                     <GripVertical className="h-4 w-4" />
                 </Button>
             </TableCell>
-            <TableCell className="font-bold text-zinc-500 tabular-nums">{station.index + 1}</TableCell>
+            <TableCell className="font-bold text-zinc-500 tabular-nums">{arrayIndex + 1}</TableCell>
             <TableCell>
                 <div className="flex flex-col">
                     <span className="font-bold text-zinc-800 dark:text-zinc-200">{station.station?.name || "Unknown"}</span>
@@ -88,7 +88,13 @@ function SortableRow({ id, station, onDelete, routeId, onSuccess }: any) {
             <TableCell className="text-zinc-500 font-medium tabular-nums text-xs">
                 <div>{station.station?.latitude.toFixed(4)}, {station.station?.longitude.toFixed(4)}</div>
             </TableCell>
-            <TableCell className="font-black text-[#802222] tabular-nums">{station.distanceFromStart} <span className="text-[10px] opacity-40">km</span></TableCell>
+            <TableCell className="font-black text-[#802222] tabular-nums">
+                {station.distanceFromStart === -1 || station.distanceFromStart == null ? (
+                    <span className="text-muted-foreground font-normal">-</span>
+                ) : (
+                    <>{station.distanceFromStart} <span className="text-[10px] opacity-40">km</span></>
+                )}
+            </TableCell>
             <TableCell className="pr-6">
                 <div className="flex justify-end gap-1">
                     <EditRouteStationDialog
@@ -124,6 +130,27 @@ export default function RouteDetailPage() {
     
     const updateRoute = useUpdateRoute()
 
+    const { data: availableData } = useAvailableStations({
+        routeId,
+        page: 1,
+        limit: 100,
+    })
+    const availableStations = availableData?.data || []
+
+    const handleAddStationFromMap = (candidate: { id: string; name: string; latitude: number; longitude: number }) => {
+        const nextIndex = items.length;
+        const lastDistance = items.length > 0 ? items[items.length - 1].distanceFromStart : 0;
+        const newItem = {
+            stationId: candidate.id,
+            index: nextIndex,
+            distanceFromStart: -1, // -1 means uncalculated
+            station: candidate
+        };
+        setItems(prev => [...prev, newItem]);
+        setHasChanged(true);
+        toast.success(`Đã thêm ga ${candidate.name} vào lộ trình`);
+    }
+
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -156,14 +183,24 @@ export default function RouteDetailPage() {
                 const oldIndex = items.findIndex((item) => item.stationId === active.id);
                 const newIndex = items.findIndex((item) => item.stationId === over.id);
                 const newItems = arrayMove(items, oldIndex, newIndex);
+                
+                // Distances are no longer valid after reorder
+                const updatedItems = newItems.map(item => ({
+                    ...item,
+                    distanceFromStart: -1
+                }));
+                
                 setHasChanged(true)
-                return newItems;
+                return updatedItems;
             });
         }
     }
 
     const handleRemoveStation = (stationId: string) => {
-        setItems((prev) => prev.filter(s => s.stationId !== stationId))
+        setItems((prev) => prev.filter(s => s.stationId !== stationId).map(item => ({
+            ...item,
+            distanceFromStart: -1 // Distances change when a station is removed
+        })))
         setHasChanged(true)
     }
 
@@ -174,7 +211,7 @@ export default function RouteDetailPage() {
                 routeId,
                 stationId: stationData.id,
                 index: prev.length,
-                distanceFromStart: 0,
+                distanceFromStart: -1,
                 station: stationData
             }
         ])
@@ -190,7 +227,9 @@ export default function RouteDetailPage() {
         const payload = items.map(s => ({
             id: s.stationId
         }))
-        updateRoute.mutate({ id: routeId, data: { stations: payload } }, {
+        const newName = items.length > 1 ? `${items[0].station?.name} - ${items[items.length - 1].station?.name}` : route.name;
+
+        updateRoute.mutate({ id: routeId, data: { stations: payload, name: newName } }, {
             onSuccess: (newRoute) => {
                 setHasChanged(false)
                 // If it created a new version, redirect to it
@@ -199,17 +238,6 @@ export default function RouteDetailPage() {
                 }
             }
         })
-    }
-
-    const handleRecalculatePath = async () => {
-        try {
-            await apiClient.post(`/route/${routeId}/recalculate-path`)
-            toast.success("Tính lại đường đi thành công")
-            queryClient.invalidateQueries({ queryKey: ['route', routeId] })
-        } catch (error: any) {
-            const msg = error?.response?.data?.message || "Tính lại đường đi thất bại"
-            toast.error(msg)
-        }
     }
 
     const handleBack = () => {
@@ -223,6 +251,8 @@ export default function RouteDetailPage() {
     if (isLoading) return <RouteDetailSkeleton />
     if (isError || !route) return <div>Route not found</div>
 
+    const routeName = items.length > 1 ? `${items[0].station?.name} - ${items[items.length - 1].station?.name}` : route.name;
+
     return (
         <div className="flex flex-1 flex-col gap-6 animate-in fade-in duration-500 pb-24">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -232,20 +262,10 @@ export default function RouteDetailPage() {
                     </Button>
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Chi tiết tuyến đường</h1>
-                        <p className="text-sm text-muted-foreground mt-1 font-medium italic opacity-60">{route.name}</p>
+                        <p className="text-sm text-muted-foreground mt-1 font-medium italic opacity-60">{routeName}</p>
                     </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleRecalculatePath}
-                        className="rounded-xl border-gray-100 dark:border-zinc-800 hover:bg-rose-50 font-bold"
-                        title="Tính lại đường đi theo đường ray"
-                    >
-                        <RefreshCw className="h-4 w-4 mr-2" />
-                        Tính lại đường
-                    </Button>
                     <EditRouteDialog route={route} />
                     <DeleteRouteAlert
                         route={route}
@@ -272,15 +292,22 @@ export default function RouteDetailPage() {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-12 flex-1 lg:justify-end">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8 flex-1 lg:justify-end">
                         <div className="space-y-1">
+                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Phiên bản</span>
+                            <Badge variant="outline" className="rounded-lg px-3 py-1 text-[10px] font-black bg-rose-50 dark:bg-rose-950/30 text-[#802222] dark:text-rose-400 border-rose-200/50 dark:border-rose-900/30">
+                                v{route.version || 1}
+                            </Badge>
+                        </div>
+
+                        <div className="space-y-1 sm:border-l sm:border-gray-50 sm:dark:border-zinc-800/50 sm:pl-6 lg:pl-8">
                             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Trạng thái</span>
                             <Badge variant={getRouteStatusColor(route.status)} className="rounded-lg px-3 py-1 text-[10px] font-bold">
                                 {translateRouteStatus(route.status)}
                             </Badge>
                         </div>
                         
-                        <div className="space-y-0.5 sm:border-l sm:border-gray-50 sm:dark:border-zinc-800/50 sm:pl-8 lg:pl-12">
+                        <div className="space-y-0.5 sm:border-l sm:border-gray-50 sm:dark:border-zinc-800/50 sm:pl-6 lg:pl-8">
                             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Thời gian chạy</span>
                             <div className="flex items-baseline gap-1">
                                 <span className="text-2xl font-black text-[#802222] tabular-nums tracking-tighter">
@@ -290,13 +317,21 @@ export default function RouteDetailPage() {
                             </div>
                         </div>
 
-                        <div className="space-y-0.5 sm:border-l sm:border-gray-50 sm:dark:border-zinc-800/50 sm:pl-8 lg:pl-12">
+                        <div className="space-y-0.5 sm:border-l sm:border-gray-50 sm:dark:border-zinc-800/50 sm:pl-6 lg:pl-8">
                             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Cự ly ước tính</span>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-2xl font-black text-[#802222] tabular-nums tracking-tighter">
-                                    {items.length > 0 ? items[items.length - 1].distanceFromStart : 0}
-                                </span>
-                                <span className="text-xs font-bold text-[#802222]/40 tracking-tighter uppercase">km</span>
+                                {items.length > 0 && items[items.length - 1].distanceFromStart !== -1 ? (
+                                    <>
+                                        <span className="text-2xl font-black text-[#802222] tabular-nums tracking-tighter">
+                                            {items[items.length - 1].distanceFromStart}
+                                        </span>
+                                        <span className="text-xs font-bold text-[#802222]/40 tracking-tighter uppercase">km</span>
+                                    </>
+                                ) : (
+                                    <span className="text-2xl font-black text-muted-foreground tabular-nums tracking-tighter">
+                                        -
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -305,11 +340,21 @@ export default function RouteDetailPage() {
 
             {/* Full-width Map Card */}
             <div className="rounded-[2.5rem] overflow-hidden bg-white dark:bg-zinc-950 border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015] min-h-[500px] relative group">
-                <RouteMap stations={items} pathCoordinates={route.pathCoordinates} />
+                <RouteMap 
+                    stations={items} 
+                    pathCoordinates={route.pathCoordinates} 
+                    availableStations={availableStations}
+                    onAddStationClick={handleAddStationFromMap}
+                />
                 <div className="absolute top-6 left-6 z-10">
                     <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-100 dark:border-zinc-800 shadow-sm flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-[#802222] animate-pulse" />
                         <span className="text-[10px] font-bold uppercase tracking-widest text-[#802222]/80">Trực quan lộ trình</span>
+                    </div>
+                </div>
+                <div className="absolute top-6 right-6 z-10 pointer-events-none">
+                    <div className="bg-zinc-900/90 text-white backdrop-blur-md px-4 py-2 rounded-xl shadow-md text-xs font-medium">
+                        💡 <span className="opacity-90">Nhấn vào các mốc ga xám trên bản đồ để thêm vào lộ trình</span>
                     </div>
                 </div>
             </div>
@@ -318,11 +363,7 @@ export default function RouteDetailPage() {
             <div className="space-y-4">
                 <div className="flex items-center justify-between px-2">
                     <h3 className="text-2xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Hành trình chi tiết</h3>
-                    <div className="flex gap-2">
-                        <Button onClick={() => setCreateOpen(true)} size="sm" className="bg-[#802222] hover:bg-rose-900 text-white rounded-xl font-bold px-6">
-                            <Plus className="mr-2 h-4 w-4" /> Thêm trạm dừng
-                        </Button>
-                    </div>
+                    <span className="text-xs text-muted-foreground/60 italic">Kéo thả để sắp xếp lại thứ tự ga dừng</span>
                 </div>
 
                 <div className="rounded-[2.5rem] border-none bg-white dark:bg-zinc-900 overflow-hidden shadow-none">
@@ -348,11 +389,12 @@ export default function RouteDetailPage() {
                                     strategy={verticalListSortingStrategy}
                                 >
                                     {items.length > 0 ? (
-                                        items.map((item: any) => (
+                                        items.map((item: any, index: number) => (
                                             <SortableRow
                                                 key={item.stationId}
                                                 id={item.stationId}
                                                 station={item}
+                                                arrayIndex={index}
                                                 onDelete={handleRemoveStation}
                                                 routeId={routeId}
                                                 onSuccess={handleEditStationLocally}
@@ -361,24 +403,16 @@ export default function RouteDetailPage() {
                                     ) : (
                                         <TableRow>
                                             <TableCell colSpan={6} className="text-center py-20 text-muted-foreground italic">
-                                                Chưa có dữ liệu hành trình.
+                                                Chưa có dữ liệu hành trình. Vui lòng chọn ga từ bản đồ phía trên.
                                             </TableCell>
                                         </TableRow>
                                     )}
                                 </SortableContext>
-                            </TableBody>
+                                </TableBody>
                         </Table>
                     </DndContext>
                 </div>
             </div>
-
-            <AddStationDialog
-                routeId={routeId}
-                currentStationCount={items.length}
-                open={createOpen}
-                onOpenChange={setCreateOpen}
-                onSuccess={handleAddStationLocally}
-            />
 
             {/* Floating Save Changes Bar */}
             {hasChanged && (

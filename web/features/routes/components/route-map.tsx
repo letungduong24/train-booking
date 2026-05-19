@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useMemo } from 'react'
+import { Plus } from 'lucide-react'
 import {
     Map,
     MapMarker,
@@ -30,6 +31,13 @@ interface RouteMapProps {
     selectedFromStationId?: string;
     selectedToStationId?: string;
     onStationClick?: (stationId: string) => void;
+    availableStations?: {
+        id: string;
+        name: string;
+        latitude: number;
+        longitude: number;
+    }[]
+    onAddStationClick?: (station: { id: string; name: string; latitude: number; longitude: number }) => void;
 }
 
 export function RouteMap({
@@ -40,18 +48,15 @@ export function RouteMap({
     selectedFromStationId,
     selectedToStationId,
     onStationClick,
+    availableStations,
+    onAddStationClick,
 }: RouteMapProps) {
     // Filter valid stations first
     const validStations = stations.filter(s => s.station && s.station.longitude && s.station.latitude);
 
-    // If no data, show placeholder
-    if (validStations.length === 0) {
-        return (
-            <div className={`w-full bg-muted/20 flex items-center justify-center rounded-md border ${className || 'h-[400px]'}`}>
-                <p className="text-muted-foreground">Chưa có dữ liệu bản đồ</p>
-            </div>
-        )
-    }
+    // Compute available candidate stations not yet in the route
+    const existingStationIds = new Set(stations.map(s => s.stationId));
+    const candidateStations = (availableStations || []).filter(s => !existingStationIds.has(s.id) && s.latitude && s.longitude);
 
     // Build GeoJSON from pathCoordinates (number[][][]) — each sub-array is a LineString segment
     const pathGeoJson = useMemo(() => {
@@ -97,7 +102,7 @@ export function RouteMap({
     }
 
     // Use first station as center or calculating center of highlighted segment
-    let center = [validStations[0].station!.longitude, validStations[0].station!.latitude] as [number, number];
+    let center = validStations.length > 0 ? [validStations[0].station!.longitude, validStations[0].station!.latitude] as [number, number] : [105.8542, 21.0285] as [number, number];
     if (highlightCoordinates.length > 0) {
         const midIndex = Math.floor(highlightCoordinates.length / 2);
         center = highlightCoordinates[midIndex];
@@ -163,6 +168,23 @@ export function RouteMap({
                         </MapMarker>
                     )
                 })}
+
+                {/* Render candidate network stations available to add */}
+                {candidateStations.map((candidate) => (
+                    <MapMarker
+                        key={`candidate-${candidate.id}`}
+                        longitude={candidate.longitude}
+                        latitude={candidate.latitude}
+                        onClick={() => onAddStationClick?.(candidate)}
+                    >
+                        <MarkerContent>
+                            <div className="size-5 rounded-full border border-white shadow-md bg-zinc-400/80 hover:bg-[#802222] hover:scale-150 flex items-center justify-center text-white transition-all cursor-pointer z-20 group">
+                                <Plus className="w-3 h-3 opacity-80 group-hover:opacity-100" />
+                            </div>
+                        </MarkerContent>
+                        <MarkerTooltip>{candidate.name} (Nhấn để thêm)</MarkerTooltip>
+                    </MapMarker>
+                ))}
             </Map>
         </div>
     )
