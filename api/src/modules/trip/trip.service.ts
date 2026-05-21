@@ -30,9 +30,15 @@ export class TripService {
       throw new BadRequestException('Train không tồn tại');
     }
 
+    // Calculate duration based on train average speed and route distance
+    let durationMinutes = route.durationMinutes;
+    if (route.totalDistanceKm > 0 && train.averageSpeedKmH > 0) {
+      durationMinutes = Math.round((route.totalDistanceKm / train.averageSpeedKmH) * 60);
+    }
+
     // Calculate endTime
     const departureTime = new Date(createTripDto.departureTime);
-    const durationMs = route.durationMinutes * 60 * 1000;
+    const durationMs = durationMinutes * 60 * 1000;
     const turnaroundMs = route.turnaroundMinutes * 60 * 1000;
     const endTime = new Date(
       departureTime.getTime() + durationMs + turnaroundMs,
@@ -294,7 +300,19 @@ export class TripService {
       throw new BadRequestException('Route không tồn tại');
     }
 
-    const durationMs = route.durationMinutes * 60 * 1000;
+    const train = await this.prisma.train.findUnique({
+      where: { id: trainId },
+    });
+    if (!train) {
+      throw new BadRequestException('Train không tồn tại');
+    }
+
+    let durationMinutes = route.durationMinutes;
+    if (route.totalDistanceKm > 0 && train.averageSpeedKmH > 0) {
+      durationMinutes = Math.round((route.totalDistanceKm / train.averageSpeedKmH) * 60);
+    }
+
+    const durationMs = durationMinutes * 60 * 1000;
     const turnaroundMs = route.turnaroundMinutes * 60 * 1000;
     const endTime = new Date(
       departureTime.getTime() + durationMs + turnaroundMs,
@@ -390,20 +408,26 @@ export class TripService {
       return [];
     }
 
-    // Step 3: Find trips on those routes matching the date
+    // Step 3: Find trips on those routes matching a broad range (+/- 5 days to cover intermediate offsets)
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(date);
     endOfDay.setHours(23, 59, 59, 999);
 
-    let trips = await this.prisma.trip.findMany({
+    const startOfRange = new Date(startOfDay);
+    startOfRange.setDate(startOfRange.getDate() - 5);
+
+    const endOfRange = new Date(endOfDay);
+    endOfRange.setDate(endOfRange.getDate() + 4);
+
+    const allTrips = await this.prisma.trip.findMany({
       where: {
         routeId: {
           in: validRouteIds,
         },
         departureTime: {
-          gte: startOfDay,
-          lte: endOfDay,
+          gte: startOfRange,
+          lte: endOfRange,
           gt: new Date(),
         },
         status: TripStatus.SCHEDULED,
@@ -440,60 +464,51 @@ export class TripService {
       },
     });
 
-    // Step 4: If no trips found, search nearby (+/- 3 days)
-    if (trips.length === 0) {
-      const startOfRange = new Date(startOfDay);
-      startOfRange.setDate(startOfRange.getDate() - 3);
+    // Step 4: Map trips with resolved stations and calculate actual local departure at the station
+    const mappedTrips = allTrips.map((trip) => {
+      const resolvedFrom = trip.route.stations.find(
+        (rs) => rs.station.name === fromStation.name,
+      ) || null;
+      const resolvedTo = trip.route.stations.find(
+        (rs) => rs.station.name === toStation.name,
+      ) || null;
 
-      const endOfRange = new Date(endOfDay);
-      endOfRange.setDate(endOfRange.getDate() + 3);
+      const durationFromStart = resolvedFrom?.durationFromStart ?? 0;
+      const actualDeparture = new Date(trip.departureTime.getTime() + durationFromStart * 60 * 1000);
+      
+      // Calculate local YYYY-MM-DD date in GMT+7 (Vietnam)
+      const localDateStr = new Date(actualDeparture.getTime() + 7 * 60 * 60 * 1000)
+        .toISOString()
+        .split('T')[0];
 
-      trips = await this.prisma.trip.findMany({
-        where: {
-          routeId: {
-            in: validRouteIds,
-          },
-          departureTime: {
-            gte: startOfRange,
-            lte: endOfRange,
-            gt: new Date(),
-          },
-          status: TripStatus.SCHEDULED,
-        },
-        include: {
-          route: {
-            include: {
-              stations: {
-                include: {
-                  station: true,
-                },
-                orderBy: {
-                  index: 'asc',
-                },
-              },
-            },
-          },
-          train: {
-            include: {
-              coaches: {
-                include: {
-                  _count: {
-                    select: {
-                      seats: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-        orderBy: {
-          departureTime: 'asc',
-        },
-      });
+      return {
+        ...trip,
+        resolvedFrom,
+        resolvedTo,
+        localDateStr,
+      };
+    });
+
+    // Step 5: Filter exact matches (localDateStr matches query date)
+    const exactTrips = mappedTrips.filter((t) => t.localDateStr === date);
+
+    if (exactTrips.length > 0) {
+      return exactTrips.map(({ localDateStr, ...trip }) => trip);
     }
 
-    return trips;
+    // Step 6: Fallback to nearby matches within +/- 3 days
+    const getDayDiff = (d1: string, d2: string) => {
+      const time1 = new Date(d1).getTime();
+      const time2 = new Date(d2).getTime();
+      return Math.abs(time1 - time2) / (1000 * 60 * 60 * 24);
+    };
+
+    const nearbyTrips = mappedTrips.filter((t) => {
+      const diff = getDayDiff(t.localDateStr, date);
+      return diff <= 3;
+    });
+
+    return nearbyTrips.map(({ localDateStr, ...trip }) => trip);
   }
 
   async remove(id: string) {
@@ -651,5 +666,195 @@ export class TripService {
         return metadata.seatSelections.length;
     }
     return 0;
+  }
+
+  async getLiveLocation(tripId: string, speedup?: number) {
+    const trip = await this.prisma.trip.findUnique({
+      where: { id: tripId },
+      include: {
+        route: {
+          include: {
+            stations: {
+              include: {
+                station: true,
+              },
+              orderBy: {
+                index: 'asc',
+              },
+            },
+          },
+        },
+        train: true,
+      },
+    });
+
+    if (!trip) {
+      throw new NotFoundException(`Trip #${tripId} không tồn tại`);
+    }
+
+    const { status, departureTime, departureDelayMinutes = 0, arrivalDelayMinutes = 0, route, train } = trip;
+
+    // Helper: calculate geodesic bearing between two coordinates
+    const calculateBearing = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const lat1Rad = lat1 * Math.PI / 180;
+      const lat2Rad = lat2 * Math.PI / 180;
+      const y = Math.sin(dLon) * Math.cos(lat2Rad);
+      const x = Math.cos(lat1Rad) * Math.sin(lat2Rad) - Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(dLon);
+      const brng = Math.atan2(y, x) * 180 / Math.PI;
+      return (brng + 360) % 360;
+    };
+
+    // Construct the overall polyline path (from pathCoordinates or fallback to station coordinates)
+    let allPoints: [number, number][] = [];
+    if (route.pathCoordinates && Array.isArray(route.pathCoordinates)) {
+      for (const seg of route.pathCoordinates as any[]) {
+        if (Array.isArray(seg)) {
+          for (const pt of seg) {
+            if (Array.isArray(pt) && pt.length >= 2) {
+              allPoints.push([Number(pt[0]), Number(pt[1])]); // Store as [lng, lat]
+            }
+          }
+        }
+      }
+    }
+
+    // Fallback if pathCoordinates is empty or not loaded
+    if (allPoints.length < 2) {
+      allPoints = route.stations
+        .filter(rs => rs.station)
+        .map(rs => [rs.station.longitude, rs.station.latitude]);
+    }
+
+    // Default response coordinates (first/last stations)
+    const firstStation = route.stations[0]?.station;
+    const lastStation = route.stations[route.stations.length - 1]?.station;
+    
+    const defaultLng = firstStation?.longitude ?? 105.8542;
+    const defaultLat = firstStation?.latitude ?? 21.0285;
+
+    if (allPoints.length < 2) {
+      return {
+        latitude: defaultLat,
+        longitude: defaultLng,
+        bearing: 0,
+        speed: 0,
+        progress: 0,
+        status,
+        departureDelayMinutes,
+        alignmentDelayMinutes: arrivalDelayMinutes,
+      };
+    }
+
+    // Base the duration on the train's actual average speed if possible, otherwise fallback to route.durationMinutes
+    let durationMinutes = route.durationMinutes || 60;
+    if (route.totalDistanceKm > 0 && train?.averageSpeedKmH > 0) {
+      durationMinutes = Math.round((route.totalDistanceKm / train.averageSpeedKmH) * 60);
+    }
+
+    const totalDurationMs = Math.max(
+      60 * 1000,
+      (durationMinutes + arrivalDelayMinutes - departureDelayMinutes) * 60 * 1000
+    );
+    
+    // Trip start time with delay
+    const startMs = new Date(departureTime).getTime() + departureDelayMinutes * 60 * 1000;
+    const endMs = startMs + totalDurationMs;
+
+    // Current time
+    const now = Date.now();
+    const speedupMultiplier = speedup && speedup > 0 ? speedup : 1;
+    const elapsedMs = (now - startMs) * speedupMultiplier;
+    const simulatedNow = startMs + elapsedMs;
+
+    // Determine status and progress
+    let progress = 0;
+    let currentStatus = status;
+
+    if (currentStatus === 'SCHEDULED' && simulatedNow >= startMs) {
+      currentStatus = 'IN_PROGRESS';
+    }
+    if (currentStatus === 'IN_PROGRESS' && simulatedNow >= endMs) {
+      currentStatus = 'COMPLETED';
+      // Automatically update trip status to COMPLETED in database
+      this.prisma.trip.update({
+        where: { id: tripId },
+        data: {
+          status: TripStatus.COMPLETED,
+          departureDelayMinutes: 0,
+          arrivalDelayMinutes: 0,
+        },
+      }).catch((err) => {
+        console.error(`Failed to auto-complete trip ${tripId} in getLiveLocation:`, err);
+      });
+    }
+
+    if (currentStatus === 'SCHEDULED') {
+      progress = 0;
+    } else if (currentStatus === 'COMPLETED') {
+      progress = 1;
+    } else if (currentStatus === 'CANCELLED') {
+      progress = 0;
+    } else {
+      // IN_PROGRESS
+      progress = elapsedMs / totalDurationMs;
+      progress = Math.max(0, Math.min(1, progress));
+    }
+
+    // Calculate position and bearing along the polyline using progress
+    const dists: number[] = [0];
+    for (let i = 1; i < allPoints.length; i++) {
+      const dx = allPoints[i][0] - allPoints[i-1][0];
+      const dy = allPoints[i][1] - allPoints[i-1][1];
+      const s = Math.sqrt(dx * dx + dy * dy);
+      dists.push(dists[i-1] + s);
+    }
+
+    const totalDist = dists[dists.length - 1];
+    let lng = defaultLng;
+    let lat = defaultLat;
+    let bearing = 0;
+
+    if (totalDist > 0) {
+      const targetDist = progress * totalDist;
+      
+      // Find segment index
+      let idx = 0;
+      while (idx < dists.length - 1 && dists[idx + 1] < targetDist) {
+        idx++;
+      }
+
+      const dSeg = dists[idx + 1] - dists[idx];
+      const t = dSeg > 0 ? (targetDist - dists[idx]) / dSeg : 0;
+
+      const p1 = allPoints[idx];
+      const p2 = allPoints[idx + 1];
+
+      lng = p1[0] + t * (p2[0] - p1[0]);
+      lat = p1[1] + t * (p2[1] - p1[1]);
+      
+      // Calculate bearing from current segment points (p1 to p2)
+      bearing = calculateBearing(p1[1], p1[0], p2[1], p2[0]);
+    } else {
+      lng = allPoints[0][0];
+      lat = allPoints[0][1];
+    }
+
+    // Dynamic speed simulation: base average speed +/- some minor fluctuations if running
+    const baseSpeed = train?.averageSpeedKmH ?? 60;
+    const speed = currentStatus === 'IN_PROGRESS' 
+      ? Math.max(10, Math.round(baseSpeed + Math.sin(simulatedNow / 5000) * 5)) 
+      : 0;
+
+    return {
+      latitude: lat,
+      longitude: lng,
+      bearing,
+      speed,
+      progress,
+      status: currentStatus,
+      departureDelayMinutes,
+      arrivalDelayMinutes,
+    };
   }
 }

@@ -621,25 +621,29 @@ export class RouteService {
 
       const newLine = turf.lineString(newCoords);
 
-      // Check against all previous segments EXCEPT the last one's end (which is our start)
       for (let i = 0; i < pathCoordinates.length; i++) {
         const prevCoords = pathCoordinates[i];
         if (prevCoords.length < 2) continue;
-        
-        // For the immediately preceding segment, we only want to ignore the connection point
-        // For older segments, any overlap is a backtrack
-        
-        // We can just sample points along the new line and see if they are too close to the prev line
-        // Skip the first point of the new line, since it connects to the previous segment naturally.
+
         const prevLine = turf.lineString(prevCoords);
-        
-        for (let j = 1; j < newCoords.length - 1; j++) { // skip first and last points of the new line
+        const prevLen = turf.length(prevLine, { units: 'kilometers' });
+        const limit = Math.min(1.5, prevLen * 0.5);
+
+        for (let j = 1; j < newCoords.length - 1; j++) {
           const pt = turf.point(newCoords[j]);
           try {
             const snapped = turf.nearestPointOnLine(prevLine, pt);
-            // If an intermediate point of the new segment is very close (< 100 meters) to an old segment, it's backtracking
-            if ((snapped.properties.dist ?? Infinity) <= 0.1) {
-              return true;
+            const dist = snapped.properties.dist ?? Infinity;
+            if (dist <= 0.1) {
+              if (i === pathCoordinates.length - 1) {
+                const connPt = turf.point(newCoords[0]);
+                const distToConn = turf.distance(snapped, connPt, { units: 'kilometers' });
+                if (distToConn > limit) {
+                  return true;
+                }
+              } else {
+                return true;
+              }
             }
           } catch { }
         }

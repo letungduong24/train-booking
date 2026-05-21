@@ -64,6 +64,15 @@ export class TripController {
     return this.tripService.getTripStats(id);
   }
 
+  @Get(':id/live-location')
+  getLiveLocation(
+    @Param('id') id: string,
+    @Query('speedup') speedup?: string,
+  ) {
+    const speedupVal = speedup ? parseFloat(speedup) : undefined;
+    return this.tripService.getLiveLocation(id, speedupVal);
+  }
+
   @Get(':id')
   findOne(
     @Param('id') id: string,

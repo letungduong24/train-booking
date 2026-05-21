@@ -81,14 +81,20 @@ export class TripCron {
           endTime: true,
           departureDelayMinutes: true,
           arrivalDelayMinutes: true,
+          route: {
+            select: {
+              turnaroundMinutes: true,
+            },
+          },
         },
       });
 
       let completedCount = 0;
       for (const trip of tripsToComplete) {
-        // Calculate actual end time
-        // endTime + departureDelay (vì đã delay khởi hành) + arrivalDelay (delay thêm khi đang chạy)
+        // Calculate actual end time of train journey (excluding turnaround time)
+        // endTime - turnaroundMinutes + departureDelay + arrivalDelay
         const actualEnd = dayjs(trip.endTime)
+          .subtract(trip.route.turnaroundMinutes || 60, 'minute')
           .add(trip.departureDelayMinutes, 'minute')
           .add(trip.arrivalDelayMinutes, 'minute')
           .toDate();

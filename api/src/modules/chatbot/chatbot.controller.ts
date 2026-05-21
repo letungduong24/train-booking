@@ -103,6 +103,7 @@ Trả lời súc tích bằng tiếng Việt. Không dùng markdown (**, *, #).`
                   routeName: trip.route.name,
                   trainCode: trip.train.code,
                   departureTime: trip.departureTime,
+                  endTime: trip.endTime,
                   fromStation: fromRS?.station?.name ?? '',
                   toStation: toRS?.station?.name ?? '',
                   fromStationId: fromRS?.stationId ?? fromStationId,
