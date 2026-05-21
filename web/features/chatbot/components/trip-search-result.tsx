@@ -1,7 +1,7 @@
 "use client";
 
 import { Train } from "lucide-react";
-import { format } from "date-fns";
+import { format, addMinutes } from "date-fns";
 import { vi } from "date-fns/locale";
 import { TripCard, type TripCardData } from "./trip-card";
 
@@ -20,7 +20,7 @@ export function TripSearchResult({ trips, date }: TripSearchResultProps) {
                 <div>
                     <p className="text-sm font-medium">Không tìm thấy chuyến tàu</p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                        Ngày {date} không có chuyến phù hợp.
+                        Ngày {format(new Date(date), "dd/MM/yyyy", { locale: vi })} không có chuyến phù hợp.
                     </p>
                     <p className="text-xs text-muted-foreground">
                         Thử hỏi tôi với ngày khác nhé!
@@ -30,9 +30,14 @@ export function TripSearchResult({ trips, date }: TripSearchResultProps) {
         );
     }
 
-    // Tách chuyến đúng ngày vs chuyến gần nhất
-    const exactTrips = trips.filter(t => t.departureTime.startsWith(date));
-    const nearbyTrips = trips.filter(t => !t.departureTime.startsWith(date));
+    // Tách chuyến đúng ngày vs chuyến gần nhất dựa trên thời gian khởi hành thực tế tại ga đi
+    const getActualLocalDateStr = (trip: TripCardData) => {
+        const departure = addMinutes(new Date(trip.departureTime), trip.durationFromStart);
+        return format(departure, "yyyy-MM-dd");
+    };
+
+    const exactTrips = trips.filter(t => getActualLocalDateStr(t) === date);
+    const nearbyTrips = trips.filter(t => getActualLocalDateStr(t) !== date);
     const hasExact = exactTrips.length > 0;
     const requestedDateLabel = format(new Date(date), "dd/MM/yyyy", { locale: vi });
 

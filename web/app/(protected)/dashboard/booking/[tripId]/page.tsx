@@ -199,7 +199,7 @@ export default function TripDetailPage() {
             </Button>
 
             {/* Trip Info */}
-            <div className="bg-white dark:bg-zinc-900 rounded-[1.5rem] p-5 shadow-lg shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-zinc-800 relative overflow-hidden group mb-6">
+            <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-[2rem] p-6 shadow-xl shadow-rose-900/[0.02] dark:shadow-none border border-gray-100 dark:border-zinc-800 relative overflow-hidden group mb-6">
                 <div className="flex justify-between items-start mb-5 relative z-10">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-[#802222] dark:text-rose-400">
@@ -248,8 +248,9 @@ export default function TripDetailPage() {
                     )}
                 </div>
                 
-                {/* Decorative element */}
-                <div className="absolute -right-16 -top-16 w-48 h-48 bg-rose-50/40 dark:bg-rose-950/5 rounded-full blur-3xl -z-0" />
+                {/* Decorative background gradient glow circles */}
+                <div className="absolute -right-16 -top-16 w-56 h-56 bg-gradient-to-br from-rose-500/20 to-pink-500/0 dark:from-[#802222]/30 dark:to-transparent rounded-full blur-3xl z-0 pointer-events-none" />
+                <div className="absolute -left-16 -bottom-16 w-56 h-56 bg-gradient-to-tr from-rose-500/15 to-pink-500/0 dark:from-[#802222]/20 dark:to-transparent rounded-full blur-3xl z-0 pointer-events-none" />
             </div>
 
             {/* Error Banner for non-SCHEDULED trips */}

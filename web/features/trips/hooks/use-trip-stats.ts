@@ -5,9 +5,12 @@ import { useSocketStore } from '@/lib/store/socket.store';
 
 export interface TripStats {
     revenue: number;
+    actualRevenue: number;
+    expectedRevenue: number;
     ticketsSold: number;
     ticketsPending: number;
     occupancy: number;
+    totalOccupancy: number;
 }
 
 export function useTripStats(tripId: string) {

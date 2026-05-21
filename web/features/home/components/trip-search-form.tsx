@@ -34,9 +34,10 @@ export interface TripSearchFormProps {
     className?: string;
     defaultValues?: Partial<TripSearchInput>;
     onSubmit?: (values: TripSearchInput) => void;
+    layout?: 'horizontal' | 'vertical';
 }
 
-export function TripSearchForm({ className, defaultValues, onSubmit: externalOnSubmit }: TripSearchFormProps) {
+export function TripSearchForm({ className, defaultValues, onSubmit: externalOnSubmit, layout = 'horizontal' }: TripSearchFormProps) {
     const { user } = useAuth();
     const router = useRouter();
     const { data: stationsData } = useStations({ page: 1, limit: 1000 });
@@ -71,9 +72,13 @@ export function TripSearchForm({ className, defaultValues, onSubmit: externalOnS
     };
 
     return (
-        <div className={cn("w-full rounded-[1.5rem] bg-white/95 p-6 shadow-xl backdrop-blur-md dark:bg-zinc-900/95 border border-white/20", className)}>
+        <div className={cn("w-full rounded-[1.5rem] bg-white/95 p-6 shadow-xl backdrop-blur-md dark:bg-zinc-900/95 border border-white/20 flex flex-col", className)}>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                <form onSubmit={form.handleSubmit(onSubmit)} className={cn(
+                    layout === 'vertical'
+                        ? "flex flex-col justify-between flex-1 gap-5"
+                        : "grid grid-cols-1 md:grid-cols-4 gap-6 items-end"
+                )}>
                     <FormField
                         control={form.control}
                         name="fromStationId"
@@ -86,12 +91,12 @@ export function TripSearchForm({ className, defaultValues, onSubmit: externalOnS
                                     <PopoverTrigger asChild>
                                         <FormControl>
                                             <Button
-                                                variant="outline"
+                                                variant="ghost"
                                                 role="combobox"
                                                 aria-expanded={openFrom}
                                                 className={cn(
-                                                    "w-full justify-between h-12 bg-gray-50 dark:bg-zinc-800/50 border-none rounded-2xl text-sm font-medium px-4 hover:bg-gray-100 transition-all",
-                                                    !field.value && "text-muted-foreground"
+                                                    "w-full justify-between h-12 bg-gray-50 dark:bg-zinc-800/50 border-none rounded-2xl text-sm font-semibold px-4 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-zinc-800 dark:hover:text-white transition-all text-left",
+                                                    field.value ? "text-gray-900 dark:text-white" : "text-muted-foreground"
                                                 )}
                                             >
                                                 <span className="truncate">
@@ -153,12 +158,12 @@ export function TripSearchForm({ className, defaultValues, onSubmit: externalOnS
                                     <PopoverTrigger asChild>
                                         <FormControl>
                                             <Button
-                                                variant="outline"
+                                                variant="ghost"
                                                 role="combobox"
                                                 aria-expanded={openTo}
                                                 className={cn(
-                                                    "w-full justify-between h-12 bg-gray-50 dark:bg-zinc-800/50 border-none rounded-2xl text-sm font-medium px-4 hover:bg-gray-100 transition-all",
-                                                    !field.value && "text-muted-foreground"
+                                                    "w-full justify-between h-12 bg-gray-50 dark:bg-zinc-800/50 border-none rounded-2xl text-sm font-semibold px-4 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-zinc-800 dark:hover:text-white transition-all text-left",
+                                                    field.value ? "text-gray-900 dark:text-white" : "text-muted-foreground"
                                                 )}
                                             >
                                                 <span className="truncate">
@@ -220,10 +225,10 @@ export function TripSearchForm({ className, defaultValues, onSubmit: externalOnS
                                     <PopoverTrigger asChild>
                                         <FormControl>
                                             <Button
-                                                variant="outline"
+                                                variant="ghost"
                                                 className={cn(
-                                                    'w-full px-4 text-left font-medium h-12 bg-gray-50 dark:bg-zinc-800/50 border-none rounded-2xl text-sm hover:bg-gray-100 transition-all',
-                                                    !field.value && 'text-muted-foreground'
+                                                    'w-full px-4 text-left font-semibold h-12 bg-gray-50 dark:bg-zinc-800/50 border-none rounded-2xl text-sm hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-zinc-800 dark:hover:text-white transition-all',
+                                                    field.value ? 'text-gray-900 dark:text-white' : 'text-muted-foreground'
                                                 )}
                                             >
                                                 {field.value ? format(new Date(field.value), 'dd/MM/yyyy') : <span>Chọn ngày</span>}

@@ -54,22 +54,22 @@ export function DashboardTransactionItem({ transaction }: DashboardTransactionIt
     const Icon = info.icon;
 
     return (
-        <div className="flex items-center justify-between p-4 rounded-2xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:shadow-xl hover:shadow-gray-200/50 dark:hover:shadow-none hover:border-[#802222]/20 transition-all group cursor-pointer">
-            <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${info.bgColor}`}>
+        <div className="flex items-center justify-between p-4 rounded-2xl border border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:shadow-xl hover:shadow-gray-200/50 dark:hover:shadow-none hover:border-[#802222]/20 transition-all group cursor-pointer gap-3">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-transform shrink-0 group-hover:scale-110 ${info.bgColor}`}>
                     <Icon className={`h-5 w-5 ${info.color}`} />
                 </div>
-                <div>
-                    <div className="flex items-center">
-                        <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">{info.label}</p>
+                <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1">
+                        <p className="font-semibold text-sm text-gray-900 dark:text-gray-100 truncate flex-1">{info.label}</p>
                         {info.statusBadge}
                     </div>
-                    <p className="text-[10px] font-medium text-muted-foreground mt-1">
+                    <p className="text-[10px] font-medium text-muted-foreground mt-1 truncate">
                         {format(new Date(transaction.createdAt), 'HH:mm dd/MM/yyyy', { locale: vi })}
                     </p>
                 </div>
             </div>
-            <div className={`font-semibold text-base tabular-nums tracking-tighter ${transaction.amount > 0 ? 'text-emerald-600' : 'text-[#802222]'}`}>
+            <div className={`font-semibold text-sm sm:text-base tabular-nums tracking-tighter shrink-0 text-right ${transaction.amount > 0 ? 'text-emerald-600' : 'text-[#802222]'}`}>
                 {transaction.amount > 0 ? '+' : ''}
                 {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(transaction.amount)}
             </div>

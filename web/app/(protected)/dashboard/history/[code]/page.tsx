@@ -8,15 +8,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
-import { ArrowLeft, Calendar, Clock, MapPin, Train, CreditCard, User, Ticket, Wifi, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, MapPin, Train, CreditCard, User, Ticket, Wifi, ArrowRight, Gauge, Compass } from 'lucide-react';
 import { format } from 'date-fns';
 import { formatCurrency } from '@/lib/utils';
 import dayjs from 'dayjs';
 import { RouteMap } from '@/features/routes/components/route-map';
 import { BookingTimer } from '@/features/booking/components/booking-timer';
 import { CancelBookingButton } from '@/features/booking/components/cancel-booking-button';
+import { useTripLiveLocation } from '@/features/trips/hooks/use-trips';
 // import { socket } from '@/lib/socket';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function BookingDetailPage() {
     const params = useParams();
@@ -27,6 +28,16 @@ export default function BookingDetailPage() {
     // Socket logic moved to useBooking hook
 
     const { data: booking, isLoading, error } = useBooking(code);
+
+    const tripId = booking?.trip?.id;
+    const isTripInProgress = booking?.trip?.status === 'IN_PROGRESS';
+    const { data: liveLocation } = useTripLiveLocation(tripId || '', isTripInProgress);
+
+    useEffect(() => {
+        if (liveLocation?.status === 'COMPLETED' && booking?.trip?.status === 'IN_PROGRESS') {
+            queryClient.invalidateQueries({ queryKey: ['booking', code] });
+        }
+    }, [liveLocation?.status, booking?.trip?.status, code, queryClient]);
 
     if (isLoading) {
         return (
@@ -60,12 +71,21 @@ export default function BookingDetailPage() {
         toStation = stations.find((s: any) => s.index === tickets[0].toStationIndex);
     }
 
+    const getDynamicDuration = (station: any) => {
+        if (!station) return 0;
+        const speed = trip.train?.averageSpeedKmH;
+        if (speed && speed > 0 && station.distanceFromStart !== undefined) {
+            return Math.round((station.distanceFromStart / speed) * 60);
+        }
+        return station.durationFromStart || 0;
+    };
+
     // Calculate departure and arrival times with delays
-    const scheduledDeparture = dayjs(trip.departureTime).add(fromStation?.durationFromStart || 0, 'minute');
+    const scheduledDeparture = dayjs(trip.departureTime).add(getDynamicDuration(fromStation), 'minute');
     const actualDeparture = scheduledDeparture.add(trip.departureDelayMinutes || 0, 'minute');
     const departureDelay = trip.departureDelayMinutes || 0;
 
-    const scheduledArrival = dayjs(trip.departureTime).add(toStation?.durationFromStart || 0, 'minute');
+    const scheduledArrival = dayjs(trip.departureTime).add(getDynamicDuration(toStation), 'minute');
     const actualArrival = scheduledArrival.add(trip.arrivalDelayMinutes || 0, 'minute');
     const arrivalDelay = trip.arrivalDelayMinutes || 0;
 
@@ -135,6 +155,12 @@ export default function BookingDetailPage() {
                                     Đang chạy
                                 </Badge>
                             )}
+                            {trip.status === 'COMPLETED' && (
+                                <Badge className="bg-gray-100 dark:bg-zinc-800 text-muted-foreground border-none px-3 py-1.5 rounded-full font-medium text-[11px] flex gap-2 items-center">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                                    Đã hoàn thành
+                                </Badge>
+                            )}
                         </div>
 
                         {/* Timing Section */}
@@ -179,25 +205,133 @@ export default function BookingDetailPage() {
 
                     {/* Map Card */}
                     <div className="bg-white dark:bg-zinc-900 rounded-[2rem] p-6 shadow-xl shadow-gray-100 dark:shadow-none border border-gray-100 dark:border-zinc-800 overflow-hidden group">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-[#802222] dark:text-rose-400">
-                                <MapPin className="h-5 w-5" />
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-[#802222] dark:text-rose-400">
+                                    <MapPin className="h-5 w-5" />
+                                </div>
+                                <h3 className="text-sm font-semibold text-[#802222] dark:text-rose-400">
+                                    Bản đồ lộ trình & Theo dõi trực tuyến
+                                </h3>
                             </div>
-                            <h3 className="text-sm font-semibold text-[#802222] dark:text-rose-400">
-                                Bản đồ lộ trình
-                            </h3>
+                            
+                            {isTripInProgress && liveLocation && (
+                                <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/20 px-3 py-1.5 rounded-full text-emerald-600 dark:text-emerald-400 text-xs font-semibold self-start sm:self-auto border border-emerald-100 dark:border-emerald-950/30">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                    </span>
+                                    GPS Live Connect
+                                </div>
+                            )}
                         </div>
-                        <div className="rounded-[1.5rem] overflow-hidden border border-gray-50 dark:border-zinc-800 h-[300px]">
-                            <RouteMap
-                                stations={stations}
-                                className="h-full"
-                                highlightSegment={{
-                                    fromStationId: fromStation?.stationId || '',
-                                    toStationId: toStation?.stationId || ''
-                                }}
-                                pathCoordinates={trip.route.pathCoordinates}
-                            />
-                        </div>
+
+                        {isTripInProgress && liveLocation ? (
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <div className="lg:col-span-2 rounded-[1.5rem] overflow-hidden border border-gray-50 dark:border-zinc-800 h-[350px]">
+                                    <RouteMap
+                                        stations={stations}
+                                        className="h-full"
+                                        highlightSegment={{
+                                            fromStationId: fromStation?.stationId || '',
+                                            toStationId: toStation?.stationId || ''
+                                        }}
+                                        pathCoordinates={trip.route.pathCoordinates}
+                                        trainLocation={liveLocation}
+                                    />
+                                </div>
+                                
+                                <div className="flex flex-col justify-between bg-zinc-50 dark:bg-zinc-950/30 p-5 rounded-[1.5rem] border border-gray-100 dark:border-zinc-800/80">
+                                    <div className="space-y-6">
+                                        <div>
+                                            <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Trạng thái hành trình</h4>
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm font-bold text-gray-900 dark:text-white">Tàu {trip.train.code}</span>
+                                                <span className="text-xs font-medium bg-rose-50 dark:bg-rose-950/30 text-[#802222] dark:text-rose-400 px-2.5 py-1 rounded-full border border-rose-100 dark:border-rose-950/20">
+                                                    Đang di chuyển
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <Separator className="bg-gray-200/60 dark:bg-zinc-800/60" />
+
+                                        {/* Real-time speed and bearing */}
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="bg-white dark:bg-zinc-900 p-3.5 rounded-2xl border border-gray-100 dark:border-zinc-800/50 shadow-sm">
+                                                <div className="flex items-center gap-2 text-muted-foreground mb-1.5">
+                                                    <Gauge className="w-4 h-4 text-[#802222] dark:text-rose-400" />
+                                                    <span className="text-[10px] font-semibold uppercase tracking-wider">Vận tốc</span>
+                                                </div>
+                                                <div className="flex items-baseline gap-1">
+                                                    <span className="text-2xl font-black text-gray-900 dark:text-white leading-none tracking-tight tabular-nums">
+                                                        {liveLocation.speed}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-muted-foreground">km/h</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="bg-white dark:bg-zinc-900 p-3.5 rounded-2xl border border-gray-100 dark:border-zinc-800/50 shadow-sm">
+                                                <div className="flex items-center gap-2 text-muted-foreground mb-1.5">
+                                                    <Compass className="w-4 h-4 text-[#802222] dark:text-rose-400" />
+                                                    <span className="text-[10px] font-semibold uppercase tracking-wider">Hướng đi</span>
+                                                </div>
+                                                <div className="flex items-baseline gap-1">
+                                                    <span className="text-2xl font-black text-gray-900 dark:text-white leading-none tracking-tight tabular-nums">
+                                                        {Math.round(liveLocation.bearing)}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-muted-foreground">°</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Progress Bar & Percentage */}
+                                        <div className="space-y-2">
+                                            <div className="flex justify-between text-xs font-semibold">
+                                                <span className="text-muted-foreground">Tiến độ</span>
+                                                <span className="text-rose-600 dark:text-rose-400 tabular-nums">
+                                                    {Math.round(liveLocation.progress * 100)}%
+                                                </span>
+                                            </div>
+                                            <div className="w-full h-3 bg-gray-200 dark:bg-zinc-800 rounded-full overflow-hidden p-[2px]">
+                                                <div 
+                                                    className="h-full bg-gradient-to-r from-rose-500 to-rose-600 rounded-full transition-all duration-1000 ease-out" 
+                                                    style={{ width: `${liveLocation.progress * 100}%` }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    {/* Footer delays if any */}
+                                    <div className="pt-4 border-t border-dashed border-gray-200 dark:border-zinc-800 mt-4 text-[11px] text-muted-foreground space-y-1.5">
+                                        <div className="flex justify-between">
+                                            <span>Trễ ga xuất phát:</span>
+                                            <span className={`font-semibold ${liveLocation.departureDelayMinutes > 0 ? 'text-red-500' : 'text-gray-500 dark:text-zinc-400'}`}>
+                                                {liveLocation.departureDelayMinutes} phút
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>Trễ ga đích (dự kiến):</span>
+                                            <span className={`font-semibold ${liveLocation.arrivalDelayMinutes > 0 ? 'text-red-500' : 'text-gray-500 dark:text-zinc-400'}`}>
+                                                {liveLocation.arrivalDelayMinutes} phút
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="rounded-[1.5rem] overflow-hidden border border-gray-50 dark:border-zinc-800 h-[300px]">
+                                <RouteMap
+                                    stations={stations}
+                                    className="h-full"
+                                    highlightSegment={{
+                                        fromStationId: fromStation?.stationId || '',
+                                        toStationId: toStation?.stationId || ''
+                                    }}
+                                    pathCoordinates={trip.route.pathCoordinates}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
 

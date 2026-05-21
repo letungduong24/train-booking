@@ -218,6 +218,34 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     mapInstance.setStyle(newStyle, { diff: true });
   }, [mapInstance, resolvedTheme, mapStyles, clearStyleTimeout]);
 
+  // Update center when prop changes dynamically (e.g. for following train)
+  const centerProp = props.center;
+  useEffect(() => {
+    if (!mapInstance || !centerProp) return;
+    const currentCenter = mapInstance.getCenter();
+    const [newLng, newLat] = Array.isArray(centerProp)
+      ? [centerProp[0], centerProp[1]]
+      : 'lng' in centerProp
+        ? [centerProp.lng, centerProp.lat]
+        : [(centerProp as any).lon, centerProp.lat];
+
+    if (
+      Math.abs(currentCenter.lng - newLng) > 0.0001 ||
+      Math.abs(currentCenter.lat - newLat) > 0.0001
+    ) {
+      mapInstance.setCenter([newLng, newLat]);
+    }
+  }, [mapInstance, centerProp]);
+
+  // Update zoom when prop changes dynamically
+  const zoomProp = props.zoom;
+  useEffect(() => {
+    if (!mapInstance || zoomProp === undefined) return;
+    if (mapInstance.getZoom() !== zoomProp) {
+      mapInstance.setZoom(zoomProp);
+    }
+  }, [mapInstance, zoomProp]);
+
   const contextValue = useMemo(
     () => ({
       map: mapInstance,

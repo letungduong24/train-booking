@@ -15,9 +15,28 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
         ? addMinutes(new Date(trip.departureTime), trip.departureDelayMinutes)
         : new Date(trip.departureTime);
 
-    const effectiveEndTime = trip.arrivalDelayMinutes
-        ? addMinutes(new Date(trip.endTime), trip.arrivalDelayMinutes)
-        : new Date(trip.endTime);
+    // Tính toán thời gian cập bến thực sự của ga cuối (không gồm turnaround)
+    const stations = [...(trip.route?.stations || [])].sort((a, b) => a.index - b.index);
+    const lastStation = stations[stations.length - 1];
+    
+    const speed = trip.train?.averageSpeedKmH;
+    let durationMinutes = 0;
+    if (lastStation) {
+        if (speed && speed > 0 && lastStation.distanceFromStart !== undefined) {
+            durationMinutes = Math.round((lastStation.distanceFromStart / speed) * 60);
+        } else {
+            durationMinutes = lastStation.durationFromStart || 0;
+        }
+    }
+
+    const scheduledArrival = addMinutes(new Date(trip.departureTime), durationMinutes);
+    const actualArrival = trip.arrivalDelayMinutes
+        ? addMinutes(scheduledArrival, trip.arrivalDelayMinutes)
+        : scheduledArrival;
+
+    // Thời gian giải phóng tàu sau khi nghỉ quay đầu (bằng thời gian cập bến thực tế + turnaroundMinutes)
+    const turnaroundMinutes = trip.route?.turnaroundMinutes ?? 60;
+    const effectiveEndTimeWithTurnaround = addMinutes(actualArrival, turnaroundMinutes);
 
     return (
         <div className="space-y-4">
@@ -77,20 +96,28 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                     </div>
                     <div className="flex flex-col gap-0.5">
                         <span className="text-[10px] uppercase tracking-widest opacity-40 font-bold">Dự kiến đến</span>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                             {trip.arrivalDelayMinutes ? (
                                 <>
                                     <span className="line-through opacity-30 text-xs">
-                                        {format(new Date(trip.endTime), 'HH:mm dd/MM/yyyy')}
+                                        {format(scheduledArrival, 'HH:mm dd/MM/yyyy')}
                                     </span>
                                     <span className="text-lg font-bold text-rose-600">
-                                        {format(effectiveEndTime, 'HH:mm dd/MM/yyyy')}
+                                        {format(actualArrival, 'HH:mm dd/MM/yyyy')}
                                     </span>
                                 </>
                             ) : (
-                                <span className="text-lg font-bold text-zinc-800 dark:text-zinc-200">{format(new Date(trip.endTime), 'HH:mm dd/MM/yyyy')}</span>
+                                <span className="text-lg font-bold text-zinc-800 dark:text-zinc-200">
+                                    {format(actualArrival, 'HH:mm dd/MM/yyyy')}
+                                </span>
                             )}
+                            <Badge variant="secondary" className="text-[9px] py-0.5 px-2 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/20 whitespace-nowrap">
+                                +{turnaroundMinutes}m nghỉ quay đầu
+                            </Badge>
                         </div>
+                        <span className="text-[10px] text-muted-foreground/60 font-medium">
+                            Giải phóng tàu: {format(effectiveEndTimeWithTurnaround, 'HH:mm dd/MM/yyyy')}
+                        </span>
                     </div>
                 </div>
                 

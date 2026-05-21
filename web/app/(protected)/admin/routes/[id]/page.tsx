@@ -137,6 +137,14 @@ export default function RouteDetailPage() {
     })
     const availableStations = availableData?.data || []
 
+    const actualAvailableStations = React.useMemo(() => {
+        const localItemsIds = new Set(items.map(item => item.stationId));
+        const locallyRemovedStations = (route?.stations || [])
+            .filter((rs: any) => rs.station && !localItemsIds.has(rs.stationId))
+            .map((rs: any) => rs.station);
+        return [...availableStations, ...locallyRemovedStations];
+    }, [availableStations, items, route?.stations]);
+
     const handleAddStationFromMap = (candidate: { id: string; name: string; latitude: number; longitude: number }) => {
         const nextIndex = items.length;
         const lastDistance = items.length > 0 ? items[items.length - 1].distanceFromStart : 0;
@@ -224,6 +232,7 @@ export default function RouteDetailPage() {
     }
 
     const handleSaveChanges = () => {
+        if (!route) return;
         const payload = items.map(s => ({
             id: s.stationId
         }))
@@ -343,7 +352,7 @@ export default function RouteDetailPage() {
                 <RouteMap 
                     stations={items} 
                     pathCoordinates={route.pathCoordinates} 
-                    availableStations={availableStations}
+                    availableStations={actualAvailableStations}
                     onAddStationClick={handleAddStationFromMap}
                 />
                 <div className="absolute top-6 left-6 z-10">

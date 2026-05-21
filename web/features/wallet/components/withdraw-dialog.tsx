@@ -17,6 +17,7 @@ const withdrawSchema = z.object({
     bankName: z.string().min(1, "Vui lòng nhập tên ngân hàng"),
     bankAccount: z.string().min(1, "Vui lòng nhập số tài khoản"),
     accountName: z.string().min(1, "Vui lòng nhập tên chủ tài khoản").toUpperCase(),
+    pin: z.string().length(6, "Mã PIN phải gồm 6 chữ số").regex(/^\d+$/, "Mã PIN chỉ chứa chữ số"),
 })
 
 interface WithdrawDialogProps {
@@ -35,6 +36,7 @@ export function WithdrawDialog({ open, onOpenChange, maxAmount }: WithdrawDialog
             bankName: "",
             bankAccount: "",
             accountName: "",
+            pin: "",
         },
     })
 
@@ -120,6 +122,26 @@ export function WithdrawDialog({ open, onOpenChange, maxAmount }: WithdrawDialog
                                 )}
                             />
                         </div>
+
+                        <FormField
+                            control={form.control}
+                            name="pin"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Mã PIN bảo mật (6 số)</FormLabel>
+                                    <FormControl>
+                                        <Input 
+                                            type="password" 
+                                            maxLength={6} 
+                                            placeholder="------" 
+                                            className="text-center text-xl tracking-[0.5em] font-mono" 
+                                            {...field} 
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
                         <DialogFooter className="mt-4">
                             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

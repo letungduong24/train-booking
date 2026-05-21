@@ -469,7 +469,7 @@ export function DataTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm" className="h-10 rounded-2xl bg-[#802222] text-white hover:bg-rose-900 border-none shadow-lg shadow-rose-900/20 transition-all duration-300 hover:scale-[1.02] active:scale-95 group">
+          <Button variant="outline" size="sm" className="h-10 rounded-2xl bg-[#802222] text-white hover:bg-rose-900 hover:text-white border-none shadow-lg shadow-rose-900/20 transition-all duration-300 hover:scale-[1.02] active:scale-95 group">
             <IconPlus className="size-4" />
             <span className="hidden lg:inline font-bold text-xs">Thêm mục</span>
           </Button>

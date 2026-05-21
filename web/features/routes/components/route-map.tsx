@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useMemo } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, Train } from 'lucide-react'
 import {
     Map,
     MapMarker,
@@ -38,6 +38,14 @@ interface RouteMapProps {
         longitude: number;
     }[]
     onAddStationClick?: (station: { id: string; name: string; latitude: number; longitude: number }) => void;
+    trainLocation?: {
+        latitude: number;
+        longitude: number;
+        bearing: number;
+        speed: number;
+        progress: number;
+        status: string;
+    } | null;
 }
 
 export function RouteMap({
@@ -50,6 +58,7 @@ export function RouteMap({
     onStationClick,
     availableStations,
     onAddStationClick,
+    trainLocation,
 }: RouteMapProps) {
     // Filter valid stations first
     const validStations = stations.filter(s => s.station && s.station.longitude && s.station.latitude);
@@ -103,7 +112,9 @@ export function RouteMap({
 
     // Use first station as center or calculating center of highlighted segment
     let center = validStations.length > 0 ? [validStations[0].station!.longitude, validStations[0].station!.latitude] as [number, number] : [105.8542, 21.0285] as [number, number];
-    if (highlightCoordinates.length > 0) {
+    if (trainLocation) {
+        center = [trainLocation.longitude, trainLocation.latitude];
+    } else if (highlightCoordinates.length > 0) {
         const midIndex = Math.floor(highlightCoordinates.length / 2);
         center = highlightCoordinates[midIndex];
     }
@@ -112,7 +123,7 @@ export function RouteMap({
         <div className={`w-full rounded-md border overflow-hidden ${className || 'h-[500px]'}`}>
             <Map
                 center={center}
-                zoom={highlightCoordinates.length > 0 ? 9 : 8}
+                zoom={trainLocation ? 10 : (highlightCoordinates.length > 0 ? 9 : 8)}
             >
                 {/* Route path — follows railway tracks if pathCoordinates available */}
                 {pathGeoJson ? (
@@ -168,6 +179,36 @@ export function RouteMap({
                         </MapMarker>
                     )
                 })}
+
+                {/* Render simulated train live location */}
+                {trainLocation && (
+                    <MapMarker
+                        key="train-live-marker"
+                        longitude={trainLocation.longitude}
+                        latitude={trainLocation.latitude}
+                        rotation={trainLocation.bearing}
+                        rotationAlignment="map"
+                    >
+                        <MarkerContent className="z-30">
+                            <div className="relative flex items-center justify-center size-10">
+                                {/* Directional arrow pointing UP (North) at the top of marker */}
+                                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[8px] border-b-rose-500 z-10 filter drop-shadow-md" />
+                                
+                                {/* Pulsing radar rings */}
+                                <div className="absolute inset-0 rounded-full bg-rose-500/35 animate-ping" />
+                                <div className="absolute size-8 rounded-full border border-rose-500/40" />
+
+                                {/* Train center badge */}
+                                <div className="relative size-8 rounded-full bg-rose-700 hover:bg-rose-600 border-2 border-white shadow-xl flex items-center justify-center text-white transition-all">
+                                    <Train className="w-4 h-4 text-white" />
+                                </div>
+                            </div>
+                        </MarkerContent>
+                        <MarkerTooltip>
+                            Tàu đang chạy • {trainLocation.speed} km/h (Tiến độ {Math.round(trainLocation.progress * 100)}%)
+                        </MarkerTooltip>
+                    </MapMarker>
+                )}
 
                 {/* Render candidate network stations available to add */}
                 {candidateStations.map((candidate) => (

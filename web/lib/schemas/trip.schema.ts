@@ -13,6 +13,9 @@ export const tripSchema = z.object({
     route: z.object({
         id: z.string(),
         name: z.string(),
+        durationMinutes: z.number().optional(),
+        turnaroundMinutes: z.number().optional(),
+        totalDistanceKm: z.number().optional(),
         stations: z.array(z.object({
             stationId: z.string(),
             index: z.number(),
@@ -23,6 +26,7 @@ export const tripSchema = z.object({
         id: z.string(),
         code: z.string(),
         name: z.string(),
+        averageSpeedKmH: z.number().optional(),
     }).optional(),
     _count: z.object({
         tickets: z.number(),
@@ -52,6 +56,9 @@ export const tripDetailSchema = tripSchema.extend({
     route: z.object({
         id: z.string(),
         name: z.string(),
+        durationMinutes: z.number().optional(),
+        turnaroundMinutes: z.number().optional(),
+        totalDistanceKm: z.number().optional(),
         stations: z.array(z.object({
             id: z.string(),
             stationId: z.string(),
@@ -74,6 +81,7 @@ export const tripDetailSchema = tripSchema.extend({
         id: z.string(),
         code: z.string(),
         name: z.string(),
+        averageSpeedKmH: z.number().optional(),
         coaches: z.array(z.object({
             id: z.string(),
             name: z.string(),
@@ -112,3 +120,15 @@ export type TripsResponse = {
         totalPages: number;
     }
 }
+
+export interface LiveLocationResponse {
+    latitude: number;
+    longitude: number;
+    bearing: number;
+    speed: number;
+    progress: number;
+    status: string;
+    departureDelayMinutes: number;
+    arrivalDelayMinutes: number;
+}
+

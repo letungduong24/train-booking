@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
-import { Trip, CreateTripInput, UpdateTripInput, TripsResponse, TripFilters } from '@/lib/schemas/trip.schema';
+import { Trip, CreateTripInput, UpdateTripInput, TripsResponse, TripFilters, LiveLocationResponse } from '@/lib/schemas/trip.schema';
 
-export type { Trip, CreateTripInput, UpdateTripInput };
+export type { Trip, CreateTripInput, UpdateTripInput, LiveLocationResponse };
 
 // API functions
 const fetchTrips = async (filters: TripFilters) => {
@@ -97,5 +97,23 @@ export const useDeleteTrip = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['trips'] });
         },
+    });
+};
+
+export const useTripLiveLocation = (id: string, enabled: boolean = false, speedup?: number) => {
+    return useQuery({
+        queryKey: ['trips', id, 'live-location', speedup],
+        queryFn: async () => {
+            const params = new URLSearchParams();
+            if (speedup !== undefined) {
+                params.append('speedup', speedup.toString());
+            }
+            const queryString = params.toString() ? `?${params.toString()}` : '';
+            const response = await apiClient.get<LiveLocationResponse>(`/trip/${id}/live-location${queryString}`);
+            return response.data;
+        },
+        enabled: !!id && enabled,
+        refetchInterval: enabled ? 5000 : false, // Poll every 5 seconds
+        refetchIntervalInBackground: false,
     });
 };

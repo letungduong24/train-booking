@@ -54,10 +54,14 @@ export function WalletDashboard() {
 
         if (depositStatus === 'success') {
             queryClient.invalidateQueries({ queryKey: ['wallet'] })
-            toast.success(`Nạp tiền thành công! +${formatCurrency(amount ? Number(amount) : 0)}`)
+            toast.success(`Nạp tiền thành công! +${formatCurrency(amount ? Number(amount) : 0)}`, {
+                id: "deposit-callback-toast"
+            })
             router.replace('/dashboard/wallet') // Clear params
         } else if (depositStatus === 'failed') {
-            toast.error('Nạp tiền thất bại hoặc bị hủy.')
+            toast.error('Nạp tiền thất bại hoặc bị hủy.', {
+                id: "deposit-callback-toast"
+            })
             router.replace('/dashboard/wallet')
         }
     }, [searchParams, router, queryClient])
@@ -90,7 +94,7 @@ export function WalletDashboard() {
                                 variant="outline"
                                 onClick={() => setShowWithdraw(true)}
                                 disabled={wallet.balance < 10000}
-                                className="bg-rose-950/30 text-white border-white/20 hover:bg-rose-900/50 font-medium text-sm px-5 py-5 rounded-[1.2rem] transition-all hover:scale-105 active:scale-95 disabled:opacity-40"
+                                className="bg-rose-950/30 text-white border-white/20 hover:bg-rose-900/50 hover:text-white font-medium text-sm px-5 py-5 rounded-[1.2rem] transition-all hover:scale-105 active:scale-95 disabled:opacity-40"
                             >
                                 <ArrowUpCircle className="w-4 h-4 mr-2" />
                                 Rút tiền

@@ -9,16 +9,17 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default:
+          "bg-primary text-primary-foreground shadow-md shadow-rose-950/10 hover:bg-primary/95 hover:scale-[1.01] active:scale-95 transition-all duration-200 cursor-pointer",
         destructive:
-          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 cursor-pointer",
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border border-primary/20 text-primary bg-background/50 hover:bg-primary hover:text-primary-foreground dark:text-rose-400 dark:border-rose-900/30 dark:hover:bg-rose-950/50 dark:hover:text-rose-200 transition-all duration-300 hover:scale-[1.01] active:scale-95 cursor-pointer",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 cursor-pointer",
         ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
+          "hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 dark:hover:text-rose-400 transition-all duration-200 hover:scale-[1.01] active:scale-95 cursor-pointer",
+        link: "text-primary dark:text-rose-400 underline-offset-4 hover:underline transition-colors cursor-pointer",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

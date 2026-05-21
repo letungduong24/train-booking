@@ -62,6 +62,7 @@ export const BookingTripSchema = z.object({
     }),
     train: z.object({
         code: z.string(),
+        averageSpeedKmH: z.number().optional(),
     }),
 });
 
