@@ -12,4 +12,9 @@ export class CreateTripDto {
   @IsDateString()
   @IsNotEmpty()
   departureTime: string;
+
+  @IsString()
+  @IsNotEmpty()
+  driverId: string;
 }
+

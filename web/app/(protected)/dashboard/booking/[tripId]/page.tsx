@@ -20,6 +20,8 @@ import { SeatLayoutViewer } from '@/features/booking/components/seat-layout-view
 import { RouteMap } from '@/features/routes/components/route-map';
 import { BedLayoutViewer } from '@/features/booking/components/bed-layout-viewer';
 import { BookingCoachNavigationBar } from '@/features/booking/components/booking-coach-navigation-bar';
+import { useSocketStore } from '@/lib/store/socket.store';
+import { useQueryClient } from '@tanstack/react-query';
 import { BookingSummary } from '@/features/booking/components/booking-summary';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
 import { ChevronUp } from 'lucide-react';
@@ -37,6 +39,34 @@ export default function TripDetailPage() {
     const fromStationId = searchParams.get('from') || '';
     const toStationId = searchParams.get('to') || '';
 
+    const { socket } = useSocketStore();
+    const queryClient = useQueryClient();
+
+    // Listen to real-time seats and issues updates
+    useEffect(() => {
+        if (!socket || !tripId) return;
+
+        function onSeatsBooked(data: { tripId: string, seatIds: string[] }) {
+            if (data.tripId === tripId) {
+                queryClient.invalidateQueries({ queryKey: ['coaches'] });
+            }
+        }
+
+        function onSeatIssueUpdated(data: { tripId: string, seatId: string }) {
+            if (data.tripId === tripId) {
+                queryClient.invalidateQueries({ queryKey: ['coaches'] });
+                toast.info("Trạng thái ghế ngồi vừa cập nhật (sự cố/bảo trì)!");
+            }
+        }
+
+        socket.on("seats.booked", onSeatsBooked);
+        socket.on("seat-issues.updated", onSeatIssueUpdated);
+
+        return () => {
+            socket.off("seats.booked", onSeatsBooked);
+            socket.off("seat-issues.updated", onSeatIssueUpdated);
+        };
+    }, [socket, tripId, queryClient]);
 
     const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
     const [selectedSeats, setSelectedSeats] = useState<Array<{ id: string; name: string; price: number; type: string }>>([]);

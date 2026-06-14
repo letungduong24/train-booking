@@ -97,3 +97,8 @@ export type PassengerGroup = Prisma.PassengerGroupModel
  * 
  */
 export type Ticket = Prisma.TicketModel
+/**
+ * Model SeatIssueReport
+ * 
+ */
+export type SeatIssueReport = Prisma.SeatIssueReportModel

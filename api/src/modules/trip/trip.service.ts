@@ -30,6 +30,16 @@ export class TripService {
       throw new BadRequestException('Train không tồn tại');
     }
 
+    // Validate driver if provided
+    if (createTripDto.driverId) {
+      const driver = await this.prisma.user.findUnique({
+        where: { id: createTripDto.driverId, role: 'DRIVER' },
+      });
+      if (!driver) {
+        throw new BadRequestException('Lái tàu không tồn tại hoặc không hợp lệ');
+      }
+    }
+
     // Calculate duration based on train average speed and route distance
     let durationMinutes = route.durationMinutes;
     if (route.totalDistanceKm > 0 && train.averageSpeedKmH > 0) {
@@ -86,10 +96,19 @@ export class TripService {
         departureTime,
         endTime,
         status: TripStatus.SCHEDULED,
+        ...(createTripDto.driverId && { driverId: createTripDto.driverId }),
       },
       include: {
         route: true,
         train: true,
+        driver: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
       },
     });
   }
@@ -168,6 +187,14 @@ export class TripService {
             },
           },
           train: true,
+          driver: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+            },
+          },
           _count: {
             select: {
               tickets: true,
@@ -220,6 +247,14 @@ export class TripService {
                 order: 'asc',
               },
             },
+          },
+        },
+        driver: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
           },
         },
         _count: {
@@ -278,6 +313,22 @@ export class TripService {
       });
       if (!train) {
         throw new BadRequestException('Train không tồn tại');
+      }
+    }
+
+    // Validate driver if provided
+    let driverIdUpdate: string | null | undefined = undefined;
+    if (updateTripDto.driverId !== undefined) {
+      if (updateTripDto.driverId === null || updateTripDto.driverId === '') {
+        driverIdUpdate = null;
+      } else {
+        const driver = await this.prisma.user.findUnique({
+          where: { id: updateTripDto.driverId, role: 'DRIVER' },
+        });
+        if (!driver) {
+          throw new BadRequestException('Lái tàu không tồn tại hoặc không hợp lệ');
+        }
+        driverIdUpdate = updateTripDto.driverId;
       }
     }
 
@@ -344,11 +395,20 @@ export class TripService {
         ...(updateTripDto.routeId && { routeId: updateTripDto.routeId }),
         ...(updateTripDto.trainId && { trainId: updateTripDto.trainId }),
         ...(updateTripDto.departureTime && { departureTime }),
+        ...(driverIdUpdate !== undefined && { driverId: driverIdUpdate }),
         endTime, // Always update endTime
       },
       include: {
         route: true,
         train: true,
+        driver: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
       },
     });
   }
@@ -856,5 +916,20 @@ export class TripService {
       departureDelayMinutes,
       arrivalDelayMinutes,
     };
+  }
+
+  async getDrivers() {
+    return this.prisma.user.findMany({
+      where: { role: 'DRIVER' },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    });
   }
 }

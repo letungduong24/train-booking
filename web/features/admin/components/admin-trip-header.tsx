@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { TripDetail } from "@/lib/schemas/trip.schema";
 import { format, addMinutes } from "date-fns";
 import { vi } from "date-fns/locale";
-import { Train, MapPin, Calendar, Clock, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Train, MapPin, Calendar, Clock, AlertTriangle, CheckCircle2, User } from "lucide-react";
 import { useTripStats } from "@/features/trips/hooks/use-trip-stats";
 import { TripStatusBadge } from "@/lib/utils/trip-status";
 
@@ -63,7 +63,7 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-[2.5rem] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015] relative overflow-hidden group">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 rounded-[2.5rem] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015] relative overflow-hidden group">
                 <div className="flex items-center gap-4 relative z-10">
                     <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/30 text-[#802222] dark:text-rose-400 flex items-center justify-center border border-rose-100/50 dark:border-rose-900/20">
                         <Calendar className="w-6 h-6 opacity-70" />
@@ -118,6 +118,34 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                         <span className="text-[10px] text-muted-foreground/60 font-medium">
                             Giải phóng tàu: {format(effectiveEndTimeWithTurnaround, 'HH:mm dd/MM/yyyy')}
                         </span>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-4 relative z-10">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-100/50 dark:border-amber-900/20">
+                        <User className="w-6 h-6 opacity-70" />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                        <span className="text-[10px] uppercase tracking-widest opacity-40 font-bold">Lái tàu phụ trách</span>
+                        {trip.driver ? (
+                            <>
+                                <span className="text-lg font-bold text-zinc-800 dark:text-zinc-200">
+                                    {trip.driver.name || "Lái tàu"}
+                                </span>
+                                <span className="text-[10px] text-muted-foreground/60 font-medium whitespace-nowrap overflow-hidden text-overflow-ellipsis">
+                                    {trip.driver.email}
+                                </span>
+                                {trip.driver.phone && (
+                                    <span className="text-[10px] text-muted-foreground/50 font-medium">
+                                        SĐT: {trip.driver.phone}
+                                    </span>
+                                )}
+                            </>
+                        ) : (
+                            <span className="text-sm font-semibold text-muted-foreground/50 opacity-60 italic">
+                                Chưa phân công
+                            </span>
+                        )}
                     </div>
                 </div>
                 

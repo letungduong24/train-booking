@@ -1,4 +1,4 @@
-# Biểu Đồ Tuần Tự (Sequence Diagrams) - 18 Use Cases
+# Biểu Đồ Tuần Tự (Sequence Diagrams) - 20 Use Cases
 
 Tài liệu này cung cấp biểu đồ tuần tự theo chuẩn **Best Practice** cho 18 Use Cases. Các biểu đồ tập trung vào luồng giao tiếp cốt lõi (Happy Path) giữa các service và các rẽ nhánh nghiệp vụ quan trọng nhất, lược bỏ các logic validation nội bộ để đảm bảo tính dễ đọc khi đưa vào báo cáo.
 
@@ -273,7 +273,7 @@ sequenceDiagram
     FE-->>Admin: Thực hiện thành công
 ```
 
-### UC-13: Xử lý ghế hỏng
+### UC-13: Quản lý trạng thái ghế
 ```mermaid
 sequenceDiagram
     actor Admin as Quản Trị Viên
@@ -281,14 +281,72 @@ sequenceDiagram
     participant API as Backend
     participant DB as Database
     participant Email as Email Service
-    
-    Admin->>FE: Bấm Xử lý ghế hỏng
-    FE->>API: POST /admin/seat-issues/{id}/resolve
-    API->>DB: Vô hiệu hóa ghế (DISABLED)
-    API->>DB: Lấy danh sách vé đã đặt vào ghế này
-    API->>Email: Gửi thông báo sự cố & Link tự đổi ghế (UC-04)
-    API-->>FE: 200 OK
-    FE-->>Admin: Xử lý thành công
+    actor Customer as Khách Hàng
+    actor Driver as Lái Tàu
+
+    alt Luồng cơ bản: Admin chủ động cập nhật trạng thái ghế
+        Admin->>FE: Chọn Ghế trên Sơ đồ & Chọn trạng thái mới (ACTIVE/DISABLED/MAINTENANCE)
+        FE->>API: PATCH /seats/{id} (updateSeatDto)
+        API->>DB: Cập nhật trạng thái ghế trong CSDL
+        API-->>FE: 200 OK
+        FE-->>Admin: Cập nhật thành công & Đổi màu sắc sơ đồ ghế
+        
+    else Luồng thay thế: Tiếp nhận & Xử lý báo cáo sự cố từ Lái tàu
+        Admin->>FE: Xem chi tiết sự cố & Chọn quyết định
+        
+        alt Nhánh 1: Admin chọn "Từ chối" (Reject)
+            Admin->>FE: Nhập lý do từ chối & Xác nhận
+            FE->>API: PATCH /admin/seat-issues/{id}/reject (reason)
+            API->>DB: Cập nhật báo cáo thành REJECTED & Lưu lý do từ chối
+            API->>DB: Gửi thông báo phản hồi lại cho Lái tàu
+            API-->>FE: 200 OK
+            FE-->>Admin: Từ chối báo cáo sự cố thành công
+            
+        else Nhánh 2: Admin chọn "Xác nhận sự cố" (Confirm)
+            Admin->>FE: Chọn "Xác nhận"
+            FE->>API: PATCH /admin/seat-issues/{id}/confirm
+            API->>DB: Cập nhật trạng thái Ghế thành DISABLED
+            API->>DB: Quét vé (Ticket) trạng thái PAID bị ảnh hưởng bởi ghế hỏng
+            
+            alt Có vé bị ảnh hưởng
+                API->>API: Quét tìm vị trí ghế trống thay thế tương đương
+                
+                alt Tìm được ghế trống thay thế
+                    API->>DB: Tạo Token đổi ghế (24 giờ) và lưu ghế đề xuất
+                    API->>DB: Cập nhật trạng thái sự cố: WAITING_CUSTOMER_CONFIRMATION
+                    API->>Email: Gửi email đổi ghế riêng kèm link /confirm-seat-replacement?token=... & đề xuất vị trí
+                    API-->>FE: 200 OK (Chờ khách xác nhận)
+                    FE-->>Admin: Đang chờ hành khách chọn ghế thay thế
+                    
+                    Customer->>FE: Bấm Link đổi ghế & chọn vị trí mới (UC-04)
+                    FE->>API: POST /tickets/confirm-replacement
+                    API->>DB: Cập nhật Ticket sang ghế mới, giải phóng ghế cũ
+                    API->>DB: Cập nhật trạng thái sự cố: RESOLVED
+                    API->>Email: Gửi email xác nhận đổi ghế thành công
+                    API-->>FE: 200 OK
+
+                    Customer->>FE: Không ưng ý ghế đề xuất
+                    FE->>API: POST /tickets/reject-replacement
+                    API->>DB: Hủy Booking bị ảnh hưởng, hoàn tiền về Ví
+                    API->>DB: Cập nhật trạng thái sự cố: RESOLVED
+                    API->>Email: Gửi email hoàn tiền
+                    
+                else Không tìm được ghế trống thay thế
+                    API->>DB: Tự động hủy Booking bị ảnh hưởng
+                    API->>DB: Hoàn tiền 100% về Ví điện tử nội bộ của hành khách
+                    API->>DB: Cập nhật trạng thái sự cố: RESOLVED
+                    API->>Email: Gửi email xin lỗi, báo hủy vé và chi tiết hoàn tiền
+                    API-->>FE: 200 OK
+                    FE-->>Admin: Sự cố đã giải quyết bằng hoàn tiền tự động
+                end
+                
+            else Không có vé bị ảnh hưởng
+                API->>DB: Cập nhật trạng thái sự cố: RESOLVED
+                API-->>FE: 200 OK
+                FE-->>Admin: Xác nhận sự cố thành công (Không có vé bị ảnh hưởng)
+            end
+        end
+    end
 ```
 
 ### UC-14: Quản lý tàu
@@ -299,15 +357,90 @@ sequenceDiagram
     participant API as Backend
     participant DB as Database
     
-    Admin->>FE: Tạo/Cập nhật Chuyến tàu
-    FE->>API: POST/PUT /admin/trips
-    API->>DB: Kiểm tra trùng lặp lịch trình (Conflict)
-    alt Hợp lệ
-        API->>DB: Lưu Chuyến tàu
-        API-->>FE: 200/201 Success
+    %% Tạo Tàu
+    Admin->>FE: Thêm Tàu mới (Mã tàu, Tên, Vận tốc)
+    FE->>API: POST /admin/trains
+    API->>DB: Kiểm tra Mã tàu trùng lặp
+    alt Không trùng lặp
+        API->>DB: Lưu thực thể Train mới
+        API-->>FE: 201 Created
     else Trùng lặp
-        API-->>FE: 409 Conflict
+        API-->>FE: 409 Conflict (Mã tàu đã tồn tại)
     end
+    
+    %% Thêm Toa và sinh ghế tự động
+    Admin->>FE: Thêm Toa xe (Mã toa, Tên, Thứ tự, Mẫu toa template)
+    FE->>API: POST /admin/trains/{trainId}/coaches
+    API->>DB: Lấy cấu hình CoachTemplate (hàng, cột, tầng)
+    API->>DB: Tạo thực thể Coach mới
+    API->>API: Tính toán tự động số hàng, số cột, số tầng từ template
+    API->>DB: Tạo hàng loạt thực thể Seat tương ứng
+    API-->>FE: 201 Created (Thêm toa và khởi tạo ghế thành công)
+```
+
+### UC-19: Quản lý chuyến tàu
+```mermaid
+sequenceDiagram
+    actor Admin as Quản Trị Viên
+    participant FE as Admin Portal
+    participant API as Backend
+    participant DB as Database
+    participant Email as Email Service
+    participant Map as Bản Đồ GIS
+    
+    %% Lập lịch chuyến tàu
+    Admin->>FE: Lập lịch chuyến tàu mới (Chọn Tàu, Tuyến, Thời gian)
+    FE->>API: POST /admin/trips
+    API->>DB: Kiểm tra xung đột lịch trình của đầu tàu vật lý
+    alt Hợp lệ (Không trùng lịch)
+        API->>DB: Lưu thực thể Trip (SCHEDULED)
+        API-->>FE: 201 Created
+    else Trùng lịch
+        API-->>FE: 409 Conflict (Trùng lịch chạy đầu tàu)
+    end
+    
+    %% Cập nhật delay chuyến tàu
+    Admin->>FE: Cập nhật delay chuyến tàu (Số phút trễ ga đi/đến)
+    FE->>API: PATCH /admin/trips/{id}/delay
+    API->>DB: Cập nhật departureDelayMinutes / arrivalDelayMinutes
+    API->>DB: Quét các vé Ticket trạng thái PAID bị ảnh hưởng
+    API->>Email: Gửi email cảnh báo trễ giờ khởi hành/cập bến mới
+    API-->>FE: 200 OK (Đã cập nhật delay & gửi email)
+    
+    %% Giám sát GPS thời gian thực
+    Admin->>FE: Truy cập menu "Giám sát bản đồ chạy tàu"
+    FE->>API: GET /trips/live-location (dành cho các chuyến IN_PROGRESS)
+    API->>DB: Lấy thông tin ga đỗ, khoảng cách & delay từ DB
+    API->>API: Tính toán tỉ lệ quãng đường thực tế & nội suy vị trí tuyến tính trên ray GeoJSON
+    API-->>FE: Trả về tọa độ GPS (Vĩ độ, Kinh độ)
+    FE->>Map: Cập nhật vị trí và vẽ icon tàu trên bản đồ MapLibre
+```
+
+### UC-20: Quản lý cơ sở hạ tầng
+```mermaid
+sequenceDiagram
+    actor Admin as Quản Trị Viên
+    participant FE as Admin Portal
+    participant API as Backend
+    participant DB as Database
+    participant Map as Bản Đồ GIS
+    
+    %% Đồng bộ GeoJSON
+    Admin->>FE: Tải lên file bản đồ GeoJSON (mapData)
+    FE->>API: POST /geojson/sync (Multipart form data: mapData)
+    API->>API: Tạo phiên bản mạng lưới mới (Network v{X})
+    API->>DB: Lưu thực thể Network mới
+    API->>API: Trích xuất các trạm ga (Point features) & sinh Code tự động
+    API->>DB: Lưu hàng loạt Station vào DB (linked to Network)
+    API->>API: Trích xuất và gộp các đường ray (LineString/MultiLineString)
+    API->>DB: Lưu hàng loạt RailwayLine vào DB (linked to Network)
+    API-->>FE: 201 Created (Đồng bộ thành công)
+    
+    %% Hiển thị trên bản đồ GIS
+    FE->>API: GET /geojson/network?networkId={id}
+    API->>DB: Truy vấn Stations & RailwayLines theo Network ID
+    API-->>FE: Trả về danh sách Ga dừng & Tọa độ vector đường ray
+    FE->>Map: Render trực quan và vẽ nét đường ray uốn lượn lên bản đồ GIS
 ```
 
 ---
@@ -370,9 +503,15 @@ sequenceDiagram
     
     Driver->>FE: Báo sự cố ghế (Kèm ảnh chụp)
     FE->>API: POST /driver/seat-issues
-    API->>DB: Lưu Yêu cầu (PENDING)
-    API-->>FE: 201 Created
-    FE-->>Driver: Báo cáo đã gửi cho Admin xử lý
+    API->>DB: Kiểm tra driver được phân công, status SCHEDULED/IN_PROGRESS và now <= endTime
+    alt Chuyến còn hợp lệ
+        API->>DB: Lưu Yêu cầu (PENDING)
+        API-->>FE: 201 Created
+        FE-->>Driver: Báo cáo đã gửi cho Admin xử lý
+    else Chuyến đã kết thúc hoặc không hoạt động
+        API-->>FE: 400 Bad Request
+        FE-->>Driver: Khóa thao tác báo cáo ghế hỏng
+    end
 ```
 
 ---

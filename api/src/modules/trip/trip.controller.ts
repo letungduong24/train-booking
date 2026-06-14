@@ -73,6 +73,11 @@ export class TripController {
     return this.tripService.getLiveLocation(id, speedupVal);
   }
 
+  @Get('drivers')
+  getDrivers() {
+    return this.tripService.getDrivers();
+  }
+
   @Get(':id')
   findOne(
     @Param('id') id: string,

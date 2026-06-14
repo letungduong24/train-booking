@@ -85,7 +85,8 @@ export type CoachLayout = (typeof CoachLayout)[keyof typeof CoachLayout]
 
 export const SeatStatus = {
   AVAILABLE: 'AVAILABLE',
-  DISABLED: 'DISABLED'
+  DISABLED: 'DISABLED',
+  MAINTENANCE: 'MAINTENANCE'
 } as const
 
 export type SeatStatus = (typeof SeatStatus)[keyof typeof SeatStatus]
@@ -109,3 +110,13 @@ export const BookingStatus = {
 } as const
 
 export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus]
+
+
+export const SeatIssueStatus = {
+  PENDING: 'PENDING',
+  WAITING_CUSTOMER_CONFIRMATION: 'WAITING_CUSTOMER_CONFIRMATION',
+  RESOLVED: 'RESOLVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type SeatIssueStatus = (typeof SeatIssueStatus)[keyof typeof SeatIssueStatus]

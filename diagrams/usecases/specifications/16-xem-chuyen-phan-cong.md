@@ -40,7 +40,7 @@ Alternative Flow
 Use Case tiếp tục bước 7
 
 3b. Driver chọn "Lịch sử chuyến"
-3b1. Hệ thống truy vấn danh sách chuyến với: driverId = Driver.id, status COMPLETED hoặc CANCELLED
+3b1. Hệ thống truy vấn danh sách chuyến với: driverId = Driver.id, status COMPLETED hoặc CANCELLED; đồng thời đưa các chuyến đã quá endTime vào nhóm lịch sử dù cron chưa kịp cập nhật status
 3b2. Hệ thống hiển thị danh sách chuyến với thêm cột: Kết quả (Hoàn thành/Đã hủy)
 3b3. Hệ thống phân trang 20 chuyến/trang
 Use Case tiếp tục bước 7
@@ -57,7 +57,8 @@ Use Case dừng lại
      - Thông tin tàu: Mã tàu, Số toa, Tổng số ghế
      - Số lượng hành khách: Tổng số vé đã bán, Tỷ lệ lấp đầy
      - Sơ đồ toa tàu: Hiển thị các toa và số ghế đã đặt/trống
-6a2. Hệ thống hiển thị các nút: "Báo cáo delay", "Báo cáo ghế hỏng", "Hủy chuyến khẩn cấp" (nếu status SCHEDULED hoặc IN_PROGRESS)
+6a2. Hệ thống hiển thị các nút: "Báo cáo delay", "Báo cáo ghế hỏng", "Hủy chuyến khẩn cấp" nếu status SCHEDULED hoặc IN_PROGRESS và thời điểm hiện tại chưa vượt quá endTime
+6a3. Nếu chuyến đã quá endTime hoặc có status COMPLETED/CANCELLED, hệ thống chỉ cho xem thông tin chuyến và khóa các thao tác báo cáo sự cố
 Use Case tiếp tục bước 7
 
 6b. Driver chọn lệnh "Báo cáo delay" (từ chi tiết chuyến)
@@ -79,9 +80,10 @@ Business Rules
 BR-01: Chỉ hiển thị chuyến được phân công cho Driver đang đăng nhập
 BR-02: Chuyến hôm nay: departureTime trong ngày hôm nay
 BR-03: Chuyến tuần này: departureTime trong tuần này (Thứ 2 - Chủ nhật)
-BR-04: Lịch sử chuyến: status COMPLETED hoặc CANCELLED
+BR-04: Lịch sử chuyến: status COMPLETED hoặc CANCELLED hoặc chuyến đã quá endTime
 BR-05: Hiển thị thông tin delay nếu có
 BR-06: Tỷ lệ lấp đầy = (Số vé đã bán / Tổng số ghế) × 100%
+BR-07: Các thao tác báo cáo sự cố chỉ khả dụng khi chuyến chưa kết thúc theo endTime
 
 Non-Functional Requirement
 NFR-01: Thời gian load danh sách dưới 1 giây

@@ -23,6 +23,7 @@ import { ChatbotModule } from './modules/chatbot/chatbot.module';
 import { GeojsonModule } from './modules/geojson/geojson.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { MailModule } from './modules/mail/mail.module';
+import { SeatIssuesModule } from './modules/seat-issues/seat-issues.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { MailModule } from './modules/mail/mail.module';
     GeojsonModule,
     DashboardModule,
     MailModule,
+    SeatIssuesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -10,6 +10,13 @@ export const tripSchema = z.object({
     status: z.string(),
     departureDelayMinutes: z.number().optional(),
     arrivalDelayMinutes: z.number().optional(),
+    driverId: z.string().nullable().optional(),
+    driver: z.object({
+        id: z.string(),
+        name: z.string().nullable(),
+        email: z.string(),
+        phone: z.string().nullable(),
+    }).nullable().optional(),
     route: z.object({
         id: z.string(),
         name: z.string(),
@@ -40,10 +47,12 @@ export const createTripSchema = z.object({
     routeId: z.string().min(1, "Route không được để trống"),
     trainId: z.string().min(1, "Train không được để trống"),
     departureTime: z.string().min(1, "Thời gian khởi hành không được để trống"),
+    driverId: z.string().min(1, "Lái tàu không được để trống"),
 });
 
 export const updateTripSchema = createTripSchema.partial().extend({
     status: z.string().optional(),
+    driverId: z.string().nullable().optional(),
 });
 
 // Inferred Types

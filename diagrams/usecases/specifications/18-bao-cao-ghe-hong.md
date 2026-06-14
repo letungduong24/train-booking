@@ -20,6 +20,7 @@ Pre-Condition(s)
 Driver đã đăng nhập vào hệ thống với role DRIVER
 Driver được phân công cho chuyến tàu này
 Chuyến tàu có status SCHEDULED hoặc IN_PROGRESS
+Chuyến tàu chưa kết thúc: thời điểm hiện tại phải nhỏ hơn hoặc bằng endTime của chuyến
 Thiết bị của Driver đã được kết nối internet
 
 Post-Condition(s)
@@ -65,6 +66,17 @@ Use Case tiếp tục bước 8
 8a1. Hệ thống đóng form
 Use Case quay lại bước 3
 
+9a. Driver gửi báo cáo cho chuyến đã kết thúc hoặc không còn hoạt động
+9a1. Hệ thống từ chối tạo báo cáo và hiển thị lỗi: "Chuyến tàu đã kết thúc hoặc không còn hoạt động. Không thể báo cáo sự cố ghế."
+9a2. Hệ thống không tạo SeatIssueReport mới
+Use Case dừng lại
+
+9b. Driver gửi báo cáo trùng cho cùng ghế trong cùng chuyến khi báo cáo cũ vẫn đang chờ xử lý
+9b1. Hệ thống kiểm tra SeatIssueReport theo tripId, seatId với status PENDING hoặc WAITING_CUSTOMER_CONFIRMATION
+9b2. Hệ thống từ chối tạo báo cáo và hiển thị lỗi: "Ghế này đã có báo cáo sự cố đang chờ xử lý. Không thể gửi trùng báo cáo."
+9b3. Hệ thống không tạo SeatIssueReport mới
+Use Case dừng lại
+
 Exception Flow
 10a. Mô tả quá ngắn (< 10 ký tự)
 10a1. Hệ thống hiển thị lỗi: "Mô tả phải có ít nhất 10 ký tự"
@@ -91,6 +103,7 @@ Use Case tiếp tục bước 14
 
 Business Rules
 BR-01: Chỉ Driver được phân công mới có quyền báo cáo ghế hỏng
+BR-01a: Driver chỉ được báo cáo ghế hỏng khi chuyến có status SCHEDULED hoặc IN_PROGRESS và thời điểm hiện tại chưa vượt quá endTime
 BR-02: Mô tả phải có ít nhất 10 ký tự
 BR-03: Tối đa 3 ảnh, mỗi ảnh tối đa 5MB
 BR-04: Định dạng ảnh: jpg, png, jpeg

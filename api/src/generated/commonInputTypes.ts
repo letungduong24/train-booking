@@ -518,6 +518,23 @@ export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedIntNullableFilter<$PrismaModel>
 }
 
+export type EnumSeatIssueStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.SeatIssueStatus | Prisma.EnumSeatIssueStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SeatIssueStatus[] | Prisma.ListEnumSeatIssueStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SeatIssueStatus[] | Prisma.ListEnumSeatIssueStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSeatIssueStatusFilter<$PrismaModel> | $Enums.SeatIssueStatus
+}
+
+export type EnumSeatIssueStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SeatIssueStatus | Prisma.EnumSeatIssueStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SeatIssueStatus[] | Prisma.ListEnumSeatIssueStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SeatIssueStatus[] | Prisma.ListEnumSeatIssueStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSeatIssueStatusWithAggregatesFilter<$PrismaModel> | $Enums.SeatIssueStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSeatIssueStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSeatIssueStatusFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -968,6 +985,23 @@ export type NestedFloatNullableFilter<$PrismaModel = never> = {
   gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
   gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
   not?: Prisma.NestedFloatNullableFilter<$PrismaModel> | number | null
+}
+
+export type NestedEnumSeatIssueStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.SeatIssueStatus | Prisma.EnumSeatIssueStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SeatIssueStatus[] | Prisma.ListEnumSeatIssueStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SeatIssueStatus[] | Prisma.ListEnumSeatIssueStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSeatIssueStatusFilter<$PrismaModel> | $Enums.SeatIssueStatus
+}
+
+export type NestedEnumSeatIssueStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SeatIssueStatus | Prisma.EnumSeatIssueStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.SeatIssueStatus[] | Prisma.ListEnumSeatIssueStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SeatIssueStatus[] | Prisma.ListEnumSeatIssueStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSeatIssueStatusWithAggregatesFilter<$PrismaModel> | $Enums.SeatIssueStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSeatIssueStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSeatIssueStatusFilter<$PrismaModel>
 }
 
 

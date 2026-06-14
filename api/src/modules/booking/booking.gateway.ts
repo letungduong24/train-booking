@@ -61,4 +61,11 @@ export class BookingGateway
     this.server.emit(`trip.stats_update`, { tripId, stats });
     this.logger.debug(`Emitted trip.stats_update for trip ${tripId}`);
   }
+
+  emitSeatIssuesUpdated(tripId: string, seatId: string, status?: string) {
+    this.server.emit('seat-issues.updated', { tripId, seatId, status });
+    this.logger.debug(
+      `Emitted seat-issues.updated for trip ${tripId}, seat ${seatId}`,
+    );
+  }
 }

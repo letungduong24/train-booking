@@ -213,6 +213,14 @@ async function main() {
                 role: UserRole.USER,
             },
         }),
+        prisma.user.create({
+            data: {
+                email: 'driver@gmail.com',
+                password: passwordHash,
+                name: 'Driver User',
+                role: UserRole.DRIVER,
+            },
+        }),
     ]);
     console.log(`Created ${users.length} users`);
 

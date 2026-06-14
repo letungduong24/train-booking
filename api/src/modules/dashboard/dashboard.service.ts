@@ -277,4 +277,80 @@ export class DashboardService {
       chartData,
     };
   }
+
+  async getDriverOverview(driverId: string) {
+    const now = new Date();
+
+    const [
+      totalTrips,
+      upcomingTripsCount,
+      totalIssues,
+      recentTrips,
+      recentIssues,
+    ] = await Promise.all([
+      // 1. Total trips assigned
+      this.prisma.trip.count({
+        where: { driverId },
+      }),
+
+      // 2. Upcoming trips count (scheduled or in progress)
+      this.prisma.trip.count({
+        where: {
+          driverId,
+          departureTime: { gte: now },
+          status: { in: ['SCHEDULED', 'IN_PROGRESS'] },
+        },
+      }),
+
+      // 3. Total reported issues
+      this.prisma.seatIssueReport.count({
+        where: { reportedById: driverId },
+      }),
+
+      // 4. Recent 5 assigned trips
+      this.prisma.trip.findMany({
+        where: { driverId },
+        take: 5,
+        orderBy: { departureTime: 'asc' },
+        include: {
+          route: true,
+          train: {
+            include: {
+              coaches: true,
+            },
+          },
+        },
+      }),
+
+      // 5. Recent 5 reported issues
+      this.prisma.seatIssueReport.findMany({
+        where: { reportedById: driverId },
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          seat: {
+            include: {
+              coach: true,
+            },
+          },
+          trip: {
+            include: {
+              route: true,
+            },
+          },
+        },
+      }),
+    ]);
+
+    return {
+      stats: {
+        totalTrips,
+        upcomingTripsCount,
+        totalIssues,
+      },
+      recentTrips,
+      recentIssues,
+    };
+  }
 }
+

@@ -29,6 +29,7 @@ import { useCreateTrip } from "@/features/trips/hooks/use-trips"
 import { createTripSchema, CreateTripInput } from "@/lib/schemas/trip.schema"
 import { SelectRouteDialog } from "./select-route-dialog"
 import { SelectTrainDialog } from "./select-train-dialog"
+import { SelectDriverDialog } from "./select-driver-dialog"
 import { Route } from "@/lib/schemas/route.schema"
 import { Train } from "@/lib/schemas/train.schema"
 
@@ -36,8 +37,10 @@ export function CreateTripDialog() {
     const [open, setOpen] = React.useState(false)
     const [routeDialogOpen, setRouteDialogOpen] = React.useState(false)
     const [trainDialogOpen, setTrainDialogOpen] = React.useState(false)
+    const [driverDialogOpen, setDriverDialogOpen] = React.useState(false)
     const [selectedRoute, setSelectedRoute] = React.useState<Route | null>(null)
     const [selectedTrain, setSelectedTrain] = React.useState<Train | null>(null)
+    const [selectedDriver, setSelectedDriver] = React.useState<any>(null)
     const createTrip = useCreateTrip()
 
     const form = useForm<CreateTripInput>({
@@ -46,6 +49,7 @@ export function CreateTripDialog() {
             routeId: "",
             trainId: "",
             departureTime: "",
+            driverId: "",
         },
     })
 
@@ -59,6 +63,11 @@ export function CreateTripDialog() {
         form.setValue("trainId", train.id)
     }
 
+    const handleDriverSelect = (driver: any) => {
+        setSelectedDriver(driver)
+        form.setValue("driverId", driver.id)
+    }
+
     function onSubmit(values: CreateTripInput) {
         createTrip.mutate(values, {
             onSuccess: () => {
@@ -67,6 +76,7 @@ export function CreateTripDialog() {
                 form.reset()
                 setSelectedRoute(null)
                 setSelectedTrain(null)
+                setSelectedDriver(null)
             },
             onError: (error: any) => {
                 toast.error(error.response?.data?.message || "Đã có lỗi xảy ra")
@@ -158,6 +168,33 @@ export function CreateTripDialog() {
                                     </FormItem>
                                 )}
                             />
+                            <FormField
+                                control={form.control}
+                                name="driverId"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Lái tàu</FormLabel>
+                                        <FormControl>
+                                            <div className="flex gap-2">
+                                                <Input
+                                                    value={selectedDriver ? `${selectedDriver.name || "Chưa đặt tên"} - ${selectedDriver.email}` : ""}
+                                                    placeholder="Chọn lái tàu"
+                                                    readOnly
+                                                    className="flex-1"
+                                                />
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    onClick={() => setDriverDialogOpen(true)}
+                                                >
+                                                    Chọn
+                                                </Button>
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <DialogFooter className="pt-4">
                                 <Button type="submit" disabled={createTrip.isPending} className="w-full bg-[#802222] hover:bg-rose-900 text-white rounded-full h-11 font-bold shadow-lg shadow-rose-900/20">
                                     {createTrip.isPending ? "Đang tạo..." : "Tạo chuyến đi"}
@@ -180,6 +217,13 @@ export function CreateTripDialog() {
                 onOpenChange={setTrainDialogOpen}
                 onSelect={handleTrainSelect}
                 selectedTrainId={selectedTrain?.id}
+            />
+
+            <SelectDriverDialog
+                open={driverDialogOpen}
+                onOpenChange={setDriverDialogOpen}
+                onSelect={handleDriverSelect}
+                selectedDriverId={selectedDriver?.id}
             />
         </>
     )

@@ -21,4 +21,11 @@ export class DashboardController {
   async getAdminOverview() {
     return this.dashboardService.getAdminOverview();
   }
+
+  @Get('driver')
+  @UseGuards(RolesGuard)
+  @Roles(Role.Driver)
+  async getDriverOverview(@Req() req: any) {
+    return this.dashboardService.getDriverOverview(req.user.id);
+  }
 }

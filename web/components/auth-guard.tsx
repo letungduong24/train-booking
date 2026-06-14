@@ -10,6 +10,7 @@ interface AuthGuardProps {
     children: React.ReactNode;
     fallbackPath?: string;
     requireAdmin?: boolean;
+    requireDriver?: boolean;
     allowUnverified?: boolean;
 }
 
@@ -22,11 +23,13 @@ export function AuthGuard({
     children, 
     fallbackPath = '/login', 
     requireAdmin = false,
+    requireDriver = false,
     allowUnverified = false 
 }: AuthGuardProps) {
-    const { isAuthenticated, isAdmin, isEmailVerified, isInitialized } = useAuthStore(useShallow((state) => ({
+    const { isAuthenticated, isAdmin, isDriver, isEmailVerified, isInitialized } = useAuthStore(useShallow((state) => ({
         isAuthenticated: !!state.user,
         isAdmin: state.user?.role === 'ADMIN',
+        isDriver: state.user?.role === 'DRIVER',
         isEmailVerified: state.user?.isEmailVerified ?? false,
         isInitialized: state.isInitialized,
     })));
@@ -42,6 +45,11 @@ export function AuthGuard({
 
     // Redirect non-admin users trying to access admin routes
     if (requireAdmin && !isAdmin) {
+        redirect('/dashboard');
+    }
+
+    // Redirect non-driver users trying to access driver routes
+    if (requireDriver && !isDriver && !isAdmin) {
         redirect('/dashboard');
     }
 

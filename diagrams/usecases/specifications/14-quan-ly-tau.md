@@ -5,7 +5,7 @@ Use Case Name
 Quản lý tàu
 
 Description
-Là Admin, tôi muốn quản lý tàu, toa, ghế, ga, tuyến đường, chuyến tàu và mạng lưới đường sắt.
+Là Admin, tôi muốn quản trị thông tin danh mục Tàu hỏa (Train), Toa xe (Coach) thuộc tàu và các Mẫu thiết kế toa xe (CoachTemplate) để xây dựng nên cấu trúc cấu hình vật lý cho hệ thống.
 
 Actor(s)
 Admin
@@ -14,158 +14,78 @@ Priority
 Must Have
 
 Trigger
-Admin muốn quản lý hệ thống tàu hỏa
+Admin muốn thiết lập mới hoặc cập nhật thông số danh mục tàu hỏa và toa xe
 
 Pre-Condition(s)
-Admin đã đăng nhập vào hệ thống với role ADMIN
+Admin đã đăng nhập thành công vào hệ thống với vai trò ADMIN
 Thiết bị của Admin đã được kết nối internet
 
 Post-Condition(s)
-Dữ liệu được tạo, cập nhật hoặc xóa thành công
-Hệ thống ghi nhận hoạt động vào Activity Log
+Bản ghi Tàu hỏa (Train), Toa xe (Coach) hoặc Mẫu toa (CoachTemplate) được tạo mới, chỉnh sửa, hoặc xóa thành công trong CSDL PostgreSQL
+Sơ đồ ghế tĩnh (Seat) được tự động sinh ra trong database khi thêm mới Toa xe dựa trên mẫu cấu hình
+Hệ thống ghi nhật ký Activity Log cho các hành động thay đổi dữ liệu của Admin
 
-Basic Flow - Quản lý Tàu
+Basic Flow
 1. Admin chọn menu "Quản lý tàu"
-2. Hệ thống hiển thị danh sách tàu với: Mã tàu, Tên, Vận tốc trung bình, Số toa, Trạng thái, Ngày tạo
+2. Hệ thống hiển thị danh sách các tàu hiện có trong hệ thống bao gồm: Mã tàu, Tên tàu, Vận tốc trung bình (km/h), Số toa, Trạng thái hoạt động, và Ngày tạo
 3. Admin chọn lệnh "Thêm tàu mới"
-4. Hệ thống hiển thị form với các trường: Mã tàu, Tên, Vận tốc trung bình (km/h), Trạng thái (ACTIVE/INACTIVE/MAINTENANCE)
-5. Admin nhập thông tin và chọn lệnh "Lưu"
-6. Hệ thống kiểm tra: Mã tàu duy nhất, Vận tốc > 0
-7. Hệ thống tạo Train mới
+4. Hệ thống hiển thị form điền thông tin: Mã tàu, Tên tàu, Vận tốc trung bình, và Trạng thái (ACTIVE, INACTIVE, hoặc MAINTENANCE)
+5. Admin nhập dữ liệu và chọn nút "Lưu"
+6. Hệ thống thực hiện kiểm tra: Mã tàu không được trùng lặp, Vận tốc trung bình phải lớn hơn 0
+7. Hệ thống tạo thực thể Tàu (Train) mới trong cơ sở dữ liệu
 8. Hệ thống hiển thị thông báo: "Thêm tàu thành công!"
-9. Hệ thống ghi nhận hoạt động vào Activity Log
+9. Hệ thống ghi nhận hoạt động vào nhật ký (Activity Log)
 
-Alternative Flow 1 - Sửa thông tin tàu
-3a. Admin click vào 1 tàu để xem chi tiết
-3a1. Hệ thống hiển thị trang chi tiết tàu với: Thông tin tàu, Danh sách toa, Thống kê (Tổng ghế, Số chuyến đã chạy)
-3a2. Admin chọn lệnh "Sửa thông tin"
-3a3. Hệ thống hiển thị form chỉnh sửa
-3a4. Admin thay đổi thông tin và chọn lệnh "Lưu"
-3a5. Hệ thống cập nhật Train
-3a6. Hệ thống hiển thị thông báo: "Cập nhật thành công!"
-Use Case tiếp tục bước 9
+Alternative Flow
+14a. Sửa đổi thông tin Tàu hỏa
+14a1. Admin click chọn vào 1 tàu từ danh sách để xem chi tiết
+14a2. Hệ thống hiển thị trang thông tin chi tiết của tàu bao gồm: thông số kỹ thuật, danh sách các toa xe hiện có thuộc tàu này và bảng thống kê số chuyến đã thực hiện
+14a3. Admin chọn lệnh "Sửa thông tin"
+14a4. Hệ thống hiển thị form chỉnh sửa thông tin tàu
+14a5. Admin thay đổi thông số và chọn lệnh "Lưu"
+14a6. Hệ thống cập nhật bản ghi Train trong database và thông báo: "Cập nhật thông tin tàu thành công!"
 
-Alternative Flow 2 - Xóa tàu
-3b. Admin chọn lệnh "Xóa" (từ danh sách hoặc chi tiết)
-3b1. Hệ thống kiểm tra: Tàu không có chuyến tàu nào đang sử dụng
-3b2. Hệ thống hiển thị xác nhận: "Bạn có chắc muốn xóa tàu này?"
-3b3. Admin chọn lệnh "Xác nhận"
-3b4. Hệ thống xóa Train và các Coach, Seat liên quan
-3b5. Hệ thống hiển thị thông báo: "Xóa tàu thành công!"
-Use Case tiếp tục bước 9
+14b. Xóa Tàu khỏi hệ thống
+14b1. Admin click chọn nút "Xóa tàu" từ danh sách hoặc trang chi tiết
+14b2. Hệ thống thực hiện kiểm tra tính toàn vẹn: Tàu muốn xóa không được có bất kỳ chuyến tàu (Trip) nào đang được lên lịch chạy (SCHEDULED hoặc IN_PROGRESS)
+14b3. Hệ thống hiển thị cảnh báo xác nhận: "Bạn có chắc chắn muốn xóa tàu này? Toàn bộ toa xe và ghế liên quan cũng sẽ bị xóa bỏ."
+14b4. Admin bấm "Xác nhận"
+14b5. Hệ thống xóa bản ghi Train cùng các toa xe (Coach) và ghế (Seat) thuộc tàu đó khỏi CSDL
+14b6. Hệ thống thông báo: "Xóa tàu thành công!"
 
-Alternative Flow 3 - Thêm toa vào tàu
-3c. Admin chọn lệnh "Thêm toa" (từ chi tiết tàu)
-3c1. Hệ thống hiển thị form với các trường: Mã toa, Tên, Mẫu toa (dropdown), Thứ tự
-3c2. Admin chọn mẫu toa và nhập thông tin
-3c3. Hệ thống tạo Coach mới
-3c4. Hệ thống tự động tạo Seat dựa trên CoachTemplate (rows × cols × tiers)
-3c5. Hệ thống hiển thị thông báo: "Thêm toa thành công!"
-Use Case tiếp tục bước 9
+14c. Quản lý cấu trúc Toa xe (Coach) thuộc Tàu
+14c1. Tại trang chi tiết của một tàu cụ thể, Admin chọn lệnh "Thêm toa xe"
+14c2. Hệ thống hiển thị form thông tin: Mã toa, Tên toa, Thứ tự toa, và Mẫu toa (Coach Template - dropdown list các mẫu toa có sẵn)
+14c3. Admin chọn một mẫu toa (ví dụ: Toa ngồi mềm điều hòa 64 ghế, Toa giường nằm 28 chỗ) và nhập thông tin toa
+14c4. Admin chọn lệnh "Lưu"
+14c5. Hệ thống tạo bản ghi Coach mới, đồng thời tự động tính toán số hàng, số cột, số tầng từ CoachTemplate được chọn để sinh tự động tất cả các bản ghi ghế ngồi (Seat) tương ứng của toa đó trong database
+14c6. Hệ thống thông báo: "Thêm toa xe và khởi tạo ghế thành công!"
 
-Alternative Flow 4 - Quản lý ghế trong toa
-3d. Admin click vào 1 toa để xem sơ đồ ghế
-3d1. Hệ thống hiển thị sơ đồ ghế với màu sắc: Xanh (ACTIVE), Xám (DISABLED), Đỏ (MAINTENANCE)
-3d2. Admin click vào 1 ghế
-3d3. Hệ thống hiển thị dialog với thông tin ghế: Mã, Tên, Loại, Tầng, Trạng thái
-3d4. Admin chọn trạng thái mới và chọn lệnh "Cập nhật"
-3d5. Hệ thống cập nhật Seat.status
-3d6. Hệ thống hiển thị thông báo: "Cập nhật ghế thành công!"
-Use Case tiếp tục bước 9
-
-Alternative Flow 5 - Quản lý Ga
-3e. Admin chọn menu "Quản lý ga"
-3e1. Hệ thống hiển thị danh sách ga với: Mã ga, Tên, Tọa độ (lat, lng), Số tuyến, Ngày tạo
-3e2. Admin chọn lệnh "Thêm ga mới"
-3e3. Hệ thống hiển thị form với các trường: Mã ga, Tên, Tọa độ (lat, lng)
-3e4. Admin nhập thông tin và chọn lệnh "Lưu"
-3e5. Hệ thống kiểm tra: Mã ga duy nhất, Tọa độ hợp lệ
-3e6. Hệ thống tạo Station mới
-3e7. Hệ thống hiển thị thông báo: "Thêm ga thành công!"
-Use Case tiếp tục bước 9
-
-Alternative Flow 6 - Quản lý Tuyến đường
-3f. Admin chọn menu "Quản lý tuyến đường"
-3f1. Hệ thống hiển thị danh sách tuyến với: Mã tuyến, Tên, Số ga, Tổng km, Giá cơ bản/km, Phí ga, Ngày tạo
-3f2. Admin chọn lệnh "Thêm tuyến mới"
-3f3. Hệ thống hiển thị form với các trường: Mã tuyến, Tên, Giá cơ bản/km, Phí ga
-3f4. Admin nhập thông tin và chọn lệnh "Lưu"
-3f5. Hệ thống tạo Route mới
-3f6. Hệ thống hiển thị thông báo: "Thêm tuyến thành công!"
-3f7. Admin chọn lệnh "Thêm ga vào tuyến"
-3f8. Hệ thống hiển thị form với các trường: Ga (dropdown), Thứ tự, Khoảng cách từ ga đầu (km), Thời gian từ ga đầu (phút)
-3f9. Admin nhập thông tin và chọn lệnh "Lưu"
-3f10. Hệ thống tạo RouteStation mới
-3f11. Hệ thống hiển thị thông báo: "Thêm ga vào tuyến thành công!"
-Use Case tiếp tục bước 9
-
-Alternative Flow 7 - Quản lý Chuyến tàu
-3g. Admin chọn menu "Quản lý chuyến tàu"
-3g1. Hệ thống hiển thị danh sách chuyến với: Mã chuyến, Tàu, Tuyến, Giờ khởi hành, Giờ kết thúc, Trạng thái, Delay
-3g2. Admin chọn lệnh "Thêm chuyến mới"
-3g3. Hệ thống hiển thị form với các trường: Tàu (dropdown), Tuyến (dropdown), Giờ khởi hành, Giờ kết thúc
-3g4. Admin nhập thông tin và chọn lệnh "Lưu"
-3g5. Hệ thống kiểm tra: Tàu không bị trùng lịch, Giờ kết thúc > Giờ khởi hành
-3g6. Hệ thống tạo Trip mới với status SCHEDULED
-3g7. Hệ thống hiển thị thông báo: "Thêm chuyến thành công!"
-Use Case tiếp tục bước 9
-
-Alternative Flow 8 - Cập nhật Delay chuyến tàu
-3h. Admin chọn lệnh "Cập nhật delay" (từ danh sách chuyến)
-3h1. Hệ thống hiển thị form với các trường: Delay khởi hành (phút), Delay đến nơi (phút)
-3h2. Admin nhập số phút delay và chọn lệnh "Lưu"
-3h3. Hệ thống cập nhật Trip.departureDelayMinutes, Trip.arrivalDelayMinutes
-3h4. Hệ thống gửi thông báo đến khách hàng có vé
-3h5. Hệ thống hiển thị thông báo: "Cập nhật delay thành công!"
-Use Case tiếp tục bước 9
-
-Alternative Flow 9 - Giám sát tàu trên bản đồ
-3i. Admin chọn menu "Giám sát tàu"
-3i1. Hệ thống truy vấn tất cả chuyến có status IN_PROGRESS
-3i2. Hệ thống tính toán vị trí tàu cho từng chuyến (GPS giả lập)
-3i3. Hệ thống hiển thị bản đồ với marker tàu, tuyến đường, ga dừng
-3i4. Hệ thống tự động cập nhật vị trí mỗi 30 giây
-3i5. Admin click vào 1 marker tàu
-3i6. Hệ thống hiển thị popup với: Mã chuyến, Tàu, Tuyến, Giờ khởi hành, Trạng thái, Delay
-Use Case tiếp tục bước 9
-
-Alternative Flow 10 - Quản lý Mạng lưới đường sắt
-3j. Admin chọn menu "Quản lý mạng lưới"
-3j1. Hệ thống hiển thị danh sách RailwayLine với: Mã, Tên, Tuyến liên kết, Tọa độ GeoJSON
-3j2. Admin chọn lệnh "Thêm đường ray mới"
-3j3. Hệ thống hiển thị form với các trường: Mã, Tên, Tuyến (dropdown), Tọa độ GeoJSON (LineString)
-3j4. Admin nhập thông tin và chọn lệnh "Lưu"
-3j5. Hệ thống tạo RailwayLine mới
-3j6. Hệ thống hiển thị thông báo: "Thêm đường ray thành công!"
-Use Case tiếp tục bước 9
+14d. Quản lý Mẫu toa xe (CoachTemplate)
+14d1. Admin chọn menu "Quản lý mẫu toa xe"
+14d2. Hệ thống hiển thị danh sách các mẫu toa xe bao gồm: Tên mẫu, Loại toa (Ghế ngồi - SEAT / Giường nằm - BED), Số tầng, Số hàng, Số cột, Tổng số chỗ, và Hệ số nhân giá vé
+14d3. Admin chọn lệnh "Tạo mẫu toa mới"
+14d4. Hệ thống hiển thị form nhập thông số kỹ thuật. Admin nhập dữ liệu và bấm "Lưu"
+14d5. Hệ thống tạo thực thể CoachTemplate mới làm cơ sở để tái sử dụng khi tạo toa xe
 
 Exception Flow
-6a. Mã tàu đã tồn tại
-6a1. Hệ thống hiển thị lỗi: "Mã tàu đã tồn tại"
+6a. Mã tàu trùng lặp
+6a1. Hệ thống hiển thị thông báo lỗi: "Mã tàu này đã tồn tại trong hệ thống. Vui lòng nhập mã khác"
 Use Case quay lại bước 4
 
-3b1a. Tàu đang có chuyến tàu sử dụng
-3b1a1. Hệ thống hiển thị lỗi: "Không thể xóa tàu. Tàu đang có chuyến tàu sử dụng"
-Use Case quay lại bước 3a1
+6b. Vận tốc trung bình nhỏ hơn hoặc bằng 0
+6b1. Hệ thống hiển thị thông báo lỗi: "Vận tốc trung bình của tàu phải lớn hơn 0"
+Use Case quay lại bước 4
 
-3g5a. Tàu bị trùng lịch
-3g5a1. Hệ thống hiển thị lỗi: "Tàu đã có chuyến khác trong khoảng thời gian này"
-Use Case quay lại bước 3g3
+14b2a. Tàu đang có chuyến đi được lập lịch hoạt động
+14b2a1. Hệ thống hiển thị thông báo lỗi: "Không thể xóa tàu này vì đang có chuyến tàu được lên lịch hoạt động trong tương lai"
+Use Case dừng lại
 
 Business Rules
-BR-01: Mã tàu, mã ga, mã tuyến phải duy nhất
-BR-02: Vận tốc trung bình > 0
-BR-03: Không thể xóa tàu đang có chuyến sử dụng
-BR-04: Ghế được tạo tự động khi thêm toa dựa trên CoachTemplate
-BR-05: Giá vé được tính động dựa trên: basePricePerKm, stationFee, coachMultiplier, tierMultiplier, discountRate
-BR-06: Trạng thái chuyến tàu tự động cập nhật bằng cron job
-BR-07: GPS giả lập được tính toán dựa trên thời gian và tọa độ tuyến
+BR-01: Các mã định danh (Mã tàu, Mã toa) bắt buộc phải là duy nhất
+BR-02: Ghế ngồi tĩnh được tự động sinh ra trong database khi tạo Toa xe dựa trên thông số hàng, cột, tầng của CoachTemplate được chọn. Admin không cần phải tạo thủ công từng chiếc ghế
+BR-03: Không cho phép xóa một đoàn tàu đang có chuyến tàu (Trip) đã được lập lịch chạy hoạt động
 
 Non-Functional Requirement
-NFR-01: Thời gian load danh sách dưới 2 giây
-NFR-02: Thời gian tạo/cập nhật dưới 1 giây
-NFR-03: Bản đồ giám sát load dưới 3 giây
-NFR-04: Sơ đồ ghế responsive, hoạt động tốt trên tablet
-NFR-05: Hỗ trợ pagination cho tất cả danh sách
-NFR-06: Hỗ trợ tìm kiếm và lọc
-NFR-07: Bản đồ tự động cập nhật mỗi 30 giây
+NFR-01: Quá trình tự động sinh hàng loạt ghế ngồi trong CSDL khi tạo Toa xe mới phải hoàn tất dưới 1.5 giây
+NFR-02: Sơ đồ bố cục layout ghế và giường phải responsive, hoạt động tốt trên cả tablet và máy tính để quản trị viên dễ cấu hình

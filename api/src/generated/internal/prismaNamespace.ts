@@ -399,7 +399,8 @@ export const ModelName = {
   Trip: 'Trip',
   Booking: 'Booking',
   PassengerGroup: 'PassengerGroup',
-  Ticket: 'Ticket'
+  Ticket: 'Ticket',
+  SeatIssueReport: 'SeatIssueReport'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -415,7 +416,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "refreshToken" | "transaction" | "network" | "station" | "route" | "railwayLine" | "routeStation" | "coachTemplate" | "train" | "coach" | "seat" | "trip" | "booking" | "passengerGroup" | "ticket"
+    modelProps: "user" | "refreshToken" | "transaction" | "network" | "station" | "route" | "railwayLine" | "routeStation" | "coachTemplate" | "train" | "coach" | "seat" | "trip" | "booking" | "passengerGroup" | "ticket" | "seatIssueReport"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1603,6 +1604,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SeatIssueReport: {
+      payload: Prisma.$SeatIssueReportPayload<ExtArgs>
+      fields: Prisma.SeatIssueReportFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SeatIssueReportFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SeatIssueReportPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SeatIssueReportFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SeatIssueReportPayload>
+        }
+        findFirst: {
+          args: Prisma.SeatIssueReportFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SeatIssueReportPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SeatIssueReportFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SeatIssueReportPayload>
+        }
+        findMany: {
+          args: Prisma.SeatIssueReportFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SeatIssueReportPayload>[]
+        }
+        create: {
+          args: Prisma.SeatIssueReportCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SeatIssueReportPayload>
+        }
+        createMany: {
+          args: Prisma.SeatIssueReportCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SeatIssueReportCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SeatIssueReportPayload>[]
+        }
+        delete: {
+          args: Prisma.SeatIssueReportDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SeatIssueReportPayload>
+        }
+        update: {
+          args: Prisma.SeatIssueReportUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SeatIssueReportPayload>
+        }
+        deleteMany: {
+          args: Prisma.SeatIssueReportDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SeatIssueReportUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SeatIssueReportUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SeatIssueReportPayload>[]
+        }
+        upsert: {
+          args: Prisma.SeatIssueReportUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SeatIssueReportPayload>
+        }
+        aggregate: {
+          args: Prisma.SeatIssueReportAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSeatIssueReport>
+        }
+        groupBy: {
+          args: Prisma.SeatIssueReportGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SeatIssueReportGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SeatIssueReportCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SeatIssueReportCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1838,6 +1913,7 @@ export const TripScalarFieldEnum = {
   status: 'status',
   departureDelayMinutes: 'departureDelayMinutes',
   arrivalDelayMinutes: 'arrivalDelayMinutes',
+  driverId: 'driverId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1894,6 +1970,25 @@ export const TicketScalarFieldEnum = {
 } as const
 
 export type TicketScalarFieldEnum = (typeof TicketScalarFieldEnum)[keyof typeof TicketScalarFieldEnum]
+
+
+export const SeatIssueReportScalarFieldEnum = {
+  id: 'id',
+  tripId: 'tripId',
+  seatId: 'seatId',
+  issueType: 'issueType',
+  description: 'description',
+  reportedById: 'reportedById',
+  status: 'status',
+  rejectReason: 'rejectReason',
+  token: 'token',
+  tokenExpires: 'tokenExpires',
+  proposedSeatId: 'proposedSeatId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SeatIssueReportScalarFieldEnum = (typeof SeatIssueReportScalarFieldEnum)[keyof typeof SeatIssueReportScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2180,6 +2275,20 @@ export type EnumBookingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
 export type ListEnumBookingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BookingStatus[]'>
     
 
+
+/**
+ * Reference to a field of type 'SeatIssueStatus'
+ */
+export type EnumSeatIssueStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SeatIssueStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'SeatIssueStatus[]'
+ */
+export type ListEnumSeatIssueStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SeatIssueStatus[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -2291,6 +2400,7 @@ export type GlobalOmitConfig = {
   booking?: Prisma.BookingOmit
   passengerGroup?: Prisma.PassengerGroupOmit
   ticket?: Prisma.TicketOmit
+  seatIssueReport?: Prisma.SeatIssueReportOmit
 }
 
 /* Types for Logging */

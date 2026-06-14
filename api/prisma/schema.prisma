@@ -26,8 +26,10 @@ model User {
   googleId      String?        @unique
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  refreshTokens RefreshToken[]
-  bookings      Booking[]
+  refreshTokens      RefreshToken[]
+  bookings           Booking[]
+  driverTrips        Trip[]            @relation("DriverTrips")
+  reportedSeatIssues SeatIssueReport[] @relation("ReportedIssues")
   // Role & Permissions
   role          UserRole       @default(USER)
 
@@ -277,11 +279,13 @@ model Seat {
   status    SeatStatus @default(AVAILABLE)
   type      SeatType   @default(STANDARD)
   tier      Int        @default(0) // Tầng ghế cho tính giá (0-3)
-  coachId   String
-  coach     Coach      @relation(fields: [coachId], references: [id], onDelete: Cascade)
-  tickets   Ticket[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  coachId            String
+  coach              Coach             @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  tickets            Ticket[]
+  seatIssueReports   SeatIssueReport[]
+  proposedSeatIssues SeatIssueReport[] @relation("ProposedSeat")
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
 
   @@unique([coachId, rowIndex, colIndex, tier])
 }
@@ -289,6 +293,7 @@ model Seat {
 enum SeatStatus {
   AVAILABLE
   DISABLED
+  MAINTENANCE
 }
 
 enum SeatType {
@@ -311,12 +316,15 @@ model Trip {
   status        TripStatus @default(SCHEDULED) // SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED
 
   // Delay management (phút) - Giữ nguyên departureTime/endTime gốc
-  departureDelayMinutes Int       @default(0) // Delay khởi hành
-  arrivalDelayMinutes   Int       @default(0) // Delay kết thúc
+  departureDelayMinutes Int               @default(0) // Delay khởi hành
+  arrivalDelayMinutes   Int               @default(0) // Delay kết thúc
   tickets               Ticket[]
   bookings              Booking[]
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  driverId              String?
+  driver                User?             @relation("DriverTrips", fields: [driverId], references: [id])
+  seatIssues            SeatIssueReport[]
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
 
   @@index([routeId])
   @@index([trainId])
@@ -392,4 +400,38 @@ model Ticket {
   @@index([tripId])
   @@index([seatId])
   @@index([passengerGroupId])
+}
+
+enum SeatIssueStatus {
+  PENDING
+  WAITING_CUSTOMER_CONFIRMATION
+  RESOLVED
+  REJECTED
+}
+
+model SeatIssueReport {
+  id             String          @id @default(uuid())
+  tripId         String
+  trip           Trip            @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  seatId         String
+  seat           Seat            @relation(fields: [seatId], references: [id], onDelete: Cascade)
+  issueType      String          // "Ghế gãy/hỏng", "Ghế bẩn", "Không điều chỉnh được", "Thiết bị hỏng (đèn, ổ cắm)", "Khác"
+  description    String
+  reportedById   String
+  reportedBy     User            @relation("ReportedIssues", fields: [reportedById], references: [id])
+  status         SeatIssueStatus @default(PENDING)
+  rejectReason   String?
+  
+  // Tự động đề xuất đổi ghế
+  token          String?         @unique
+  tokenExpires   DateTime?
+  proposedSeatId String?
+  proposedSeat   Seat?           @relation("ProposedSeat", fields: [proposedSeatId], references: [id])
+  
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([tripId])
+  @@index([seatId])
+  @@index([reportedById])
 }

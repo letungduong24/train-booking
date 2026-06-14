@@ -66,7 +66,8 @@ export const ModelName = {
   Trip: 'Trip',
   Booking: 'Booking',
   PassengerGroup: 'PassengerGroup',
-  Ticket: 'Ticket'
+  Ticket: 'Ticket',
+  SeatIssueReport: 'SeatIssueReport'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -281,6 +282,7 @@ export const TripScalarFieldEnum = {
   status: 'status',
   departureDelayMinutes: 'departureDelayMinutes',
   arrivalDelayMinutes: 'arrivalDelayMinutes',
+  driverId: 'driverId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -337,6 +339,25 @@ export const TicketScalarFieldEnum = {
 } as const
 
 export type TicketScalarFieldEnum = (typeof TicketScalarFieldEnum)[keyof typeof TicketScalarFieldEnum]
+
+
+export const SeatIssueReportScalarFieldEnum = {
+  id: 'id',
+  tripId: 'tripId',
+  seatId: 'seatId',
+  issueType: 'issueType',
+  description: 'description',
+  reportedById: 'reportedById',
+  status: 'status',
+  rejectReason: 'rejectReason',
+  token: 'token',
+  tokenExpires: 'tokenExpires',
+  proposedSeatId: 'proposedSeatId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SeatIssueReportScalarFieldEnum = (typeof SeatIssueReportScalarFieldEnum)[keyof typeof SeatIssueReportScalarFieldEnum]
 
 
 export const SortOrder = {

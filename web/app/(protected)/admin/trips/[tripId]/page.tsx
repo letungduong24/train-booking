@@ -6,6 +6,7 @@ import { useTrip } from "@/features/trips/hooks/use-trips";
 import { AdminTripHeader } from "@/features/admin/components/admin-trip-header";
 import { AdminSeatMap } from "@/features/admin/components/admin-seat-map";
 import { DelayControlDialog } from "@/features/admin/components/delay-control-dialog";
+import { AssignDriverDialog } from "@/features/admin/components/assign-driver-dialog";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, TrendingUp, Users, Ticket, Wallet, CheckCircle2 } from "lucide-react";
@@ -110,6 +111,11 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
                     </div>
                     
                     <div className="flex items-center gap-3">
+                        <AssignDriverDialog
+                            tripId={trip.id}
+                            currentDriverId={trip.driverId || null}
+                        />
+                        
                         <DelayControlDialog
                             tripId={trip.id}
                             tripStatus={trip.status}

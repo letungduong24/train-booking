@@ -68,6 +68,30 @@ const navAdmin = [
     url: "/admin/finance/withdrawals",
     icon: IconCreditCard,
   },
+  {
+    title: "Sự cố ghế hỏng",
+    url: "/admin/seat-issues",
+    icon: IconMapPin,
+  },
+]
+
+// Driver Menu items
+const navDriver = [
+  {
+    title: "Bảng điều khiển",
+    url: "/driver",
+    icon: IconDashboard,
+  },
+  {
+    title: "Chuyến xe phân công",
+    url: "/driver/trips",
+    icon: IconCalendar,
+  },
+  {
+    title: "Sự cố ghế hỏng",
+    url: "/driver/issues",
+    icon: IconMapPin,
+  },
 ]
 
 // User Menu items
@@ -111,10 +135,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
 
   const isAdminView = pathname?.startsWith('/admin');
+  const isDriverView = pathname?.startsWith('/driver');
   const isAdminUser = user?.role === 'ADMIN';
+  const isDriverUser = user?.role === 'DRIVER';
 
   // Base navigation
-  let navMain = isAdminView ? navAdmin : navUser;
+  let navMain = navUser;
+  if (isAdminView && isAdminUser) {
+    navMain = navAdmin;
+  } else if (isDriverView && (isDriverUser || isAdminUser)) {
+    navMain = navDriver;
+  }
 
   // Add cross-navigation
   const crossNav: any[] = [];
@@ -141,6 +172,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
   }
 
+  if (isDriverUser) {
+    if (isDriverView) {
+      crossNav.push({
+        title: "Về Dashboard Người dùng",
+        url: "/dashboard",
+        icon: IconHome,
+      });
+    } else {
+      crossNav.push({
+        title: "Khu vực Lái tàu",
+        url: "/driver",
+        icon: IconSettings,
+      });
+    }
+  }
+
   const userData = {
     name: user?.name || "Người dùng",
     email: user?.email || "",
@@ -159,7 +206,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <div className="flex flex-col gap-0">
                 <span className="text-lg font-bold tracking-tight text-zinc-900 dark:text-white">Railflow</span>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#802222]/60 -mt-1">
-                    {isAdminView ? "Admin Panel" : "User Panel"}
+                    {isAdminView ? "Admin Panel" : isDriverView ? "Driver Panel" : "User Panel"}
                 </span>
               </div>
             </div>

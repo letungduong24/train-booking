@@ -116,10 +116,21 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
             }
         }
 
+        function onSeatIssueUpdated(data: { tripId: string, seatId: string }) {
+            if (data.tripId === trip.id) {
+                queryClient.invalidateQueries({
+                    queryKey: ['coaches']
+                })
+                toast.success("Đã đồng bộ thay đổi trạng thái ghế sự cố thời gian thực")
+            }
+        }
+
         socket.on("seats.booked", onSeatsBooked)
+        socket.on("seat-issues.updated", onSeatIssueUpdated)
 
         return () => {
             socket.off("seats.booked", onSeatsBooked)
+            socket.off("seat-issues.updated", onSeatIssueUpdated)
         }
     }, [socket, trip.id, queryClient])
 

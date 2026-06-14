@@ -153,6 +153,103 @@ export class MailService {
     );
   }
 
+  async sendSeatReplacementEmail(email: string, data: {
+    link: string;
+    oldSeatName?: string | null;
+    oldCoachName?: string | number | null;
+    proposedSeatName?: string | null;
+    proposedCoachName?: string | number | null;
+    tokenExpires?: Date | null;
+  }) {
+    const expiresAt = data.tokenExpires
+      ? new Intl.DateTimeFormat('vi-VN', {
+          dateStyle: 'short',
+          timeStyle: 'short',
+          timeZone: 'Asia/Ho_Chi_Minh',
+        }).format(data.tokenExpires)
+      : '48 gi&#7901;';
+
+    const html = this.getHtmlTemplate({
+      title: 'Th&#244;ng b&#225;o &#273;&#7893;i gh&#7871;',
+      previewText: 'Gh&#7871; c&#7911;a b&#7841;n c&#7847;n &#273;&#432;&#7907;c thay th&#7871;. Vui l&#242;ng x&#225;c nh&#7853;n gh&#7871; m&#7899;i.',
+      content: `
+        <p style="margin: 0; font-size: 16px; line-height: 24px;">Ch&#224;o b&#7841;n,</p>
+        <p style="margin: 20px 0; font-size: 16px; line-height: 24px;">Gh&#7871; hi&#7879;n t&#7841;i c&#7911;a b&#7841;n c&#7847;n b&#7843;o tr&#236;. Railflow &#273;&#227; t&#236;m gh&#7871; thay th&#7871; ph&#249; h&#7907;p v&#224; c&#7847;n b&#7841;n x&#225;c nh&#7853;n.</p>
+        <div style="background-color: #F8FAFC; border-radius: 16px; padding: 16px; border: 1px solid #E2E8F0;">
+          <p style="margin: 0 0 8px 0; font-size: 14px;"><strong>Gh&#7871; c&#361;:</strong> Toa ${data.oldCoachName || 'N/A'} - Gh&#7871; ${data.oldSeatName || 'N/A'}</p>
+          <p style="margin: 0; font-size: 14px;"><strong>Gh&#7871; &#273;&#7873; xu&#7845;t:</strong> Toa ${data.proposedCoachName || 'N/A'} - Gh&#7871; ${data.proposedSeatName || 'N/A'}</p>
+        </div>
+        <p style="margin: 20px 0 0 0; font-size: 14px; line-height: 22px;">Li&#234;n k&#7871;t n&#224;y h&#7871;t h&#7841;n l&#250;c: <strong>${expiresAt}</strong>.</p>
+      `,
+      buttonText: 'X&#193;C NH&#7852;N &#272;&#7892;I GH&#7870;',
+      buttonUrl: data.link,
+      footerText: 'N&#7871;u b&#7841;n kh&#244;ng x&#225;c nh&#7853;n trong th&#7901;i gian hi&#7879;u l&#7921;c, h&#7879; th&#7889;ng c&#243; th&#7875; t&#7921; &#273;&#7897;ng ch&#7885;n gh&#7871; &#273;&#7873; xu&#7845;t &#273;&#7847;u ti&#234;n theo quy tr&#236;nh h&#7895; tr&#7907; s&#7921; c&#7889;.',
+    });
+
+    await this.sendEmail(
+      email,
+      'Railflow - Xác nhận đổi ghế',
+      `Ghế của bạn cần được thay thế. Vui lòng xác nhận tại: ${data.link}`,
+      html
+    );
+  }
+
+  async sendSeatReplacementSuccessEmail(email: string, data: {
+    newSeatName?: string | null;
+    newCoachName?: string | number | null;
+  }) {
+    const html = this.getHtmlTemplate({
+      title: '&#272;&#7893;i gh&#7871; th&#224;nh c&#244;ng',
+      previewText: 'V&#233; c&#7911;a b&#7841;n &#273;&#227; &#273;&#432;&#7907;c c&#7853;p nh&#7853;t sang gh&#7871; m&#7899;i.',
+      content: `
+        <p style="margin: 0; font-size: 16px; line-height: 24px;">Ch&#224;o b&#7841;n,</p>
+        <p style="margin: 20px 0; font-size: 16px; line-height: 24px;">V&#233; c&#7911;a b&#7841;n &#273;&#227; &#273;&#432;&#7907;c c&#7853;p nh&#7853;t sang gh&#7871; m&#7899;i.</p>
+        <div style="background-color: #F0FDF4; border-radius: 16px; padding: 16px; border: 1px solid #BBF7D0;">
+          <p style="margin: 0; font-size: 14px;"><strong>Gh&#7871; m&#7899;i:</strong> Toa ${data.newCoachName || 'N/A'} - Gh&#7871; ${data.newSeatName || 'N/A'}</p>
+        </div>
+      `,
+      buttonText: 'XEM L&#7882;CH S&#7916; &#272;&#7862;T V&#201;',
+      buttonUrl: `${this.configService.get('FRONTEND_URL') || 'http://localhost:4000'}/dashboard/history`,
+      footerText: 'C&#7843;m &#417;n b&#7841;n &#273;&#227; ph&#7889;i h&#7907;p v&#7899;i Railflow trong qu&#225; tr&#236;nh x&#7917; l&#253; s&#7921; c&#7889; gh&#7871;.',
+    });
+
+    await this.sendEmail(
+      email,
+      'Railflow - Đổi ghế thành công',
+      `Vé của bạn đã được cập nhật sang ghế mới: Toa ${data.newCoachName || 'N/A'} - Ghế ${data.newSeatName || 'N/A'}.`,
+      html
+    );
+  }
+
+  async sendSeatIssueRefundEmail(email: string, data: {
+    refundAmount: number;
+    bookingCode?: string | null;
+  }) {
+    const amount = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.refundAmount);
+    const html = this.getHtmlTemplate({
+      title: 'Ho&#224;n ti&#7873;n s&#7921; c&#7889; gh&#7871;',
+      previewText: 'V&#233; b&#7883; &#7843;nh h&#432;&#7903;ng b&#7903;i s&#7921; c&#7889; gh&#7871; &#273;&#227; &#273;&#432;&#7907;c ho&#224;n ti&#7873;n.',
+      content: `
+        <p style="margin: 0; font-size: 16px; line-height: 24px;">Ch&#224;o b&#7841;n,</p>
+        <p style="margin: 20px 0; font-size: 16px; line-height: 24px;">Railflow kh&#244;ng t&#236;m &#273;&#432;&#7907;c gh&#7871; thay th&#7871; ph&#249; h&#7907;p cho v&#233; b&#7883; &#7843;nh h&#432;&#7903;ng. H&#7879; th&#7889;ng &#273;&#227; ho&#224;n 100% gi&#225; tr&#7883; v&#233; v&#224;o v&#237; c&#7911;a b&#7841;n.</p>
+        <div style="background-color: #FFF7ED; border-radius: 16px; padding: 16px; border: 1px solid #FED7AA;">
+          <p style="margin: 0; font-size: 14px;"><strong>S&#7889; ti&#7873;n ho&#224;n:</strong> ${amount}</p>
+          <p style="margin: 8px 0 0 0; font-size: 14px;"><strong>M&#227; &#273;&#417;n:</strong> ${data.bookingCode || 'N/A'}</p>
+        </div>
+      `,
+      buttonText: 'XEM V&#205; C&#7910;A T&#212;I',
+      buttonUrl: `${this.configService.get('FRONTEND_URL') || 'http://localhost:4000'}/dashboard/wallet`,
+      footerText: 'N&#7871;u c&#7847;n h&#7895; tr&#7907; th&#234;m, vui l&#242;ng li&#234;n h&#7879; b&#7897; ph&#7853;n ch&#259;m s&#243;c kh&#225;ch h&#224;ng Railflow.',
+    });
+
+    await this.sendEmail(
+      email,
+      'Railflow - Hoàn tiền sự cố ghế',
+      `Railflow đã hoàn tiền ${amount} cho vé bị ảnh hưởng bởi sự cố ghế.`,
+      html
+    );
+  }
+
   private async sendEmail(to: string, subject: string, text: string, html?: string, attachments: any[] = []) {
     try {
       const from = this.configService.get('MAIL_FROM') || 'Railflow <onboarding@resend.dev>';

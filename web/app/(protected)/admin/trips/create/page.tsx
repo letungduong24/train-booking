@@ -17,10 +17,11 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useCreateTrip } from "@/features/trips/hooks/use-trips"
+import { useCreateTrip, useDrivers } from "@/features/trips/hooks/use-trips"
 import { createTripSchema, CreateTripInput } from "@/lib/schemas/trip.schema"
 import { SelectRouteDialog } from "@/features/trips/components/select-route-dialog"
 import { SelectTrainDialog } from "@/features/trips/components/select-train-dialog"
+import { SelectDriverDialog } from "@/features/trips/components/select-driver-dialog"
 import { Route } from "@/lib/schemas/route.schema"
 import { Train } from "@/lib/schemas/train.schema"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -29,8 +30,10 @@ export default function CreateTripPage() {
     const router = useRouter()
     const [routeDialogOpen, setRouteDialogOpen] = React.useState(false)
     const [trainDialogOpen, setTrainDialogOpen] = React.useState(false)
+    const [driverDialogOpen, setDriverDialogOpen] = React.useState(false)
     const [selectedRoute, setSelectedRoute] = React.useState<Route | null>(null)
     const [selectedTrain, setSelectedTrain] = React.useState<Train | null>(null)
+    const [selectedDriver, setSelectedDriver] = React.useState<any>(null)
     const createTrip = useCreateTrip()
 
     const form = useForm<CreateTripInput>({
@@ -39,6 +42,7 @@ export default function CreateTripPage() {
             routeId: "",
             trainId: "",
             departureTime: "",
+            driverId: "",
         },
     })
 
@@ -50,6 +54,11 @@ export default function CreateTripPage() {
     const handleTrainSelect = (train: Train) => {
         setSelectedTrain(train)
         form.setValue("trainId", train.id)
+    }
+
+    const handleDriverSelect = (driver: any) => {
+        setSelectedDriver(driver)
+        form.setValue("driverId", driver.id)
     }
 
     function onSubmit(values: CreateTripInput) {
@@ -149,25 +158,57 @@ export default function CreateTripPage() {
                                         />
                                     </div>
 
-                                    <FormField
-                                        control={form.control}
-                                        name="departureTime"
-                                        render={({ field }) => (
-                                            <FormItem className="space-y-3">
-                                                <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Lịch khởi hành</FormLabel>
-                                                <FormControl>
-                                                    <div className="relative">
-                                                        <Input 
-                                                            type="datetime-local" 
-                                                            {...field} 
-                                                            className="h-14 rounded-2xl bg-rose-50/10 border-rose-100/50 focus-visible:ring-[#802222]/20 text-lg transition-all"
-                                                        />
-                                                    </div>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <FormField
+                                            control={form.control}
+                                            name="departureTime"
+                                            render={({ field }) => (
+                                                <FormItem className="space-y-3">
+                                                    <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Lịch khởi hành</FormLabel>
+                                                    <FormControl>
+                                                        <div className="relative">
+                                                            <Input 
+                                                                type="datetime-local" 
+                                                                {...field} 
+                                                                className="h-14 rounded-2xl bg-rose-50/10 border-rose-100/50 focus-visible:ring-[#802222]/20 text-lg transition-all"
+                                                            />
+                                                        </div>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            control={form.control}
+                                            name="driverId"
+                                            render={({ field }) => (
+                                                <FormItem className="space-y-3">
+                                                    <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Lái tàu</FormLabel>
+                                                    <FormControl>
+                                                        <div className="relative group">
+                                                            <Input
+                                                                value={selectedDriver ? `${selectedDriver.name || "Chưa đặt tên"} - ${selectedDriver.email}` : ""}
+                                                                placeholder="Chọn lái tàu điều hành..."
+                                                                readOnly
+                                                                className="h-14 rounded-2xl bg-rose-50/10 border-rose-100/50 focus-visible:ring-[#802222]/20 text-lg transition-all cursor-pointer pr-24"
+                                                                onClick={() => setDriverDialogOpen(true)}
+                                                            />
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                onClick={() => setDriverDialogOpen(true)}
+                                                                className="absolute right-2 top-2 h-10 rounded-xl text-[#802222] hover:bg-rose-50 font-bold"
+                                                            >
+                                                                Chọn
+                                                            </Button>
+                                                        </div>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
 
                                     <div className="pt-6">
                                         <Button type="submit" disabled={createTrip.isPending} className="w-full bg-[#802222] hover:bg-rose-900 text-white rounded-[1.5rem] h-16 text-xl font-bold shadow-2xl shadow-rose-900/30 transition-all hover:scale-[1.01] active:scale-[0.98]">
@@ -182,18 +223,25 @@ export default function CreateTripPage() {
             </div>
 
             <SelectRouteDialog
-                open={routeDialogOpen}
-                onOpenChange={setRouteDialogOpen}
-                onSelect={handleRouteSelect}
-                selectedRouteId={selectedRoute?.id}
-            />
+                                open={routeDialogOpen}
+                                onOpenChange={setRouteDialogOpen}
+                                onSelect={handleRouteSelect}
+                                selectedRouteId={selectedRoute?.id}
+                            />
 
-            <SelectTrainDialog
-                open={trainDialogOpen}
-                onOpenChange={setTrainDialogOpen}
-                onSelect={handleTrainSelect}
-                selectedTrainId={selectedTrain?.id}
-            />
+                            <SelectTrainDialog
+                                open={trainDialogOpen}
+                                onOpenChange={setTrainDialogOpen}
+                                onSelect={handleTrainSelect}
+                                selectedTrainId={selectedTrain?.id}
+                            />
+
+                            <SelectDriverDialog
+                                open={driverDialogOpen}
+                                onOpenChange={setDriverDialogOpen}
+                                onSelect={handleDriverSelect}
+                                selectedDriverId={selectedDriver?.id}
+                            />
         </div>
     )
 }

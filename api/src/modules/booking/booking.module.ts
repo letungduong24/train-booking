@@ -26,6 +26,6 @@ import { TicketModule } from '../ticket/ticket.module';
   ],
   controllers: [BookingController],
   providers: [BookingService, BookingProcessor, BookingGateway],
-  exports: [BookingService],
+  exports: [BookingService, BookingGateway],
 })
 export class BookingModule {}

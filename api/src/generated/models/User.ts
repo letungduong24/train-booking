@@ -338,6 +338,8 @@ export type UserWhereInput = {
   isBanned?: Prisma.BoolFilter<"User"> | boolean
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
   bookings?: Prisma.BookingListRelationFilter
+  driverTrips?: Prisma.TripListRelationFilter
+  reportedSeatIssues?: Prisma.SeatIssueReportListRelationFilter
   transactions?: Prisma.TransactionListRelationFilter
 }
 
@@ -364,6 +366,8 @@ export type UserOrderByWithRelationInput = {
   isBanned?: Prisma.SortOrder
   refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
   bookings?: Prisma.BookingOrderByRelationAggregateInput
+  driverTrips?: Prisma.TripOrderByRelationAggregateInput
+  reportedSeatIssues?: Prisma.SeatIssueReportOrderByRelationAggregateInput
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
 }
 
@@ -393,6 +397,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   isBanned?: Prisma.BoolFilter<"User"> | boolean
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
   bookings?: Prisma.BookingListRelationFilter
+  driverTrips?: Prisma.TripListRelationFilter
+  reportedSeatIssues?: Prisma.SeatIssueReportListRelationFilter
   transactions?: Prisma.TransactionListRelationFilter
 }, "id" | "email" | "phone" | "googleId" | "verificationToken" | "passwordResetToken" | "walletPinResetToken">
 
@@ -473,6 +479,8 @@ export type UserCreateInput = {
   isBanned?: boolean
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
+  driverTrips?: Prisma.TripCreateNestedManyWithoutDriverInput
+  reportedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
 }
 
@@ -499,6 +507,8 @@ export type UserUncheckedCreateInput = {
   isBanned?: boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
+  driverTrips?: Prisma.TripUncheckedCreateNestedManyWithoutDriverInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -525,6 +535,8 @@ export type UserUpdateInput = {
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
+  driverTrips?: Prisma.TripUpdateManyWithoutDriverNestedInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
 }
 
@@ -551,6 +563,8 @@ export type UserUncheckedUpdateInput = {
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
+  driverTrips?: Prisma.TripUncheckedUpdateManyWithoutDriverNestedInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -770,6 +784,22 @@ export type UserUpdateOneRequiredWithoutTransactionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTransactionsInput, Prisma.UserUpdateWithoutTransactionsInput>, Prisma.UserUncheckedUpdateWithoutTransactionsInput>
 }
 
+export type UserCreateNestedOneWithoutDriverTripsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDriverTripsInput, Prisma.UserUncheckedCreateWithoutDriverTripsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDriverTripsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutDriverTripsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDriverTripsInput, Prisma.UserUncheckedCreateWithoutDriverTripsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDriverTripsInput
+  upsert?: Prisma.UserUpsertWithoutDriverTripsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDriverTripsInput, Prisma.UserUpdateWithoutDriverTripsInput>, Prisma.UserUncheckedUpdateWithoutDriverTripsInput>
+}
+
 export type UserCreateNestedOneWithoutBookingsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutBookingsInput, Prisma.UserUncheckedCreateWithoutBookingsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutBookingsInput
@@ -784,6 +814,20 @@ export type UserUpdateOneWithoutBookingsNestedInput = {
   delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBookingsInput, Prisma.UserUpdateWithoutBookingsInput>, Prisma.UserUncheckedUpdateWithoutBookingsInput>
+}
+
+export type UserCreateNestedOneWithoutReportedSeatIssuesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReportedSeatIssuesInput, Prisma.UserUncheckedCreateWithoutReportedSeatIssuesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReportedSeatIssuesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutReportedSeatIssuesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReportedSeatIssuesInput, Prisma.UserUncheckedCreateWithoutReportedSeatIssuesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReportedSeatIssuesInput
+  upsert?: Prisma.UserUpsertWithoutReportedSeatIssuesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReportedSeatIssuesInput, Prisma.UserUpdateWithoutReportedSeatIssuesInput>, Prisma.UserUncheckedUpdateWithoutReportedSeatIssuesInput>
 }
 
 export type UserCreateWithoutRefreshTokensInput = {
@@ -808,6 +852,8 @@ export type UserCreateWithoutRefreshTokensInput = {
   walletPin?: string | null
   isBanned?: boolean
   bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
+  driverTrips?: Prisma.TripCreateNestedManyWithoutDriverInput
+  reportedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
 }
 
@@ -833,6 +879,8 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   walletPin?: string | null
   isBanned?: boolean
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
+  driverTrips?: Prisma.TripUncheckedCreateNestedManyWithoutDriverInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -874,6 +922,8 @@ export type UserUpdateWithoutRefreshTokensInput = {
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
+  driverTrips?: Prisma.TripUpdateManyWithoutDriverNestedInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
 }
 
@@ -899,6 +949,8 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
+  driverTrips?: Prisma.TripUncheckedUpdateManyWithoutDriverNestedInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -925,6 +977,8 @@ export type UserCreateWithoutTransactionsInput = {
   isBanned?: boolean
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
+  driverTrips?: Prisma.TripCreateNestedManyWithoutDriverInput
+  reportedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutReportedByInput
 }
 
 export type UserUncheckedCreateWithoutTransactionsInput = {
@@ -950,6 +1004,8 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   isBanned?: boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
+  driverTrips?: Prisma.TripUncheckedCreateNestedManyWithoutDriverInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutReportedByInput
 }
 
 export type UserCreateOrConnectWithoutTransactionsInput = {
@@ -991,6 +1047,8 @@ export type UserUpdateWithoutTransactionsInput = {
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
+  driverTrips?: Prisma.TripUpdateManyWithoutDriverNestedInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutReportedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTransactionsInput = {
@@ -1016,6 +1074,132 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
+  driverTrips?: Prisma.TripUncheckedUpdateManyWithoutDriverNestedInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutReportedByNestedInput
+}
+
+export type UserCreateWithoutDriverTripsInput = {
+  id?: string
+  profilePic?: string | null
+  email: string
+  phone?: string | null
+  password?: string | null
+  name?: string | null
+  googleId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
+  balance?: number
+  walletPin?: string | null
+  isBanned?: boolean
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
+  reportedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutReportedByInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutDriverTripsInput = {
+  id?: string
+  profilePic?: string | null
+  email: string
+  phone?: string | null
+  password?: string | null
+  name?: string | null
+  googleId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
+  balance?: number
+  walletPin?: string | null
+  isBanned?: boolean
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutReportedByInput
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutDriverTripsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDriverTripsInput, Prisma.UserUncheckedCreateWithoutDriverTripsInput>
+}
+
+export type UserUpsertWithoutDriverTripsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDriverTripsInput, Prisma.UserUncheckedUpdateWithoutDriverTripsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDriverTripsInput, Prisma.UserUncheckedCreateWithoutDriverTripsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDriverTripsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDriverTripsInput, Prisma.UserUncheckedUpdateWithoutDriverTripsInput>
+}
+
+export type UserUpdateWithoutDriverTripsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutReportedByNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDriverTripsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutReportedByNestedInput
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBookingsInput = {
@@ -1040,6 +1224,8 @@ export type UserCreateWithoutBookingsInput = {
   walletPin?: string | null
   isBanned?: boolean
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  driverTrips?: Prisma.TripCreateNestedManyWithoutDriverInput
+  reportedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
 }
 
@@ -1065,6 +1251,8 @@ export type UserUncheckedCreateWithoutBookingsInput = {
   walletPin?: string | null
   isBanned?: boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  driverTrips?: Prisma.TripUncheckedCreateNestedManyWithoutDriverInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1106,6 +1294,8 @@ export type UserUpdateWithoutBookingsInput = {
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  driverTrips?: Prisma.TripUpdateManyWithoutDriverNestedInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
 }
 
@@ -1131,6 +1321,132 @@ export type UserUncheckedUpdateWithoutBookingsInput = {
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  driverTrips?: Prisma.TripUncheckedUpdateManyWithoutDriverNestedInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutReportedByNestedInput
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutReportedSeatIssuesInput = {
+  id?: string
+  profilePic?: string | null
+  email: string
+  phone?: string | null
+  password?: string | null
+  name?: string | null
+  googleId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
+  balance?: number
+  walletPin?: string | null
+  isBanned?: boolean
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
+  driverTrips?: Prisma.TripCreateNestedManyWithoutDriverInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutReportedSeatIssuesInput = {
+  id?: string
+  profilePic?: string | null
+  email: string
+  phone?: string | null
+  password?: string | null
+  name?: string | null
+  googleId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
+  balance?: number
+  walletPin?: string | null
+  isBanned?: boolean
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
+  driverTrips?: Prisma.TripUncheckedCreateNestedManyWithoutDriverInput
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutReportedSeatIssuesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReportedSeatIssuesInput, Prisma.UserUncheckedCreateWithoutReportedSeatIssuesInput>
+}
+
+export type UserUpsertWithoutReportedSeatIssuesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReportedSeatIssuesInput, Prisma.UserUncheckedUpdateWithoutReportedSeatIssuesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReportedSeatIssuesInput, Prisma.UserUncheckedCreateWithoutReportedSeatIssuesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReportedSeatIssuesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReportedSeatIssuesInput, Prisma.UserUncheckedUpdateWithoutReportedSeatIssuesInput>
+}
+
+export type UserUpdateWithoutReportedSeatIssuesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
+  driverTrips?: Prisma.TripUpdateManyWithoutDriverNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReportedSeatIssuesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
+  driverTrips?: Prisma.TripUncheckedUpdateManyWithoutDriverNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1142,12 +1458,16 @@ export type UserUncheckedUpdateWithoutBookingsInput = {
 export type UserCountOutputType = {
   refreshTokens: number
   bookings: number
+  driverTrips: number
+  reportedSeatIssues: number
   transactions: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   refreshTokens?: boolean | UserCountOutputTypeCountRefreshTokensArgs
   bookings?: boolean | UserCountOutputTypeCountBookingsArgs
+  driverTrips?: boolean | UserCountOutputTypeCountDriverTripsArgs
+  reportedSeatIssues?: boolean | UserCountOutputTypeCountReportedSeatIssuesArgs
   transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
 }
 
@@ -1173,6 +1493,20 @@ export type UserCountOutputTypeCountRefreshTokensArgs<ExtArgs extends runtime.Ty
  */
 export type UserCountOutputTypeCountBookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.BookingWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDriverTripsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TripWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountReportedSeatIssuesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SeatIssueReportWhereInput
 }
 
 /**
@@ -1206,6 +1540,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   isBanned?: boolean
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
   bookings?: boolean | Prisma.User$bookingsArgs<ExtArgs>
+  driverTrips?: boolean | Prisma.User$driverTripsArgs<ExtArgs>
+  reportedSeatIssues?: boolean | Prisma.User$reportedSeatIssuesArgs<ExtArgs>
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -1283,6 +1619,8 @@ export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
   bookings?: boolean | Prisma.User$bookingsArgs<ExtArgs>
+  driverTrips?: boolean | Prisma.User$driverTripsArgs<ExtArgs>
+  reportedSeatIssues?: boolean | Prisma.User$reportedSeatIssuesArgs<ExtArgs>
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1294,6 +1632,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
     bookings: Prisma.$BookingPayload<ExtArgs>[]
+    driverTrips: Prisma.$TripPayload<ExtArgs>[]
+    reportedSeatIssues: Prisma.$SeatIssueReportPayload<ExtArgs>[]
     transactions: Prisma.$TransactionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1713,6 +2053,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   refreshTokens<T extends Prisma.User$refreshTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   bookings<T extends Prisma.User$bookingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  driverTrips<T extends Prisma.User$driverTripsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$driverTripsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TripPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reportedSeatIssues<T extends Prisma.User$reportedSeatIssuesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportedSeatIssuesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SeatIssueReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   transactions<T extends Prisma.User$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2196,6 +2538,54 @@ export type User$bookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.BookingScalarFieldEnum | Prisma.BookingScalarFieldEnum[]
+}
+
+/**
+ * User.driverTrips
+ */
+export type User$driverTripsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Trip
+   */
+  select?: Prisma.TripSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Trip
+   */
+  omit?: Prisma.TripOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TripInclude<ExtArgs> | null
+  where?: Prisma.TripWhereInput
+  orderBy?: Prisma.TripOrderByWithRelationInput | Prisma.TripOrderByWithRelationInput[]
+  cursor?: Prisma.TripWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TripScalarFieldEnum | Prisma.TripScalarFieldEnum[]
+}
+
+/**
+ * User.reportedSeatIssues
+ */
+export type User$reportedSeatIssuesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SeatIssueReport
+   */
+  select?: Prisma.SeatIssueReportSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SeatIssueReport
+   */
+  omit?: Prisma.SeatIssueReportOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SeatIssueReportInclude<ExtArgs> | null
+  where?: Prisma.SeatIssueReportWhereInput
+  orderBy?: Prisma.SeatIssueReportOrderByWithRelationInput | Prisma.SeatIssueReportOrderByWithRelationInput[]
+  cursor?: Prisma.SeatIssueReportWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SeatIssueReportScalarFieldEnum | Prisma.SeatIssueReportScalarFieldEnum[]
 }
 
 /**

@@ -61,7 +61,7 @@ Use Case quay lại bước 4
 Use Case quay lại bước 4
 
 Exception Flow
-3a. Link xác nhận đã hết hạn (quá 48 giờ)
+3a. Link xác nhận đã hết hạn (quá 24 giờ)
 3a1. Hệ thống hiển thị thông báo: "Link xác nhận đã hết hạn. Vui lòng liên hệ hỗ trợ"
 Use Case dừng lại
 
@@ -81,7 +81,9 @@ Business Rules
 BR-01: Ghế thay thế phải cùng loại (SEAT/BED) với ghế cũ
 BR-02: Ghế thay thế phải cùng giá với ghế cũ
 BR-03: Ghế thay thế phải trong cùng chuyến tàu
-BR-04: Link xác nhận hết hạn sau 48 giờ
+BR-04: Link xác nhận hết hạn sau 24 giờ
+BR-05: Nếu hành khách không ưng ý với các ghế đề xuất, hệ thống hủy vé bị ảnh hưởng và hoàn tiền về Ví nội bộ
+BR-06: Nếu hành khách không phản hồi trong 24 giờ, cron job tự động hủy vé bị ảnh hưởng và hoàn tiền về Ví nội bộ
 BR-05: Khách hàng chỉ có thể chọn 1 trong các ghế đề xuất
 BR-06: Không hoàn tiền khi đổi ghế (vì cùng giá)
 BR-07: Ghế cũ được đánh dấu DISABLED sau khi đổi thành công

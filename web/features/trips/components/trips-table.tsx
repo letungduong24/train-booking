@@ -109,6 +109,29 @@ export function TripsTable() {
             ),
         },
         {
+            accessorKey: "driver.name",
+            header: "Lái tàu",
+            cell: ({ row }) => {
+                const driver = row.original.driver;
+                return (
+                    <div>
+                        {driver ? (
+                            <div>
+                                <div className="font-semibold text-zinc-800 dark:text-zinc-200">
+                                    {driver.name || "Lái tàu"}
+                                </div>
+                                <div className="text-xs text-muted-foreground/60">
+                                    {driver.email}
+                                </div>
+                            </div>
+                        ) : (
+                            <span className="text-xs text-muted-foreground/40 italic">Chưa phân công</span>
+                        )}
+                    </div>
+                );
+            },
+        },
+        {
             accessorKey: "departureTime",
             header: ({ column }) => {
                 return (

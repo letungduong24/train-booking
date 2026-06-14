@@ -100,6 +100,16 @@ export const useDeleteTrip = () => {
     });
 };
 
+export const useDrivers = () => {
+    return useQuery({
+        queryKey: ['drivers'],
+        queryFn: async () => {
+            const response = await apiClient.get<Array<{ id: string; name: string | null; email: string; phone: string | null }>>('/trip/drivers');
+            return response.data;
+        },
+    });
+};
+
 export const useTripLiveLocation = (id: string, enabled: boolean = false, speedup?: number) => {
     return useQuery({
         queryKey: ['trips', id, 'live-location', speedup],
