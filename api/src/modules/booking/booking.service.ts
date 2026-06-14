@@ -107,17 +107,11 @@ export class BookingService {
       );
     }
 
-    const requestedStations = await this.prisma.station.findMany({
-      where: { id: { in: [fromStationId, toStationId] } }
-    });
-    const fromReq = requestedStations.find(s => s.id === fromStationId);
-    const toReq = requestedStations.find(s => s.id === toStationId);
-
-    const fromStation = trip.route.stations.find(
-      (s) => s.station.name === fromReq?.name,
-    );
-    const toStation = trip.route.stations.find(
-      (s) => s.station.name === toReq?.name,
+    const { fromStation, toStation } = await this.resolveRouteStationPair(
+      trip.routeId,
+      trip.route.stations,
+      fromStationId,
+      toStationId,
     );
 
     if (!fromStation || !toStation) {
@@ -216,8 +210,10 @@ export class BookingService {
         status: 'PENDING',
         metadata: {
           tripId,
-          fromStationId,
-          toStationId,
+          fromStationId: fromStation.stationId,
+          toStationId: toStation.stationId,
+          requestedFromStationId: fromStationId,
+          requestedToStationId: toStationId,
           passengers: ticketInputs.map((t) => ({
             seatId: t.seatId,
             price: t.price,
@@ -674,17 +670,11 @@ export class BookingService {
       throw new BadRequestException('Không tìm thấy chuyến tàu');
     }
 
-    const requestedStations = await this.prisma.station.findMany({
-      where: { id: { in: [fromStationId, toStationId] } }
-    });
-    const fromReq = requestedStations.find(s => s.id === fromStationId);
-    const toReq = requestedStations.find(s => s.id === toStationId);
-
-    const fromStation = trip.route.stations.find(
-      (s) => s.station.name === fromReq?.name,
-    );
-    const toStation = trip.route.stations.find(
-      (s) => s.station.name === toReq?.name,
+    const { fromStation, toStation } = await this.resolveRouteStationPair(
+      trip.routeId,
+      trip.route.stations,
+      fromStationId,
+      toStationId,
     );
 
     if (!fromStation || !toStation) {
@@ -751,8 +741,10 @@ export class BookingService {
           status: 'PENDING',
           metadata: {
             tripId,
-            fromStationId,
-            toStationId,
+            fromStationId: fromStation.stationId,
+            toStationId: toStation.stationId,
+            requestedFromStationId: fromStationId,
+            requestedToStationId: toStationId,
             seatIds,
           },
         },
@@ -937,16 +929,12 @@ export class BookingService {
     const toStationId = metadata.toStationId;
     const trip = booking.trip;
 
-    const fromStation =
-      (trip.route as any).stations.find(
-        (s: any) => s.stationId === fromStationId,
-      ) ||
-      (await this.prisma.routeStation.findFirst({
-        where: { routeId: trip.routeId, stationId: fromStationId },
-      }));
-    const toStation = await this.prisma.routeStation.findFirst({
-      where: { routeId: trip.routeId, stationId: toStationId },
-    });
+    const { fromStation, toStation } = await this.resolveRouteStationPair(
+      trip.routeId,
+      (trip.route as any).stations,
+      fromStationId,
+      toStationId,
+    );
 
     if (!fromStation || !toStation)
       throw new BadRequestException('Ga không hợp lệ');
@@ -1006,6 +994,10 @@ export class BookingService {
         totalPrice,
         metadata: {
           ...metadata,
+          fromStationId: fromStation.stationId,
+          toStationId: toStation.stationId,
+          requestedFromStationId: metadata.requestedFromStationId ?? fromStationId,
+          requestedToStationId: metadata.requestedToStationId ?? toStationId,
           passengers: ticketInputs.map((t) => ({
             seatId: t.seatId,
             price: t.price,
@@ -1081,11 +1073,23 @@ export class BookingService {
       booking.metadata
     ) {
       const metadata = booking.metadata as any;
+      const resolvedStations =
+        metadata.fromStationId && metadata.toStationId
+          ? await this.resolveRouteStationPair(
+              booking.trip.routeId,
+              (booking.trip.route as any).stations,
+              metadata.fromStationId,
+              metadata.toStationId,
+            ).catch(() => null)
+          : null;
+      const normalizedMetadata = resolvedStations
+        ? this.withResolvedStations(metadata, resolvedStations.fromStation, resolvedStations.toStation)
+        : metadata;
 
       // Case 1: Has Passengers info in metadata (User filled details but didn't pay)
-      if (metadata.passengers && metadata.passengers.length > 0) {
+      if (normalizedMetadata.passengers && normalizedMetadata.passengers.length > 0) {
         // Fetch seat info for these passengers to display seat name
-        const seatIds = metadata.passengers.map((p: any) => p.seatId);
+        const seatIds = normalizedMetadata.passengers.map((p: any) => p.seatId);
         const seats = await this.prisma.seat.findMany({
           where: { id: { in: seatIds } },
           include: { coach: true },
@@ -1095,10 +1099,10 @@ export class BookingService {
           id: s.id,
           name: `${s.coach.name}-${s.name}`,
           price:
-            metadata.passengers.find((p: any) => p.seatId === s.id)?.price || 0,
+            normalizedMetadata.passengers.find((p: any) => p.seatId === s.id)?.price || 0,
         }));
 
-        const simulatedTickets = metadata.passengers.map(
+        const simulatedTickets = normalizedMetadata.passengers.map(
           (p: any, index: number) => {
             const seat = seats.find((s) => s.id === p.seatId);
             return {
@@ -1118,14 +1122,14 @@ export class BookingService {
           expiresAt,
           tickets: simulatedTickets,
           metadata: {
-            ...metadata,
+            ...normalizedMetadata,
             seats: enrichedSeats,
           },
         };
       }
 
       // Case 2: Only Seat selection
-      const seatIds = (metadata.seatIds as string[]) || [];
+      const seatIds = (normalizedMetadata.seatIds as string[]) || [];
       if (seatIds.length > 0) {
         const seats = await this.prisma.seat.findMany({
           where: { id: { in: seatIds } },
@@ -1133,21 +1137,9 @@ export class BookingService {
         });
 
         // Need station info for pricing
-        const fromStationId = metadata.fromStationId;
-        const toStationId = metadata.toStationId;
         const trip = booking.trip;
-
-        // Fetch station info if needed
-        const fromStation =
-          (trip.route as any).stations.find(
-            (s: any) => s.stationId === fromStationId,
-          ) ||
-          (await this.prisma.routeStation.findFirst({
-            where: { routeId: trip.routeId, stationId: fromStationId },
-          }));
-        const toStation = await this.prisma.routeStation.findFirst({
-          where: { routeId: trip.routeId, stationId: toStationId },
-        });
+        const fromStation = resolvedStations?.fromStation;
+        const toStation = resolvedStations?.toStation;
 
         const enrichedSeats: { id: string; name: string; price: number }[] = [];
         const simulatedTickets: any[] = [];
@@ -1191,7 +1183,7 @@ export class BookingService {
           expiresAt,
           tickets: simulatedTickets,
           metadata: {
-            ...metadata,
+            ...normalizedMetadata,
             seats: enrichedSeats,
           },
         };
@@ -1208,6 +1200,77 @@ export class BookingService {
     // Extract seatIds from keys
     const seatIds = keys.map((key) => key.split(':').pop());
     return { seatIds };
+  }
+
+  private async resolveRouteStationPair(
+    routeId: string,
+    routeStations: any[],
+    fromStationId: string,
+    toStationId: string,
+  ) {
+    const requestedIds = [fromStationId, toStationId].filter(Boolean);
+    const requestedStations = await this.prisma.station.findMany({
+      where: { id: { in: requestedIds } },
+      select: { id: true, name: true },
+    });
+    const requestedNameById = new Map(requestedStations.map((station) => [station.id, station.name]));
+
+    const resolve = async (stationId: string) => {
+      const direct = routeStations.find((routeStation: any) => routeStation.stationId === stationId);
+      if (direct) return direct;
+
+      const stationName = requestedNameById.get(stationId);
+      if (!stationName) return null;
+
+      return (
+        routeStations.find((routeStation: any) => routeStation.station?.name === stationName) ??
+        this.prisma.routeStation.findFirst({
+          where: {
+            routeId,
+            station: { name: stationName },
+          },
+          include: { station: true },
+        })
+      );
+    };
+
+    const [fromStation, toStation] = await Promise.all([resolve(fromStationId), resolve(toStationId)]);
+    if (!fromStation || !toStation) {
+      throw new BadRequestException('Ga đến hoặc ga đi không hợp lệ với phiên bản tuyến đường hiện tại');
+    }
+    if (fromStation.index >= toStation.index) {
+      throw new BadRequestException('Ga đi phải đứng trước ga đến trong tuyến đường');
+    }
+
+    return { fromStation, toStation };
+  }
+
+  private withResolvedStations(metadata: any, fromStation: any, toStation: any) {
+    return {
+      ...metadata,
+      fromStationId: fromStation.stationId,
+      toStationId: toStation.stationId,
+      requestedFromStationId: metadata.requestedFromStationId ?? metadata.fromStationId,
+      requestedToStationId: metadata.requestedToStationId ?? metadata.toStationId,
+      resolvedFromStation: this.toBookingRouteStationMetadata(fromStation),
+      resolvedToStation: this.toBookingRouteStationMetadata(toStation),
+    };
+  }
+
+  private toBookingRouteStationMetadata(routeStation: any) {
+    return {
+      stationId: routeStation.stationId,
+      index: routeStation.index,
+      distanceFromStart: routeStation.distanceFromStart,
+      durationFromStart: routeStation.durationFromStart,
+      station: routeStation.station
+        ? {
+            id: routeStation.station.id,
+            name: routeStation.station.name,
+            code: routeStation.station.code,
+          }
+        : undefined,
+    };
   }
 
   private async validatePassengers(passengers: any[], passengerGroups: any[]) {

@@ -336,21 +336,28 @@ export function PassengerInfoForm({
                 ))}
 
                 {/* Action Buttons */}
-                <div className="flex flex-col md:flex-row gap-3 pt-4">
+                <div className="space-y-3 pt-4">
+                    <Button
+                        onClick={handleSubmit}
+                        className="w-full bg-[#802222] hover:bg-rose-900 text-white font-medium h-11 rounded-full text-sm shadow-xl shadow-rose-900/20 transition-all hover:scale-[1.01] active:scale-[0.98] border-none"
+                    >
+                        {submitLabel}
+                    </Button>
+
                     {bookingCode ? (
-                        <div className="flex-1 flex gap-3">
+                        <div className="grid grid-cols-2 gap-3">
                             <Button 
                                 variant="outline" 
                                 onClick={onCancel} 
-                                className="flex-1 h-11 rounded-xl font-semibold border-gray-100 hover:bg-gray-50 transition-all text-xs"
+                                className="h-10 rounded-full font-medium border-gray-200 bg-white !text-muted-foreground hover:bg-rose-50 hover:!text-[#802222] focus-visible:!text-[#802222] transition-all text-xs"
                             >
                                 Quay lại
                             </Button>
                             <CancelBookingButton
                                 bookingCode={bookingCode}
-                                className="flex-1 h-11 rounded-xl font-semibold transition-all text-xs"
+                                className="h-10 rounded-full font-medium transition-all text-xs"
                                 onCancelSuccess={onCancel}
-                                variant="destructive"
+                                variant="outline"
                             >
                                 Hủy đơn
                             </CancelBookingButton>
@@ -359,18 +366,11 @@ export function PassengerInfoForm({
                         <Button 
                             variant="outline" 
                             onClick={onCancel} 
-                            className="flex-1 h-11 rounded-xl font-semibold border-gray-100 hover:bg-gray-50 transition-all text-xs"
+                            className="w-full h-10 rounded-full font-medium border-gray-200 bg-white !text-muted-foreground hover:bg-rose-50 hover:!text-[#802222] focus-visible:!text-[#802222] transition-all text-xs"
                         >
                             Quay lại
                         </Button>
                     )}
-
-                    <Button 
-                        onClick={handleSubmit} 
-                        className="flex-1 h-11 bg-[#802222] hover:bg-rose-900 text-white rounded-xl font-semibold shadow-lg shadow-rose-900/10 transition-all hover:scale-[1.02] active:scale-[0.98] border-none text-xs"
-                    >
-                        {submitLabel}
-                    </Button>
                 </div>
             </CardContent>
         </Card>
