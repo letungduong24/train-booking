@@ -16,6 +16,8 @@ interface BedLayoutViewerProps {
     selectedSeats?: string[]
     isAdmin?: boolean
     tripId?: string
+    fromStationId?: string
+    toStationId?: string
     onSeatsForceDeselected?: (seatIds: string[]) => void
     isSubmitting?: boolean
     highlightedSeatIds?: string[]
@@ -26,7 +28,7 @@ interface BedLayoutViewerProps {
 
 
 
-export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = [], isAdmin = false, tripId, onSeatsForceDeselected, isSubmitting = false, highlightedSeatIds = [], focusedSeatId = null, coachName, onSearchPassenger }: BedLayoutViewerProps) {
+export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = [], isAdmin = false, tripId, fromStationId, toStationId, onSeatsForceDeselected, isSubmitting = false, highlightedSeatIds = [], focusedSeatId = null, coachName, onSearchPassenger }: BedLayoutViewerProps) {
 
     const lastScrolledSeatId = useRef<string | null>(null)
 
@@ -47,7 +49,7 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
     const { socket } = useSocketStore();
 
     // Fetch initial locked seats using custom hook
-    const { data: initialLockedSeats } = useLockedSeats(tripId);
+    const { data: initialLockedSeats, refetch: refetchLockedSeats } = useLockedSeats(tripId, fromStationId, toStationId);
 
     // Sync initial data to local state
     useEffect(() => {
@@ -60,38 +62,22 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
     useEffect(() => {
         if (!tripId || !socket) return
 
-        function onSeatsLocked(data: { tripId: string, seatIds: string[] }) {
+        function onSeatLockChanged(data: { tripId: string }) {
             if (data.tripId === tripId) {
-                setLockedSeatIds(prev => {
-                    const newIds = data.seatIds.filter(id => !prev.includes(id))
-
-                    // Check for conflicts with selected seats
-                    if (onSeatsForceDeselected && selectedSeats.length > 0 && !isSubmitting) {
-                        const conflicts = data.seatIds.filter(id => selectedSeats.includes(id));
-                        if (conflicts.length > 0) {
-                            onSeatsForceDeselected(conflicts);
-                        }
-                    }
-
-                    return [...prev, ...newIds]
-                })
+                void refetchLockedSeats()
             }
         }
 
-        function onSeatsReleased(data: { tripId: string, seatIds: string[] }) {
-            if (data.tripId === tripId) {
-                setLockedSeatIds(prev => prev.filter(id => !data.seatIds.includes(id)))
-            }
-        }
-
-        socket.on("seats.locked", onSeatsLocked)
-        socket.on("seats.released", onSeatsReleased)
+        socket.on("seats.locked", onSeatLockChanged)
+        socket.on("seats.released", onSeatLockChanged)
+        socket.on("seats.booked", onSeatLockChanged)
 
         return () => {
-            socket.off("seats.locked", onSeatsLocked)
-            socket.off("seats.released", onSeatsReleased)
+            socket.off("seats.locked", onSeatLockChanged)
+            socket.off("seats.released", onSeatLockChanged)
+            socket.off("seats.booked", onSeatLockChanged)
         }
-    }, [tripId, socket, selectedSeats, onSeatsForceDeselected, isSubmitting])
+    }, [tripId, socket, refetchLockedSeats])
 
     // Handle conflicts
     useEffect(() => {

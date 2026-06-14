@@ -119,7 +119,6 @@ export class AuthService {
   }
 
   async verifyEmail(token: string) {
-    console.log('[DEBUG] Verifying token:', token);
     const user = await this.prisma.user.findFirst({
       where: {
         verificationToken: token,
@@ -127,15 +126,10 @@ export class AuthService {
     });
 
     if (!user) {
-      console.log('[DEBUG] No user found for token:', token);
       throw new BadRequestException('Mã xác thực không hợp lệ hoặc đã hết hạn');
     }
 
-    console.log('[DEBUG] Found user:', user.email, 'Verification status:', user.isEmailVerified);
-    console.log('[DEBUG] Token expires at:', user.verificationTokenExpires, 'Now:', new Date());
-
     if (user.verificationTokenExpires && user.verificationTokenExpires < new Date()) {
-      console.log('[DEBUG] Token expired');
       throw new BadRequestException('Mã xác thực đã hết hạn');
     }
 
@@ -148,7 +142,6 @@ export class AuthService {
       },
     });
 
-    console.log('[DEBUG] Verification success for:', user.email);
     return { message: 'Xác thực email thành công' };
   }
 

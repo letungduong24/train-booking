@@ -29,15 +29,23 @@ export class BookingGateway
     this.logger.log(`Client disconnected: ${client.id}`);
   }
 
-  emitSeatsLocked(tripId: string, seatIds: string[]) {
-    this.server.emit('seats.locked', { tripId, seatIds });
+  emitSeatsLocked(
+    tripId: string,
+    seatIds: string[],
+    segment?: { fromStationIndex: number; toStationIndex: number },
+  ) {
+    this.server.emit('seats.locked', { tripId, seatIds, ...segment });
     this.logger.debug(
       `Emitted seats.locked for trip ${tripId}: ${seatIds.join(', ')}`,
     );
   }
 
-  emitSeatsReleased(tripId: string, seatIds: string[]) {
-    this.server.emit('seats.released', { tripId, seatIds });
+  emitSeatsReleased(
+    tripId: string,
+    seatIds: string[],
+    segment?: { fromStationIndex: number; toStationIndex: number },
+  ) {
+    this.server.emit('seats.released', { tripId, seatIds, ...segment });
     this.logger.debug(
       `Emitted seats.released for trip ${tripId}: ${seatIds.join(', ')}`,
     );
@@ -50,8 +58,12 @@ export class BookingGateway
     );
   }
 
-  emitSeatsBooked(tripId: string, seatIds: string[]) {
-    this.server.emit('seats.booked', { tripId, seatIds });
+  emitSeatsBooked(
+    tripId: string,
+    seatIds: string[],
+    segment?: { fromStationIndex: number; toStationIndex: number },
+  ) {
+    this.server.emit('seats.booked', { tripId, seatIds, ...segment });
     this.logger.debug(
       `Emitted seats.booked for trip ${tripId}: ${seatIds.join(', ')}`,
     );

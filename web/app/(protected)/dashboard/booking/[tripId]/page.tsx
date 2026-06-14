@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { format, addMinutes } from 'date-fns';
-import { ArrowLeft, Train, MapPin, Clock, Calendar, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Train, MapPin, Clock, Calendar, AlertCircle, ArrowRightLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import apiClient from '@/lib/api-client';
 
@@ -28,6 +28,13 @@ import { ChevronUp } from 'lucide-react';
 import { ConflictDialog } from '@/features/booking/components/conflict-dialog';
 import { MaxPendingDialog } from '@/features/booking/components/max-pending-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import Link from 'next/link';
 
 export default function TripDetailPage() {
@@ -92,6 +99,10 @@ export default function TripDetailPage() {
 
     const { mutate: initBooking, isPending: isInitializing } = useInitBooking();
 
+    useEffect(() => {
+        setSelectedSeats([]);
+    }, [fromStationId, toStationId]);
+
     if (isTripLoading) {
         return (
             <div className="container mx-auto py-8 px-4 space-y-6">
@@ -124,6 +135,11 @@ export default function TripDetailPage() {
 
     const fromStation = trip.resolvedFrom || trip.route.stations.find((rs: any) => rs.stationId === fromStationId);
     const toStation = trip.resolvedTo || trip.route.stations.find((rs: any) => rs.stationId === toStationId);
+    const routeStations = [...trip.route.stations].sort((a: any, b: any) => a.index - b.index);
+    const currentFromStationId = fromStation?.stationId || fromStationId;
+    const currentToStationId = toStation?.stationId || toStationId;
+    const currentFromIndex = routeStations.find((rs: any) => rs.stationId === currentFromStationId)?.index ?? -1;
+    const currentToIndex = routeStations.find((rs: any) => rs.stationId === currentToStationId)?.index ?? -1;
 
     const departureDate = trip.departureTime && fromStation
         ? addMinutes(new Date(trip.departureTime), fromStation.durationFromStart)
@@ -136,6 +152,50 @@ export default function TripDetailPage() {
     const totalPrice = selectedSeats.reduce((sum, seat) => sum + seat.price, 0);
 
 
+
+    const updateRouteSegment = (nextFromStationId: string, nextToStationId: string) => {
+        if (!nextFromStationId || !nextToStationId || nextFromStationId === nextToStationId) {
+            return;
+        }
+
+        const nextParams = new URLSearchParams(searchParams.toString());
+        nextParams.set('from', nextFromStationId);
+        nextParams.set('to', nextToStationId);
+        setSelectedSeats([]);
+        router.replace(`/dashboard/booking/${tripId}?${nextParams.toString()}`, { scroll: false });
+    };
+
+    const handleFromStationChange = (nextFromStationId: string) => {
+        const nextFrom = routeStations.find((rs: any) => rs.stationId === nextFromStationId);
+        if (!nextFrom) return;
+
+        const nextTo =
+            routeStations.find((rs: any) => rs.stationId === currentToStationId && rs.index > nextFrom.index) ||
+            routeStations.find((rs: any) => rs.index > nextFrom.index);
+
+        if (!nextTo) {
+            toast.error('Ga đi phải đứng trước ga đến');
+            return;
+        }
+
+        updateRouteSegment(nextFrom.stationId, nextTo.stationId);
+    };
+
+    const handleToStationChange = (nextToStationId: string) => {
+        const nextTo = routeStations.find((rs: any) => rs.stationId === nextToStationId);
+        if (!nextTo) return;
+
+        const nextFrom =
+            routeStations.find((rs: any) => rs.stationId === currentFromStationId && rs.index < nextTo.index) ||
+            [...routeStations].reverse().find((rs: any) => rs.index < nextTo.index);
+
+        if (!nextFrom) {
+            toast.error('Ga đến phải đứng sau ga đi');
+            return;
+        }
+
+        updateRouteSegment(nextFrom.stationId, nextTo.stationId);
+    };
 
     const handleSeatToggle = (seat: any) => {
         const isSelected = selectedSeats.some((s) => s.id === seat.id);
@@ -175,7 +235,6 @@ export default function TripDetailPage() {
                 toStationId
             }, {
                 onSuccess: (data) => {
-                    console.log('Booking initialized:', data);
                     // Navigate to passengers page instead of showing form
                     router.push(`/dashboard/booking/passengers?bookingCode=${data.bookingCode}`);
                     // NOTE: Do NOT set isProcessing to false here. 
@@ -243,6 +302,58 @@ export default function TripDetailPage() {
                     <Badge variant="outline" className="border-[#802222]/20 text-[#802222] dark:text-rose-400 font-medium px-3 py-1 rounded-full text-[11px]">
                         Tàu {trip.train.code}
                     </Badge>
+                </div>
+
+                <div className="relative z-10 mb-6 rounded-2xl border border-rose-100/70 bg-white/80 p-4 shadow-sm shadow-rose-900/[0.02] dark:border-zinc-800 dark:bg-zinc-900/70">
+                    <div className="mb-3 flex items-center gap-2">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-50 text-[#802222] dark:bg-rose-950/20 dark:text-rose-400">
+                            <ArrowRightLeft className="h-4 w-4" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-bold text-[#802222] dark:text-rose-400">Chọn chặng đi</p>
+                            <p className="text-[11px] font-medium text-muted-foreground/60">Đổi ga đi/ga đến, giá vé và trạng thái ghế sẽ cập nhật theo chặng</p>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                        <div className="space-y-1.5">
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50">Ga đi</p>
+                            <Select value={currentFromStationId} onValueChange={handleFromStationChange}>
+                                <SelectTrigger className="h-11 w-full rounded-xl border-rose-100 bg-white text-sm font-semibold shadow-none hover:border-[#802222]/30 dark:border-zinc-800 dark:bg-zinc-950">
+                                    <SelectValue placeholder="Chọn ga đi" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {routeStations.slice(0, -1).map((rs: any) => (
+                                        <SelectItem
+                                            key={rs.stationId}
+                                            value={rs.stationId}
+                                            disabled={rs.index >= currentToIndex && currentToIndex >= 0}
+                                        >
+                                            {rs.station.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-1.5">
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50">Ga đến</p>
+                            <Select value={currentToStationId} onValueChange={handleToStationChange}>
+                                <SelectTrigger className="h-11 w-full rounded-xl border-rose-100 bg-white text-sm font-semibold shadow-none hover:border-[#802222]/30 dark:border-zinc-800 dark:bg-zinc-950">
+                                    <SelectValue placeholder="Chọn ga đến" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {routeStations.slice(1).map((rs: any) => (
+                                        <SelectItem
+                                            key={rs.stationId}
+                                            value={rs.stationId}
+                                            disabled={rs.index <= currentFromIndex && currentFromIndex >= 0}
+                                        >
+                                            {rs.station.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 relative z-10">
@@ -347,6 +458,8 @@ export default function TripDetailPage() {
                                                     selectedSeats={selectedSeats.map((s) => s.id)}
                                                     onSeatClick={handleSeatToggle}
                                                     tripId={tripId}
+                                                    fromStationId={fromStationId}
+                                                    toStationId={toStationId}
                                                     onSeatsForceDeselected={handleSeatsForceDeselected}
                                                     isSubmitting={isProcessing || isInitializing}
                                                 />
@@ -358,6 +471,8 @@ export default function TripDetailPage() {
                                                     selectedSeats={selectedSeats.map((s) => s.id)}
                                                     onSeatClick={handleSeatToggle}
                                                     tripId={tripId}
+                                                    fromStationId={fromStationId}
+                                                    toStationId={toStationId}
                                                     onSeatsForceDeselected={handleSeatsForceDeselected}
                                                     isSubmitting={isProcessing || isInitializing}
                                                 />
@@ -388,9 +503,9 @@ export default function TripDetailPage() {
                                             <RouteMap
                                                 stations={trip.route.stations.map((s: any, i: number) => ({ ...s, index: i }))}
                                                 className="h-full border-0"
-                                                highlightSegment={fromStationId && toStationId ? {
-                                                    fromStationId: fromStationId,
-                                                    toStationId: toStationId
+                                                highlightSegment={currentFromStationId && currentToStationId ? {
+                                                    fromStationId: currentFromStationId,
+                                                    toStationId: currentToStationId
                                                 } : undefined}
                                                 pathCoordinates={trip.route.pathCoordinates}
                                             />
@@ -420,9 +535,9 @@ export default function TripDetailPage() {
                             <RouteMap
                                 stations={trip.route.stations.map((s: any, i: number) => ({ ...s, index: i }))}
                                 className="h-full border-0"
-                                highlightSegment={fromStationId && toStationId ? {
-                                    fromStationId: fromStationId,
-                                    toStationId: toStationId
+                                highlightSegment={currentFromStationId && currentToStationId ? {
+                                    fromStationId: currentFromStationId,
+                                    toStationId: currentToStationId
                                 } : undefined}
                                 pathCoordinates={trip.route.pathCoordinates}
                             />

@@ -271,14 +271,15 @@ export class CoachesService {
       throw new BadRequestException('Invalid station IDs for this route');
     }
 
-    // Query all booked tickets for this trip that overlap with the requested segment
+    // Query booked tickets that overlap this segment.
+    // Segments are half-open: [from, to), so a seat can be reused when one
+    // passenger gets off at the same station another passenger gets on.
     const bookedTickets = await this.prisma.ticket.findMany({
       where: {
         tripId: tripId,
-        // Check overlap: new segment overlaps with already booked segment
         AND: [
-          { fromStationIndex: { lte: toStation.index } },
-          { toStationIndex: { gte: fromStation.index } },
+          { fromStationIndex: { lt: toStation.index } },
+          { toStationIndex: { gt: fromStation.index } },
         ],
       },
       select: {

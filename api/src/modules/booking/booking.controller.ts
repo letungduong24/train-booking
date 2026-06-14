@@ -13,20 +13,16 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { InitBookingDto } from './dto/init-booking.dto';
 import { UpdateBookingPassengersDto } from './dto/update-booking-passengers.dto';
 import { FilterBookingDto } from './dto/filter-booking.dto';
-import type { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-// import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @Controller('bookings')
 export class BookingController {
   constructor(private readonly bookingService: BookingService) {}
 
   @Post()
-  // @UseGuards(JwtAuthGuard) // Bỏ comment để yêu cầu đăng nhập
-  async createBooking(@Body() dto: CreateBookingDto, @Req() req: Request) {
-    // const userId = req.user['id'];
-    const userId = null; // Tạm thời để null (khách vãng lai) để test sandbox
-
+  @UseGuards(JwtAuthGuard)
+  async createBooking(@Body() dto: CreateBookingDto, @Req() req: any) {
+    const userId = req.user.id;
     const ipAddr =
       (req.headers['x-forwarded-for'] as string) ||
       req.socket.remoteAddress ||
@@ -81,8 +77,16 @@ export class BookingController {
   }
 
   @Get('locked-seats/:tripId')
-  async getLockedSeats(@Param('tripId') tripId: string) {
-    return this.bookingService.getLockedSeats(tripId);
+  async getLockedSeats(
+    @Param('tripId') tripId: string,
+    @Query('fromStationId') fromStationId?: string,
+    @Query('toStationId') toStationId?: string,
+  ) {
+    return this.bookingService.getLockedSeats(
+      tripId,
+      fromStationId,
+      toStationId,
+    );
   }
 
   @Get(':code')

@@ -33,27 +33,6 @@ export class TripController {
     );
   }
 
-  @Get('debug-search')
-  async debugSearch(@Query() query: SearchTripDto) {
-    const route = await this.tripService['prisma'].route.findUnique({
-      where: { id: '4fbefd74-6561-4e7f-a83a-f7137af06f39' },
-      include: { stations: { include: { station: true }, orderBy: { index: 'asc' } } }
-    });
-    
-    return {
-      routeId: route?.id,
-      routeName: route?.name,
-      networkId: route?.networkId,
-      status: route?.status,
-      stations: route?.stations.map(rs => ({
-        index: rs.index,
-        stationId: rs.stationId,
-        stationCode: rs.station.code,
-        stationName: rs.station.name,
-      })),
-    };
-  }
-
   @Get()
   findAll(@Query() query: FilterTripDto) {
     return this.tripService.findAll(query);

@@ -30,6 +30,12 @@ import { TripService } from '../trip/trip.service';
 import { MailService } from '../mail/mail.service';
 import { TicketService } from '../ticket/ticket.service';
 
+type SeatLockSegment = {
+  seatId: string;
+  fromStationIndex: number;
+  toStationIndex: number;
+};
+
 @Injectable()
 export class BookingService {
   private readonly logger = new Logger(BookingService.name);
@@ -324,7 +330,11 @@ export class BookingService {
     const existingTickets = await this.prisma.ticket.findMany({
       where: {
         tripId: tripId,
-        seatId: { in: seatIds },
+        OR: tickets.map((ticket) => ({
+          seatId: ticket.seatId,
+          fromStationIndex: { lt: ticket.toStationIndex },
+          toStationIndex: { gt: ticket.fromStationIndex },
+        })),
       },
     });
 
@@ -366,25 +376,13 @@ export class BookingService {
       );
     }
 
-    // Kiểm tra Redis lock - Ưu tiên người đang lock hiện tại
-    const lockKeys = seatIds.map((id: string) => `lock:seat:${tripId}:${id}`);
-    const locks = await Promise.all(
-      lockKeys.map((key: string) => this.redis.get(key)),
+    const lockedByOthers = await this.findOverlappingSeatLocks(
+      tripId,
+      tickets,
+      bookingCode,
     );
 
-    const lockedByOthers = locks.some((lock, index) => {
-      if (!lock) return false; // Không có lock
-      try {
-        // The lock value is just the bookingCode string, not a JSON object.
-        // The `initBooking` method sets `await this.redis.set(key, bookingCode, 'EX', lockTimeSec, 'NX');`
-        // So we should compare directly with the bookingCode.
-        return lock !== bookingCode; // Lock bởi booking khác
-      } catch {
-        return false; // Should not happen if lock is just a string
-      }
-    });
-
-    if (lockedByOthers) {
+    if (lockedByOthers.length > 0) {
       this.logger.error(
         `Booking ${bookingCode} rejected: Seats are locked by another active booking`,
       );
@@ -515,18 +513,15 @@ export class BookingService {
     if (metadata.tripId && metadata.passengers) {
       const tripId = metadata.tripId;
       const seatIds = metadata.passengers.map((p: any) => p.seatId);
+      const lockSegments = this.getSeatLockSegmentsFromMetadata(metadata);
 
-      // Xóa key trong Redis
-      const locks = seatIds.map((id: string) => `lock:seat:${tripId}:${id}`);
-      if (locks.length > 0) {
-        await Promise.all(locks.map((key: string) => this.redis.del(key)));
-      }
+      await this.releaseSeatLocks(tripId, lockSegments, seatIds);
 
       // Emit sự kiện để các client khác bỏ màu vàng (chuyển sang đỏ nếu logic FE/BE đã sync status BOOKED, hoặc xanh tạm thời)
       // Tốt nhất là các client nên trigger fetch lại seats khi nhận event này hoặc một event `seats.booked` riêng.
       // Nhưng hiện tại để fix lỗi "bị ghi đè locked" thì ta release lock là được.
-      this.bookingGateway.emitSeatsReleased(tripId, seatIds);
-      this.bookingGateway.emitSeatsBooked(tripId, seatIds);
+      this.emitSeatLocksReleased(tripId, lockSegments, seatIds);
+      this.emitSeatLocksBooked(tripId, lockSegments, seatIds);
     }
 
     this.logger.log(
@@ -692,9 +687,42 @@ export class BookingService {
       throw new BadRequestException('Một số ghế không hợp lệ');
     }
 
+    const occupiedTickets = await this.prisma.ticket.findMany({
+      where: {
+        tripId,
+        seatId: { in: seatIds },
+        fromStationIndex: { lt: toStation.index },
+        toStationIndex: { gt: fromStation.index },
+      },
+      select: {
+        seat: {
+          select: {
+            name: true,
+            coach: {
+              select: { name: true },
+            },
+          },
+        },
+      },
+    });
+
+    if (occupiedTickets.length > 0) {
+      const occupiedNames = occupiedTickets
+        .map((ticket) => `${ticket.seat.name} (${ticket.seat.coach.name})`)
+        .join(', ');
+      throw new BadRequestException(
+        `Ghế ${occupiedNames} đã được đặt trên chặng này. Vui lòng chọn ghế khác.`,
+      );
+    }
+
     // 3. Redis Lock Check (Optimistic Locking)
     const bookingCode = `RAILFLOW-${dayjs().format('YYYYMMDD')}-${Math.floor(Math.random() * 10000)}`;
     const acquiredLocks: string[] = [];
+    const lockSegments = seatIds.map((seatId) => ({
+      seatId,
+      fromStationIndex: fromStation.index,
+      toStationIndex: toStation.index,
+    }));
 
     const lockTimeMin =
       this.configService.get<number>('BOOKING_LOCK_TIME_MINUTES') || 10;
@@ -702,30 +730,28 @@ export class BookingService {
     const lockTimeMs = lockTimeMin * 60 * 1000;
 
     try {
-      for (const seatId of seatIds) {
-        const key = `lock:seat:${tripId}:${seatId}`;
-        // NX: Set if Not Exists, EX: Expire in seconds (600s = 10m)
-        const result = await this.redis.set(
-          key,
+      for (const segment of lockSegments) {
+        const key = this.buildSeatLockKey(tripId, segment);
+        const result = await this.acquireSeatSegmentLock(
+          tripId,
+          segment,
           bookingCode,
-          'EX',
           lockTimeSec,
-          'NX',
         );
 
-        if (result !== 'OK') {
+        if (!result) {
           // Lock failed, meaning seat is taken
           // Instead of throwing immediately, we want to know ALL failed seats to report meaningful names
           // But for simplicity/performance in optimistic lock, failing on first one is fine, just need its name.
           const lockedSeat = await this.prisma.seat.findUnique({
-            where: { id: seatId },
+            where: { id: segment.seatId },
             include: { coach: true },
           });
           const seatName = lockedSeat
             ? `${lockedSeat.name} (Toa ${lockedSeat.coach.name})`
-            : seatId;
+            : segment.seatId;
           throw new BadRequestException(
-            `Ghế ${seatName} đang được giữ bởi người khác. Vui lòng thử lại sau.`,
+            `Ghế ${seatName} đang được giữ bởi người khác trên chặng này. Vui lòng thử lại sau.`,
           );
         }
         acquiredLocks.push(key);
@@ -745,6 +771,8 @@ export class BookingService {
             toStationId: toStation.stationId,
             requestedFromStationId: fromStationId,
             requestedToStationId: toStationId,
+            fromStationIndex: fromStation.index,
+            toStationIndex: toStation.index,
             seatIds,
           },
         },
@@ -758,7 +786,7 @@ export class BookingService {
       ); // Dynamic delay
 
       // 6. Emit Socket Event
-      this.bookingGateway.emitSeatsLocked(tripId, seatIds);
+      this.emitSeatLocksLocked(tripId, lockSegments, seatIds);
       this.triggerStatsUpdate(tripId);
 
       return {
@@ -814,29 +842,21 @@ export class BookingService {
         this.triggerStatsUpdate(metadata.tripId);
       }
 
+      const lockSegments = this.getSeatLockSegmentsFromMetadata(metadata);
+
       if (metadata.tripId && metadata.seatIds) {
         // For initBooking style
-        this.bookingGateway.emitSeatsReleased(
+        await this.releaseSeatLocks(
           metadata.tripId,
+          lockSegments,
           metadata.seatIds,
         );
-        // Also delete from Redis
-        const locks = metadata.seatIds.map(
-          (id: string) => `lock:seat:${metadata.tripId}:${id}`,
-        );
-        if (locks.length > 0) {
-          await Promise.all(locks.map((key: string) => this.redis.del(key)));
-        }
+        this.emitSeatLocksReleased(metadata.tripId, lockSegments, metadata.seatIds);
       } else if (metadata.tripId && metadata.passengers) {
         // For createBooking style (legacy/mixed)
         const seatIds = metadata.passengers.map((p) => p.seatId);
-        this.bookingGateway.emitSeatsReleased(metadata.tripId, seatIds);
-        const locks = seatIds.map(
-          (id: string) => `lock:seat:${metadata.tripId}:${id}`,
-        );
-        if (locks.length > 0) {
-          await Promise.all(locks.map((key: string) => this.redis.del(key)));
-        }
+        await this.releaseSeatLocks(metadata.tripId, lockSegments, seatIds);
+        this.emitSeatLocksReleased(metadata.tripId, lockSegments, seatIds);
       }
     }
 
@@ -873,7 +893,9 @@ export class BookingService {
           }
 
           if (seatIds.length > 0) {
-            this.bookingGateway.emitSeatsReleased(metadata.tripId, seatIds);
+            const lockSegments = this.getSeatLockSegmentsFromMetadata(metadata);
+            await this.releaseSeatLocks(metadata.tripId, lockSegments, seatIds);
+            this.emitSeatLocksReleased(metadata.tripId, lockSegments, seatIds);
           }
         }
       }
@@ -998,6 +1020,8 @@ export class BookingService {
           toStationId: toStation.stationId,
           requestedFromStationId: metadata.requestedFromStationId ?? fromStationId,
           requestedToStationId: metadata.requestedToStationId ?? toStationId,
+          fromStationIndex: fromStation.index,
+          toStationIndex: toStation.index,
           passengers: ticketInputs.map((t) => ({
             seatId: t.seatId,
             price: t.price,
@@ -1192,14 +1216,304 @@ export class BookingService {
 
     return { ...booking, expiresAt };
   }
-  async getLockedSeats(tripId: string) {
-    // Scan for keys: lock:seat:{tripId}:*
-    const pattern = `lock:seat:${tripId}:*`;
-    const keys = await this.redis.keys(pattern);
+  async getLockedSeats(
+    tripId: string,
+    fromStationId?: string,
+    toStationId?: string,
+  ) {
+    let targetSegment: Omit<SeatLockSegment, 'seatId'> | null = null;
 
-    // Extract seatIds from keys
-    const seatIds = keys.map((key) => key.split(':').pop());
-    return { seatIds };
+    if (fromStationId && toStationId) {
+      const trip = await this.prisma.trip.findUnique({
+        where: { id: tripId },
+        include: {
+          route: {
+            include: {
+              stations: {
+                include: { station: true },
+              },
+            },
+          },
+        },
+      });
+
+      if (trip) {
+        const { fromStation, toStation } = await this.resolveRouteStationPair(
+          trip.routeId,
+          trip.route.stations,
+          fromStationId,
+          toStationId,
+        );
+        if (fromStation && toStation) {
+          targetSegment = {
+            fromStationIndex: fromStation.index,
+            toStationIndex: toStation.index,
+          };
+        }
+      }
+    }
+
+    const keys = await this.redis.keys(`lock:seat:${tripId}:*`);
+    const lockedSeatIds = new Set<string>();
+
+    for (const key of keys) {
+      const parsed = this.parseSeatLockKey(key, tripId);
+      if (!parsed) continue;
+
+      if (!targetSegment || parsed.isLegacy) {
+        lockedSeatIds.add(parsed.seatId);
+        continue;
+      }
+
+      if (
+        this.segmentsOverlap(
+          parsed.fromStationIndex,
+          parsed.toStationIndex,
+          targetSegment.fromStationIndex,
+          targetSegment.toStationIndex,
+        )
+      ) {
+        lockedSeatIds.add(parsed.seatId);
+      }
+    }
+
+    return { seatIds: [...lockedSeatIds] };
+  }
+
+  private buildSeatLockPrefix(tripId: string, seatId: string) {
+    return `lock:seat:${tripId}:${seatId}`;
+  }
+
+  private buildSeatLockKey(tripId: string, segment: SeatLockSegment) {
+    return `${this.buildSeatLockPrefix(tripId, segment.seatId)}:${segment.fromStationIndex}:${segment.toStationIndex}`;
+  }
+
+  private parseSeatLockKey(key: string, tripId?: string) {
+    const parts = key.split(':');
+    if (parts.length < 4 || parts[0] !== 'lock' || parts[1] !== 'seat') {
+      return null;
+    }
+
+    const [, , keyTripId, seatId, from, to] = parts;
+    if (tripId && keyTripId !== tripId) return null;
+
+    if (parts.length === 4) {
+      return {
+        seatId,
+        fromStationIndex: Number.NEGATIVE_INFINITY,
+        toStationIndex: Number.POSITIVE_INFINITY,
+        isLegacy: true,
+      };
+    }
+
+    const fromStationIndex = Number(from);
+    const toStationIndex = Number(to);
+    if (!Number.isFinite(fromStationIndex) || !Number.isFinite(toStationIndex)) {
+      return null;
+    }
+
+    return {
+      seatId,
+      fromStationIndex,
+      toStationIndex,
+      isLegacy: false,
+    };
+  }
+
+  private segmentsOverlap(
+    fromA: number,
+    toA: number,
+    fromB: number,
+    toB: number,
+  ) {
+    return fromA < toB && toA > fromB;
+  }
+
+  private async acquireSeatSegmentLock(
+    tripId: string,
+    segment: SeatLockSegment,
+    bookingCode: string,
+    ttlSeconds: number,
+  ) {
+    const prefix = this.buildSeatLockPrefix(tripId, segment.seatId);
+    const key = this.buildSeatLockKey(tripId, segment);
+    const script = `
+      local legacy = redis.call("GET", KEYS[1])
+      if legacy and legacy ~= ARGV[1] then
+        return "LOCKED"
+      end
+
+      local keys = redis.call("KEYS", KEYS[1] .. ":*")
+      for _, existingKey in ipairs(keys) do
+        local value = redis.call("GET", existingKey)
+        if value and value ~= ARGV[1] then
+          local parts = {}
+          for part in string.gmatch(existingKey, "[^:]+") do
+            table.insert(parts, part)
+          end
+          local fromIndex = tonumber(parts[#parts - 1])
+          local toIndex = tonumber(parts[#parts])
+          if fromIndex and toIndex and fromIndex < tonumber(ARGV[3]) and toIndex > tonumber(ARGV[2]) then
+            return "LOCKED"
+          end
+        end
+      end
+
+      return redis.call("SET", KEYS[2], ARGV[1], "EX", ARGV[4], "NX")
+    `;
+
+    const result = await this.redis.eval(
+      script,
+      2,
+      prefix,
+      key,
+      bookingCode,
+      String(segment.fromStationIndex),
+      String(segment.toStationIndex),
+      String(ttlSeconds),
+    );
+
+    return result === 'OK';
+  }
+
+  private async findOverlappingSeatLocks(
+    tripId: string,
+    segments: SeatLockSegment[],
+    bookingCode?: string,
+  ) {
+    const keys = await this.redis.keys(`lock:seat:${tripId}:*`);
+    const lockedSeatIds = new Set<string>();
+    const values = await Promise.all(keys.map((key) => this.redis.get(key)));
+
+    keys.forEach((key, index) => {
+      const value = values[index];
+      if (!value || value === bookingCode) return;
+
+      const parsed = this.parseSeatLockKey(key, tripId);
+      if (!parsed) return;
+
+      const target = segments.find((segment) => segment.seatId === parsed.seatId);
+      if (!target) return;
+
+      if (
+        parsed.isLegacy ||
+        this.segmentsOverlap(
+          parsed.fromStationIndex,
+          parsed.toStationIndex,
+          target.fromStationIndex,
+          target.toStationIndex,
+        )
+      ) {
+        lockedSeatIds.add(parsed.seatId);
+      }
+    });
+
+    return [...lockedSeatIds];
+  }
+
+  private getSeatLockSegmentsFromMetadata(metadata: any): SeatLockSegment[] {
+    if (metadata?.passengers?.length) {
+      return metadata.passengers
+        .filter(
+          (passenger: any) =>
+            passenger.seatId &&
+            Number.isInteger(passenger.fromStationIndex) &&
+            Number.isInteger(passenger.toStationIndex),
+        )
+        .map((passenger: any) => ({
+          seatId: passenger.seatId,
+          fromStationIndex: passenger.fromStationIndex,
+          toStationIndex: passenger.toStationIndex,
+        }));
+    }
+
+    if (
+      metadata?.seatIds?.length &&
+      Number.isInteger(metadata.fromStationIndex) &&
+      Number.isInteger(metadata.toStationIndex)
+    ) {
+      return metadata.seatIds.map((seatId: string) => ({
+        seatId,
+        fromStationIndex: metadata.fromStationIndex,
+        toStationIndex: metadata.toStationIndex,
+      }));
+    }
+
+    return [];
+  }
+
+  private async releaseSeatLocks(
+    tripId: string,
+    segments: SeatLockSegment[],
+    fallbackSeatIds: string[] = [],
+  ) {
+    const keys =
+      segments.length > 0
+        ? segments.flatMap((segment) => [
+            this.buildSeatLockKey(tripId, segment),
+            this.buildSeatLockPrefix(tripId, segment.seatId),
+          ])
+        : fallbackSeatIds.map((seatId) =>
+            this.buildSeatLockPrefix(tripId, seatId),
+          );
+
+    if (keys.length === 0) return;
+
+    await Promise.all(keys.map((key) => this.redis.del(key)));
+  }
+
+  private getCommonSegment(segments: SeatLockSegment[]) {
+    const first = segments[0];
+    if (!first) return undefined;
+
+    const isSameSegment = segments.every(
+      (segment) =>
+        segment.fromStationIndex === first.fromStationIndex &&
+        segment.toStationIndex === first.toStationIndex,
+    );
+
+    return isSameSegment
+      ? {
+          fromStationIndex: first.fromStationIndex,
+          toStationIndex: first.toStationIndex,
+        }
+      : undefined;
+  }
+
+  private emitSeatLocksLocked(
+    tripId: string,
+    segments: SeatLockSegment[],
+    fallbackSeatIds: string[],
+  ) {
+    this.bookingGateway.emitSeatsLocked(
+      tripId,
+      segments.length ? segments.map((segment) => segment.seatId) : fallbackSeatIds,
+      this.getCommonSegment(segments),
+    );
+  }
+
+  private emitSeatLocksReleased(
+    tripId: string,
+    segments: SeatLockSegment[],
+    fallbackSeatIds: string[],
+  ) {
+    this.bookingGateway.emitSeatsReleased(
+      tripId,
+      segments.length ? segments.map((segment) => segment.seatId) : fallbackSeatIds,
+      this.getCommonSegment(segments),
+    );
+  }
+
+  private emitSeatLocksBooked(
+    tripId: string,
+    segments: SeatLockSegment[],
+    fallbackSeatIds: string[],
+  ) {
+    this.bookingGateway.emitSeatsBooked(
+      tripId,
+      segments.length ? segments.map((segment) => segment.seatId) : fallbackSeatIds,
+      this.getCommonSegment(segments),
+    );
   }
 
   private async resolveRouteStationPair(
