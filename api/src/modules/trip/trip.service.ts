@@ -772,7 +772,11 @@ export class TripService {
         if (Array.isArray(seg)) {
           for (const pt of seg) {
             if (Array.isArray(pt) && pt.length >= 2) {
-              allPoints.push([Number(pt[0]), Number(pt[1])]); // Store as [lng, lat]
+              const lng = Number(pt[0]);
+              const lat = Number(pt[1]);
+              if (Number.isFinite(lng) && Number.isFinite(lat)) {
+                allPoints.push([lng, lat]); // Store as [lng, lat]
+              }
             }
           }
         }
@@ -783,7 +787,8 @@ export class TripService {
     if (allPoints.length < 2) {
       allPoints = route.stations
         .filter(rs => rs.station)
-        .map(rs => [rs.station.longitude, rs.station.latitude]);
+        .map(rs => [rs.station.longitude, rs.station.latitude] as [number, number])
+        .filter(([lng, lat]) => Number.isFinite(lng) && Number.isFinite(lat));
     }
 
     // Default response coordinates (first/last stations)

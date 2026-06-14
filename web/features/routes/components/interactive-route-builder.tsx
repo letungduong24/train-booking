@@ -8,6 +8,10 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import { IconMapPin, IconX } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
+import {
+    createNetworkLinesFeatureCollection,
+    createStationLineFeatureCollection,
+} from "@/features/routes/lib/geojson"
 
 export interface Station {
     id: string
@@ -41,26 +45,7 @@ export function InteractiveRouteBuilder({ value = [], onChange }: InteractiveRou
     })
 
     const networkLinesGeoJson = useMemo(() => {
-        if (!networkLines || networkLines.length === 0) return null
-
-        const features: GeoJSON.Feature<GeoJSON.LineString | GeoJSON.MultiLineString>[] = []
-        networkLines.forEach((line: any) => {
-            line.pathCoordinates.forEach((coords: any) => {
-                features.push({
-                    type: "Feature" as const,
-                    properties: { id: line.id, name: line.name },
-                    geometry: {
-                        type: (Array.isArray(coords[0]) && Array.isArray(coords[0][0])) ? "MultiLineString" as const : "LineString" as const,
-                        coordinates: coords
-                    } as GeoJSON.LineString | GeoJSON.MultiLineString
-                })
-            })
-        })
-
-        return {
-            type: "FeatureCollection" as const,
-            features
-        } as GeoJSON.FeatureCollection<GeoJSON.LineString | GeoJSON.MultiLineString>
+        return createNetworkLinesFeatureCollection(networkLines)
     }, [networkLines])
 
     // Toggle station selection
@@ -76,22 +61,7 @@ export function InteractiveRouteBuilder({ value = [], onChange }: InteractiveRou
 
     // Straight-line segments to preview the current path visually
     const currentPathGeoJson = useMemo(() => {
-        if (value.length < 2) return null;
-
-        const coordinates = value.map(s => [s.longitude, s.latitude]);
-        return {
-            type: "FeatureCollection",
-            features: [
-                {
-                    type: "Feature",
-                    properties: {},
-                    geometry: {
-                        type: "LineString",
-                        coordinates
-                    }
-                }
-            ]
-        } as GeoJSON.FeatureCollection<GeoJSON.LineString>;
+        return createStationLineFeatureCollection(value);
     }, [value])
 
 

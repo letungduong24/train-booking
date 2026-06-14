@@ -9,6 +9,7 @@ interface SocketState {
 }
 
 const URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000";
+const isDev = process.env.NODE_ENV !== "production";
 
 export const useSocketStore = create<SocketState>((set, get) => ({
     socket: null,
@@ -33,17 +34,17 @@ export const useSocketStore = create<SocketState>((set, get) => ({
         });
 
         newSocket.on('connect', () => {
-            console.log('Socket connected:', newSocket.id);
+            if (isDev) console.log('Socket connected:', newSocket.id);
             set({ isConnected: true });
         });
 
         newSocket.on('disconnect', () => {
-            console.log('Socket disconnected');
+            if (isDev) console.log('Socket disconnected');
             set({ isConnected: false });
         });
 
         newSocket.on('connect_error', (err) => {
-            console.error('Socket connection error:', err);
+            if (isDev) console.error('Socket connection error:', err);
         });
 
         newSocket.connect();

@@ -427,34 +427,70 @@ export class BookingService {
     }
 
     // Tạo vé và cập nhật trạng thái booking
-    const updatedBooking = await this.prisma.booking.update({
-      where: { code: bookingCode },
-      data: {
-        status: 'PAID',
-        metadata: Prisma.JsonNull,
-        tickets: {
-          create: tickets,
-        },
-      },
-      include: {
-        user: true,
-        trip: {
-          include: {
-            train: true,
-            route: true,
+    let updatedBooking;
+    try {
+      updatedBooking = await this.prisma.booking.update({
+        where: { code: bookingCode },
+        data: {
+          status: 'PAID',
+          metadata: Prisma.JsonNull,
+          tickets: {
+            create: tickets,
           },
         },
-        tickets: {
-          include: {
-            seat: {
-              include: {
-                coach: true,
+        include: {
+          user: true,
+          trip: {
+            include: {
+              train: true,
+              route: true,
+            },
+          },
+          tickets: {
+            include: {
+              seat: {
+                include: {
+                  coach: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
+    } catch (error: any) {
+      if (error?.code !== 'P2002') {
+        throw error;
+      }
+
+      const paidBooking = await this.prisma.booking.findUnique({
+        where: { code: bookingCode },
+        include: {
+          user: true,
+          trip: {
+            include: {
+              train: true,
+              route: true,
+            },
+          },
+          tickets: {
+            include: {
+              seat: {
+                include: {
+                  coach: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (paidBooking?.status === 'PAID') {
+        this.logger.warn(`Booking ${bookingCode} was confirmed by another callback`);
+        return paidBooking;
+      }
+
+      throw error;
+    }
 
     // Gửi email biên lai kèm vé PDF
     if (updatedBooking.user?.email) {
@@ -856,6 +892,7 @@ export class BookingService {
     code: string,
     dto: UpdateBookingPassengersDto,
     ipAddr: string,
+    userId?: string,
   ) {
     const { passengers } = dto;
 
@@ -885,6 +922,10 @@ export class BookingService {
 
     if (!booking) {
       throw new BadRequestException('Bản ghi đặt chỗ không tồn tại');
+    }
+
+    if (userId && booking.userId && booking.userId !== userId) {
+      throw new BadRequestException('Bạn không có quyền cập nhật đơn hàng này');
     }
 
     if (booking.status !== 'PENDING') {

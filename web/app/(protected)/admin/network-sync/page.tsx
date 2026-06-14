@@ -25,6 +25,7 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
+import { createNetworkLinesFeatureCollection } from "@/features/routes/lib/geojson";
 
 interface NetworkLine {
     id: string;
@@ -81,26 +82,7 @@ export default function NetworkSyncPage() {
     }, []);
 
     const networkLinesGeoJson = useMemo(() => {
-        if (!network?.lines || network.lines.length === 0) return null;
-
-        const features: GeoJSON.Feature<GeoJSON.LineString | GeoJSON.MultiLineString>[] = [];
-        network.lines.forEach((line) => {
-            line.pathCoordinates.forEach((coords: any) => {
-                features.push({
-                    type: "Feature",
-                    properties: { id: line.id, name: line.name },
-                    geometry: {
-                        type: Array.isArray(coords[0]) && Array.isArray(coords[0][0]) ? "MultiLineString" : "LineString",
-                        coordinates: coords
-                    }
-                });
-            });
-        });
-
-        return {
-            type: "FeatureCollection",
-            features
-        } as GeoJSON.FeatureCollection<GeoJSON.LineString | GeoJSON.MultiLineString>;
+        return createNetworkLinesFeatureCollection(network?.lines);
     }, [network?.lines]);
 
     const handleSync = async (e: React.FormEvent) => {

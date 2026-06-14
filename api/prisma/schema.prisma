@@ -400,6 +400,7 @@ model Ticket {
   @@index([tripId])
   @@index([seatId])
   @@index([passengerGroupId])
+  @@unique([bookingId, seatId])
 }
 
 enum SeatIssueStatus {
@@ -433,5 +434,6 @@ model SeatIssueReport {
 
   @@index([tripId])
   @@index([seatId])
+  @@index([tripId, seatId, status])
   @@index([reportedById])
 }

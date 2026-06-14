@@ -133,20 +133,49 @@ export class PaymentService {
   }
 
   async payBooking(bookingCode: string, userId: string, amount: number) {
-    // Tạo Transaction cho thanh toán VNPAY
-    await this.prisma.transaction.create({
-      data: {
-        userId,
-        amount: -amount,
+    const booking = await this.prisma.booking.findUnique({
+      where: { code: bookingCode },
+      select: { status: true },
+    });
+
+    if (booking?.status === 'PAID') {
+      this.logger.log(
+        `Booking ${bookingCode} already paid, skip duplicate VNPAY callback`,
+      );
+      return;
+    }
+
+    const existingPayment = await this.prisma.transaction.findFirst({
+      where: {
+        referenceId: bookingCode,
         type: 'PAYMENT',
         paymentMethod: 'VNPAY',
         status: 'COMPLETED',
-        referenceId: bookingCode,
-        description: `Thanh toán vé tàu ${bookingCode} qua VNPAY`,
       },
     });
 
-    // Xác nhận booking (tạo vé, cập nhật trạng thái)
+    if (!existingPayment) {
+      try {
+        await this.prisma.transaction.create({
+          data: {
+            userId,
+            amount: -amount,
+            type: 'PAYMENT',
+            paymentMethod: 'VNPAY',
+            status: 'COMPLETED',
+            referenceId: bookingCode,
+            description: `Thanh toán vé tàu ${bookingCode} qua VNPAY`,
+          },
+        });
+      } catch (error: any) {
+        if (error?.code !== 'P2002') {
+          throw error;
+        }
+        this.logger.warn(`Duplicate VNPAY payment transaction for ${bookingCode}`);
+        return;
+      }
+    }
+
     await this.bookingService.confirmBooking(bookingCode);
   }
 

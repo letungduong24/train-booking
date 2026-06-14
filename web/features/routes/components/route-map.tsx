@@ -9,7 +9,11 @@ import {
     MarkerTooltip,
     MapLineLayer,
 } from "@/components/ui/map"
-import { Station } from '@/lib/schemas/station.schema';
+import {
+    createRoutePathFeatureCollection,
+    createStationLineFeatureCollection,
+    type RoutePathCoordinates,
+} from "@/features/routes/lib/geojson"
 
 interface RouteMapProps {
     stations: {
@@ -27,7 +31,7 @@ interface RouteMapProps {
         fromStationId: string;
         toStationId: string;
     }
-    pathCoordinates?: [number, number][][] | null;
+    pathCoordinates?: RoutePathCoordinates | null;
     selectedFromStationId?: string;
     selectedToStationId?: string;
     onStationClick?: (stationId: string) => void;
@@ -67,34 +71,12 @@ export function RouteMap({
     const existingStationIds = new Set(stations.map(s => s.stationId));
     const candidateStations = (availableStations || []).filter(s => !existingStationIds.has(s.id) && s.latitude && s.longitude);
 
-    // Build GeoJSON from pathCoordinates (number[][][]) — each sub-array is a LineString segment
     const pathGeoJson = useMemo(() => {
-        if (!pathCoordinates || pathCoordinates.length === 0) return null;
-        return {
-            type: "FeatureCollection" as const,
-            features: [{
-                type: "Feature" as const,
-                properties: {},
-                geometry: {
-                    type: "MultiLineString" as const,
-                    coordinates: pathCoordinates
-                }
-            }]
-        } as GeoJSON.FeatureCollection<GeoJSON.MultiLineString>;
+        return createRoutePathFeatureCollection(pathCoordinates);
     }, [pathCoordinates]);
 
-    // Fallback: straight line between stations when no path data
     const fallbackGeoJson = useMemo(() => {
-        const coords = validStations.map(s => [s.station!.longitude, s.station!.latitude]);
-        if (coords.length < 2) return null;
-        return {
-            type: "FeatureCollection" as const,
-            features: [{
-                type: "Feature" as const,
-                properties: {},
-                geometry: { type: "LineString" as const, coordinates: coords }
-            }]
-        } as GeoJSON.FeatureCollection<GeoJSON.LineString>;
+        return createStationLineFeatureCollection(validStations.map(s => s.station!));
     }, [validStations]);
 
     // Calculate highlighted segment coordinates ONLY for centering map

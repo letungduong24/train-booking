@@ -307,6 +307,7 @@ export type TicketOrderByWithRelationInput = {
 
 export type TicketWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  bookingId_seatId?: Prisma.TicketBookingIdSeatIdCompoundUniqueInput
   AND?: Prisma.TicketWhereInput | Prisma.TicketWhereInput[]
   OR?: Prisma.TicketWhereInput[]
   NOT?: Prisma.TicketWhereInput | Prisma.TicketWhereInput[]
@@ -325,7 +326,7 @@ export type TicketWhereUniqueInput = Prisma.AtLeast<{
   trip?: Prisma.XOR<Prisma.TripScalarRelationFilter, Prisma.TripWhereInput>
   seat?: Prisma.XOR<Prisma.SeatScalarRelationFilter, Prisma.SeatWhereInput>
   passengerGroup?: Prisma.XOR<Prisma.PassengerGroupScalarRelationFilter, Prisma.PassengerGroupWhereInput>
-}, "id">
+}, "id" | "bookingId_seatId">
 
 export type TicketOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -474,6 +475,11 @@ export type TicketListRelationFilter = {
 
 export type TicketOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type TicketBookingIdSeatIdCompoundUniqueInput = {
+  bookingId: string
+  seatId: string
 }
 
 export type TicketCountOrderByAggregateInput = {

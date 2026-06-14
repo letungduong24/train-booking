@@ -231,32 +231,11 @@ export class SeatIssuesService {
           },
         },
         trip: {
-          include: {
-            route: {
-              include: {
-                stations: {
-                  include: {
-                    station: true,
-                  },
-                  orderBy: { index: 'asc' },
-                },
-              },
-            },
-            train: {
-              include: {
-                coaches: {
-                  include: {
-                    template: true,
-                    _count: {
-                      select: {
-                        seats: true,
-                      },
-                    },
-                  },
-                  orderBy: { order: 'asc' },
-                },
-              },
-            },
+          select: {
+            id: true,
+            status: true,
+            departureTime: true,
+            endTime: true,
           },
         },
         reportedBy: {

@@ -31,7 +31,7 @@ interface TripCardProps {
 
 export function TripCard({ trip, className }: TripCardProps) {
     const departure = addMinutes(new Date(trip.departureTime), trip.durationFromStart);
-    const arrival = addMinutes(new Date(trip.endTime), trip.durationToEnd);
+    const arrival = addMinutes(new Date(trip.departureTime), trip.durationToEnd);
     const durationMin = trip.durationToEnd - trip.durationFromStart;
     const hours = Math.floor(durationMin / 60);
     const minutes = durationMin % 60;

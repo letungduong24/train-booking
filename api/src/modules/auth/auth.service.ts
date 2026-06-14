@@ -483,17 +483,42 @@ export class AuthService {
   }
 
   /**
-   * Lấy userId từ request (optional) — đọc accessToken cookie, không throw lỗi.
-   * Trả về userId nếu token hợp lệ, null nếu không có hoặc hết hạn.
+   * Lấy userId từ request (optional), không throw lỗi.
+   * Ưu tiên accessToken; nếu accessToken hết hạn nhưng refreshToken còn hợp lệ
+   * thì vẫn trả userId để các luồng optional-auth như chatbot không hiểu nhầm là đã đăng xuất.
    */
   async getUserIdFromRequest(req: Request): Promise<string | null> {
+    const accessToken = req.cookies?.accessToken;
+    const accessUserId = this.getUserIdFromToken(
+      accessToken,
+      this.configService.get<string>('JWT_SECRET'),
+    );
+    if (accessUserId) return accessUserId;
+
+    const refreshToken = req.cookies?.refreshToken;
+    const refreshUserId = this.getUserIdFromToken(
+      refreshToken,
+      this.configService.get<string>('JWT_REFRESH_SECRET'),
+    );
+    if (!refreshToken || !refreshUserId) return null;
+
     try {
-      const token = req.cookies?.accessToken;
-      if (!token) return null;
-      const payload = this.jwtService.verify(token, {
-        secret: this.configService.get<string>('JWT_SECRET'),
-      }) as { sub: string };
-      return payload?.sub ?? null;
+      const storedToken = await this.prisma.refreshToken.findUnique({
+        where: { token: refreshToken },
+        select: { userId: true, expiresAt: true },
+      });
+      if (!storedToken || storedToken.expiresAt < new Date()) return null;
+      return storedToken.userId;
+    } catch {
+      return null;
+    }
+  }
+
+  private getUserIdFromToken(token: string | undefined, secret: string | undefined) {
+    if (!token || !secret) return null;
+    try {
+      const payload = this.jwtService.verify(token, { secret }) as { sub?: string };
+      return payload.sub ?? null;
     } catch {
       return null;
     }

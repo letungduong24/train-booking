@@ -2,14 +2,19 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { MessageCircle, X, Send, Bot, User, Search } from "lucide-react";
+import { X, Send, Bot, User } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { TripSearchResult } from "@/features/chatbot/components/trip-search-result";
-import { BookingHistoryResult } from "@/features/chatbot/components/booking-history-result";
 import ReactMarkdown from "react-markdown";
+import { BouncingDots } from "@/features/chatbot/components/chat-loading";
+import { ChatToolPart } from "@/features/chatbot/components/chat-tool-part";
+import { fetchWithChatbotAuth, getChatbotApiUrl } from "@/features/chatbot/lib/chatbot-api";
+import {
+    CHATBOT_SUGGESTIONS,
+    hasChatbotDataTool,
+    hasChatbotDataToolOutput,
+} from "@/features/chatbot/lib/chatbot.constants";
 import {
     Sheet,
     SheetContent,
@@ -18,33 +23,10 @@ import {
     SheetClose,
 } from "@/components/ui/sheet";
 
-// Bouncing dots loading indicator
-function BouncingDots({ label }: { label?: string }) {
-    return (
-        <div className="self-start flex items-center gap-1.5 text-xs text-muted-foreground px-2 py-1">
-            <div className="flex gap-0.5">
-                {[0, 1, 2].map(i => (
-                    <span key={i} className="w-1 h-1 rounded-full bg-muted-foreground/60 animate-bounce"
-                        style={{ animationDelay: `${i * 150}ms`, animationDuration: '900ms' }} />
-                ))}
-            </div>
-            {label && <span>{label}</span>}
-        </div>
-    );
-}
-
-const SUGGESTIONS = [
-    'Tôi muốn đặt vé',
-    'Xem vé đã đặt của tôi',
-    'Số dư ví của tôi',
-    'Các tuyến đường có sẵn',
-    'Loại hành khách và giảm giá',
-];
-
 function SuggestionChips({ onSelect, disabled }: { onSelect: (text: string) => void; disabled?: boolean }) {
     return (
         <div className="flex flex-wrap gap-1.5 px-1">
-            {SUGGESTIONS.map((text) => (
+            {CHATBOT_SUGGESTIONS.map((text) => (
                 <button
                     key={text}
                     onClick={() => onSelect(text)}
@@ -64,8 +46,9 @@ export function GlobalChatbot() {
     const { messages, sendMessage, status } =
         useChat({
             transport: new DefaultChatTransport({
-                api: process.env.NEXT_PUBLIC_API_URL + "/api/chat",
+                api: getChatbotApiUrl(),
                 credentials: 'include',
+                fetch: fetchWithChatbotAuth,
             }),
             onError: (error) => {
                 console.error("Chat error:", error);
@@ -118,24 +101,17 @@ export function GlobalChatbot() {
                             <SuggestionChips onSelect={handleSend} disabled={isLoading} />
                         </div>
                     ) : (
-                        messages.map((m) => (
+                        messages.map((m, messageIndex) => (
                             <div key={m.id} className="flex flex-col gap-2">
                                 {m.parts?.map((part, index) => {
                                     switch (part.type) {
                                         // ── Text ──────────────────────────────────────────────
                                         case 'text': {
                                             if (!part.text.trim()) return null;
-                                            // Hide text if message already has a rendered tool output
-                                            const hasToolOutput = m.parts?.some(
-                                                (p) => [
-                                                    'tool-searchTrainTrips',
-                                                    'tool-getMyBookings',
-                                                    'tool-getWalletBalance',
-                                                    'tool-getPassengerGroups',
-                                                    'tool-getRoutes',
-                                                ].includes(p.type) && (p as any).state === 'output-available'
-                                            );
-                                            if (hasToolOutput) return null;
+                                            const isLatestMessage = messageIndex === messages.length - 1;
+                                            const isStreamingAssistantText = m.role === "assistant" && isLatestMessage && isLoading;
+                                            const hasDataTool = hasChatbotDataTool(m.parts as any);
+                                            if (isStreamingAssistantText || hasDataTool) return null;
                                             return (
                                                 <div
                                                     key={index}
@@ -166,129 +142,8 @@ export function GlobalChatbot() {
                                             );
                                         }
 
-                                        // ── findStationByName ──────────────────────────────
-                                        case 'tool-findStationByName': {
-                                            if (part.state === 'input-streaming' || part.state === 'input-available') {
-                                                return (
-                                                    <div key={index} className="self-start flex items-center gap-1.5 text-xs text-muted-foreground px-2 py-1">
-                                                        <Search className="h-3 w-3 animate-pulse" />
-                                                        <span>Đang tìm ga tàu...</span>
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        }
-
-                                        // ── searchTrainTrips ───────────────────────────────
-                                        case 'tool-searchTrainTrips': {
-                                            if (part.state === 'input-streaming' || part.state === 'input-available') {
-                                                return (
-                                                    <div key={index} className="self-start bg-muted rounded-xl rounded-tl-sm p-3 space-y-2 w-full max-w-[90%]">
-                                                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                                            <div className="flex items-center gap-0.5">
-                                                                {[0, 1, 2].map((i) => (
-                                                                    <span key={i} className="w-1 h-1 rounded-full bg-muted-foreground/60 animate-bounce"
-                                                                        style={{ animationDelay: `${i * 150}ms`, animationDuration: "900ms" }} />
-                                                                ))}
-                                                            </div>
-                                                            <span>Đang tìm chuyến tàu...</span>
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            {[1, 2].map((i) => (
-                                                                <div key={i} className="h-24 rounded-lg bg-muted-foreground/10 animate-pulse" />
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                );
-                                            }
-                                            if (part.state === 'output-available') {
-                                                const output = part.output as { trips: any[]; date: string };
-                                                return (
-                                                    <div key={index} className="self-start w-full max-w-[90%]">
-                                                        <TripSearchResult trips={output.trips} date={output.date} />
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        }
-
-                                        // ── getMyBookings ──────────────────────────────────
-                                        case 'tool-getMyBookings': {
-                                            if (part.state === 'input-streaming' || part.state === 'input-available') {
-                                                return <BouncingDots key={index} label="Đang lấy lịch sử đặt vé..." />;
-                                            }
-                                            if (part.state === 'output-available') {
-                                                const output = part.output as { bookings?: any[]; error?: string };
-                                                if (output.error) return <p key={index} className="self-start text-xs text-muted-foreground px-2">{output.error}</p>;
-                                                return (
-                                                    <div key={index} className="self-start w-full max-w-[90%]">
-                                                        <BookingHistoryResult bookings={output.bookings ?? []} />
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        }
-
-                                        // ── getWalletBalance ───────────────────────────────
-                                        case 'tool-getWalletBalance': {
-                                            if (part.state === 'input-streaming' || part.state === 'input-available') {
-                                                return <BouncingDots key={index} label="Đang lấy thông tin ví..." />;
-                                            }
-                                            if (part.state === 'output-available') {
-                                                const output = part.output as { balance?: number; error?: string };
-                                                if (output.error) return <p key={index} className="self-start text-xs text-muted-foreground px-2">{output.error}</p>;
-                                                return (
-                                                    <div key={index} className="self-start rounded-xl border bg-card p-3 w-full max-w-[90%] space-y-1">
-                                                        <p className="text-xs text-muted-foreground">Số dư ví</p>
-                                                        <p className="text-lg font-bold text-primary">{(output.balance ?? 0).toLocaleString('vi-VN')} ₫</p>
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        }
-
-                                        // ── getPassengerGroups ─────────────────────────────
-                                        case 'tool-getPassengerGroups': {
-                                            if (part.state === 'output-available') {
-                                                const groups = part.output as { name: string; discountPercent: number }[];
-                                                return (
-                                                    <div key={index} className="self-start rounded-xl border bg-card p-3 w-full max-w-[90%] space-y-1.5">
-                                                        <p className="text-xs font-medium text-muted-foreground">Loại hành khách</p>
-                                                        {groups.map((g, i) => (
-                                                            <div key={i} className="flex items-center justify-between text-sm">
-                                                                <span>{g.name}</span>
-                                                                <span className="text-xs text-primary font-semibold">
-                                                                    {g.discountPercent === 0 ? 'Giá gốc' : `-${g.discountPercent}%`}
-                                                                </span>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        }
-
-                                        // ── getRoutes ──────────────────────────────────────
-                                        case 'tool-getRoutes': {
-                                            if (part.state === 'output-available') {
-                                                const routes = part.output as { name: string; stations: string[] }[];
-                                                return (
-                                                    <div key={index} className="self-start rounded-xl border bg-card p-3 w-full max-w-[90%] space-y-2">
-                                                        <p className="text-xs font-medium text-muted-foreground">Tuyến đường</p>
-                                                        {routes.map((r, i) => (
-                                                            <div key={i}>
-                                                                <p className="font-medium text-sm">{r.name}</p>
-                                                                <p className="text-xs text-muted-foreground">{r.stations.join(' → ')}</p>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        }
-
                                         default:
-                                            return null;
+                                            return <ChatToolPart key={index} part={part} />;
                                     }
                                 })}
                             </div>
@@ -298,10 +153,7 @@ export function GlobalChatbot() {
                         const lastMsg = messages[messages.length - 1];
                         const lastIsUser = lastMsg?.role === "user";
                         // Hide if tool output already rendered (AI may still be generating hidden text)
-                        const hasToolOutput = lastMsg?.parts?.some(
-                            (p) => ['tool-searchTrainTrips', 'tool-getMyBookings', 'tool-getWalletBalance', 'tool-getPassengerGroups', 'tool-getRoutes']
-                                .includes(p.type) && (p as any).state === 'output-available'
-                        );
+                        const hasToolOutput = hasChatbotDataToolOutput(lastMsg?.parts as any);
                         const lastIsEmptyAssistant = lastMsg?.role === "assistant" &&
                             !lastMsg.parts?.some((p) => p.type === "text" && (p as any).text?.trim());
                         if (!lastIsUser && (!lastIsEmptyAssistant || hasToolOutput)) return null;
