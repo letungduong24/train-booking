@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
-import { SeatIssueStatus, SeatStatus } from '../../generated/client';
+import { Prisma, SeatIssueStatus, SeatStatus } from '../../generated/client';
 import { BookingGateway } from '../booking/booking.gateway';
 import dayjs from 'dayjs';
 import * as crypto from 'crypto';
@@ -608,11 +608,17 @@ export class SeatIssuesService {
           paymentMethod: 'WALLET',
           status: 'COMPLETED',
           referenceId: ticket.bookingId,
+          idempotencyKey: `SEAT_ISSUE_REFUND:${id}:${ticket.id}`,
           description: `Hoàn tiền sự cố ghế hỏng #${report.seat.name} chuyến ${report.tripId}`,
         },
       });
 
-      // 3. Mark ticket and booking cancelled
+      // 3. Release occupied segments so the seat can be sold again.
+      await tx.ticketSeatSegment.deleteMany({
+        where: { ticketId: ticket.id },
+      });
+
+      // 4. Mark ticket and booking cancelled
       await tx.booking.update({
         where: { id: ticket.bookingId },
         data: {
@@ -620,7 +626,7 @@ export class SeatIssuesService {
         },
       });
 
-      // 4. Update Issue Report status to RESOLVED
+      // 5. Update Issue Report status to RESOLVED
       await tx.seatIssueReport.update({
         where: { id },
         data: {
@@ -801,7 +807,7 @@ export class SeatIssuesService {
     }
 
     if (report.tokenExpires && new Date() > report.tokenExpires) {
-      throw new BadRequestException('Seat replacement token has expired.');
+      throw new BadRequestException('Mã xác nhận đổi ghế đã hết hạn');
     }
 
     // Find affected ticket
@@ -826,13 +832,19 @@ export class SeatIssuesService {
       throw new NotFoundException('Không tìm thấy vé hợp lệ');
     }
 
-    // Double check that the new seat is still empty (race condition)
-    const alreadyBooked = await this.prisma.ticket.findFirst({
+    // Double check that the new seat is still empty on the affected segment.
+    const alreadyBooked = await this.prisma.ticketSeatSegment.findFirst({
       where: {
         tripId: report.tripId,
         seatId: newSeatId,
-        booking: {
-          status: { in: ['PAID', 'PENDING'] },
+        segmentIndex: {
+          gte: ticket.fromStationIndex,
+          lt: ticket.toStationIndex,
+        },
+        ticket: {
+          booking: {
+            status: 'PAID',
+          },
         },
       },
     });
@@ -861,23 +873,49 @@ export class SeatIssuesService {
       throw new BadRequestException('Selected seat is not a valid replacement option.');
     }
 
-    // Update ticket in transaction
-    await this.prisma.$transaction([
-      this.prisma.ticket.update({
-        where: { id: ticket.id },
-        data: {
-          seatId: newSeatId,
+    try {
+      await this.prisma.$transaction(
+        async (tx) => {
+          await tx.ticket.update({
+            where: { id: ticket.id },
+            data: {
+              seatId: newSeatId,
+            },
+          });
+
+          await tx.ticketSeatSegment.deleteMany({
+            where: { ticketId: ticket.id },
+          });
+
+          await tx.ticketSeatSegment.createMany({
+            data: this.buildTicketSeatSegments({
+              id: ticket.id,
+              tripId: ticket.tripId,
+              seatId: newSeatId,
+              fromStationIndex: ticket.fromStationIndex,
+              toStationIndex: ticket.toStationIndex,
+            }),
+          });
+
+          await tx.seatIssueReport.update({
+            where: { id: report.id },
+            data: {
+              status: SeatIssueStatus.RESOLVED,
+              token: null,
+              tokenExpires: null,
+            },
+          });
         },
-      }),
-      this.prisma.seatIssueReport.update({
-        where: { id: report.id },
-        data: {
-          status: SeatIssueStatus.RESOLVED,
-          token: null,
-          tokenExpires: null,
+        {
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
         },
-      }),
-    ]);
+      );
+    } catch (error: any) {
+      if (error?.code === 'P2002') {
+        throw new ConflictException('Ghế ngồi này đã bị hành khách khác chọn trước. Vui lòng chọn ghế khác.');
+      }
+      throw error;
+    }
 
     // Emit real-time updates for seat status change
     this.bookingGateway.emitSeatIssuesUpdated(report.tripId, report.seatId, 'RESOLVED');
@@ -892,5 +930,35 @@ export class SeatIssuesService {
     }
 
     return { success: true, message: 'Đổi ghế thành công!' };
+  }
+
+  private buildTicketSeatSegments(ticket: {
+    id: string;
+    tripId: string;
+    seatId: string;
+    fromStationIndex: number;
+    toStationIndex: number;
+  }) {
+    const segments: {
+      ticketId: string;
+      tripId: string;
+      seatId: string;
+      segmentIndex: number;
+    }[] = [];
+
+    for (
+      let segmentIndex = ticket.fromStationIndex;
+      segmentIndex < ticket.toStationIndex;
+      segmentIndex++
+    ) {
+      segments.push({
+        ticketId: ticket.id,
+        tripId: ticket.tripId,
+        seatId: ticket.seatId,
+        segmentIndex,
+      });
+    }
+
+    return segments;
   }
 }

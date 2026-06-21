@@ -99,6 +99,22 @@ type MapStyleOption = string | MapLibreGL.StyleSpecification;
 
 type Theme = "light" | "dark";
 
+function normalizeCenter(
+  center: MapLibreGL.MapOptions["center"]
+): [number, number] | null {
+  if (!center) return null;
+
+  if (Array.isArray(center)) {
+    return [center[0], center[1]];
+  }
+
+  if ("lng" in center) {
+    return [center.lng, center.lat];
+  }
+
+  return [(center as { lon: number; lat: number }).lon, center.lat];
+}
+
 type MapProps = {
   children?: ReactNode;
   /**
@@ -137,6 +153,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
   const [isStyleLoaded, setIsStyleLoaded] = useState(false);
   const currentStyleRef = useRef<MapStyleOption | null>(null);
   const styleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastCenterPropRef = useRef<[number, number] | null>(null);
   const resolvedTheme = useResolvedTheme(themeProp);
 
   const mapStyles = useMemo(
@@ -218,22 +235,33 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     mapInstance.setStyle(newStyle, { diff: true });
   }, [mapInstance, resolvedTheme, mapStyles, clearStyleTimeout]);
 
-  // Update center when prop changes dynamically (e.g. for following train)
+  // Update center only when the numeric prop changes.
+  // Parent renders often create a new array for the same center; do not steal
+  // the user's current pan/zoom position in that case.
   const centerProp = props.center;
   useEffect(() => {
     if (!mapInstance || !centerProp) return;
+    const nextCenter = normalizeCenter(centerProp);
+    if (!nextCenter) return;
+
+    const previousCenter = lastCenterPropRef.current;
+    if (
+      previousCenter &&
+      Math.abs(previousCenter[0] - nextCenter[0]) <= 0.0001 &&
+      Math.abs(previousCenter[1] - nextCenter[1]) <= 0.0001
+    ) {
+      return;
+    }
+
+    lastCenterPropRef.current = nextCenter;
+
     const currentCenter = mapInstance.getCenter();
-    const [newLng, newLat] = Array.isArray(centerProp)
-      ? [centerProp[0], centerProp[1]]
-      : 'lng' in centerProp
-        ? [centerProp.lng, centerProp.lat]
-        : [(centerProp as any).lon, centerProp.lat];
 
     if (
-      Math.abs(currentCenter.lng - newLng) > 0.0001 ||
-      Math.abs(currentCenter.lat - newLat) > 0.0001
+      Math.abs(currentCenter.lng - nextCenter[0]) > 0.0001 ||
+      Math.abs(currentCenter.lat - nextCenter[1]) > 0.0001
     ) {
-      mapInstance.setCenter([newLng, newLat]);
+      mapInstance.setCenter(nextCenter);
     }
   }, [mapInstance, centerProp]);
 

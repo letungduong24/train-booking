@@ -67,7 +67,9 @@ export const ModelName = {
   Booking: 'Booking',
   PassengerGroup: 'PassengerGroup',
   Ticket: 'Ticket',
-  SeatIssueReport: 'SeatIssueReport'
+  TicketSeatSegment: 'TicketSeatSegment',
+  SeatIssueReport: 'SeatIssueReport',
+  TripDelayReport: 'TripDelayReport'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -131,6 +133,7 @@ export const TransactionScalarFieldEnum = {
   paymentMethod: 'paymentMethod',
   status: 'status',
   referenceId: 'referenceId',
+  idempotencyKey: 'idempotencyKey',
   description: 'description',
   bankName: 'bankName',
   bankAccount: 'bankAccount',
@@ -341,6 +344,18 @@ export const TicketScalarFieldEnum = {
 export type TicketScalarFieldEnum = (typeof TicketScalarFieldEnum)[keyof typeof TicketScalarFieldEnum]
 
 
+export const TicketSeatSegmentScalarFieldEnum = {
+  id: 'id',
+  ticketId: 'ticketId',
+  tripId: 'tripId',
+  seatId: 'seatId',
+  segmentIndex: 'segmentIndex',
+  createdAt: 'createdAt'
+} as const
+
+export type TicketSeatSegmentScalarFieldEnum = (typeof TicketSeatSegmentScalarFieldEnum)[keyof typeof TicketSeatSegmentScalarFieldEnum]
+
+
 export const SeatIssueReportScalarFieldEnum = {
   id: 'id',
   tripId: 'tripId',
@@ -358,6 +373,23 @@ export const SeatIssueReportScalarFieldEnum = {
 } as const
 
 export type SeatIssueReportScalarFieldEnum = (typeof SeatIssueReportScalarFieldEnum)[keyof typeof SeatIssueReportScalarFieldEnum]
+
+
+export const TripDelayReportScalarFieldEnum = {
+  id: 'id',
+  tripId: 'tripId',
+  reportedById: 'reportedById',
+  type: 'type',
+  minutes: 'minutes',
+  reason: 'reason',
+  status: 'status',
+  rejectReason: 'rejectReason',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TripDelayReportScalarFieldEnum = (typeof TripDelayReportScalarFieldEnum)[keyof typeof TripDelayReportScalarFieldEnum]
 
 
 export const SortOrder = {

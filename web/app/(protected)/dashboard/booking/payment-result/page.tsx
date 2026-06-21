@@ -65,7 +65,7 @@ export default function PaymentResultPage() {
                     <Button 
                         size="lg" 
                         variant="outline" 
-                        className="rounded-xl h-12 font-medium text-sm border-gray-200 hover:bg-gray-50 hover:scale-[1.02] transition-all"
+                        className="rounded-xl h-12 font-medium text-sm border-gray-200 text-[#802222] hover:bg-rose-50 hover:text-[#802222] hover:border-rose-200 hover:scale-[1.02] transition-all"
                         onClick={() => router.push('/dashboard')}
                     >
                         <Home className="w-4 h-4 mr-2" />

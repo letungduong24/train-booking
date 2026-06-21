@@ -24,6 +24,7 @@ import { GeojsonModule } from './modules/geojson/geojson.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { MailModule } from './modules/mail/mail.module';
 import { SeatIssuesModule } from './modules/seat-issues/seat-issues.module';
+import { TripDelayReportsModule } from './modules/trip-delay-reports/trip-delay-reports.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { SeatIssuesModule } from './modules/seat-issues/seat-issues.module';
     DashboardModule,
     MailModule,
     SeatIssuesModule,
+    TripDelayReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

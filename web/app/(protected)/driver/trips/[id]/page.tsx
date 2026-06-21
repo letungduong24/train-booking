@@ -2,13 +2,14 @@
 
 import * as React from "react"
 import apiClient from "@/lib/api-client"
-import { Loader2, Train, ChevronLeft, MapPin, Clock, Info, CheckCircle2, ShieldAlert, AlertTriangle } from "lucide-react"
+import { Loader2, Train, ChevronLeft, MapPin, Clock, Info, CheckCircle2, ShieldAlert, AlertTriangle, Timer } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { format, parseISO } from "date-fns"
 import { vi } from "date-fns/locale"
@@ -41,6 +42,12 @@ export default function TripDetailPage({ params }: PageProps) {
   const [errorMsg, setErrorMsg] = React.useState<string>("")
   const [successMsg, setSuccessMsg] = React.useState<string>("")
   const [reportedSeatIds, setReportedSeatIds] = React.useState<Set<string>>(new Set())
+  const [delayDialogOpen, setDelayDialogOpen] = React.useState(false)
+  const [delayMinutes, setDelayMinutes] = React.useState("")
+  const [delayReason, setDelayReason] = React.useState("")
+  const [delaySubmitting, setDelaySubmitting] = React.useState(false)
+  const [delayError, setDelayError] = React.useState("")
+  const [delaySuccess, setDelaySuccess] = React.useState("")
 
   const { socket } = useSocketStore()
   const queryClient = useQueryClient()
@@ -134,6 +141,8 @@ export default function TripDetailPage({ params }: PageProps) {
     Boolean(trip.canReportSeatIssue) &&
     ["SCHEDULED", "IN_PROGRESS"].includes(trip.status) &&
     new Date() <= new Date(trip.endTime)
+  const delayType = trip.status === "SCHEDULED" ? "DEPARTURE" : "ARRIVAL"
+  const canReportDelay = canReportSeatIssue && ["SCHEDULED", "IN_PROGRESS"].includes(trip.status)
 
   // Handle seat click
   const handleSeatClick = (seat: any) => {
@@ -192,6 +201,41 @@ export default function TripDetailPage({ params }: PageProps) {
       }
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  const handleSubmitDelayReport = async () => {
+    const minutes = Number(delayMinutes)
+    if (!Number.isInteger(minutes) || minutes < 1 || minutes > 720) {
+      setDelayError("Số phút delay phải từ 1 đến 720 phút.")
+      return
+    }
+
+    if (!delayReason.trim() || delayReason.trim().length < 10) {
+      setDelayError("Lý do báo delay phải có tối thiểu 10 ký tự.")
+      return
+    }
+
+    try {
+      setDelaySubmitting(true)
+      setDelayError("")
+      await apiClient.post("/driver/trip-delay-reports", {
+        tripId,
+        type: delayType,
+        minutes,
+        reason: delayReason.trim(),
+      })
+      setDelaySuccess("Đã gửi báo cáo delay cho Admin phê duyệt.")
+      setDelayMinutes("")
+      setDelayReason("")
+      setTimeout(() => {
+        setDelayDialogOpen(false)
+        setDelaySuccess("")
+      }, 1400)
+    } catch (err: any) {
+      setDelayError(err.response?.data?.message || "Không thể gửi báo cáo delay. Vui lòng thử lại.")
+    } finally {
+      setDelaySubmitting(false)
     }
   }
 
@@ -326,6 +370,39 @@ export default function TripDetailPage({ params }: PageProps) {
         <div className="col-span-12 lg:col-span-4 space-y-6">
           <Card className="rounded-[2rem] border border-gray-100 dark:border-zinc-800 shadow-xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-6">
             <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase mb-4 tracking-wider flex items-center gap-1.5">
+              <Timer className="size-4 text-[#802222]" />
+              Báo cáo delay
+            </h4>
+            <div className="space-y-3 text-xs font-medium text-muted-foreground leading-relaxed">
+              <p>
+                {trip.status === "SCHEDULED"
+                  ? "Chuyến chưa khởi hành: tài xế có thể báo trễ khởi hành để Admin duyệt."
+                  : trip.status === "IN_PROGRESS"
+                    ? "Chuyến đang chạy: tài xế có thể báo trễ thời gian đến ga để Admin duyệt."
+                    : "Chuyến đã kết thúc hoặc không còn hoạt động nên không thể báo delay."}
+              </p>
+              <Button
+                type="button"
+                onClick={() => {
+                  setDelayDialogOpen(true)
+                  setDelayError("")
+                  setDelaySuccess("")
+                }}
+                disabled={!canReportDelay}
+                className="w-full rounded-xl bg-[#802222] hover:bg-rose-900 text-white font-bold text-xs h-11"
+              >
+                Gửi báo cáo delay
+              </Button>
+              {!canReportDelay && (
+                <p className="rounded-xl bg-amber-50 p-3 text-[11px] font-semibold text-amber-700">
+                  Chức năng báo cáo delay chỉ mở cho chuyến sắp khởi hành hoặc đang chạy.
+                </p>
+              )}
+            </div>
+          </Card>
+
+          <Card className="rounded-[2rem] border border-gray-100 dark:border-zinc-800 shadow-xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-6">
+            <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase mb-4 tracking-wider flex items-center gap-1.5">
               <Info className="size-4 text-[#802222]" />
               Hướng dẫn báo hỏng
             </h4>
@@ -444,6 +521,98 @@ export default function TripDetailPage({ params }: PageProps) {
                 disabled={submitting}
               >
                 {submitting ? (
+                  <>
+                    <Loader2 className="size-3.5 animate-spin" />
+                    Đang gửi...
+                  </>
+                ) : (
+                  "Gửi báo cáo"
+                )}
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={delayDialogOpen} onOpenChange={setDelayDialogOpen}>
+        <DialogContent className="rounded-3xl border border-gray-100 max-w-md p-6">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold text-[#802222] flex items-center gap-2">
+              <Timer className="size-5 text-amber-500" />
+              Báo cáo delay chuyến tàu
+            </DialogTitle>
+            <DialogDescription className="text-xs mt-1">
+              Báo cáo sẽ ở trạng thái chờ duyệt. Delay chỉ được áp dụng sau khi Admin xác nhận.
+            </DialogDescription>
+          </DialogHeader>
+
+          {delaySuccess ? (
+            <div className="py-6 text-center space-y-3">
+              <CheckCircle2 className="size-12 text-emerald-500 mx-auto animate-bounce" />
+              <p className="text-sm font-bold text-gray-900">{delaySuccess}</p>
+            </div>
+          ) : (
+            <div className="space-y-4 py-2">
+              <div className="grid grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-2xl text-xs font-semibold">
+                <div>
+                  <span className="text-muted-foreground block font-bold text-[9px] uppercase tracking-wider mb-0.5">Loại delay</span>
+                  <span className="text-gray-900 text-sm font-black">
+                    {delayType === "DEPARTURE" ? "Trễ khởi hành" : "Trễ đến ga"}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground block font-bold text-[9px] uppercase tracking-wider mb-0.5">Trạng thái</span>
+                  <span className="text-gray-900 text-sm font-black">
+                    {trip.status === "SCHEDULED" ? "Sắp chạy" : "Đang chạy"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Số phút delay</label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={720}
+                  value={delayMinutes}
+                  onChange={(event) => setDelayMinutes(event.target.value)}
+                  placeholder="Ví dụ: 15"
+                  className="rounded-xl h-11 text-xs font-semibold border-gray-200"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Lý do delay</label>
+                <Textarea
+                  placeholder="Nhập nguyên nhân delay thực tế để Admin kiểm duyệt..."
+                  value={delayReason}
+                  onChange={(event) => setDelayReason(event.target.value)}
+                  className="rounded-xl min-h-[100px] text-xs font-semibold border-gray-200"
+                />
+              </div>
+
+              {delayError && (
+                <p className="text-xs font-bold text-rose-600 bg-rose-50 p-3 rounded-xl">{delayError}</p>
+              )}
+            </div>
+          )}
+
+          <DialogFooter className="mt-4 gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => setDelayDialogOpen(false)}
+              className="rounded-xl text-xs font-bold"
+              disabled={delaySubmitting}
+            >
+              Hủy bỏ
+            </Button>
+            {!delaySuccess && (
+              <Button
+                onClick={handleSubmitDelayReport}
+                className="rounded-xl bg-[#802222] hover:bg-rose-900 text-white font-bold text-xs px-6 border-none shadow-md shadow-rose-900/10 flex items-center gap-1.5"
+                disabled={delaySubmitting}
+              >
+                {delaySubmitting ? (
                   <>
                     <Loader2 className="size-3.5 animate-spin" />
                     Đang gửi...

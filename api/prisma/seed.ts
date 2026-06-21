@@ -13,18 +13,23 @@ async function main() {
 
     // Clear existing data (in correct order due to foreign keys)
     console.log('Clearing existing data...');
+    await prisma.ticketSeatSegment.deleteMany();
     await prisma.ticket.deleteMany();
     await prisma.booking.deleteMany();
     await prisma.transaction.deleteMany(); // Delete transactions first
+    await prisma.tripDelayReport.deleteMany();
+    await prisma.seatIssueReport.deleteMany();
     await prisma.passengerGroup.deleteMany();
     await prisma.seat.deleteMany();
     await prisma.coach.deleteMany();
-    await prisma.train.deleteMany();
     await prisma.trip.deleteMany();
+    await prisma.train.deleteMany();
     await prisma.coachTemplate.deleteMany();
     await prisma.routeStation.deleteMany();
     await prisma.route.deleteMany();
+    await prisma.railwayLine.deleteMany();
     await prisma.station.deleteMany();
+    await prisma.network.deleteMany();
     await prisma.refreshToken.deleteMany(); // Delete refresh tokens first
     await prisma.user.deleteMany();
 
@@ -203,6 +208,7 @@ async function main() {
                 password: passwordHash,
                 name: 'Admin User',
                 role: UserRole.ADMIN,
+                isEmailVerified: true,
             },
         }),
         prisma.user.create({
@@ -211,6 +217,7 @@ async function main() {
                 password: passwordHash,
                 name: 'Normal User',
                 role: UserRole.USER,
+                isEmailVerified: true,
             },
         }),
         prisma.user.create({
@@ -219,6 +226,7 @@ async function main() {
                 password: passwordHash,
                 name: 'Driver User',
                 role: UserRole.DRIVER,
+                isEmailVerified: true,
             },
         }),
     ]);

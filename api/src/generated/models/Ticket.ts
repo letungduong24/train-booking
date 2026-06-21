@@ -277,13 +277,14 @@ export type TicketWhereInput = {
   passengerGroupId?: Prisma.StringFilter<"Ticket"> | string
   fromStationIndex?: Prisma.IntFilter<"Ticket"> | number
   toStationIndex?: Prisma.IntFilter<"Ticket"> | number
-  price?: Prisma.FloatFilter<"Ticket"> | number
+  price?: Prisma.IntFilter<"Ticket"> | number
   createdAt?: Prisma.DateTimeFilter<"Ticket"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Ticket"> | Date | string
   booking?: Prisma.XOR<Prisma.BookingScalarRelationFilter, Prisma.BookingWhereInput>
   trip?: Prisma.XOR<Prisma.TripScalarRelationFilter, Prisma.TripWhereInput>
   seat?: Prisma.XOR<Prisma.SeatScalarRelationFilter, Prisma.SeatWhereInput>
   passengerGroup?: Prisma.XOR<Prisma.PassengerGroupScalarRelationFilter, Prisma.PassengerGroupWhereInput>
+  occupiedSegments?: Prisma.TicketSeatSegmentListRelationFilter
 }
 
 export type TicketOrderByWithRelationInput = {
@@ -303,6 +304,7 @@ export type TicketOrderByWithRelationInput = {
   trip?: Prisma.TripOrderByWithRelationInput
   seat?: Prisma.SeatOrderByWithRelationInput
   passengerGroup?: Prisma.PassengerGroupOrderByWithRelationInput
+  occupiedSegments?: Prisma.TicketSeatSegmentOrderByRelationAggregateInput
 }
 
 export type TicketWhereUniqueInput = Prisma.AtLeast<{
@@ -319,13 +321,14 @@ export type TicketWhereUniqueInput = Prisma.AtLeast<{
   passengerGroupId?: Prisma.StringFilter<"Ticket"> | string
   fromStationIndex?: Prisma.IntFilter<"Ticket"> | number
   toStationIndex?: Prisma.IntFilter<"Ticket"> | number
-  price?: Prisma.FloatFilter<"Ticket"> | number
+  price?: Prisma.IntFilter<"Ticket"> | number
   createdAt?: Prisma.DateTimeFilter<"Ticket"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Ticket"> | Date | string
   booking?: Prisma.XOR<Prisma.BookingScalarRelationFilter, Prisma.BookingWhereInput>
   trip?: Prisma.XOR<Prisma.TripScalarRelationFilter, Prisma.TripWhereInput>
   seat?: Prisma.XOR<Prisma.SeatScalarRelationFilter, Prisma.SeatWhereInput>
   passengerGroup?: Prisma.XOR<Prisma.PassengerGroupScalarRelationFilter, Prisma.PassengerGroupWhereInput>
+  occupiedSegments?: Prisma.TicketSeatSegmentListRelationFilter
 }, "id" | "bookingId_seatId">
 
 export type TicketOrderByWithAggregationInput = {
@@ -361,7 +364,7 @@ export type TicketScalarWhereWithAggregatesInput = {
   passengerGroupId?: Prisma.StringWithAggregatesFilter<"Ticket"> | string
   fromStationIndex?: Prisma.IntWithAggregatesFilter<"Ticket"> | number
   toStationIndex?: Prisma.IntWithAggregatesFilter<"Ticket"> | number
-  price?: Prisma.FloatWithAggregatesFilter<"Ticket"> | number
+  price?: Prisma.IntWithAggregatesFilter<"Ticket"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Ticket"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Ticket"> | Date | string
 }
@@ -379,6 +382,7 @@ export type TicketCreateInput = {
   trip: Prisma.TripCreateNestedOneWithoutTicketsInput
   seat: Prisma.SeatCreateNestedOneWithoutTicketsInput
   passengerGroup: Prisma.PassengerGroupCreateNestedOneWithoutTicketsInput
+  occupiedSegments?: Prisma.TicketSeatSegmentCreateNestedManyWithoutTicketInput
 }
 
 export type TicketUncheckedCreateInput = {
@@ -394,6 +398,7 @@ export type TicketUncheckedCreateInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  occupiedSegments?: Prisma.TicketSeatSegmentUncheckedCreateNestedManyWithoutTicketInput
 }
 
 export type TicketUpdateInput = {
@@ -402,13 +407,14 @@ export type TicketUpdateInput = {
   passengerId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   booking?: Prisma.BookingUpdateOneRequiredWithoutTicketsNestedInput
   trip?: Prisma.TripUpdateOneRequiredWithoutTicketsNestedInput
   seat?: Prisma.SeatUpdateOneRequiredWithoutTicketsNestedInput
   passengerGroup?: Prisma.PassengerGroupUpdateOneRequiredWithoutTicketsNestedInput
+  occupiedSegments?: Prisma.TicketSeatSegmentUpdateManyWithoutTicketNestedInput
 }
 
 export type TicketUncheckedUpdateInput = {
@@ -421,9 +427,10 @@ export type TicketUncheckedUpdateInput = {
   passengerGroupId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  occupiedSegments?: Prisma.TicketSeatSegmentUncheckedUpdateManyWithoutTicketNestedInput
 }
 
 export type TicketCreateManyInput = {
@@ -447,7 +454,7 @@ export type TicketUpdateManyMutationInput = {
   passengerId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -462,7 +469,7 @@ export type TicketUncheckedUpdateManyInput = {
   passengerGroupId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -537,6 +544,11 @@ export type TicketSumOrderByAggregateInput = {
   fromStationIndex?: Prisma.SortOrder
   toStationIndex?: Prisma.SortOrder
   price?: Prisma.SortOrder
+}
+
+export type TicketScalarRelationFilter = {
+  is?: Prisma.TicketWhereInput
+  isNot?: Prisma.TicketWhereInput
 }
 
 export type TicketCreateNestedManyWithoutSeatInput = {
@@ -707,6 +719,20 @@ export type TicketUncheckedUpdateManyWithoutPassengerGroupNestedInput = {
   deleteMany?: Prisma.TicketScalarWhereInput | Prisma.TicketScalarWhereInput[]
 }
 
+export type TicketCreateNestedOneWithoutOccupiedSegmentsInput = {
+  create?: Prisma.XOR<Prisma.TicketCreateWithoutOccupiedSegmentsInput, Prisma.TicketUncheckedCreateWithoutOccupiedSegmentsInput>
+  connectOrCreate?: Prisma.TicketCreateOrConnectWithoutOccupiedSegmentsInput
+  connect?: Prisma.TicketWhereUniqueInput
+}
+
+export type TicketUpdateOneRequiredWithoutOccupiedSegmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.TicketCreateWithoutOccupiedSegmentsInput, Prisma.TicketUncheckedCreateWithoutOccupiedSegmentsInput>
+  connectOrCreate?: Prisma.TicketCreateOrConnectWithoutOccupiedSegmentsInput
+  upsert?: Prisma.TicketUpsertWithoutOccupiedSegmentsInput
+  connect?: Prisma.TicketWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TicketUpdateToOneWithWhereWithoutOccupiedSegmentsInput, Prisma.TicketUpdateWithoutOccupiedSegmentsInput>, Prisma.TicketUncheckedUpdateWithoutOccupiedSegmentsInput>
+}
+
 export type TicketCreateWithoutSeatInput = {
   id?: string
   passengerName: string
@@ -719,6 +745,7 @@ export type TicketCreateWithoutSeatInput = {
   booking: Prisma.BookingCreateNestedOneWithoutTicketsInput
   trip: Prisma.TripCreateNestedOneWithoutTicketsInput
   passengerGroup: Prisma.PassengerGroupCreateNestedOneWithoutTicketsInput
+  occupiedSegments?: Prisma.TicketSeatSegmentCreateNestedManyWithoutTicketInput
 }
 
 export type TicketUncheckedCreateWithoutSeatInput = {
@@ -733,6 +760,7 @@ export type TicketUncheckedCreateWithoutSeatInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  occupiedSegments?: Prisma.TicketSeatSegmentUncheckedCreateNestedManyWithoutTicketInput
 }
 
 export type TicketCreateOrConnectWithoutSeatInput = {
@@ -774,7 +802,7 @@ export type TicketScalarWhereInput = {
   passengerGroupId?: Prisma.StringFilter<"Ticket"> | string
   fromStationIndex?: Prisma.IntFilter<"Ticket"> | number
   toStationIndex?: Prisma.IntFilter<"Ticket"> | number
-  price?: Prisma.FloatFilter<"Ticket"> | number
+  price?: Prisma.IntFilter<"Ticket"> | number
   createdAt?: Prisma.DateTimeFilter<"Ticket"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Ticket"> | Date | string
 }
@@ -791,6 +819,7 @@ export type TicketCreateWithoutTripInput = {
   booking: Prisma.BookingCreateNestedOneWithoutTicketsInput
   seat: Prisma.SeatCreateNestedOneWithoutTicketsInput
   passengerGroup: Prisma.PassengerGroupCreateNestedOneWithoutTicketsInput
+  occupiedSegments?: Prisma.TicketSeatSegmentCreateNestedManyWithoutTicketInput
 }
 
 export type TicketUncheckedCreateWithoutTripInput = {
@@ -805,6 +834,7 @@ export type TicketUncheckedCreateWithoutTripInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  occupiedSegments?: Prisma.TicketSeatSegmentUncheckedCreateNestedManyWithoutTicketInput
 }
 
 export type TicketCreateOrConnectWithoutTripInput = {
@@ -845,6 +875,7 @@ export type TicketCreateWithoutBookingInput = {
   trip: Prisma.TripCreateNestedOneWithoutTicketsInput
   seat: Prisma.SeatCreateNestedOneWithoutTicketsInput
   passengerGroup: Prisma.PassengerGroupCreateNestedOneWithoutTicketsInput
+  occupiedSegments?: Prisma.TicketSeatSegmentCreateNestedManyWithoutTicketInput
 }
 
 export type TicketUncheckedCreateWithoutBookingInput = {
@@ -859,6 +890,7 @@ export type TicketUncheckedCreateWithoutBookingInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  occupiedSegments?: Prisma.TicketSeatSegmentUncheckedCreateNestedManyWithoutTicketInput
 }
 
 export type TicketCreateOrConnectWithoutBookingInput = {
@@ -899,6 +931,7 @@ export type TicketCreateWithoutPassengerGroupInput = {
   booking: Prisma.BookingCreateNestedOneWithoutTicketsInput
   trip: Prisma.TripCreateNestedOneWithoutTicketsInput
   seat: Prisma.SeatCreateNestedOneWithoutTicketsInput
+  occupiedSegments?: Prisma.TicketSeatSegmentCreateNestedManyWithoutTicketInput
 }
 
 export type TicketUncheckedCreateWithoutPassengerGroupInput = {
@@ -913,6 +946,7 @@ export type TicketUncheckedCreateWithoutPassengerGroupInput = {
   price: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  occupiedSegments?: Prisma.TicketSeatSegmentUncheckedCreateNestedManyWithoutTicketInput
 }
 
 export type TicketCreateOrConnectWithoutPassengerGroupInput = {
@@ -941,6 +975,82 @@ export type TicketUpdateManyWithWhereWithoutPassengerGroupInput = {
   data: Prisma.XOR<Prisma.TicketUpdateManyMutationInput, Prisma.TicketUncheckedUpdateManyWithoutPassengerGroupInput>
 }
 
+export type TicketCreateWithoutOccupiedSegmentsInput = {
+  id?: string
+  passengerName: string
+  passengerId: string
+  fromStationIndex: number
+  toStationIndex: number
+  price: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  booking: Prisma.BookingCreateNestedOneWithoutTicketsInput
+  trip: Prisma.TripCreateNestedOneWithoutTicketsInput
+  seat: Prisma.SeatCreateNestedOneWithoutTicketsInput
+  passengerGroup: Prisma.PassengerGroupCreateNestedOneWithoutTicketsInput
+}
+
+export type TicketUncheckedCreateWithoutOccupiedSegmentsInput = {
+  id?: string
+  bookingId: string
+  tripId: string
+  seatId: string
+  passengerName: string
+  passengerId: string
+  passengerGroupId: string
+  fromStationIndex: number
+  toStationIndex: number
+  price: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type TicketCreateOrConnectWithoutOccupiedSegmentsInput = {
+  where: Prisma.TicketWhereUniqueInput
+  create: Prisma.XOR<Prisma.TicketCreateWithoutOccupiedSegmentsInput, Prisma.TicketUncheckedCreateWithoutOccupiedSegmentsInput>
+}
+
+export type TicketUpsertWithoutOccupiedSegmentsInput = {
+  update: Prisma.XOR<Prisma.TicketUpdateWithoutOccupiedSegmentsInput, Prisma.TicketUncheckedUpdateWithoutOccupiedSegmentsInput>
+  create: Prisma.XOR<Prisma.TicketCreateWithoutOccupiedSegmentsInput, Prisma.TicketUncheckedCreateWithoutOccupiedSegmentsInput>
+  where?: Prisma.TicketWhereInput
+}
+
+export type TicketUpdateToOneWithWhereWithoutOccupiedSegmentsInput = {
+  where?: Prisma.TicketWhereInput
+  data: Prisma.XOR<Prisma.TicketUpdateWithoutOccupiedSegmentsInput, Prisma.TicketUncheckedUpdateWithoutOccupiedSegmentsInput>
+}
+
+export type TicketUpdateWithoutOccupiedSegmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  passengerName?: Prisma.StringFieldUpdateOperationsInput | string
+  passengerId?: Prisma.StringFieldUpdateOperationsInput | string
+  fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  booking?: Prisma.BookingUpdateOneRequiredWithoutTicketsNestedInput
+  trip?: Prisma.TripUpdateOneRequiredWithoutTicketsNestedInput
+  seat?: Prisma.SeatUpdateOneRequiredWithoutTicketsNestedInput
+  passengerGroup?: Prisma.PassengerGroupUpdateOneRequiredWithoutTicketsNestedInput
+}
+
+export type TicketUncheckedUpdateWithoutOccupiedSegmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  bookingId?: Prisma.StringFieldUpdateOperationsInput | string
+  tripId?: Prisma.StringFieldUpdateOperationsInput | string
+  seatId?: Prisma.StringFieldUpdateOperationsInput | string
+  passengerName?: Prisma.StringFieldUpdateOperationsInput | string
+  passengerId?: Prisma.StringFieldUpdateOperationsInput | string
+  passengerGroupId?: Prisma.StringFieldUpdateOperationsInput | string
+  fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type TicketCreateManySeatInput = {
   id?: string
   bookingId: string
@@ -961,12 +1071,13 @@ export type TicketUpdateWithoutSeatInput = {
   passengerId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   booking?: Prisma.BookingUpdateOneRequiredWithoutTicketsNestedInput
   trip?: Prisma.TripUpdateOneRequiredWithoutTicketsNestedInput
   passengerGroup?: Prisma.PassengerGroupUpdateOneRequiredWithoutTicketsNestedInput
+  occupiedSegments?: Prisma.TicketSeatSegmentUpdateManyWithoutTicketNestedInput
 }
 
 export type TicketUncheckedUpdateWithoutSeatInput = {
@@ -978,9 +1089,10 @@ export type TicketUncheckedUpdateWithoutSeatInput = {
   passengerGroupId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  occupiedSegments?: Prisma.TicketSeatSegmentUncheckedUpdateManyWithoutTicketNestedInput
 }
 
 export type TicketUncheckedUpdateManyWithoutSeatInput = {
@@ -992,7 +1104,7 @@ export type TicketUncheckedUpdateManyWithoutSeatInput = {
   passengerGroupId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1017,12 +1129,13 @@ export type TicketUpdateWithoutTripInput = {
   passengerId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   booking?: Prisma.BookingUpdateOneRequiredWithoutTicketsNestedInput
   seat?: Prisma.SeatUpdateOneRequiredWithoutTicketsNestedInput
   passengerGroup?: Prisma.PassengerGroupUpdateOneRequiredWithoutTicketsNestedInput
+  occupiedSegments?: Prisma.TicketSeatSegmentUpdateManyWithoutTicketNestedInput
 }
 
 export type TicketUncheckedUpdateWithoutTripInput = {
@@ -1034,9 +1147,10 @@ export type TicketUncheckedUpdateWithoutTripInput = {
   passengerGroupId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  occupiedSegments?: Prisma.TicketSeatSegmentUncheckedUpdateManyWithoutTicketNestedInput
 }
 
 export type TicketUncheckedUpdateManyWithoutTripInput = {
@@ -1048,7 +1162,7 @@ export type TicketUncheckedUpdateManyWithoutTripInput = {
   passengerGroupId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1073,12 +1187,13 @@ export type TicketUpdateWithoutBookingInput = {
   passengerId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   trip?: Prisma.TripUpdateOneRequiredWithoutTicketsNestedInput
   seat?: Prisma.SeatUpdateOneRequiredWithoutTicketsNestedInput
   passengerGroup?: Prisma.PassengerGroupUpdateOneRequiredWithoutTicketsNestedInput
+  occupiedSegments?: Prisma.TicketSeatSegmentUpdateManyWithoutTicketNestedInput
 }
 
 export type TicketUncheckedUpdateWithoutBookingInput = {
@@ -1090,9 +1205,10 @@ export type TicketUncheckedUpdateWithoutBookingInput = {
   passengerGroupId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  occupiedSegments?: Prisma.TicketSeatSegmentUncheckedUpdateManyWithoutTicketNestedInput
 }
 
 export type TicketUncheckedUpdateManyWithoutBookingInput = {
@@ -1104,7 +1220,7 @@ export type TicketUncheckedUpdateManyWithoutBookingInput = {
   passengerGroupId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1129,12 +1245,13 @@ export type TicketUpdateWithoutPassengerGroupInput = {
   passengerId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   booking?: Prisma.BookingUpdateOneRequiredWithoutTicketsNestedInput
   trip?: Prisma.TripUpdateOneRequiredWithoutTicketsNestedInput
   seat?: Prisma.SeatUpdateOneRequiredWithoutTicketsNestedInput
+  occupiedSegments?: Prisma.TicketSeatSegmentUpdateManyWithoutTicketNestedInput
 }
 
 export type TicketUncheckedUpdateWithoutPassengerGroupInput = {
@@ -1146,9 +1263,10 @@ export type TicketUncheckedUpdateWithoutPassengerGroupInput = {
   passengerId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  occupiedSegments?: Prisma.TicketSeatSegmentUncheckedUpdateManyWithoutTicketNestedInput
 }
 
 export type TicketUncheckedUpdateManyWithoutPassengerGroupInput = {
@@ -1160,11 +1278,40 @@ export type TicketUncheckedUpdateManyWithoutPassengerGroupInput = {
   passengerId?: Prisma.StringFieldUpdateOperationsInput | string
   fromStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
   toStationIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  price?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type TicketCountOutputType
+ */
+
+export type TicketCountOutputType = {
+  occupiedSegments: number
+}
+
+export type TicketCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  occupiedSegments?: boolean | TicketCountOutputTypeCountOccupiedSegmentsArgs
+}
+
+/**
+ * TicketCountOutputType without action
+ */
+export type TicketCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TicketCountOutputType
+   */
+  select?: Prisma.TicketCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * TicketCountOutputType without action
+ */
+export type TicketCountOutputTypeCountOccupiedSegmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TicketSeatSegmentWhereInput
+}
 
 
 export type TicketSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1184,6 +1331,8 @@ export type TicketSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   trip?: boolean | Prisma.TripDefaultArgs<ExtArgs>
   seat?: boolean | Prisma.SeatDefaultArgs<ExtArgs>
   passengerGroup?: boolean | Prisma.PassengerGroupDefaultArgs<ExtArgs>
+  occupiedSegments?: boolean | Prisma.Ticket$occupiedSegmentsArgs<ExtArgs>
+  _count?: boolean | Prisma.TicketCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["ticket"]>
 
 export type TicketSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1245,6 +1394,8 @@ export type TicketInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   trip?: boolean | Prisma.TripDefaultArgs<ExtArgs>
   seat?: boolean | Prisma.SeatDefaultArgs<ExtArgs>
   passengerGroup?: boolean | Prisma.PassengerGroupDefaultArgs<ExtArgs>
+  occupiedSegments?: boolean | Prisma.Ticket$occupiedSegmentsArgs<ExtArgs>
+  _count?: boolean | Prisma.TicketCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TicketIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   booking?: boolean | Prisma.BookingDefaultArgs<ExtArgs>
@@ -1266,6 +1417,7 @@ export type $TicketPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     trip: Prisma.$TripPayload<ExtArgs>
     seat: Prisma.$SeatPayload<ExtArgs>
     passengerGroup: Prisma.$PassengerGroupPayload<ExtArgs>
+    occupiedSegments: Prisma.$TicketSeatSegmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1678,6 +1830,7 @@ export interface Prisma__TicketClient<T, Null = never, ExtArgs extends runtime.T
   trip<T extends Prisma.TripDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TripDefaultArgs<ExtArgs>>): Prisma.Prisma__TripClient<runtime.Types.Result.GetResult<Prisma.$TripPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   seat<T extends Prisma.SeatDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SeatDefaultArgs<ExtArgs>>): Prisma.Prisma__SeatClient<runtime.Types.Result.GetResult<Prisma.$SeatPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   passengerGroup<T extends Prisma.PassengerGroupDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PassengerGroupDefaultArgs<ExtArgs>>): Prisma.Prisma__PassengerGroupClient<runtime.Types.Result.GetResult<Prisma.$PassengerGroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  occupiedSegments<T extends Prisma.Ticket$occupiedSegmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Ticket$occupiedSegmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TicketSeatSegmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1716,7 +1869,7 @@ export interface TicketFieldRefs {
   readonly passengerGroupId: Prisma.FieldRef<"Ticket", 'String'>
   readonly fromStationIndex: Prisma.FieldRef<"Ticket", 'Int'>
   readonly toStationIndex: Prisma.FieldRef<"Ticket", 'Int'>
-  readonly price: Prisma.FieldRef<"Ticket", 'Float'>
+  readonly price: Prisma.FieldRef<"Ticket", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Ticket", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Ticket", 'DateTime'>
 }
@@ -2112,6 +2265,30 @@ export type TicketDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Limit how many Tickets to delete.
    */
   limit?: number
+}
+
+/**
+ * Ticket.occupiedSegments
+ */
+export type Ticket$occupiedSegmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TicketSeatSegment
+   */
+  select?: Prisma.TicketSeatSegmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TicketSeatSegment
+   */
+  omit?: Prisma.TicketSeatSegmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TicketSeatSegmentInclude<ExtArgs> | null
+  where?: Prisma.TicketSeatSegmentWhereInput
+  orderBy?: Prisma.TicketSeatSegmentOrderByWithRelationInput | Prisma.TicketSeatSegmentOrderByWithRelationInput[]
+  cursor?: Prisma.TicketSeatSegmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TicketSeatSegmentScalarFieldEnum | Prisma.TicketSeatSegmentScalarFieldEnum[]
 }
 
 /**

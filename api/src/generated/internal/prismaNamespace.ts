@@ -400,7 +400,9 @@ export const ModelName = {
   Booking: 'Booking',
   PassengerGroup: 'PassengerGroup',
   Ticket: 'Ticket',
-  SeatIssueReport: 'SeatIssueReport'
+  TicketSeatSegment: 'TicketSeatSegment',
+  SeatIssueReport: 'SeatIssueReport',
+  TripDelayReport: 'TripDelayReport'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -416,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "refreshToken" | "transaction" | "network" | "station" | "route" | "railwayLine" | "routeStation" | "coachTemplate" | "train" | "coach" | "seat" | "trip" | "booking" | "passengerGroup" | "ticket" | "seatIssueReport"
+    modelProps: "user" | "refreshToken" | "transaction" | "network" | "station" | "route" | "railwayLine" | "routeStation" | "coachTemplate" | "train" | "coach" | "seat" | "trip" | "booking" | "passengerGroup" | "ticket" | "ticketSeatSegment" | "seatIssueReport" | "tripDelayReport"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1604,6 +1606,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TicketSeatSegment: {
+      payload: Prisma.$TicketSeatSegmentPayload<ExtArgs>
+      fields: Prisma.TicketSeatSegmentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TicketSeatSegmentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TicketSeatSegmentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TicketSeatSegmentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TicketSeatSegmentPayload>
+        }
+        findFirst: {
+          args: Prisma.TicketSeatSegmentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TicketSeatSegmentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TicketSeatSegmentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TicketSeatSegmentPayload>
+        }
+        findMany: {
+          args: Prisma.TicketSeatSegmentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TicketSeatSegmentPayload>[]
+        }
+        create: {
+          args: Prisma.TicketSeatSegmentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TicketSeatSegmentPayload>
+        }
+        createMany: {
+          args: Prisma.TicketSeatSegmentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TicketSeatSegmentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TicketSeatSegmentPayload>[]
+        }
+        delete: {
+          args: Prisma.TicketSeatSegmentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TicketSeatSegmentPayload>
+        }
+        update: {
+          args: Prisma.TicketSeatSegmentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TicketSeatSegmentPayload>
+        }
+        deleteMany: {
+          args: Prisma.TicketSeatSegmentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TicketSeatSegmentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TicketSeatSegmentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TicketSeatSegmentPayload>[]
+        }
+        upsert: {
+          args: Prisma.TicketSeatSegmentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TicketSeatSegmentPayload>
+        }
+        aggregate: {
+          args: Prisma.TicketSeatSegmentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTicketSeatSegment>
+        }
+        groupBy: {
+          args: Prisma.TicketSeatSegmentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TicketSeatSegmentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TicketSeatSegmentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TicketSeatSegmentCountAggregateOutputType> | number
+        }
+      }
+    }
     SeatIssueReport: {
       payload: Prisma.$SeatIssueReportPayload<ExtArgs>
       fields: Prisma.SeatIssueReportFieldRefs
@@ -1675,6 +1751,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.SeatIssueReportCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.SeatIssueReportCountAggregateOutputType> | number
+        }
+      }
+    }
+    TripDelayReport: {
+      payload: Prisma.$TripDelayReportPayload<ExtArgs>
+      fields: Prisma.TripDelayReportFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TripDelayReportFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripDelayReportPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TripDelayReportFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripDelayReportPayload>
+        }
+        findFirst: {
+          args: Prisma.TripDelayReportFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripDelayReportPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TripDelayReportFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripDelayReportPayload>
+        }
+        findMany: {
+          args: Prisma.TripDelayReportFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripDelayReportPayload>[]
+        }
+        create: {
+          args: Prisma.TripDelayReportCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripDelayReportPayload>
+        }
+        createMany: {
+          args: Prisma.TripDelayReportCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TripDelayReportCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripDelayReportPayload>[]
+        }
+        delete: {
+          args: Prisma.TripDelayReportDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripDelayReportPayload>
+        }
+        update: {
+          args: Prisma.TripDelayReportUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripDelayReportPayload>
+        }
+        deleteMany: {
+          args: Prisma.TripDelayReportDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TripDelayReportUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TripDelayReportUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripDelayReportPayload>[]
+        }
+        upsert: {
+          args: Prisma.TripDelayReportUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TripDelayReportPayload>
+        }
+        aggregate: {
+          args: Prisma.TripDelayReportAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTripDelayReport>
+        }
+        groupBy: {
+          args: Prisma.TripDelayReportGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TripDelayReportGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TripDelayReportCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TripDelayReportCountAggregateOutputType> | number
         }
       }
     }
@@ -1762,6 +1912,7 @@ export const TransactionScalarFieldEnum = {
   paymentMethod: 'paymentMethod',
   status: 'status',
   referenceId: 'referenceId',
+  idempotencyKey: 'idempotencyKey',
   description: 'description',
   bankName: 'bankName',
   bankAccount: 'bankAccount',
@@ -1972,6 +2123,18 @@ export const TicketScalarFieldEnum = {
 export type TicketScalarFieldEnum = (typeof TicketScalarFieldEnum)[keyof typeof TicketScalarFieldEnum]
 
 
+export const TicketSeatSegmentScalarFieldEnum = {
+  id: 'id',
+  ticketId: 'ticketId',
+  tripId: 'tripId',
+  seatId: 'seatId',
+  segmentIndex: 'segmentIndex',
+  createdAt: 'createdAt'
+} as const
+
+export type TicketSeatSegmentScalarFieldEnum = (typeof TicketSeatSegmentScalarFieldEnum)[keyof typeof TicketSeatSegmentScalarFieldEnum]
+
+
 export const SeatIssueReportScalarFieldEnum = {
   id: 'id',
   tripId: 'tripId',
@@ -1989,6 +2152,23 @@ export const SeatIssueReportScalarFieldEnum = {
 } as const
 
 export type SeatIssueReportScalarFieldEnum = (typeof SeatIssueReportScalarFieldEnum)[keyof typeof SeatIssueReportScalarFieldEnum]
+
+
+export const TripDelayReportScalarFieldEnum = {
+  id: 'id',
+  tripId: 'tripId',
+  reportedById: 'reportedById',
+  type: 'type',
+  minutes: 'minutes',
+  reason: 'reason',
+  status: 'status',
+  rejectReason: 'rejectReason',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TripDelayReportScalarFieldEnum = (typeof TripDelayReportScalarFieldEnum)[keyof typeof TripDelayReportScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2095,16 +2275,16 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'Float'
+ * Reference to a field of type 'Int'
  */
-export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
     
 
 
 /**
- * Reference to a field of type 'Float[]'
+ * Reference to a field of type 'Int[]'
  */
-export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -2137,16 +2317,16 @@ export type ListEnumTransactionStatusFieldRefInput<$PrismaModel> = FieldRefInput
 
 
 /**
- * Reference to a field of type 'Int'
+ * Reference to a field of type 'Float'
  */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
     
 
 
 /**
- * Reference to a field of type 'Int[]'
+ * Reference to a field of type 'Float[]'
  */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 
@@ -2289,6 +2469,34 @@ export type EnumSeatIssueStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$
 export type ListEnumSeatIssueStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SeatIssueStatus[]'>
     
 
+
+/**
+ * Reference to a field of type 'TripDelayType'
+ */
+export type EnumTripDelayTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TripDelayType'>
+    
+
+
+/**
+ * Reference to a field of type 'TripDelayType[]'
+ */
+export type ListEnumTripDelayTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TripDelayType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'TripDelayReportStatus'
+ */
+export type EnumTripDelayReportStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TripDelayReportStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'TripDelayReportStatus[]'
+ */
+export type ListEnumTripDelayReportStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TripDelayReportStatus[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -2400,7 +2608,9 @@ export type GlobalOmitConfig = {
   booking?: Prisma.BookingOmit
   passengerGroup?: Prisma.PassengerGroupOmit
   ticket?: Prisma.TicketOmit
+  ticketSeatSegment?: Prisma.TicketSeatSegmentOmit
   seatIssueReport?: Prisma.SeatIssueReportOmit
+  tripDelayReport?: Prisma.TripDelayReportOmit
 }
 
 /* Types for Logging */

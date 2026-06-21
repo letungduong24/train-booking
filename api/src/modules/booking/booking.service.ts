@@ -330,6 +330,9 @@ export class BookingService {
     const existingTickets = await this.prisma.ticket.findMany({
       where: {
         tripId: tripId,
+        booking: {
+          status: 'PAID',
+        },
         OR: tickets.map((ticket) => ({
           seatId: ticket.seatId,
           fromStationIndex: { lt: ticket.toStationIndex },
@@ -420,37 +423,64 @@ export class BookingService {
       );
     }
 
-    // Tạo vé và cập nhật trạng thái booking
+    // Tạo vé và đánh dấu các đoạn ghế bị chiếm trong cùng một transaction.
     let updatedBooking;
     try {
-      updatedBooking = await this.prisma.booking.update({
-        where: { code: bookingCode },
-        data: {
-          status: 'PAID',
-          metadata: Prisma.JsonNull,
-          tickets: {
-            create: tickets,
-          },
-        },
-        include: {
-          user: true,
-          trip: {
-            include: {
-              train: true,
-              route: true,
+      updatedBooking = await this.prisma.$transaction(
+        async (tx) => {
+          const statusLock = await tx.booking.updateMany({
+            where: { code: bookingCode, status: 'PENDING' },
+            data: {
+              status: 'PAID',
+              metadata: Prisma.JsonNull,
             },
-          },
-          tickets: {
-            include: {
-              seat: {
-                include: {
-                  coach: true,
+          });
+
+          if (statusLock.count === 0) {
+            const paidBooking = await this.findPaidBookingForReceipt(
+              bookingCode,
+              tx,
+            );
+            if (paidBooking) return paidBooking;
+            throw new BadRequestException(
+              'Đơn đặt chỗ không còn ở trạng thái chờ thanh toán',
+            );
+          }
+
+          const createdTickets: {
+            id: string;
+            tripId: string;
+            seatId: string;
+            fromStationIndex: number;
+            toStationIndex: number;
+          }[] = [];
+          for (const ticket of tickets) {
+            createdTickets.push(
+              await tx.ticket.create({
+                data: {
+                  bookingId: booking.id,
+                  ...ticket,
                 },
-              },
-            },
-          },
+              }),
+            );
+          }
+
+          const occupiedSegments = createdTickets.flatMap((ticket) =>
+            this.buildTicketSeatSegments(ticket),
+          );
+
+          if (occupiedSegments.length > 0) {
+            await tx.ticketSeatSegment.createMany({
+              data: occupiedSegments,
+            });
+          }
+
+          return this.findPaidBookingForReceipt(bookingCode, tx);
         },
-      });
+        {
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        },
+      );
     } catch (error: any) {
       if (error?.code !== 'P2002') {
         throw error;
@@ -483,7 +513,27 @@ export class BookingService {
         return paidBooking;
       }
 
-      throw error;
+      if (booking.userId) {
+        await this.walletService.refundToWallet(
+          booking.userId,
+          booking.totalPrice,
+          bookingCode,
+          'Hoàn tiền tự động do ghế đã được đặt bởi người khác',
+        );
+      }
+
+      await this.prisma.booking.update({
+        where: { code: bookingCode },
+        data: { status: 'PAYMENT_FAILED' },
+      });
+
+      throw new BadRequestException(
+        'Ghế đã được đặt bởi người khác. Tiền đã được hoàn về ví của bạn.',
+      );
+    }
+
+    if (!updatedBooking) {
+      throw new BadRequestException('Không thể xác nhận đơn đặt chỗ');
     }
 
     // Gửi email biên lai kèm vé PDF
@@ -691,6 +741,9 @@ export class BookingService {
       where: {
         tripId,
         seatId: { in: seatIds },
+        booking: {
+          status: 'PAID',
+        },
         fromStationIndex: { lt: toStation.index },
         toStationIndex: { gt: fromStation.index },
       },
@@ -1440,6 +1493,61 @@ export class BookingService {
     }
 
     return [];
+  }
+
+  private buildTicketSeatSegments(ticket: {
+    id: string;
+    tripId: string;
+    seatId: string;
+    fromStationIndex: number;
+    toStationIndex: number;
+  }) {
+    const segments: {
+      ticketId: string;
+      tripId: string;
+      seatId: string;
+      segmentIndex: number;
+    }[] = [];
+    for (
+      let segmentIndex = ticket.fromStationIndex;
+      segmentIndex < ticket.toStationIndex;
+      segmentIndex++
+    ) {
+      segments.push({
+        ticketId: ticket.id,
+        tripId: ticket.tripId,
+        seatId: ticket.seatId,
+        segmentIndex,
+      });
+    }
+
+    return segments;
+  }
+
+  private async findPaidBookingForReceipt(bookingCode: string, tx: any = this.prisma) {
+    const booking = await tx.booking.findUnique({
+      where: { code: bookingCode },
+      include: {
+        user: true,
+        trip: {
+          include: {
+            train: true,
+            route: true,
+          },
+        },
+        tickets: {
+          include: {
+            seat: {
+              include: {
+                coach: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return booking?.status === 'PAID' ? booking : null;
   }
 
   private async releaseSeatLocks(

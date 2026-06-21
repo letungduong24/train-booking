@@ -493,6 +493,14 @@ export type StationUncheckedUpdateManyWithoutNetworkNestedInput = {
   deleteMany?: Prisma.StationScalarWhereInput | Prisma.StationScalarWhereInput[]
 }
 
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type StationCreateNestedOneWithoutRoutesInput = {
   create?: Prisma.XOR<Prisma.StationCreateWithoutRoutesInput, Prisma.StationUncheckedCreateWithoutRoutesInput>
   connectOrCreate?: Prisma.StationCreateOrConnectWithoutRoutesInput

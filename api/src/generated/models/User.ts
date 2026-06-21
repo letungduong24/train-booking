@@ -333,13 +333,14 @@ export type UserWhereInput = {
   passwordResetTokenExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   walletPinResetToken?: Prisma.StringNullableFilter<"User"> | string | null
   walletPinResetTokenExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
-  balance?: Prisma.FloatFilter<"User"> | number
+  balance?: Prisma.IntFilter<"User"> | number
   walletPin?: Prisma.StringNullableFilter<"User"> | string | null
   isBanned?: Prisma.BoolFilter<"User"> | boolean
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
   bookings?: Prisma.BookingListRelationFilter
   driverTrips?: Prisma.TripListRelationFilter
   reportedSeatIssues?: Prisma.SeatIssueReportListRelationFilter
+  reportedTripDelays?: Prisma.TripDelayReportListRelationFilter
   transactions?: Prisma.TransactionListRelationFilter
 }
 
@@ -368,6 +369,7 @@ export type UserOrderByWithRelationInput = {
   bookings?: Prisma.BookingOrderByRelationAggregateInput
   driverTrips?: Prisma.TripOrderByRelationAggregateInput
   reportedSeatIssues?: Prisma.SeatIssueReportOrderByRelationAggregateInput
+  reportedTripDelays?: Prisma.TripDelayReportOrderByRelationAggregateInput
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
 }
 
@@ -392,13 +394,14 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   verificationTokenExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   passwordResetTokenExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   walletPinResetTokenExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
-  balance?: Prisma.FloatFilter<"User"> | number
+  balance?: Prisma.IntFilter<"User"> | number
   walletPin?: Prisma.StringNullableFilter<"User"> | string | null
   isBanned?: Prisma.BoolFilter<"User"> | boolean
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
   bookings?: Prisma.BookingListRelationFilter
   driverTrips?: Prisma.TripListRelationFilter
   reportedSeatIssues?: Prisma.SeatIssueReportListRelationFilter
+  reportedTripDelays?: Prisma.TripDelayReportListRelationFilter
   transactions?: Prisma.TransactionListRelationFilter
 }, "id" | "email" | "phone" | "googleId" | "verificationToken" | "passwordResetToken" | "walletPinResetToken">
 
@@ -451,7 +454,7 @@ export type UserScalarWhereWithAggregatesInput = {
   passwordResetTokenExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   walletPinResetToken?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   walletPinResetTokenExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
-  balance?: Prisma.FloatWithAggregatesFilter<"User"> | number
+  balance?: Prisma.IntWithAggregatesFilter<"User"> | number
   walletPin?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   isBanned?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
 }
@@ -481,6 +484,7 @@ export type UserCreateInput = {
   bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
   driverTrips?: Prisma.TripCreateNestedManyWithoutDriverInput
   reportedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutReportedByInput
+  reportedTripDelays?: Prisma.TripDelayReportCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
 }
 
@@ -509,6 +513,7 @@ export type UserUncheckedCreateInput = {
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
   driverTrips?: Prisma.TripUncheckedCreateNestedManyWithoutDriverInput
   reportedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutReportedByInput
+  reportedTripDelays?: Prisma.TripDelayReportUncheckedCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -530,13 +535,14 @@ export type UserUpdateInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
   driverTrips?: Prisma.TripUpdateManyWithoutDriverNestedInput
   reportedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutReportedByNestedInput
+  reportedTripDelays?: Prisma.TripDelayReportUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
 }
 
@@ -558,13 +564,14 @@ export type UserUncheckedUpdateInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
   driverTrips?: Prisma.TripUncheckedUpdateManyWithoutDriverNestedInput
   reportedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutReportedByNestedInput
+  reportedTripDelays?: Prisma.TripDelayReportUncheckedUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -609,7 +616,7 @@ export type UserUpdateManyMutationInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
@@ -632,7 +639,7 @@ export type UserUncheckedUpdateManyInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
@@ -748,7 +755,7 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
-export type FloatFieldUpdateOperationsInput = {
+export type IntFieldUpdateOperationsInput = {
   set?: number
   increment?: number
   decrement?: number
@@ -830,6 +837,20 @@ export type UserUpdateOneRequiredWithoutReportedSeatIssuesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReportedSeatIssuesInput, Prisma.UserUpdateWithoutReportedSeatIssuesInput>, Prisma.UserUncheckedUpdateWithoutReportedSeatIssuesInput>
 }
 
+export type UserCreateNestedOneWithoutReportedTripDelaysInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReportedTripDelaysInput, Prisma.UserUncheckedCreateWithoutReportedTripDelaysInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReportedTripDelaysInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutReportedTripDelaysNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReportedTripDelaysInput, Prisma.UserUncheckedCreateWithoutReportedTripDelaysInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReportedTripDelaysInput
+  upsert?: Prisma.UserUpsertWithoutReportedTripDelaysInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReportedTripDelaysInput, Prisma.UserUpdateWithoutReportedTripDelaysInput>, Prisma.UserUncheckedUpdateWithoutReportedTripDelaysInput>
+}
+
 export type UserCreateWithoutRefreshTokensInput = {
   id?: string
   profilePic?: string | null
@@ -854,6 +875,7 @@ export type UserCreateWithoutRefreshTokensInput = {
   bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
   driverTrips?: Prisma.TripCreateNestedManyWithoutDriverInput
   reportedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutReportedByInput
+  reportedTripDelays?: Prisma.TripDelayReportCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
 }
 
@@ -881,6 +903,7 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
   driverTrips?: Prisma.TripUncheckedCreateNestedManyWithoutDriverInput
   reportedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutReportedByInput
+  reportedTripDelays?: Prisma.TripDelayReportUncheckedCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -918,12 +941,13 @@ export type UserUpdateWithoutRefreshTokensInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
   driverTrips?: Prisma.TripUpdateManyWithoutDriverNestedInput
   reportedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutReportedByNestedInput
+  reportedTripDelays?: Prisma.TripDelayReportUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
 }
 
@@ -945,12 +969,13 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
   driverTrips?: Prisma.TripUncheckedUpdateManyWithoutDriverNestedInput
   reportedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutReportedByNestedInput
+  reportedTripDelays?: Prisma.TripDelayReportUncheckedUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -979,6 +1004,7 @@ export type UserCreateWithoutTransactionsInput = {
   bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
   driverTrips?: Prisma.TripCreateNestedManyWithoutDriverInput
   reportedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutReportedByInput
+  reportedTripDelays?: Prisma.TripDelayReportCreateNestedManyWithoutReportedByInput
 }
 
 export type UserUncheckedCreateWithoutTransactionsInput = {
@@ -1006,6 +1032,7 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
   driverTrips?: Prisma.TripUncheckedCreateNestedManyWithoutDriverInput
   reportedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutReportedByInput
+  reportedTripDelays?: Prisma.TripDelayReportUncheckedCreateNestedManyWithoutReportedByInput
 }
 
 export type UserCreateOrConnectWithoutTransactionsInput = {
@@ -1042,13 +1069,14 @@ export type UserUpdateWithoutTransactionsInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
   driverTrips?: Prisma.TripUpdateManyWithoutDriverNestedInput
   reportedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutReportedByNestedInput
+  reportedTripDelays?: Prisma.TripDelayReportUpdateManyWithoutReportedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTransactionsInput = {
@@ -1069,13 +1097,14 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
   driverTrips?: Prisma.TripUncheckedUpdateManyWithoutDriverNestedInput
   reportedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutReportedByNestedInput
+  reportedTripDelays?: Prisma.TripDelayReportUncheckedUpdateManyWithoutReportedByNestedInput
 }
 
 export type UserCreateWithoutDriverTripsInput = {
@@ -1102,6 +1131,7 @@ export type UserCreateWithoutDriverTripsInput = {
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
   reportedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutReportedByInput
+  reportedTripDelays?: Prisma.TripDelayReportCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
 }
 
@@ -1129,6 +1159,7 @@ export type UserUncheckedCreateWithoutDriverTripsInput = {
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
   reportedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutReportedByInput
+  reportedTripDelays?: Prisma.TripDelayReportUncheckedCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1166,12 +1197,13 @@ export type UserUpdateWithoutDriverTripsInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
   reportedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutReportedByNestedInput
+  reportedTripDelays?: Prisma.TripDelayReportUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
 }
 
@@ -1193,12 +1225,13 @@ export type UserUncheckedUpdateWithoutDriverTripsInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
   reportedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutReportedByNestedInput
+  reportedTripDelays?: Prisma.TripDelayReportUncheckedUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1226,6 +1259,7 @@ export type UserCreateWithoutBookingsInput = {
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   driverTrips?: Prisma.TripCreateNestedManyWithoutDriverInput
   reportedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutReportedByInput
+  reportedTripDelays?: Prisma.TripDelayReportCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
 }
 
@@ -1253,6 +1287,7 @@ export type UserUncheckedCreateWithoutBookingsInput = {
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   driverTrips?: Prisma.TripUncheckedCreateNestedManyWithoutDriverInput
   reportedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutReportedByInput
+  reportedTripDelays?: Prisma.TripDelayReportUncheckedCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1290,12 +1325,13 @@ export type UserUpdateWithoutBookingsInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   driverTrips?: Prisma.TripUpdateManyWithoutDriverNestedInput
   reportedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutReportedByNestedInput
+  reportedTripDelays?: Prisma.TripDelayReportUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
 }
 
@@ -1317,12 +1353,13 @@ export type UserUncheckedUpdateWithoutBookingsInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   driverTrips?: Prisma.TripUncheckedUpdateManyWithoutDriverNestedInput
   reportedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutReportedByNestedInput
+  reportedTripDelays?: Prisma.TripDelayReportUncheckedUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1350,6 +1387,7 @@ export type UserCreateWithoutReportedSeatIssuesInput = {
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
   bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
   driverTrips?: Prisma.TripCreateNestedManyWithoutDriverInput
+  reportedTripDelays?: Prisma.TripDelayReportCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
 }
 
@@ -1377,6 +1415,7 @@ export type UserUncheckedCreateWithoutReportedSeatIssuesInput = {
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
   bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
   driverTrips?: Prisma.TripUncheckedCreateNestedManyWithoutDriverInput
+  reportedTripDelays?: Prisma.TripDelayReportUncheckedCreateNestedManyWithoutReportedByInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1414,12 +1453,13 @@ export type UserUpdateWithoutReportedSeatIssuesInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
   driverTrips?: Prisma.TripUpdateManyWithoutDriverNestedInput
+  reportedTripDelays?: Prisma.TripDelayReportUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
 }
 
@@ -1441,12 +1481,141 @@ export type UserUncheckedUpdateWithoutReportedSeatIssuesInput = {
   passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  balance?: Prisma.FloatFieldUpdateOperationsInput | number
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
   walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
   driverTrips?: Prisma.TripUncheckedUpdateManyWithoutDriverNestedInput
+  reportedTripDelays?: Prisma.TripDelayReportUncheckedUpdateManyWithoutReportedByNestedInput
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutReportedTripDelaysInput = {
+  id?: string
+  profilePic?: string | null
+  email: string
+  phone?: string | null
+  password?: string | null
+  name?: string | null
+  googleId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
+  balance?: number
+  walletPin?: string | null
+  isBanned?: boolean
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutUserInput
+  driverTrips?: Prisma.TripCreateNestedManyWithoutDriverInput
+  reportedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutReportedByInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutReportedTripDelaysInput = {
+  id?: string
+  profilePic?: string | null
+  email: string
+  phone?: string | null
+  password?: string | null
+  name?: string | null
+  googleId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isEmailVerified?: boolean
+  verificationToken?: string | null
+  verificationTokenExpires?: Date | string | null
+  passwordResetToken?: string | null
+  passwordResetTokenExpires?: Date | string | null
+  walletPinResetToken?: string | null
+  walletPinResetTokenExpires?: Date | string | null
+  balance?: number
+  walletPin?: string | null
+  isBanned?: boolean
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutUserInput
+  driverTrips?: Prisma.TripUncheckedCreateNestedManyWithoutDriverInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutReportedByInput
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutReportedTripDelaysInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReportedTripDelaysInput, Prisma.UserUncheckedCreateWithoutReportedTripDelaysInput>
+}
+
+export type UserUpsertWithoutReportedTripDelaysInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReportedTripDelaysInput, Prisma.UserUncheckedUpdateWithoutReportedTripDelaysInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReportedTripDelaysInput, Prisma.UserUncheckedCreateWithoutReportedTripDelaysInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReportedTripDelaysInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReportedTripDelaysInput, Prisma.UserUncheckedUpdateWithoutReportedTripDelaysInput>
+}
+
+export type UserUpdateWithoutReportedTripDelaysInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
+  walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutUserNestedInput
+  driverTrips?: Prisma.TripUpdateManyWithoutDriverNestedInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutReportedByNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReportedTripDelaysInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profilePic?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  walletPinResetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  walletPinResetTokenExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  balance?: Prisma.IntFieldUpdateOperationsInput | number
+  walletPin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutUserNestedInput
+  driverTrips?: Prisma.TripUncheckedUpdateManyWithoutDriverNestedInput
+  reportedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutReportedByNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1460,6 +1629,7 @@ export type UserCountOutputType = {
   bookings: number
   driverTrips: number
   reportedSeatIssues: number
+  reportedTripDelays: number
   transactions: number
 }
 
@@ -1468,6 +1638,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   bookings?: boolean | UserCountOutputTypeCountBookingsArgs
   driverTrips?: boolean | UserCountOutputTypeCountDriverTripsArgs
   reportedSeatIssues?: boolean | UserCountOutputTypeCountReportedSeatIssuesArgs
+  reportedTripDelays?: boolean | UserCountOutputTypeCountReportedTripDelaysArgs
   transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
 }
 
@@ -1512,6 +1683,13 @@ export type UserCountOutputTypeCountReportedSeatIssuesArgs<ExtArgs extends runti
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountReportedTripDelaysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TripDelayReportWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountTransactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.TransactionWhereInput
 }
@@ -1542,6 +1720,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   bookings?: boolean | Prisma.User$bookingsArgs<ExtArgs>
   driverTrips?: boolean | Prisma.User$driverTripsArgs<ExtArgs>
   reportedSeatIssues?: boolean | Prisma.User$reportedSeatIssuesArgs<ExtArgs>
+  reportedTripDelays?: boolean | Prisma.User$reportedTripDelaysArgs<ExtArgs>
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -1621,6 +1800,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   bookings?: boolean | Prisma.User$bookingsArgs<ExtArgs>
   driverTrips?: boolean | Prisma.User$driverTripsArgs<ExtArgs>
   reportedSeatIssues?: boolean | Prisma.User$reportedSeatIssuesArgs<ExtArgs>
+  reportedTripDelays?: boolean | Prisma.User$reportedTripDelaysArgs<ExtArgs>
   transactions?: boolean | Prisma.User$transactionsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1634,6 +1814,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     bookings: Prisma.$BookingPayload<ExtArgs>[]
     driverTrips: Prisma.$TripPayload<ExtArgs>[]
     reportedSeatIssues: Prisma.$SeatIssueReportPayload<ExtArgs>[]
+    reportedTripDelays: Prisma.$TripDelayReportPayload<ExtArgs>[]
     transactions: Prisma.$TransactionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -2055,6 +2236,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   bookings<T extends Prisma.User$bookingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   driverTrips<T extends Prisma.User$driverTripsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$driverTripsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TripPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reportedSeatIssues<T extends Prisma.User$reportedSeatIssuesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportedSeatIssuesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SeatIssueReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reportedTripDelays<T extends Prisma.User$reportedTripDelaysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportedTripDelaysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TripDelayReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   transactions<T extends Prisma.User$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2102,7 +2284,7 @@ export interface UserFieldRefs {
   readonly passwordResetTokenExpires: Prisma.FieldRef<"User", 'DateTime'>
   readonly walletPinResetToken: Prisma.FieldRef<"User", 'String'>
   readonly walletPinResetTokenExpires: Prisma.FieldRef<"User", 'DateTime'>
-  readonly balance: Prisma.FieldRef<"User", 'Float'>
+  readonly balance: Prisma.FieldRef<"User", 'Int'>
   readonly walletPin: Prisma.FieldRef<"User", 'String'>
   readonly isBanned: Prisma.FieldRef<"User", 'Boolean'>
 }
@@ -2586,6 +2768,30 @@ export type User$reportedSeatIssuesArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.SeatIssueReportScalarFieldEnum | Prisma.SeatIssueReportScalarFieldEnum[]
+}
+
+/**
+ * User.reportedTripDelays
+ */
+export type User$reportedTripDelaysArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TripDelayReport
+   */
+  select?: Prisma.TripDelayReportSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TripDelayReport
+   */
+  omit?: Prisma.TripDelayReportOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TripDelayReportInclude<ExtArgs> | null
+  where?: Prisma.TripDelayReportWhereInput
+  orderBy?: Prisma.TripDelayReportOrderByWithRelationInput | Prisma.TripDelayReportOrderByWithRelationInput[]
+  cursor?: Prisma.TripDelayReportWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TripDelayReportScalarFieldEnum | Prisma.TripDelayReportScalarFieldEnum[]
 }
 
 /**

@@ -117,24 +117,21 @@ export class WalletService {
   }
 
   async requestWithdraw(userId: string, dto: WithdrawRequestDto) {
-    const { amount, bankName, bankAccount, accountName } = dto;
+    const { bankName, bankAccount, accountName } = dto;
+    const amount = this.normalizeAmount(dto.amount);
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new BadRequestException('User not found');
 
-    if (user.balance < amount) {
-      throw new BadRequestException('Insufficient balance');
-    }
-
-    // Atomic transaction: Deduct balance & Create Transaction
     await this.prisma.$transaction(async (tx) => {
-      // 1. Deduct balance
-      await tx.user.update({
-        where: { id: userId },
+      const debit = await tx.user.updateMany({
+        where: { id: userId, balance: { gte: amount } },
         data: { balance: { decrement: amount } },
       });
+      if (debit.count !== 1) {
+        throw new BadRequestException('Insufficient balance');
+      }
 
-      // 2. Create Transaction Record
       await tx.transaction.create({
         data: {
           userId,
@@ -177,10 +174,8 @@ export class WalletService {
     if (booking.userId !== userId)
       throw new BadRequestException('Booking does not belong to user');
 
-    const amount = booking.totalPrice;
-    if (user.balance < amount) {
-      throw new BadRequestException('Insufficient wallet balance');
-    }
+    const amount = this.normalizeAmount(booking.totalPrice);
+    const idempotencyKey = `PAYMENT:WALLET:${bookingCode}`;
 
     // PROCESS PAYMENT & BOOKING CONFIRMATION
     // We need to be careful with Race Condition here too.
@@ -188,12 +183,12 @@ export class WalletService {
     // Or we deduct money first, then try confirm. If confirm fails, refund.
 
     try {
-      // 1. Deduct money first (Pessimistic style)
       await this.prisma.$transaction(async (tx) => {
-        await tx.user.update({
-          where: { id: userId },
-          data: { balance: { decrement: amount } },
+        const existingPayment = await tx.transaction.findUnique({
+          where: { idempotencyKey },
         });
+
+        if (existingPayment) return;
 
         await tx.transaction.create({
           data: {
@@ -203,9 +198,18 @@ export class WalletService {
             paymentMethod: 'WALLET',
             status: 'COMPLETED',
             referenceId: bookingCode,
+            idempotencyKey,
             description: `Thanh toán vé tàu ${bookingCode}`,
           },
         });
+
+        const debit = await tx.user.updateMany({
+          where: { id: userId, balance: { gte: amount } },
+          data: { balance: { decrement: amount } },
+        });
+        if (debit.count !== 1) {
+          throw new BadRequestException('Insufficient wallet balance');
+        }
       });
 
       // 2. Confirm Booking (Create Tickets)
@@ -245,23 +249,35 @@ export class WalletService {
     bookingCode: string,
     reason: string = 'Hoàn tiền',
   ) {
-    await this.prisma.$transaction(async (tx) => {
-      await tx.user.update({
-        where: { id: userId },
-        data: { balance: { increment: amount } },
-      });
+    const normalizedAmount = this.normalizeAmount(amount);
+    const idempotencyKey = `REFUND:${bookingCode}:${reason}`;
 
-      await tx.transaction.create({
-        data: {
-          userId,
-          amount: amount,
-          type: 'REFUND',
-          status: 'COMPLETED',
-          referenceId: bookingCode,
-          description: reason,
-        },
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        await tx.transaction.create({
+          data: {
+            userId,
+            amount: normalizedAmount,
+            type: 'REFUND',
+            status: 'COMPLETED',
+            referenceId: bookingCode,
+            idempotencyKey,
+            description: reason,
+          },
+        });
+
+        await tx.user.update({
+          where: { id: userId },
+          data: { balance: { increment: normalizedAmount } },
+        });
       });
-    });
+    } catch (error: any) {
+      if (error?.code === 'P2002') {
+        this.logger.warn(`Skip duplicate refund ${idempotencyKey}`);
+        return;
+      }
+      throw error;
+    }
   }
 
   // Admin Method
@@ -275,10 +291,13 @@ export class WalletService {
     if (transaction.status !== 'PENDING')
       throw new BadRequestException('Transaction already processed');
 
-    await this.prisma.transaction.update({
-      where: { id: transactionId },
+    const result = await this.prisma.transaction.updateMany({
+      where: { id: transactionId, status: 'PENDING' },
       data: { status: 'COMPLETED' },
     });
+    if (result.count !== 1) {
+      throw new BadRequestException('Transaction already processed');
+    }
 
     return { message: 'Withdraw approved' };
   }
@@ -291,20 +310,21 @@ export class WalletService {
     if (transaction.type !== 'WITHDRAW' || transaction.status !== 'PENDING')
       throw new BadRequestException('Invalid transaction');
 
-    // Refund balance
     await this.prisma.$transaction(async (tx) => {
-      // Revert balance
-      await tx.user.update({
-        where: { id: transaction.userId },
-        data: { balance: { increment: Math.abs(transaction.amount) } },
-      });
-
-      await tx.transaction.update({
-        where: { id: transactionId },
+      const result = await tx.transaction.updateMany({
+        where: { id: transactionId, status: 'PENDING' },
         data: {
           status: 'FAILED',
           description: transaction.description + ' (Rejected)',
         },
+      });
+      if (result.count !== 1) {
+        throw new BadRequestException('Transaction already processed');
+      }
+
+      await tx.user.update({
+        where: { id: transaction.userId },
+        data: { balance: { increment: Math.abs(transaction.amount) } },
       });
     });
 
@@ -333,10 +353,11 @@ export class WalletService {
 
   async createDeposit(userId: string, amount: number) {
     // Create Transaction
+    const normalizedAmount = this.normalizeAmount(amount);
     const transaction = await this.prisma.transaction.create({
       data: {
         userId,
-        amount,
+        amount: normalizedAmount,
         type: 'DEPOSIT',
         status: 'PENDING',
         description: `Nạp tiền vào ví`,
@@ -360,17 +381,17 @@ export class WalletService {
       where: { id: transactionId },
     });
     if (!transaction) return;
-    if (transaction.status !== 'PENDING') return; // Already processed or failed
 
     await this.prisma.$transaction(async (tx) => {
+      const result = await tx.transaction.updateMany({
+        where: { id: transactionId, status: 'PENDING' },
+        data: { status: 'COMPLETED' },
+      });
+      if (result.count !== 1) return;
+
       await tx.user.update({
         where: { id: transaction.userId },
         data: { balance: { increment: transaction.amount } },
-      });
-
-      await tx.transaction.update({
-        where: { id: transactionId },
-        data: { status: 'COMPLETED' },
       });
     });
   }
@@ -384,8 +405,8 @@ export class WalletService {
       return;
     }
 
-    await this.prisma.transaction.update({
-      where: { id: transactionId },
+    await this.prisma.transaction.updateMany({
+      where: { id: transactionId, status: 'PENDING' },
       data: {
         status: 'FAILED',
         description: transaction.description + ' (Hết hạn nạp tiền)',
@@ -408,8 +429,8 @@ export class WalletService {
       throw new BadRequestException('Không thể hủy giao dịch đã xử lý');
     }
 
-    await this.prisma.transaction.update({
-      where: { id: transactionId },
+    await this.prisma.transaction.updateMany({
+      where: { id: transactionId, status: 'PENDING' },
       data: {
         status: 'FAILED',
         description: transaction.description + ' (Người dùng hủy)',
@@ -417,5 +438,13 @@ export class WalletService {
     });
 
     return { message: 'Đã hủy giao dịch nạp tiền' };
+  }
+
+  private normalizeAmount(amount: number) {
+    const normalized = Math.round(Number(amount));
+    if (!Number.isFinite(normalized) || normalized <= 0) {
+      throw new BadRequestException('Số tiền không hợp lệ');
+    }
+    return normalized;
   }
 }

@@ -120,3 +120,20 @@ export const SeatIssueStatus = {
 } as const
 
 export type SeatIssueStatus = (typeof SeatIssueStatus)[keyof typeof SeatIssueStatus]
+
+
+export const TripDelayReportStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type TripDelayReportStatus = (typeof TripDelayReportStatus)[keyof typeof TripDelayReportStatus]
+
+
+export const TripDelayType = {
+  DEPARTURE: 'DEPARTURE',
+  ARRIVAL: 'ARRIVAL'
+} as const
+
+export type TripDelayType = (typeof TripDelayType)[keyof typeof TripDelayType]

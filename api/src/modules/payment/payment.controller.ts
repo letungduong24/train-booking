@@ -8,6 +8,9 @@ import {
   HttpStatus,
   Req,
   Logger,
+  UseGuards,
+  BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -17,6 +20,7 @@ import { BookingService } from '../booking/booking.service';
 import { WalletService } from '../wallet/wallet.service';
 import { Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('payment')
 export class PaymentController {
@@ -33,7 +37,10 @@ export class PaymentController {
   ) {}
 
   @Post('create_payment_url')
-  createPaymentUrl(@Body() dto: CreatePaymentDto, @Req() req: Request) {
+  @UseGuards(JwtAuthGuard)
+  async createPaymentUrl(@Body() dto: CreatePaymentDto, @Req() req: Request & { user: { id: string } }) {
+    await this.assertPaymentOwner(dto, req.user.id);
+
     // If IP is not provided in DTO, try to get it from request
     let ipAddr = dto.ipAddr;
     if (!ipAddr) {
@@ -49,6 +56,54 @@ export class PaymentController {
       ipAddr,
     });
     return { url };
+  }
+
+  private async assertPaymentOwner(dto: CreatePaymentDto, userId: string) {
+    const amount = Math.round(dto.amount);
+    const booking = await this.prisma.booking.findUnique({
+      where: { code: dto.orderId },
+      select: {
+        userId: true,
+        status: true,
+        totalPrice: true,
+      },
+    });
+
+    if (booking) {
+      if (booking.userId !== userId) {
+        throw new ForbiddenException('Bạn không có quyền thanh toán đơn đặt chỗ này');
+      }
+      if (booking.status !== 'PENDING') {
+        throw new BadRequestException('Đơn đặt chỗ không còn ở trạng thái chờ thanh toán');
+      }
+      if (booking.totalPrice !== amount) {
+        throw new BadRequestException('Số tiền thanh toán không khớp với đơn đặt chỗ');
+      }
+      return;
+    }
+
+    const transaction = await this.prisma.transaction.findUnique({
+      where: { id: dto.orderId },
+      select: {
+        userId: true,
+        amount: true,
+        type: true,
+        status: true,
+      },
+    });
+
+    if (!transaction) {
+      throw new BadRequestException('Không tìm thấy đơn thanh toán');
+    }
+    if (transaction.userId !== userId) {
+      throw new ForbiddenException('Bạn không có quyền thanh toán giao dịch này');
+    }
+    if (transaction.type !== 'DEPOSIT' || transaction.status !== 'PENDING') {
+      throw new BadRequestException('Giao dịch không còn hợp lệ để thanh toán');
+    }
+    if (transaction.amount !== amount) {
+      throw new BadRequestException('Số tiền thanh toán không khớp với giao dịch');
+    }
   }
 
   @Get('vnpay_return')

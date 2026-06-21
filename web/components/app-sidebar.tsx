@@ -12,6 +12,7 @@ import {
   IconCreditCard,
   IconMap,
   IconWorld,
+  IconClockExclamation,
   type Icon,
 } from "@tabler/icons-react"
 
@@ -73,6 +74,11 @@ const navAdmin = [
     url: "/admin/seat-issues",
     icon: IconMapPin,
   },
+  {
+    title: "Báo cáo delay",
+    url: "/admin/delay-reports",
+    icon: IconClockExclamation,
+  },
 ]
 
 // Driver Menu items
@@ -91,6 +97,11 @@ const navDriver = [
     title: "Sự cố ghế hỏng",
     url: "/driver/issues",
     icon: IconMapPin,
+  },
+  {
+    title: "Báo cáo delay",
+    url: "/driver/delay-reports",
+    icon: IconClockExclamation,
   },
 ]
 

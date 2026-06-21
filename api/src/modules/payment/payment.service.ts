@@ -42,7 +42,7 @@ export class PaymentService {
     vnp_Params['vnp_TxnRef'] = orderId;
     vnp_Params['vnp_OrderInfo'] = dto.orderInfo;
     vnp_Params['vnp_OrderType'] = 'other';
-    vnp_Params['vnp_Amount'] = dto.amount * 100;
+    vnp_Params['vnp_Amount'] = Math.round(dto.amount) * 100;
     vnp_Params['vnp_ReturnUrl'] = returnUrl;
     vnp_Params['vnp_IpAddr'] = dto.ipAddr;
     vnp_Params['vnp_CreateDate'] = createDate;
@@ -133,6 +133,8 @@ export class PaymentService {
   }
 
   async payBooking(bookingCode: string, userId: string, amount: number) {
+    const normalizedAmount = Math.round(Number(amount));
+    const idempotencyKey = `PAYMENT:VNPAY:${bookingCode}`;
     const booking = await this.prisma.booking.findUnique({
       where: { code: bookingCode },
       select: { status: true },
@@ -159,11 +161,12 @@ export class PaymentService {
         await this.prisma.transaction.create({
           data: {
             userId,
-            amount: -amount,
+            amount: -normalizedAmount,
             type: 'PAYMENT',
             paymentMethod: 'VNPAY',
             status: 'COMPLETED',
             referenceId: bookingCode,
+            idempotencyKey,
             description: `Thanh toán vé tàu ${bookingCode} qua VNPAY`,
           },
         });
@@ -172,7 +175,6 @@ export class PaymentService {
           throw error;
         }
         this.logger.warn(`Duplicate VNPAY payment transaction for ${bookingCode}`);
-        return;
       }
     }
 

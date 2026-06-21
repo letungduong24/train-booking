@@ -38,8 +38,11 @@ export class RouteService {
       if (stations && stations.length > 0) {
         const stationIds = stations.map(s => s.id);
         const dbStations = await tx.station.findMany({
-          where: { id: { in: stationIds } }
+          where: { id: { in: stationIds }, networkId: activeNetworkId }
         });
+        if (dbStations.length !== new Set(stationIds).size) {
+          throw new BadRequestException('Một số ga không thuộc network của tuyến đường');
+        }
         const stationMap = new Map(dbStations.map(s => [s.id, s]));
 
         let cumulativeDistance = 0;
@@ -152,22 +155,19 @@ export class RouteService {
       const newStatus = status ? status.toUpperCase() as RouteStatus : currentRoute.status;
       const targetNetworkId = networkId || currentRoute.networkId;
 
-      // Validate NEW stations belong to targetNetworkId
+      // Validate all provided stations belong to targetNetworkId
       if (stations && stations.length > 0) {
         const stationIds = stations.map(s => s.id);
         const uniqueStationIds = [...new Set(stationIds)];
-        
-        // Find which stations are newly added (not in current route)
-        const existingStationIds = new Set(currentRoute.stations.map(st => st.stationId));
-        const newStationIds = uniqueStationIds.filter(id => !existingStationIds.has(id));
+        if (uniqueStationIds.length !== stationIds.length) {
+          throw new BadRequestException('Danh sách ga trong tuyến không được trùng lặp');
+        }
 
-        if (newStationIds.length > 0) {
-          const validStations = await tx.station.count({
-            where: { id: { in: newStationIds }, networkId: targetNetworkId }
-          });
-          if (validStations !== newStationIds.length) {
-            throw new BadRequestException(`Some stations do not belong to the requested network. Valid: ${validStations}, Expected: ${newStationIds.length}`);
-          }
+        const validStations = await tx.station.count({
+          where: { id: { in: uniqueStationIds }, networkId: targetNetworkId }
+        });
+        if (validStations !== uniqueStationIds.length) {
+          throw new BadRequestException('Một số ga không thuộc network của tuyến đường');
         }
       }
 
@@ -267,8 +267,11 @@ export class RouteService {
         if (stations.length > 0) {
           const stationIds = stations.map(s => s.id);
           const dbStations = await tx.station.findMany({
-            where: { id: { in: stationIds } }
+            where: { id: { in: stationIds }, networkId: targetNetworkId }
           });
+          if (dbStations.length !== new Set(stationIds).size) {
+            throw new BadRequestException('Một số ga không thuộc network của tuyến đường');
+          }
           const stationMap = new Map(dbStations.map(s => [s.id, s]));
 
           let cumulativeDistance = 0;
@@ -323,16 +326,31 @@ export class RouteService {
     dto: { stationId: string; index: number; distanceFromStart: number },
   ) {
     try {
-      const result = await this.prisma.routeStation.create({
-        data: {
-          routeId,
-          stationId: dto.stationId,
-          index: dto.index,
-          distanceFromStart: dto.distanceFromStart,
-        },
-      });
-      await this.calculatePathCoordinates(routeId);
-      return result;
+      return await this.prisma.$transaction(async (tx) => {
+        const route = await tx.route.findUnique({
+          where: { id: routeId },
+          select: { networkId: true },
+        });
+        if (!route) throw new BadRequestException('Không tìm thấy tuyến đường');
+
+        const station = await tx.station.findFirst({
+          where: { id: dto.stationId, networkId: route.networkId },
+        });
+        if (!station) {
+          throw new BadRequestException('Ga không thuộc network của tuyến đường');
+        }
+
+        const result = await tx.routeStation.create({
+          data: {
+            routeId,
+            stationId: dto.stationId,
+            index: dto.index,
+            distanceFromStart: dto.distanceFromStart,
+          },
+        });
+        await this.calculatePathCoordinates(routeId, tx);
+        return result;
+      }, { timeout: 30000 });
     } catch (error) {
       if (error.code === 'P2002') {
         throw new ConflictException(
@@ -371,10 +389,9 @@ export class RouteService {
           index: { decrement: 1 },
         },
       });
-    });
 
-    // calculatePathCoordinates runs OUTSIDE the transaction
-    await this.calculatePathCoordinates(routeId);
+      await this.calculatePathCoordinates(routeId, tx);
+    }, { timeout: 30000 });
     return { success: true };
   }
 
@@ -383,6 +400,24 @@ export class RouteService {
     dto: { stations: { stationId: string; distanceFromStart: number }[] },
   ) {
     await this.prisma.$transaction(async (tx) => {
+      const route = await tx.route.findUnique({
+        where: { id: routeId },
+        select: { networkId: true },
+      });
+      if (!route) throw new BadRequestException('Không tìm thấy tuyến đường');
+
+      const stationIds = dto.stations.map((item) => item.stationId);
+      if (new Set(stationIds).size !== stationIds.length) {
+        throw new BadRequestException('Danh sách ga trong tuyến không được trùng lặp');
+      }
+
+      const validStations = await tx.station.count({
+        where: { id: { in: stationIds }, networkId: route.networkId },
+      });
+      if (validStations !== stationIds.length) {
+        throw new BadRequestException('Một số ga không thuộc network của tuyến đường');
+      }
+
       // 1. Delete all existing stations for this route
       await tx.routeStation.deleteMany({
         where: { routeId },
@@ -401,10 +436,9 @@ export class RouteService {
       );
 
       await Promise.all(creates);
-    });
 
-    // calculatePathCoordinates runs OUTSIDE the transaction to ensure correct distance calculation
-    await this.calculatePathCoordinates(routeId);
+      await this.calculatePathCoordinates(routeId, tx);
+    }, { timeout: 30000 });
     return { success: true };
   }
 
@@ -491,6 +525,15 @@ export class RouteService {
   }
 
   async remove(id: string) {
+    const tripCount = await this.prisma.trip.count({
+      where: { routeId: id },
+    });
+    if (tripCount > 0) {
+      throw new BadRequestException(
+        'Không thể xóa tuyến đường đã có chuyến tàu. Hãy chuyển tuyến sang INACTIVE để giữ lịch sử.',
+      );
+    }
+
     return this.prisma.route.delete({
       where: { id },
     });

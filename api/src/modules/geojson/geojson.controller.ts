@@ -1,12 +1,18 @@
-import { Controller, Post, Get, UseInterceptors, UploadedFiles, BadRequestException, Query } from '@nestjs/common';
+import { Controller, Post, Get, UseInterceptors, UploadedFiles, BadRequestException, Query, UseGuards } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { GeojsonService } from './geojson.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/role.guard';
+import { Roles } from '../../lib/decorators/roles.decorator';
+import { Role } from '../../lib/enums/roles.enum';
 
 @Controller('geojson')
 export class GeojsonController {
     constructor(private readonly geojsonService: GeojsonService) { }
 
     @Post('sync')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles(Role.Admin)
     @UseInterceptors(
         FileFieldsInterceptor([
             { name: 'mapData', maxCount: 1 },

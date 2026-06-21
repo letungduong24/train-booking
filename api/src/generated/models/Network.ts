@@ -375,14 +375,6 @@ export type NetworkScalarRelationFilter = {
   isNot?: Prisma.NetworkWhereInput
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type NetworkCreateNestedOneWithoutStationsInput = {
   create?: Prisma.XOR<Prisma.NetworkCreateWithoutStationsInput, Prisma.NetworkUncheckedCreateWithoutStationsInput>
   connectOrCreate?: Prisma.NetworkCreateOrConnectWithoutStationsInput

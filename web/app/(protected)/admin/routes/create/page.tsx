@@ -4,7 +4,6 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { toast } from "sonner"
 import { ArrowLeft, Save, Plus } from "lucide-react"
 import * as turf from "@turf/turf"
 
@@ -43,12 +42,7 @@ export default function CreateRoutePage() {
     })
 
     async function onSubmit(values: CreateRouteInput) {
-        createRoute.mutate(values, {
-            onSuccess: () => {
-                toast.success("Tạo tuyến đường thành công")
-                router.push('/admin/routes')
-            },
-        })
+        createRoute.mutate(values)
     }
 
     const handleBack = () => {

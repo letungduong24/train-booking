@@ -8,6 +8,7 @@ import { UpdateTripDto } from './dto/update-trip.dto';
 import { FilterTripDto } from './dto/filter-trip.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma, TripStatus } from '../../generated/client';
+import { calculateLiveLocationSnapshot } from './utils/live-location-calculator';
 
 @Injectable()
 export class TripService {
@@ -752,174 +753,21 @@ export class TripService {
       throw new NotFoundException(`Trip #${tripId} không tồn tại`);
     }
 
-    const { status, departureTime, departureDelayMinutes = 0, arrivalDelayMinutes = 0, route, train } = trip;
-
-    // Helper: calculate geodesic bearing between two coordinates
-    const calculateBearing = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-      const dLon = (lon2 - lon1) * Math.PI / 180;
-      const lat1Rad = lat1 * Math.PI / 180;
-      const lat2Rad = lat2 * Math.PI / 180;
-      const y = Math.sin(dLon) * Math.cos(lat2Rad);
-      const x = Math.cos(lat1Rad) * Math.sin(lat2Rad) - Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(dLon);
-      const brng = Math.atan2(y, x) * 180 / Math.PI;
-      return (brng + 360) % 360;
-    };
-
-    // Construct the overall polyline path (from pathCoordinates or fallback to station coordinates)
-    let allPoints: [number, number][] = [];
-    if (route.pathCoordinates && Array.isArray(route.pathCoordinates)) {
-      for (const seg of route.pathCoordinates as any[]) {
-        if (Array.isArray(seg)) {
-          for (const pt of seg) {
-            if (Array.isArray(pt) && pt.length >= 2) {
-              const lng = Number(pt[0]);
-              const lat = Number(pt[1]);
-              if (Number.isFinite(lng) && Number.isFinite(lat)) {
-                allPoints.push([lng, lat]); // Store as [lng, lat]
-              }
-            }
-          }
-        }
-      }
-    }
-
-    // Fallback if pathCoordinates is empty or not loaded
-    if (allPoints.length < 2) {
-      allPoints = route.stations
-        .filter(rs => rs.station)
-        .map(rs => [rs.station.longitude, rs.station.latitude] as [number, number])
-        .filter(([lng, lat]) => Number.isFinite(lng) && Number.isFinite(lat));
-    }
-
-    // Default response coordinates (first/last stations)
-    const firstStation = route.stations[0]?.station;
-    const lastStation = route.stations[route.stations.length - 1]?.station;
-    
-    const defaultLng = firstStation?.longitude ?? 105.8542;
-    const defaultLat = firstStation?.latitude ?? 21.0285;
-
-    if (allPoints.length < 2) {
-      return {
-        latitude: defaultLat,
-        longitude: defaultLng,
-        bearing: 0,
-        speed: 0,
-        progress: 0,
-        status,
-        departureDelayMinutes,
-        alignmentDelayMinutes: arrivalDelayMinutes,
-      };
-    }
-
-    // Base the duration on the train's actual average speed if possible, otherwise fallback to route.durationMinutes
-    let durationMinutes = route.durationMinutes || 60;
-    if (route.totalDistanceKm > 0 && train?.averageSpeedKmH > 0) {
-      durationMinutes = Math.round((route.totalDistanceKm / train.averageSpeedKmH) * 60);
-    }
-
-    const totalDurationMs = Math.max(
-      60 * 1000,
-      (durationMinutes + arrivalDelayMinutes - departureDelayMinutes) * 60 * 1000
-    );
-    
-    // Trip start time with delay
-    const startMs = new Date(departureTime).getTime() + departureDelayMinutes * 60 * 1000;
-    const endMs = startMs + totalDurationMs;
-
-    // Current time
-    const now = Date.now();
-    const speedupMultiplier = speedup && speedup > 0 ? speedup : 1;
-    const elapsedMs = (now - startMs) * speedupMultiplier;
-    const simulatedNow = startMs + elapsedMs;
-
-    // Determine status and progress
-    let progress = 0;
-    let currentStatus = status;
-
-    if (currentStatus === 'SCHEDULED' && simulatedNow >= startMs) {
-      currentStatus = 'IN_PROGRESS';
-    }
-    if (currentStatus === 'IN_PROGRESS' && simulatedNow >= endMs) {
-      currentStatus = 'COMPLETED';
-      // Automatically update trip status to COMPLETED in database
-      this.prisma.trip.update({
+    const snapshot = calculateLiveLocationSnapshot(trip, speedup);
+    if (snapshot.shouldMarkCompleted) {
+      await this.prisma.trip.update({
         where: { id: tripId },
         data: {
           status: TripStatus.COMPLETED,
           departureDelayMinutes: 0,
           arrivalDelayMinutes: 0,
         },
-      }).catch((err) => {
-        console.error(`Failed to auto-complete trip ${tripId} in getLiveLocation:`, err);
       });
     }
 
-    if (currentStatus === 'SCHEDULED') {
-      progress = 0;
-    } else if (currentStatus === 'COMPLETED') {
-      progress = 1;
-    } else if (currentStatus === 'CANCELLED') {
-      progress = 0;
-    } else {
-      // IN_PROGRESS
-      progress = elapsedMs / totalDurationMs;
-      progress = Math.max(0, Math.min(1, progress));
-    }
-
-    // Calculate position and bearing along the polyline using progress
-    const dists: number[] = [0];
-    for (let i = 1; i < allPoints.length; i++) {
-      const dx = allPoints[i][0] - allPoints[i-1][0];
-      const dy = allPoints[i][1] - allPoints[i-1][1];
-      const s = Math.sqrt(dx * dx + dy * dy);
-      dists.push(dists[i-1] + s);
-    }
-
-    const totalDist = dists[dists.length - 1];
-    let lng = defaultLng;
-    let lat = defaultLat;
-    let bearing = 0;
-
-    if (totalDist > 0) {
-      const targetDist = progress * totalDist;
-      
-      // Find segment index
-      let idx = 0;
-      while (idx < dists.length - 1 && dists[idx + 1] < targetDist) {
-        idx++;
-      }
-
-      const dSeg = dists[idx + 1] - dists[idx];
-      const t = dSeg > 0 ? (targetDist - dists[idx]) / dSeg : 0;
-
-      const p1 = allPoints[idx];
-      const p2 = allPoints[idx + 1];
-
-      lng = p1[0] + t * (p2[0] - p1[0]);
-      lat = p1[1] + t * (p2[1] - p1[1]);
-      
-      // Calculate bearing from current segment points (p1 to p2)
-      bearing = calculateBearing(p1[1], p1[0], p2[1], p2[0]);
-    } else {
-      lng = allPoints[0][0];
-      lat = allPoints[0][1];
-    }
-
-    // Dynamic speed simulation: base average speed +/- some minor fluctuations if running
-    const baseSpeed = train?.averageSpeedKmH ?? 60;
-    const speed = currentStatus === 'IN_PROGRESS' 
-      ? Math.max(10, Math.round(baseSpeed + Math.sin(simulatedNow / 5000) * 5)) 
-      : 0;
-
+    const { shouldMarkCompleted, ...response } = snapshot;
     return {
-      latitude: lat,
-      longitude: lng,
-      bearing,
-      speed,
-      progress,
-      status: currentStatus,
-      departureDelayMinutes,
-      arrivalDelayMinutes,
+      ...response,
     };
   }
 

@@ -82,6 +82,8 @@ const CONNECT_DEG = 0.01;
 const MAX_BFS_HOPS = 10;
 const SNAP_PREFILTER_DEG = 0.08;
 const SEGMENT_GRID_DEG = 0.1;
+const STATION_ON_PATH_THRESHOLD_KM = 0.35;
+const BACKTRACKING_THRESHOLD_KM = 0.15;
 
 export function calculateRoutePath(
   routeStations: RoutePathStation[],
@@ -580,27 +582,35 @@ function trySnapAndSlice(
 function hasBacktracking(newCoords: LineCoordinates, existingPath: LineCoordinates[]) {
   if (existingPath.length === 0 || newCoords.length < 2) return false;
 
+  const newLine = turf.lineString(newCoords);
+  const newLen = turf.length(newLine, { units: 'kilometers' });
+  if (newLen <= 0) return false;
+
+  const sampleStepKm = Math.max(0.25, Math.min(1, newLen / 20));
+  const connectionToleranceKm = Math.min(2, Math.max(0.5, newLen * 0.15));
+  const maxAllowedOverlapKm = Math.min(3, Math.max(0.75, newLen * 0.25));
+
   for (let i = 0; i < existingPath.length; i++) {
     const prevCoords = existingPath[i];
     if (prevCoords.length < 2) continue;
 
     const prevLine = turf.lineString(prevCoords);
-    const prevLen = turf.length(prevLine, { units: 'kilometers' });
-    const limit = Math.min(1.5, prevLen * 0.5);
+    let overlapKm = 0;
 
-    for (let j = 1; j < newCoords.length - 1; j++) {
-      const pt = turf.point(newCoords[j]);
+    for (let distKm = sampleStepKm; distKm < newLen; distKm += sampleStepKm) {
+      if (i === existingPath.length - 1 && distKm <= connectionToleranceKm) {
+        continue;
+      }
+
+      const pt = turf.along(newLine, distKm, { units: 'kilometers' });
       try {
         const snapped = turf.nearestPointOnLine(prevLine, pt);
         const dist = snapped.properties.dist ?? Infinity;
-        if (dist > 0.1) continue;
-
-        if (i === existingPath.length - 1) {
-          const connPt = turf.point(newCoords[0]);
-          const distToConn = turf.distance(snapped, connPt, { units: 'kilometers' });
-          if (distToConn > limit) return true;
+        if (dist <= BACKTRACKING_THRESHOLD_KM) {
+          overlapKm += sampleStepKm;
+          if (overlapKm > maxAllowedOverlapKm) return true;
         } else {
-          return true;
+          overlapKm = 0;
         }
       } catch {
         // Ignore malformed points.
@@ -619,6 +629,9 @@ function hasIntermediateOverlap(
   if (coords.length < 2) return false;
 
   const line = turf.lineString(coords);
+  const lineLen = turf.length(line, { units: 'kilometers' });
+  if (lineLen <= 0) return false;
+
   for (let j = 0; j < routeStations.length; j++) {
     if (j === currentIdx || j === currentIdx + 1) continue;
 
@@ -626,7 +639,20 @@ function hasIntermediateOverlap(
     const pt = turf.point([station.longitude, station.latitude]);
     try {
       const snapped = turf.nearestPointOnLine(line, pt);
-      if ((snapped.properties.dist ?? Infinity) <= 5) return true;
+      const snapDist = snapped.properties.dist ?? Infinity;
+      const location = snapped.properties.location ?? 0;
+
+      const isInsideSegment =
+        location > STATION_ON_PATH_THRESHOLD_KM &&
+        location < lineLen - STATION_ON_PATH_THRESHOLD_KM;
+
+      if (snapDist <= STATION_ON_PATH_THRESHOLD_KM && isInsideSegment) {
+        const linePoint = turf.point(snapped.geometry.coordinates);
+        const stationDistance = turf.distance(pt, linePoint, { units: 'kilometers' });
+        if (stationDistance <= STATION_ON_PATH_THRESHOLD_KM) {
+          return true;
+        }
+      }
     } catch {
       // Ignore malformed geometry.
     }

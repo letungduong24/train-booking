@@ -277,6 +277,9 @@ export class CoachesService {
     const bookedTickets = await this.prisma.ticket.findMany({
       where: {
         tripId: tripId,
+        booking: {
+          status: 'PAID',
+        },
         AND: [
           { fromStationIndex: { lt: toStation.index } },
           { toStationIndex: { gt: fromStation.index } },

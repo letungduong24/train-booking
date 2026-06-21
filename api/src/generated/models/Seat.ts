@@ -268,6 +268,7 @@ export type SeatWhereInput = {
   tickets?: Prisma.TicketListRelationFilter
   seatIssueReports?: Prisma.SeatIssueReportListRelationFilter
   proposedSeatIssues?: Prisma.SeatIssueReportListRelationFilter
+  ticketSeatSegments?: Prisma.TicketSeatSegmentListRelationFilter
 }
 
 export type SeatOrderByWithRelationInput = {
@@ -285,6 +286,7 @@ export type SeatOrderByWithRelationInput = {
   tickets?: Prisma.TicketOrderByRelationAggregateInput
   seatIssueReports?: Prisma.SeatIssueReportOrderByRelationAggregateInput
   proposedSeatIssues?: Prisma.SeatIssueReportOrderByRelationAggregateInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentOrderByRelationAggregateInput
 }
 
 export type SeatWhereUniqueInput = Prisma.AtLeast<{
@@ -306,6 +308,7 @@ export type SeatWhereUniqueInput = Prisma.AtLeast<{
   tickets?: Prisma.TicketListRelationFilter
   seatIssueReports?: Prisma.SeatIssueReportListRelationFilter
   proposedSeatIssues?: Prisma.SeatIssueReportListRelationFilter
+  ticketSeatSegments?: Prisma.TicketSeatSegmentListRelationFilter
 }, "id" | "coachId_rowIndex_colIndex_tier">
 
 export type SeatOrderByWithAggregationInput = {
@@ -356,6 +359,7 @@ export type SeatCreateInput = {
   tickets?: Prisma.TicketCreateNestedManyWithoutSeatInput
   seatIssueReports?: Prisma.SeatIssueReportCreateNestedManyWithoutSeatInput
   proposedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutProposedSeatInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentCreateNestedManyWithoutSeatInput
 }
 
 export type SeatUncheckedCreateInput = {
@@ -372,6 +376,7 @@ export type SeatUncheckedCreateInput = {
   tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutSeatInput
   seatIssueReports?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutSeatInput
   proposedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutProposedSeatInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUncheckedCreateNestedManyWithoutSeatInput
 }
 
 export type SeatUpdateInput = {
@@ -388,6 +393,7 @@ export type SeatUpdateInput = {
   tickets?: Prisma.TicketUpdateManyWithoutSeatNestedInput
   seatIssueReports?: Prisma.SeatIssueReportUpdateManyWithoutSeatNestedInput
   proposedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutProposedSeatNestedInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUpdateManyWithoutSeatNestedInput
 }
 
 export type SeatUncheckedUpdateInput = {
@@ -404,6 +410,7 @@ export type SeatUncheckedUpdateInput = {
   tickets?: Prisma.TicketUncheckedUpdateManyWithoutSeatNestedInput
   seatIssueReports?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutSeatNestedInput
   proposedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutProposedSeatNestedInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUncheckedUpdateManyWithoutSeatNestedInput
 }
 
 export type SeatCreateManyInput = {
@@ -586,6 +593,20 @@ export type SeatUpdateOneRequiredWithoutTicketsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SeatUpdateToOneWithWhereWithoutTicketsInput, Prisma.SeatUpdateWithoutTicketsInput>, Prisma.SeatUncheckedUpdateWithoutTicketsInput>
 }
 
+export type SeatCreateNestedOneWithoutTicketSeatSegmentsInput = {
+  create?: Prisma.XOR<Prisma.SeatCreateWithoutTicketSeatSegmentsInput, Prisma.SeatUncheckedCreateWithoutTicketSeatSegmentsInput>
+  connectOrCreate?: Prisma.SeatCreateOrConnectWithoutTicketSeatSegmentsInput
+  connect?: Prisma.SeatWhereUniqueInput
+}
+
+export type SeatUpdateOneRequiredWithoutTicketSeatSegmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.SeatCreateWithoutTicketSeatSegmentsInput, Prisma.SeatUncheckedCreateWithoutTicketSeatSegmentsInput>
+  connectOrCreate?: Prisma.SeatCreateOrConnectWithoutTicketSeatSegmentsInput
+  upsert?: Prisma.SeatUpsertWithoutTicketSeatSegmentsInput
+  connect?: Prisma.SeatWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SeatUpdateToOneWithWhereWithoutTicketSeatSegmentsInput, Prisma.SeatUpdateWithoutTicketSeatSegmentsInput>, Prisma.SeatUncheckedUpdateWithoutTicketSeatSegmentsInput>
+}
+
 export type SeatCreateNestedOneWithoutSeatIssueReportsInput = {
   create?: Prisma.XOR<Prisma.SeatCreateWithoutSeatIssueReportsInput, Prisma.SeatUncheckedCreateWithoutSeatIssueReportsInput>
   connectOrCreate?: Prisma.SeatCreateOrConnectWithoutSeatIssueReportsInput
@@ -629,6 +650,7 @@ export type SeatCreateWithoutCoachInput = {
   tickets?: Prisma.TicketCreateNestedManyWithoutSeatInput
   seatIssueReports?: Prisma.SeatIssueReportCreateNestedManyWithoutSeatInput
   proposedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutProposedSeatInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentCreateNestedManyWithoutSeatInput
 }
 
 export type SeatUncheckedCreateWithoutCoachInput = {
@@ -644,6 +666,7 @@ export type SeatUncheckedCreateWithoutCoachInput = {
   tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutSeatInput
   seatIssueReports?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutSeatInput
   proposedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutProposedSeatInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUncheckedCreateNestedManyWithoutSeatInput
 }
 
 export type SeatCreateOrConnectWithoutCoachInput = {
@@ -701,6 +724,7 @@ export type SeatCreateWithoutTicketsInput = {
   coach: Prisma.CoachCreateNestedOneWithoutSeatsInput
   seatIssueReports?: Prisma.SeatIssueReportCreateNestedManyWithoutSeatInput
   proposedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutProposedSeatInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentCreateNestedManyWithoutSeatInput
 }
 
 export type SeatUncheckedCreateWithoutTicketsInput = {
@@ -716,6 +740,7 @@ export type SeatUncheckedCreateWithoutTicketsInput = {
   updatedAt?: Date | string
   seatIssueReports?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutSeatInput
   proposedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutProposedSeatInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUncheckedCreateNestedManyWithoutSeatInput
 }
 
 export type SeatCreateOrConnectWithoutTicketsInput = {
@@ -747,6 +772,7 @@ export type SeatUpdateWithoutTicketsInput = {
   coach?: Prisma.CoachUpdateOneRequiredWithoutSeatsNestedInput
   seatIssueReports?: Prisma.SeatIssueReportUpdateManyWithoutSeatNestedInput
   proposedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutProposedSeatNestedInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUpdateManyWithoutSeatNestedInput
 }
 
 export type SeatUncheckedUpdateWithoutTicketsInput = {
@@ -760,6 +786,87 @@ export type SeatUncheckedUpdateWithoutTicketsInput = {
   coachId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  seatIssueReports?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutSeatNestedInput
+  proposedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutProposedSeatNestedInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUncheckedUpdateManyWithoutSeatNestedInput
+}
+
+export type SeatCreateWithoutTicketSeatSegmentsInput = {
+  id?: string
+  name: string
+  rowIndex: number
+  colIndex: number
+  status?: $Enums.SeatStatus
+  type?: $Enums.SeatType
+  tier?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  coach: Prisma.CoachCreateNestedOneWithoutSeatsInput
+  tickets?: Prisma.TicketCreateNestedManyWithoutSeatInput
+  seatIssueReports?: Prisma.SeatIssueReportCreateNestedManyWithoutSeatInput
+  proposedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutProposedSeatInput
+}
+
+export type SeatUncheckedCreateWithoutTicketSeatSegmentsInput = {
+  id?: string
+  name: string
+  rowIndex: number
+  colIndex: number
+  status?: $Enums.SeatStatus
+  type?: $Enums.SeatType
+  tier?: number
+  coachId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutSeatInput
+  seatIssueReports?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutSeatInput
+  proposedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutProposedSeatInput
+}
+
+export type SeatCreateOrConnectWithoutTicketSeatSegmentsInput = {
+  where: Prisma.SeatWhereUniqueInput
+  create: Prisma.XOR<Prisma.SeatCreateWithoutTicketSeatSegmentsInput, Prisma.SeatUncheckedCreateWithoutTicketSeatSegmentsInput>
+}
+
+export type SeatUpsertWithoutTicketSeatSegmentsInput = {
+  update: Prisma.XOR<Prisma.SeatUpdateWithoutTicketSeatSegmentsInput, Prisma.SeatUncheckedUpdateWithoutTicketSeatSegmentsInput>
+  create: Prisma.XOR<Prisma.SeatCreateWithoutTicketSeatSegmentsInput, Prisma.SeatUncheckedCreateWithoutTicketSeatSegmentsInput>
+  where?: Prisma.SeatWhereInput
+}
+
+export type SeatUpdateToOneWithWhereWithoutTicketSeatSegmentsInput = {
+  where?: Prisma.SeatWhereInput
+  data: Prisma.XOR<Prisma.SeatUpdateWithoutTicketSeatSegmentsInput, Prisma.SeatUncheckedUpdateWithoutTicketSeatSegmentsInput>
+}
+
+export type SeatUpdateWithoutTicketSeatSegmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  rowIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  colIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+  type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
+  tier?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  coach?: Prisma.CoachUpdateOneRequiredWithoutSeatsNestedInput
+  tickets?: Prisma.TicketUpdateManyWithoutSeatNestedInput
+  seatIssueReports?: Prisma.SeatIssueReportUpdateManyWithoutSeatNestedInput
+  proposedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutProposedSeatNestedInput
+}
+
+export type SeatUncheckedUpdateWithoutTicketSeatSegmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  rowIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  colIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+  type?: Prisma.EnumSeatTypeFieldUpdateOperationsInput | $Enums.SeatType
+  tier?: Prisma.IntFieldUpdateOperationsInput | number
+  coachId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tickets?: Prisma.TicketUncheckedUpdateManyWithoutSeatNestedInput
   seatIssueReports?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutSeatNestedInput
   proposedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutProposedSeatNestedInput
 }
@@ -777,6 +884,7 @@ export type SeatCreateWithoutSeatIssueReportsInput = {
   coach: Prisma.CoachCreateNestedOneWithoutSeatsInput
   tickets?: Prisma.TicketCreateNestedManyWithoutSeatInput
   proposedSeatIssues?: Prisma.SeatIssueReportCreateNestedManyWithoutProposedSeatInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentCreateNestedManyWithoutSeatInput
 }
 
 export type SeatUncheckedCreateWithoutSeatIssueReportsInput = {
@@ -792,6 +900,7 @@ export type SeatUncheckedCreateWithoutSeatIssueReportsInput = {
   updatedAt?: Date | string
   tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutSeatInput
   proposedSeatIssues?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutProposedSeatInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUncheckedCreateNestedManyWithoutSeatInput
 }
 
 export type SeatCreateOrConnectWithoutSeatIssueReportsInput = {
@@ -812,6 +921,7 @@ export type SeatCreateWithoutProposedSeatIssuesInput = {
   coach: Prisma.CoachCreateNestedOneWithoutSeatsInput
   tickets?: Prisma.TicketCreateNestedManyWithoutSeatInput
   seatIssueReports?: Prisma.SeatIssueReportCreateNestedManyWithoutSeatInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentCreateNestedManyWithoutSeatInput
 }
 
 export type SeatUncheckedCreateWithoutProposedSeatIssuesInput = {
@@ -827,6 +937,7 @@ export type SeatUncheckedCreateWithoutProposedSeatIssuesInput = {
   updatedAt?: Date | string
   tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutSeatInput
   seatIssueReports?: Prisma.SeatIssueReportUncheckedCreateNestedManyWithoutSeatInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUncheckedCreateNestedManyWithoutSeatInput
 }
 
 export type SeatCreateOrConnectWithoutProposedSeatIssuesInput = {
@@ -858,6 +969,7 @@ export type SeatUpdateWithoutSeatIssueReportsInput = {
   coach?: Prisma.CoachUpdateOneRequiredWithoutSeatsNestedInput
   tickets?: Prisma.TicketUpdateManyWithoutSeatNestedInput
   proposedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutProposedSeatNestedInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUpdateManyWithoutSeatNestedInput
 }
 
 export type SeatUncheckedUpdateWithoutSeatIssueReportsInput = {
@@ -873,6 +985,7 @@ export type SeatUncheckedUpdateWithoutSeatIssueReportsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tickets?: Prisma.TicketUncheckedUpdateManyWithoutSeatNestedInput
   proposedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutProposedSeatNestedInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUncheckedUpdateManyWithoutSeatNestedInput
 }
 
 export type SeatUpsertWithoutProposedSeatIssuesInput = {
@@ -899,6 +1012,7 @@ export type SeatUpdateWithoutProposedSeatIssuesInput = {
   coach?: Prisma.CoachUpdateOneRequiredWithoutSeatsNestedInput
   tickets?: Prisma.TicketUpdateManyWithoutSeatNestedInput
   seatIssueReports?: Prisma.SeatIssueReportUpdateManyWithoutSeatNestedInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUpdateManyWithoutSeatNestedInput
 }
 
 export type SeatUncheckedUpdateWithoutProposedSeatIssuesInput = {
@@ -914,6 +1028,7 @@ export type SeatUncheckedUpdateWithoutProposedSeatIssuesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tickets?: Prisma.TicketUncheckedUpdateManyWithoutSeatNestedInput
   seatIssueReports?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutSeatNestedInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUncheckedUpdateManyWithoutSeatNestedInput
 }
 
 export type SeatCreateManyCoachInput = {
@@ -941,6 +1056,7 @@ export type SeatUpdateWithoutCoachInput = {
   tickets?: Prisma.TicketUpdateManyWithoutSeatNestedInput
   seatIssueReports?: Prisma.SeatIssueReportUpdateManyWithoutSeatNestedInput
   proposedSeatIssues?: Prisma.SeatIssueReportUpdateManyWithoutProposedSeatNestedInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUpdateManyWithoutSeatNestedInput
 }
 
 export type SeatUncheckedUpdateWithoutCoachInput = {
@@ -956,6 +1072,7 @@ export type SeatUncheckedUpdateWithoutCoachInput = {
   tickets?: Prisma.TicketUncheckedUpdateManyWithoutSeatNestedInput
   seatIssueReports?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutSeatNestedInput
   proposedSeatIssues?: Prisma.SeatIssueReportUncheckedUpdateManyWithoutProposedSeatNestedInput
+  ticketSeatSegments?: Prisma.TicketSeatSegmentUncheckedUpdateManyWithoutSeatNestedInput
 }
 
 export type SeatUncheckedUpdateManyWithoutCoachInput = {
@@ -979,12 +1096,14 @@ export type SeatCountOutputType = {
   tickets: number
   seatIssueReports: number
   proposedSeatIssues: number
+  ticketSeatSegments: number
 }
 
 export type SeatCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tickets?: boolean | SeatCountOutputTypeCountTicketsArgs
   seatIssueReports?: boolean | SeatCountOutputTypeCountSeatIssueReportsArgs
   proposedSeatIssues?: boolean | SeatCountOutputTypeCountProposedSeatIssuesArgs
+  ticketSeatSegments?: boolean | SeatCountOutputTypeCountTicketSeatSegmentsArgs
 }
 
 /**
@@ -1018,6 +1137,13 @@ export type SeatCountOutputTypeCountProposedSeatIssuesArgs<ExtArgs extends runti
   where?: Prisma.SeatIssueReportWhereInput
 }
 
+/**
+ * SeatCountOutputType without action
+ */
+export type SeatCountOutputTypeCountTicketSeatSegmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TicketSeatSegmentWhereInput
+}
+
 
 export type SeatSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1034,6 +1160,7 @@ export type SeatSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   tickets?: boolean | Prisma.Seat$ticketsArgs<ExtArgs>
   seatIssueReports?: boolean | Prisma.Seat$seatIssueReportsArgs<ExtArgs>
   proposedSeatIssues?: boolean | Prisma.Seat$proposedSeatIssuesArgs<ExtArgs>
+  ticketSeatSegments?: boolean | Prisma.Seat$ticketSeatSegmentsArgs<ExtArgs>
   _count?: boolean | Prisma.SeatCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["seat"]>
 
@@ -1084,6 +1211,7 @@ export type SeatInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   tickets?: boolean | Prisma.Seat$ticketsArgs<ExtArgs>
   seatIssueReports?: boolean | Prisma.Seat$seatIssueReportsArgs<ExtArgs>
   proposedSeatIssues?: boolean | Prisma.Seat$proposedSeatIssuesArgs<ExtArgs>
+  ticketSeatSegments?: boolean | Prisma.Seat$ticketSeatSegmentsArgs<ExtArgs>
   _count?: boolean | Prisma.SeatCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SeatIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1100,6 +1228,7 @@ export type $SeatPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     tickets: Prisma.$TicketPayload<ExtArgs>[]
     seatIssueReports: Prisma.$SeatIssueReportPayload<ExtArgs>[]
     proposedSeatIssues: Prisma.$SeatIssueReportPayload<ExtArgs>[]
+    ticketSeatSegments: Prisma.$TicketSeatSegmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1510,6 +1639,7 @@ export interface Prisma__SeatClient<T, Null = never, ExtArgs extends runtime.Typ
   tickets<T extends Prisma.Seat$ticketsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seat$ticketsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   seatIssueReports<T extends Prisma.Seat$seatIssueReportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seat$seatIssueReportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SeatIssueReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   proposedSeatIssues<T extends Prisma.Seat$proposedSeatIssuesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seat$proposedSeatIssuesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SeatIssueReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  ticketSeatSegments<T extends Prisma.Seat$ticketSeatSegmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seat$ticketSeatSegmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TicketSeatSegmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2014,6 +2144,30 @@ export type Seat$proposedSeatIssuesArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.SeatIssueReportScalarFieldEnum | Prisma.SeatIssueReportScalarFieldEnum[]
+}
+
+/**
+ * Seat.ticketSeatSegments
+ */
+export type Seat$ticketSeatSegmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TicketSeatSegment
+   */
+  select?: Prisma.TicketSeatSegmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TicketSeatSegment
+   */
+  omit?: Prisma.TicketSeatSegmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TicketSeatSegmentInclude<ExtArgs> | null
+  where?: Prisma.TicketSeatSegmentWhereInput
+  orderBy?: Prisma.TicketSeatSegmentOrderByWithRelationInput | Prisma.TicketSeatSegmentOrderByWithRelationInput[]
+  cursor?: Prisma.TicketSeatSegmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TicketSeatSegmentScalarFieldEnum | Prisma.TicketSeatSegmentScalarFieldEnum[]
 }
 
 /**

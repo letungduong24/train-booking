@@ -72,6 +72,8 @@ export class RouteController {
   }
 
   @Post(':id/stations/reorder')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin)
   reorderStations(
     @Param('id') id: string,
     @Body() dto: ReorderRouteStationsDto,
