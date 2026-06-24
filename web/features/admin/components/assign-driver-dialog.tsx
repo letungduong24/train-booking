@@ -20,13 +20,15 @@ import { useDrivers, useUpdateTrip } from "@/features/trips/hooks/use-trips"
 interface AssignDriverDialogProps {
     tripId: string
     currentDriverId: string | null
+    tripStatus: string
 }
 
-export function AssignDriverDialog({ tripId, currentDriverId }: AssignDriverDialogProps) {
+export function AssignDriverDialog({ tripId, currentDriverId, tripStatus }: AssignDriverDialogProps) {
     const [open, setOpen] = React.useState(false)
     const [selectedDriverId, setSelectedDriverId] = React.useState<string>(currentDriverId || "unassigned")
     const { data: drivers = [], isLoading: isLoadingDrivers } = useDrivers()
     const updateTrip = useUpdateTrip()
+    const canAssignDriver = tripStatus === "SCHEDULED"
 
     // Sync selected driver state when currentDriverId changes or dialog opens
     React.useEffect(() => {
@@ -36,6 +38,11 @@ export function AssignDriverDialog({ tripId, currentDriverId }: AssignDriverDial
     }, [open, currentDriverId])
 
     const handleAssign = () => {
+        if (!canAssignDriver) {
+            toast.error("Chỉ được phân công lái tàu khi chuyến còn SCHEDULED")
+            return
+        }
+
         if (!selectedDriverId || selectedDriverId === "unassigned") {
             toast.error("Vui lòng chọn lái tàu")
             return
@@ -65,6 +72,7 @@ export function AssignDriverDialog({ tripId, currentDriverId }: AssignDriverDial
             <DialogTrigger asChild>
                 <Button
                     variant="outline"
+                    disabled={!canAssignDriver}
                     className="h-12 px-6 rounded-xl border-gray-100 dark:border-zinc-800 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-[#802222] dark:hover:text-rose-400 transition-all flex items-center gap-2 group/btn"
                 >
                     <UserCheck className="w-4 h-4 opacity-40 group-hover/btn:opacity-100 group-hover/btn:scale-110 transition-all" />
@@ -78,7 +86,7 @@ export function AssignDriverDialog({ tripId, currentDriverId }: AssignDriverDial
                         Phân công Lái tàu điều hành
                     </DialogTitle>
                     <DialogDescription className="text-xs font-medium text-muted-foreground/50">
-                        Chọn tài xế lái tàu đảm nhận và chịu trách nhiệm điều khiển chuyến đi này.
+                        Chọn tài xế lái tàu đảm nhận chuyến đi này. Chỉ được thay đổi khi chuyến còn SCHEDULED.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -125,7 +133,7 @@ export function AssignDriverDialog({ tripId, currentDriverId }: AssignDriverDial
                     <Button
                         type="button"
                         onClick={handleAssign}
-                        disabled={updateTrip.isPending || isLoadingDrivers}
+                        disabled={!canAssignDriver || updateTrip.isPending || isLoadingDrivers}
                         className="bg-[#802222] hover:bg-rose-900 text-white rounded-xl h-11 font-bold shadow-lg shadow-rose-900/20 px-6 text-xs flex items-center gap-2"
                     >
                         {updateTrip.isPending && <Loader2 className="w-4 h-4 animate-spin" />}

@@ -1,0 +1,47 @@
+@startuml
+title UC-19 Activity Swimlane - Quản lý chuyến tàu
+
+|Admin|
+start
+switch (Chọn thao tác quản lý chuyến tàu?)
+case (Thêm chuyến mới)
+  :Chọn Route, Tàu, Driver và thời gian khởi hành;
+  |Hệ thống|
+  :POST /trip;
+  :Kiểm tra Route, Train và Driver hợp lệ;
+  :Tính endTime theo route.totalDistanceKm,\ntrain.averageSpeedKmH và turnaroundMinutes;
+  :Kiểm tra xung đột lịch của Train với Trip chưa CANCELLED;
+  :Tạo Trip trạng thái SCHEDULED;
+  |Admin|
+  :Thêm chuyến thành công;
+case (Cập nhật chuyến)
+  |Admin|
+  :Chọn chuyến cần sửa Route hoặc Driver;
+  |Hệ thống|
+  :PATCH /trip/{id};
+  :Kiểm tra Trip tồn tại;
+  if (Trip còn SCHEDULED?) then (Không)
+    :Từ chối cập nhật vì chuyến không còn ở trạng thái SCHEDULED;
+    |Admin|
+    :Nhận thông báo chỉ được sửa chuyến chưa chạy;
+  else (Có)
+    :Kiểm tra Route và Driver nếu có thay đổi;
+    :Nếu đổi Route thì tính lại endTime;
+    :Nếu đổi Route thì kiểm tra trùng lịch,\nloại trừ chính Trip hiện tại;
+    :Cập nhật routeId và/hoặc driverId;
+    |Admin|
+    :Cập nhật chuyến thành công;
+  endif
+case (Xóa chuyến)
+  |Admin|
+  :Xác nhận xóa chuyến;
+  |Hệ thống|
+  :DELETE /trip/{id};
+  :Kiểm tra Trip tồn tại;
+  :Xóa Trip;
+  |Admin|
+  :Xóa chuyến thành công;
+endswitch
+
+stop
+@enduml

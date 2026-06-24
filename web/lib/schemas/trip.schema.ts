@@ -50,8 +50,8 @@ export const createTripSchema = z.object({
     driverId: z.string().min(1, "Lái tàu không được để trống"),
 });
 
-export const updateTripSchema = createTripSchema.partial().extend({
-    status: z.string().optional(),
+export const updateTripSchema = z.object({
+    routeId: z.string().min(1, "Route không được để trống").optional(),
     driverId: z.string().nullable().optional(),
 });
 

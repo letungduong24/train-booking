@@ -114,6 +114,7 @@ export default function TripDetailPage({ params }: { params: Promise<{ tripId: s
                         <AssignDriverDialog
                             tripId={trip.id}
                             currentDriverId={trip.driverId || null}
+                            tripStatus={trip.status}
                         />
                         
                         <DelayControlDialog

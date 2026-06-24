@@ -294,8 +294,35 @@ export class TripService {
   }
 
   async update(id: string, updateTripDto: UpdateTripDto) {
-    // Check if trip exists
-    await this.findOne(id);
+    const unsupportedKeys = Object.keys(updateTripDto as Record<string, unknown>).filter(
+      (key) => !['routeId', 'driverId'].includes(key),
+    );
+    if (unsupportedKeys.length > 0) {
+      throw new BadRequestException(
+        'Chỉ được cập nhật routeId hoặc driverId. Thời gian chạy dùng chức năng delay riêng.',
+      );
+    }
+
+    const hasRouteUpdate = updateTripDto.routeId !== undefined;
+    const hasDriverUpdate = updateTripDto.driverId !== undefined;
+    if (!hasRouteUpdate && !hasDriverUpdate) {
+      throw new BadRequestException('Không có dữ liệu cập nhật hợp lệ');
+    }
+
+    if (hasRouteUpdate && updateTripDto.routeId?.trim() === '') {
+      throw new BadRequestException('Route không hợp lệ');
+    }
+
+    const trip = await this.prisma.trip.findUnique({ where: { id } });
+    if (!trip) {
+      throw new NotFoundException(`Trip #${id} không tồn tại`);
+    }
+
+    if (trip.status !== TripStatus.SCHEDULED) {
+      throw new BadRequestException(
+        'Chỉ có thể cập nhật route hoặc lái tàu khi chuyến còn SCHEDULED',
+      );
+    }
 
     // Validate route if provided
     if (updateTripDto.routeId) {
@@ -304,16 +331,6 @@ export class TripService {
       });
       if (!route) {
         throw new BadRequestException('Route không tồn tại');
-      }
-    }
-
-    // Validate train if provided
-    if (updateTripDto.trainId) {
-      const train = await this.prisma.train.findUnique({
-        where: { id: updateTripDto.trainId },
-      });
-      if (!train) {
-        throw new BadRequestException('Train không tồn tại');
       }
     }
 
@@ -333,17 +350,9 @@ export class TripService {
       }
     }
 
-    // Calculate new trip details
-    const trip = await this.prisma.trip.findUnique({ where: { id } });
-    if (!trip) {
-      throw new NotFoundException(`Trip #${id} không tồn tại`);
-    }
-
     const routeId = updateTripDto.routeId || trip.routeId;
-    const trainId = updateTripDto.trainId || trip.trainId;
-    const departureTime = updateTripDto.departureTime
-      ? new Date(updateTripDto.departureTime)
-      : trip.departureTime;
+    const trainId = trip.trainId;
+    const departureTime = trip.departureTime;
 
     const route = await this.prisma.route.findUnique({
       where: { id: routeId },
@@ -370,34 +379,34 @@ export class TripService {
       departureTime.getTime() + durationMs + turnaroundMs,
     );
 
-    // Check for overlaps (excluding current trip)
-    const existingTrip = await this.prisma.trip.findFirst({
-      where: {
-        id: { not: id },
-        trainId: trainId,
-        status: { not: 'CANCELLED' },
-        OR: [
-          { departureTime: { gte: departureTime, lt: endTime } },
-          { endTime: { gt: departureTime, lte: endTime } },
-          { departureTime: { lte: departureTime }, endTime: { gte: endTime } },
-        ],
-      },
-    });
+    if (hasRouteUpdate) {
+      // Route changes can change endTime, so re-check the train schedule window.
+      const existingTrip = await this.prisma.trip.findFirst({
+        where: {
+          id: { not: id },
+          trainId: trainId,
+          status: { not: 'CANCELLED' },
+          OR: [
+            { departureTime: { gte: departureTime, lt: endTime } },
+            { endTime: { gt: departureTime, lte: endTime } },
+            { departureTime: { lte: departureTime }, endTime: { gte: endTime } },
+          ],
+        },
+      });
 
-    if (existingTrip) {
-      throw new BadRequestException(
-        'Tàu này đã có chuyến đi khác trong khoảng thời gian này',
-      );
+      if (existingTrip) {
+        throw new BadRequestException(
+          'Tàu này đã có chuyến đi khác trong khoảng thời gian này',
+        );
+      }
     }
 
     return this.prisma.trip.update({
       where: { id },
       data: {
         ...(updateTripDto.routeId && { routeId: updateTripDto.routeId }),
-        ...(updateTripDto.trainId && { trainId: updateTripDto.trainId }),
-        ...(updateTripDto.departureTime && { departureTime }),
         ...(driverIdUpdate !== undefined && { driverId: driverIdUpdate }),
-        endTime, // Always update endTime
+        ...(updateTripDto.routeId && { endTime }),
       },
       include: {
         route: true,

@@ -287,70 +287,84 @@ sequenceDiagram
     participant FE as Admin Portal
     participant API as Backend
     participant DB as Database
+
+    Admin->>FE: Chọn ghế trên sơ đồ và chọn trạng thái mới
+    FE->>API: PATCH /seats/{id}
+    API->>DB: Cập nhật Seat.status
+    API-->>FE: 200 OK
+    FE-->>Admin: Cập nhật màu sắc sơ đồ ghế và thông báo thành công
+```
+
+### UC-21: Xử lý sự cố ghế hỏng
+```mermaid
+sequenceDiagram
+    actor Admin as Quản Trị Viên
+    participant FE as Admin Portal
+    participant API as Backend
+    participant DB as Database
     participant Email as Email Service
-    actor Customer as Khách Hàng
-    actor Driver as Lái Tàu
+    participant Wallet as Ví điện tử
+    actor Customer as Hành khách
 
-    alt Luồng cơ bản: Admin chủ động cập nhật trạng thái ghế
-        Admin->>FE: Chọn Ghế trên Sơ đồ & Chọn trạng thái mới (AVAILABLE/DISABLED/MAINTENANCE)
-        FE->>API: PATCH /seats/{id} (updateSeatDto)
-        API->>DB: Cập nhật trạng thái ghế trong CSDL
+    Admin->>FE: Mở danh sách báo cáo ghế hỏng
+    FE->>API: GET /admin/seat-issues
+    API->>DB: Lấy SeatIssueReport theo trạng thái
+    API-->>FE: Danh sách báo cáo
+    Admin->>FE: Mở chi tiết báo cáo
+    FE->>API: GET /admin/seat-issues/{id}
+    API->>DB: Lấy report, trip, seat, người báo cáo và vé bị ảnh hưởng
+    API-->>FE: Chi tiết báo cáo
+
+    alt Admin từ chối báo cáo
+        Admin->>FE: Nhập lý do từ chối
+        FE->>API: PATCH /admin/seat-issues/{id}/reject
+        API->>DB: Cập nhật SeatIssueReport.status = REJECTED và rejectReason
         API-->>FE: 200 OK
-        FE-->>Admin: Cập nhật thành công & Đổi màu sắc sơ đồ ghế
-        
-    else Luồng thay thế: Tiếp nhận & Xử lý báo cáo sự cố từ Lái tàu
-        Admin->>FE: Xem chi tiết sự cố & Chọn quyết định
-        
-        alt Nhánh 1: Admin chọn "Từ chối" (Reject)
-            Admin->>FE: Nhập lý do từ chối & Xác nhận
-            FE->>API: PATCH /admin/seat-issues/{id}/reject (reason)
-            API->>DB: Cập nhật báo cáo thành REJECTED & Lưu lý do từ chối
-            API-->>FE: 200 OK
-            FE-->>Admin: Từ chối báo cáo sự cố thành công
-            
-        else Nhánh 2: Admin chọn "Xác nhận sự cố" (Confirm)
-            Admin->>FE: Chọn "Xác nhận"
-            FE->>API: PATCH /admin/seat-issues/{id}/confirm
-            API->>DB: Cập nhật trạng thái Ghế thành DISABLED
-            API->>DB: Quét vé (Ticket) trạng thái PAID bị ảnh hưởng bởi ghế hỏng
-            
-            alt Có vé bị ảnh hưởng
-                API->>API: Quét tìm vị trí ghế trống thay thế tương đương
-                
-                alt Tìm được ghế trống thay thế
-                    API->>DB: Tạo Token đổi ghế (24 giờ) và lưu ghế đề xuất
-                    API->>DB: Cập nhật trạng thái sự cố: WAITING_CUSTOMER_CONFIRMATION
-                    API->>Email: Gửi email đổi ghế riêng kèm link /confirm-seat-replacement?token=... & đề xuất vị trí
-                    API-->>FE: 200 OK (Chờ khách xác nhận)
-                    FE-->>Admin: Đang chờ hành khách chọn ghế thay thế
-                    
-                    Customer->>FE: Bấm Link đổi ghế & chọn vị trí mới (UC-04)
-                    FE->>API: POST /tickets/confirm-replacement
-                    API->>DB: Cập nhật Ticket sang ghế mới và ghi lại TicketSeatSegment
-                    API->>DB: Cập nhật trạng thái sự cố: RESOLVED
-                    API->>Email: Gửi email xác nhận đổi ghế thành công
-                    API-->>FE: 200 OK
+        FE-->>Admin: Hiển thị báo cáo đã bị từ chối
+    else Admin xác nhận sự cố
+        Admin->>FE: Bấm xác nhận sự cố
+        FE->>API: PATCH /admin/seat-issues/{id}/confirm
+        API->>DB: Kiểm tra report còn PENDING
+        API->>DB: Cập nhật Seat.status = DISABLED
+        API->>DB: Quét Ticket/TicketSeatSegment bị ảnh hưởng trên cùng chuyến và đoạn ghế
 
-                    Customer->>FE: Không ưng ý ghế đề xuất
-                    FE->>API: POST /tickets/reject-replacement
-                    API->>DB: Giải phóng TicketSeatSegment, hủy Booking bị ảnh hưởng, hoàn tiền về Ví
-                    API->>DB: Cập nhật trạng thái sự cố: RESOLVED
-                    API->>Email: Gửi email hoàn tiền
-                    
-                else Không tìm được ghế trống thay thế
-                    API->>DB: Tự động hủy Booking bị ảnh hưởng
-                    API->>DB: Giải phóng TicketSeatSegment và hoàn tiền 100% về Ví điện tử nội bộ
-                    API->>DB: Cập nhật trạng thái sự cố: RESOLVED
-                    API->>Email: Gửi email xin lỗi, báo hủy vé và chi tiết hoàn tiền
-                    API-->>FE: 200 OK
-                    FE-->>Admin: Sự cố đã giải quyết bằng hoàn tiền tự động
-                end
-                
-            else Không có vé bị ảnh hưởng
-                API->>DB: Cập nhật trạng thái sự cố: RESOLVED
+        alt Không có vé bị ảnh hưởng
+            API->>DB: Cập nhật SeatIssueReport.status = RESOLVED
+            API-->>FE: 200 OK
+            FE-->>Admin: Xử lý xong vì chưa có hành khách bị ảnh hưởng
+        else Có vé bị ảnh hưởng và tìm được ghế thay thế
+            API->>DB: Lưu proposedSeatId, token và tokenExpires
+            API->>DB: Cập nhật SeatIssueReport.status = WAITING_CUSTOMER_CONFIRMATION
+            API->>Email: Gửi email xác nhận đổi ghế cho hành khách
+            API-->>FE: 200 OK
+            FE-->>Admin: Chờ hành khách xác nhận đổi ghế
+
+            alt Hành khách đồng ý đổi ghế
+                Customer->>FE: Mở link /confirm-seat-replacement và xác nhận
+                FE->>API: POST /tickets/confirm-replacement
+                API->>DB: Xóa TicketSeatSegment cũ
+                API->>DB: Cập nhật Ticket.seatId sang ghế mới
+                API->>DB: Tạo TicketSeatSegment mới theo chặng của vé
+                API->>DB: Cập nhật SeatIssueReport.status = RESOLVED
+                API->>Email: Gửi email đổi ghế thành công
                 API-->>FE: 200 OK
-                FE-->>Admin: Xác nhận sự cố thành công (Không có vé bị ảnh hưởng)
+            else Hành khách từ chối hoặc token hết hạn
+                Customer->>FE: Từ chối đổi ghế hoặc không phản hồi
+                FE->>API: POST /tickets/reject-replacement hoặc cron xử lý timeout
+                API->>DB: Xóa TicketSeatSegment bị ảnh hưởng
+                API->>DB: Hủy vé/booking bị ảnh hưởng theo chính sách
+                API->>Wallet: Hoàn tiền vào ví
+                API->>DB: Ghi Transaction REFUND và cập nhật SeatIssueReport.status = RESOLVED
+                API->>Email: Gửi email hoàn tiền
             end
+        else Có vé bị ảnh hưởng nhưng không có ghế thay thế
+            API->>DB: Xóa TicketSeatSegment bị ảnh hưởng
+            API->>DB: Hủy vé/booking bị ảnh hưởng theo chính sách
+            API->>Wallet: Hoàn tiền 100%
+            API->>DB: Ghi Transaction REFUND và cập nhật SeatIssueReport.status = RESOLVED
+            API->>Email: Gửi email thông báo không có ghế thay thế và chi tiết hoàn tiền
+            API-->>FE: 200 OK
+            FE-->>Admin: Sự cố đã được xử lý bằng hoàn tiền
         end
     end
 ```
@@ -362,26 +376,83 @@ sequenceDiagram
     participant FE as Admin Portal
     participant API as Backend
     participant DB as Database
-    
-    %% Tạo Tàu
-    Admin->>FE: Thêm Tàu mới (Mã tàu, Tên, Vận tốc)
-    FE->>API: POST /train
-    API->>DB: Kiểm tra Mã tàu trùng lặp
-    alt Không trùng lặp
-        API->>DB: Lưu thực thể Train mới
-        API-->>FE: 201 Created
-    else Trùng lặp
-        API-->>FE: 409 Conflict (Mã tàu đã tồn tại)
+
+    Admin->>FE: Mở trang Quản lý tàu
+    FE-->>Admin: Hiển thị bảng tàu
+
+    alt Thêm tàu mới
+        Admin->>FE: Nhập mã tàu, tên, vận tốc trung bình, trạng thái
+        FE->>API: POST /train
+        API->>DB: Tạo Train
+        alt Mã tàu chưa tồn tại
+            DB-->>API: Tạo thành công
+            API-->>FE: 201 Created
+            FE-->>Admin: Thêm tàu thành công
+        else Trùng mã tàu
+            DB-->>API: Unique constraint code
+            API-->>FE: 409 Conflict - Mã tàu đã tồn tại
+            FE-->>Admin: Hiển thị lỗi trùng mã
+        end
+    else Cập nhật tàu
+        Admin->>FE: Sửa tên, vận tốc hoặc trạng thái tàu
+        FE->>API: PATCH /train/{id}
+        API->>DB: Cập nhật Train
+        API-->>FE: Train sau cập nhật
+        FE-->>Admin: Cập nhật bảng tàu
+    else Xóa tàu
+        Admin->>FE: Xác nhận xóa tàu
+        FE->>API: DELETE /train/{id}
+        API->>DB: Xóa Train
+        alt Tàu chưa phát sinh Trip
+            DB-->>API: Xóa Train, Coach và Seat theo cascade
+            API-->>FE: 200 OK
+            FE-->>Admin: Xóa tàu thành công
+        else Tàu đã phát sinh Trip
+            DB-->>API: Foreign key restrict
+            API-->>FE: Lỗi không thể xóa do còn dữ liệu chuyến
+            FE-->>Admin: Hiển thị cảnh báo bảo toàn dữ liệu
+        end
     end
-    
-    %% Thêm Toa và sinh ghế tự động
-    Admin->>FE: Thêm Toa xe (Mã toa, Tên, Thứ tự, Mẫu toa template)
-    FE->>API: POST /coaches
-    API->>DB: Lấy cấu hình CoachTemplate (hàng, cột, tầng)
-    API->>DB: Tạo thực thể Coach mới
-    API->>API: Tính toán tự động số hàng, số cột, số tầng từ template
-    API->>DB: Tạo hàng loạt thực thể Seat tương ứng
-    API-->>FE: 201 Created (Thêm toa và khởi tạo ghế thành công)
+
+    alt Thêm toa cho tàu
+        Admin->>FE: Chọn tàu, chọn template và trạng thái toa
+        FE->>API: POST /coaches
+        API->>DB: Kiểm tra Train tồn tại
+        API->>DB: Kiểm tra CoachTemplate tồn tại
+        API->>DB: Lấy order lớn nhất của toa trong tàu
+        API->>DB: Tạo Coach với tên tự sinh Toa N
+        API->>API: Sinh danh sách Seat/Bed theo layout, hàng, cột và tầng của template
+        API->>DB: createMany Seat cho Coach
+        API-->>FE: Coach kèm template và seats
+        FE-->>Admin: Thêm toa và khởi tạo sơ đồ ghế thành công
+    else Cập nhật toa
+        Admin->>FE: Sửa tên hoặc trạng thái toa
+        FE->>API: PATCH /coaches/{id}
+        API->>DB: Kiểm tra Coach tồn tại
+        API->>DB: Cập nhật Coach.status hoặc thông tin được phép sửa
+        API-->>FE: Coach kèm template và seats
+        FE-->>Admin: Cập nhật toa thành công
+    else Sắp xếp lại thứ tự toa
+        Admin->>FE: Kéo thả thứ tự toa
+        FE->>API: POST /coaches/train/{trainId}/reorder
+        API->>DB: Cập nhật order và tự sinh lại tên Toa 1, Toa 2...
+        API-->>FE: Danh sách Coach sau reorder
+        FE-->>Admin: Hiển thị thứ tự toa mới
+    else Xóa toa
+        Admin->>FE: Xác nhận xóa toa
+        FE->>API: DELETE /coaches/{id}
+        API->>DB: Kiểm tra Coach tồn tại
+        API->>DB: Xóa Coach
+        alt Toa chưa bị ràng buộc bởi dữ liệu vé/chuyến
+            DB-->>API: Seat thuộc Coach được xóa theo cascade
+            API-->>FE: 200 OK
+            FE-->>Admin: Xóa toa thành công
+        else Toa/Ghế đã có dữ liệu lịch sử
+            DB-->>API: Foreign key restrict từ Seat/Ticket hoặc báo cáo
+            API-->>FE: Lỗi không thể xóa do cần bảo toàn lịch sử
+            FE-->>Admin: Hiển thị cảnh báo không được xóa cứng
+        end
+    end
 ```
 
 ### UC-19: Quản lý chuyến tàu
@@ -391,43 +462,42 @@ sequenceDiagram
     participant FE as Admin Portal
     participant API as Backend
     participant DB as Database
-    participant Email as Email Service
-    participant Map as Bản Đồ GIS
     
-    %% Lập lịch chuyến tàu
-    Admin->>FE: Lập lịch chuyến tàu mới (Chọn Tàu, Tuyến, Thời gian)
-    FE->>API: POST /trip
-    API->>DB: Kiểm tra xung đột lịch trình của đầu tàu vật lý
-    alt Hợp lệ (Không trùng lịch)
-        API->>DB: Lưu thực thể Trip (SCHEDULED)
+    Admin->>FE: Mở trang Quản lý chuyến tàu
+    FE-->>Admin: Hiển thị bảng chuyến và form thao tác
+
+    alt Thêm chuyến mới
+        Admin->>FE: Chọn Route, Tàu, Driver và thời gian khởi hành
+        FE->>API: POST /trip
+        API->>DB: Kiểm tra Route, Train và Driver hợp lệ
+        API->>API: Tính endTime theo route.totalDistanceKm, train.averageSpeedKmH và turnaroundMinutes
+        API->>DB: Kiểm tra xung đột lịch của Train với Trip chưa CANCELLED
+        API->>DB: Tạo Trip trạng thái SCHEDULED
         API-->>FE: 201 Created
-    else Trùng lịch
-        API-->>FE: 409 Conflict (Trùng lịch chạy đầu tàu)
+        FE-->>Admin: Thêm chuyến thành công
+    else Cập nhật chuyến
+        Admin->>FE: Chọn chuyến cần sửa Route hoặc Driver
+        FE->>API: PATCH /trip/{id}
+        API->>DB: Kiểm tra Trip tồn tại
+        alt Trip không còn SCHEDULED
+            API-->>FE: 400 Bad Request
+            FE-->>Admin: Báo lỗi chỉ được sửa chuyến chưa chạy
+        else Trip còn SCHEDULED
+            API->>DB: Kiểm tra Route và Driver nếu có thay đổi
+            API->>API: Nếu đổi Route thì tính lại endTime
+            API->>DB: Nếu đổi Route thì kiểm tra trùng lịch, loại trừ chính Trip hiện tại
+            API->>DB: Cập nhật routeId và/hoặc driverId
+            API-->>FE: Cập nhật thành công
+            FE-->>Admin: Cập nhật chuyến thành công
+        end
+    else Xóa chuyến
+        Admin->>FE: Xác nhận xóa chuyến
+        FE->>API: DELETE /trip/{id}
+        API->>DB: Kiểm tra Trip tồn tại
+        API->>DB: Xóa Trip
+        API-->>FE: 200 OK
+        FE-->>Admin: Xóa chuyến thành công
     end
-    
-    %% Cập nhật delay chuyến tàu
-    alt Admin cập nhật delay trực tiếp
-        Admin->>FE: Nhập số phút trễ phù hợp trạng thái chuyến
-        FE->>API: PATCH /trip/{id}/departure-delay hoặc /arrival-delay
-        API->>DB: Lưu số phút delay đã duyệt
-        API-->>FE: Cập nhật delay thành công
-    else Admin duyệt báo cáo delay từ lái tàu
-        Admin->>FE: Mở danh sách báo cáo delay
-        FE->>API: GET /admin/trip-delay-reports
-        API-->>FE: Danh sách báo cáo chờ duyệt
-        Admin->>FE: Duyệt một báo cáo
-        FE->>API: PATCH /admin/trip-delay-reports/{id}/approve
-        API->>DB: Áp dụng delay vào chuyến và đánh dấu báo cáo đã duyệt
-        API-->>FE: Duyệt thành công
-    end
-    
-    %% Giám sát GPS thời gian thực
-    Admin->>FE: Truy cập menu "Giám sát bản đồ chạy tàu"
-    FE->>API: GET /trip/{id}/live-location
-    API->>DB: Lấy thông tin ga đỗ, khoảng cách & delay từ DB
-    API->>API: Tính toán tỉ lệ quãng đường thực tế & nội suy vị trí tuyến tính trên ray GeoJSON
-    API-->>FE: Trả về tọa độ GPS (Vĩ độ, Kinh độ)
-    FE->>Map: Cập nhật vị trí và vẽ icon tàu trên bản đồ MapLibre
 ```
 
 ### UC-20: Quản lý cơ sở hạ tầng
@@ -437,30 +507,73 @@ sequenceDiagram
     participant FE as Admin Portal
     participant API as Backend
     participant DB as Database
-    participant Map as Bản Đồ GIS
     
-    %% Đồng bộ GeoJSON
-    Admin->>FE: Tải lên file bản đồ GeoJSON (mapData)
-    FE->>API: POST /geojson/sync (Multipart form data: mapData)
-    API->>DB: Bắt đầu transaction đồng bộ Network
-    API->>API: Tạo phiên bản mạng lưới mới (Network v{X})
-    API->>DB: Lưu thực thể Network mới
-    API->>API: Trích xuất các trạm ga (Point features) & sinh Code tự động
-    API->>DB: Lưu hàng loạt Station vào DB (linked to Network)
-    API->>API: Trích xuất và gộp các đường ray (LineString/MultiLineString)
-    API->>DB: Lưu hàng loạt RailwayLine vào DB (linked to Network)
-    API->>DB: Commit transaction nếu toàn bộ dữ liệu hợp lệ
-    API-->>FE: 201 Created (Đồng bộ thành công)
-    alt Có lỗi parse/tọa độ/trùng dữ liệu
-        API->>DB: Rollback transaction
-        API-->>FE: 400 Bad Request
+    alt Đồng bộ GeoJSON mạng lưới
+        Admin->>FE: Tải lên file bản đồ GeoJSON
+        FE->>API: POST /geojson/sync
+        API->>DB: Bắt đầu transaction
+        API->>DB: Tạo Network version mới
+        API->>DB: Lưu Station từ Point features
+        API->>DB: Lưu RailwayLine từ LineString/MultiLineString
+        alt File và tọa độ hợp lệ
+            API->>DB: Commit transaction
+            API-->>FE: 201 Created kèm số lượng xử lý
+            FE-->>Admin: Đồng bộ thành công
+        else Lỗi parse/tọa độ/dữ liệu
+            API->>DB: Rollback transaction
+            API-->>FE: 400 Bad Request
+            FE-->>Admin: Hiển thị lỗi đồng bộ
+        end
+    else Tạo tuyến đường mới
+        Admin->>FE: Nhập thông tin route và danh sách ga
+        FE->>API: POST /route
+        API->>DB: Chọn network truyền vào hoặc network mới nhất
+        API->>DB: Kiểm tra các Station thuộc network
+        API->>DB: Tạo Route và RouteStation trong transaction
+        API->>API: Tính pathCoordinates từ RailwayLine cùng network
+        alt Path hợp lệ
+            API->>DB: Commit route, totalDistanceKm và distanceFromStart
+            API-->>FE: Route đã tạo
+            FE-->>Admin: Lưu tuyến thành công
+        else Không nối được đường ray giữa các ga
+            API->>DB: Rollback transaction
+            API-->>FE: 400 Bad Request
+            FE-->>Admin: Hiển thị lỗi đoạn đường không hợp lệ
+        end
+    else Cập nhật hoặc kích hoạt tuyến đường
+        Admin->>FE: Sửa route, trạng thái hoặc danh sách ga
+        FE->>API: PATCH /route/{id}
+        API->>DB: Kiểm tra Route hiện tại, network và danh sách ga
+        alt Route ACTIVE cần giữ lịch sử hoặc kích hoạt lại INACTIVE
+            API->>DB: Tạo Route version mới
+            API->>DB: Chuyển các version cùng code sang INACTIVE
+        else Route DRAFT hoặc chỉ tắt ACTIVE
+            API->>DB: Cập nhật route hiện tại
+        end
+        API->>API: Tính lại pathCoordinates nếu danh sách ga thay đổi
+        alt Path hợp lệ
+            API->>DB: Commit transaction
+            API-->>FE: Route sau cập nhật
+            FE-->>Admin: Cập nhật tuyến thành công
+        else Path không hợp lệ
+            API->>DB: Rollback transaction
+            API-->>FE: 400 Bad Request
+        end
+    else Thêm, xóa hoặc sắp xếp ga trong tuyến
+        Admin->>FE: Chỉnh danh sách ga dừng
+        FE->>API: POST /route/{id}/stations hoặc POST /route/{id}/stations/reorder hoặc DELETE /route/{id}/stations/{stationId}
+        API->>DB: Kiểm tra ga thuộc network của route và không trùng
+        API->>DB: Cập nhật RouteStation và đánh lại index
+        API->>API: Tính lại pathCoordinates
+        alt Path hợp lệ
+            API->>DB: Commit transaction
+            API-->>FE: RouteStation sau cập nhật
+            FE-->>Admin: Cập nhật lộ trình thành công
+        else Path không hợp lệ
+            API->>DB: Rollback transaction
+            API-->>FE: 400 Bad Request
+        end
     end
-    
-    %% Hiển thị trên bản đồ GIS
-    FE->>API: GET /geojson/network?networkId={id}
-    API->>DB: Truy vấn Stations & RailwayLines theo Network ID
-    API-->>FE: Trả về danh sách Ga dừng & Tọa độ vector đường ray
-    FE->>Map: Render trực quan và vẽ nét đường ray uốn lượn lên bản đồ GIS
 ```
 
 ---

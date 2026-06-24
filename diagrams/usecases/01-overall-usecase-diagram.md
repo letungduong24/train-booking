@@ -122,4 +122,4 @@ graph TB
 - **UC-13: Quản lý trạng thái ghế** (Seat Status Management): Quản lý trạng thái ghế tĩnh trong cấu hình tàu/toa.
 - **UC-21: Xử lý sự cố ghế hỏng** (Seat Issue Handling): Xử lý báo cáo ghế hỏng, đổi ghế hoặc hoàn tiền cho hành khách bị ảnh hưởng.
 - **UC-22: Xử lý báo cáo delay** (Delay Report Handling): Duyệt hoặc từ chối báo cáo delay do lái tàu gửi.
-- **UC-19: Quản lý chuyến tàu** (Trip Management): Vận hành lịch trình các chuyến tàu chạy hàng ngày, báo delay, GPS live.
+- **UC-19: Quản lý chuyến tàu** (Trip Management): Tạo chuyến chạy, phân công lái tàu, cập nhật route/driver khi chuyến còn SCHEDULED và xóa chuyến khi không vi phạm toàn vẹn dữ liệu.

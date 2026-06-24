@@ -1,0 +1,33 @@
+@startuml
+title UC-04 Activity Swimlane - Xác nhận đổi ghế
+
+|Hành khách|
+start
+:Mở link xác nhận đổi ghế từ email;
+
+|Hệ thống|
+if (Token còn hạn và báo cáo đang chờ xác nhận?) then (Không)
+  :Thông báo link không hợp lệ hoặc đã xử lý;
+  stop
+else (Có)
+  :Hiển thị ghế hiện tại và ghế thay thế;
+endif
+
+|Hành khách|
+if (Đồng ý đổi ghế?) then (Có)
+  |Hệ thống|
+  :Cập nhật Ticket.seatId;
+  :Tạo TicketSeatSegment mới;
+  |Email / Ví|
+  :Gửi email đổi ghế thành công;
+else (Không)
+  |Hệ thống|
+  :Giải phóng đoạn ghế cũ;
+  :Hoàn tiền vào ví;
+  |Email / Ví|
+  :Gửi email hoàn tiền;
+endif
+
+|Hành khách|
+stop
+@enduml

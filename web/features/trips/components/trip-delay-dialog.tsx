@@ -94,8 +94,8 @@ export function TripDelayDialog({ trip, onSuccess }: TripDelayDialogProps) {
           </DialogTitle>
           <DialogDescription className="text-xs font-medium text-muted-foreground/50">
             {isScheduled
-              ? "Cập nhật thời gian khởi hành và kết thúc dự kiến"
-              : "Chỉ cập nhật thời gian kết thúc dự kiến (tàu đang chạy)"}
+              ? "Cập nhật delay khởi hành, không sửa giờ gốc của chuyến"
+              : "Cập nhật delay đến ga, không sửa giờ gốc của chuyến"}
           </DialogDescription>
         </DialogHeader>
 

@@ -1,46 +1,43 @@
-# Biểu Đồ Quan Hệ Thực Thể (ERD) - Cơ Sở Dữ Liệu
+# Entity Relationship Diagram - RailFlow
 
-Tài liệu này cung cấp Biểu đồ Quan hệ Thực thể (Entity-Relationship Diagram - ERD) sử dụng cú pháp `erDiagram` của Mermaid.
-Biểu đồ này biểu diễn các thực thể, thuộc tính khóa, và mối quan hệ theo chuẩn Database Relational Design, được ánh xạ trực tiếp từ `schema.prisma`.
+Tai lieu nay mo ta ERD dang bang bang Mermaid `erDiagram`.
+No duoc dong bo voi `api/prisma/schema.prisma` va uu tien de nhin trong bao cao/slide hon so do Chen XML.
 
----
-
-## Biểu Đồ ERD
+## ERD Dang Bang
 
 ```mermaid
 erDiagram
-    %% ENTITIES
     User {
         String id PK
-        String profilePic
-        String email
-        String phone
+        String email UK
+        String phone UK
+        String googleId UK
         String password
         String name
-        String googleId
-        DateTime createdAt
-        DateTime updatedAt
+        String profilePic
         UserRole role
         Boolean isEmailVerified
-        String verificationToken
+        String verificationToken UK
         DateTime verificationTokenExpires
-        String passwordResetToken
+        String passwordResetToken UK
         DateTime passwordResetTokenExpires
-        String walletPinResetToken
+        String walletPinResetToken UK
         DateTime walletPinResetTokenExpires
         Int balance
         String walletPin
         Boolean isBanned
+        DateTime createdAt
+        DateTime updatedAt
     }
-    
+
     RefreshToken {
         String id PK
-        String token
+        String token UK
         String userId FK
         DateTime expiresAt
         DateTime createdAt
     }
-    
+
     Transaction {
         String id PK
         String userId FK
@@ -49,7 +46,7 @@ erDiagram
         String paymentMethod
         TransactionStatus status
         String referenceId
-        String idempotencyKey
+        String idempotencyKey UK
         String description
         String bankName
         String bankAccount
@@ -57,10 +54,10 @@ erDiagram
         DateTime createdAt
         DateTime updatedAt
     }
-    
+
     Network {
         String id PK
-        Int version
+        Int version UK
         String name
         DateTime createdAt
         DateTime updatedAt
@@ -69,6 +66,7 @@ erDiagram
     Station {
         String id PK
         String code
+        String code_networkId UK
         String name
         Float latitude
         Float longitude
@@ -76,34 +74,7 @@ erDiagram
         DateTime createdAt
         DateTime updatedAt
     }
-    
-    Route {
-        String id PK
-        String code
-        Int version
-        String networkId FK
-        String name
-        DateTime createdAt
-        DateTime updatedAt
-        RouteStatus status
-        Int durationMinutes
-        Int turnaroundMinutes
-        Float totalDistanceKm
-        Int basePricePerKm
-        Int stationFee
-        Json pathCoordinates
-    }
-    
-    RouteStation {
-        String routeId PK,FK
-        String stationId PK,FK
-        Int index
-        Float distanceFromStart
-        Int durationFromStart
-        DateTime createdAt
-        DateTime updatedAt
-    }
-    
+
     RailwayLine {
         String id PK
         String name
@@ -112,32 +83,61 @@ erDiagram
         DateTime createdAt
         DateTime updatedAt
     }
-    
-    CoachTemplate {
+
+    Route {
         String id PK
         String code
+        Int version
+        String code_version UK
+        String networkId FK
+        String name
+        RouteStatus status
+        Int durationMinutes
+        Int turnaroundMinutes
+        Float totalDistanceKm
+        Int basePricePerKm
+        Int stationFee
+        Json pathCoordinates
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    RouteStation {
+        String routeId PK_FK
+        String stationId PK_FK
+        Int index
+        String routeId_index UK
+        Float distanceFromStart
+        Int durationFromStart
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    CoachTemplate {
+        String id PK
+        String code UK
         String name
         String description
         CoachLayout layout
         Int totalRows
         Int totalCols
         Int tiers
-        DateTime createdAt
-        DateTime updatedAt
         Float coachMultiplier
         Json tierMultipliers
+        DateTime createdAt
+        DateTime updatedAt
     }
-    
+
     Train {
         String id PK
-        String code
+        String code UK
         String name
         TrainStatus status
         Int averageSpeedKmH
         DateTime createdAt
         DateTime updatedAt
     }
-    
+
     Coach {
         String id PK
         String name
@@ -148,9 +148,10 @@ erDiagram
         DateTime createdAt
         DateTime updatedAt
     }
-    
+
     Seat {
         String id PK
+        String coachId_row_col_tier UK
         String name
         Int rowIndex
         Int colIndex
@@ -161,11 +162,12 @@ erDiagram
         DateTime createdAt
         DateTime updatedAt
     }
-    
+
     Trip {
         String id PK
         String routeId FK
         String trainId FK
+        String driverId FK
         DateTime departureTime
         DateTime endTime
         TripStatus status
@@ -174,10 +176,10 @@ erDiagram
         DateTime createdAt
         DateTime updatedAt
     }
-    
+
     Booking {
         String id PK
-        String code
+        String code UK
         String tripId FK
         String userId FK
         String contactName
@@ -189,34 +191,10 @@ erDiagram
         DateTime createdAt
         DateTime updatedAt
     }
-    
-    Ticket {
-        String id PK
-        String bookingId FK
-        String tripId FK
-        String seatId FK
-        String passengerName
-        String passengerId
-        String passengerGroupId FK
-        Int fromStationIndex
-        Int toStationIndex
-        Int price
-        DateTime createdAt
-        DateTime updatedAt
-    }
 
-    TicketSeatSegment {
-        String id PK
-        String ticketId FK
-        String tripId FK
-        String seatId FK
-        Int segmentIndex
-        DateTime createdAt
-    }
-    
     PassengerGroup {
         String id PK
-        String code
+        String code UK
         String name
         Float discountRate
         String description
@@ -226,18 +204,44 @@ erDiagram
         DateTime updatedAt
     }
 
+    Ticket {
+        String id PK
+        String bookingId_seatId UK
+        String bookingId FK
+        String tripId FK
+        String seatId FK
+        String passengerGroupId FK
+        String passengerName
+        String passengerId
+        Int fromStationIndex
+        Int toStationIndex
+        Int price
+        DateTime createdAt
+        DateTime updatedAt
+    }
+
+    TicketSeatSegment {
+        String id PK
+        String tripId_seatId_segmentIndex UK
+        String ticketId FK
+        String tripId FK
+        String seatId FK
+        Int segmentIndex
+        DateTime createdAt
+    }
+
     SeatIssueReport {
         String id PK
         String tripId FK
         String seatId FK
+        String reportedById FK
+        String proposedSeatId FK
         String issueType
         String description
-        String reportedById FK
         SeatIssueStatus status
         String rejectReason
-        String token
+        String token UK
         DateTime tokenExpires
-        String proposedSeatId FK
         DateTime createdAt
         DateTime updatedAt
     }
@@ -256,52 +260,45 @@ erDiagram
         DateTime updatedAt
     }
 
-    %% RELATIONSHIPS
-    
-    User ||--o{ RefreshToken : "sở hữu"
-    User ||--o{ Booking : "đặt vé"
-    User ||--o{ Transaction : "thực hiện"
-    User ||--o{ SeatIssueReport : "báo cáo"
-    User ||--o{ TripDelayReport : "báo cáo"
-    
-    Network ||--o{ Station : "quản lý"
-    Network ||--o{ RailwayLine : "chứa"
-    Network ||--o{ Route : "phiên bản hóa"
-    Route ||--|{ RouteStation : "bao gồm"
-    Station ||--o{ RouteStation : "dừng tại"
-    
-    Route ||--o{ Trip : "được chạy trên"
-    Train ||--o{ Trip : "vận hành"
-    
-    Train ||--|{ Coach : "bao gồm"
-    CoachTemplate ||--o{ Coach : "khởi tạo từ"
-    Coach ||--|{ Seat : "chứa"
-    
-    Trip ||--o{ Booking : "có"
-    Booking ||--|{ Ticket : "gồm"
-    Trip ||--o{ Ticket : "áp dụng cho"
-    Seat ||--o{ Ticket : "được cấp cho"
-    PassengerGroup ||--o{ Ticket : "phân loại"
-    Ticket ||--|{ TicketSeatSegment : "chiếm dụng"
-    Trip ||--o{ TicketSeatSegment : "khóa đoạn"
-    Seat ||--o{ TicketSeatSegment : "khóa đoạn"
+    User ||--o{ RefreshToken : owns
+    User ||--o{ Transaction : makes
+    User ||--o{ Booking : places
+    User ||--o{ Trip : drives
+    User ||--o{ SeatIssueReport : reports
+    User ||--o{ TripDelayReport : reports
 
-    Trip ||--o{ SeatIssueReport : "phát sinh"
-    Seat ||--o{ SeatIssueReport : "bị báo cáo"
-    Seat ||--o{ SeatIssueReport : "ghế thay thế"
-    Trip ||--o{ TripDelayReport : "phát sinh"
+    Network ||--o{ Station : contains
+    Network ||--o{ RailwayLine : contains
+    Network ||--o{ Route : versions
+    Route ||--|{ RouteStation : has
+    Station ||--o{ RouteStation : appears_in
+
+    Route ||--o{ Trip : schedules
+    Train ||--o{ Trip : operates
+    Train ||--|{ Coach : contains
+    CoachTemplate ||--o{ Coach : templates
+    Coach ||--|{ Seat : contains
+
+    Trip ||--o{ Booking : has
+    Booking ||--|{ Ticket : includes
+    Trip ||--o{ Ticket : issues
+    Seat ||--o{ Ticket : assigned
+    PassengerGroup ||--o{ Ticket : classifies
+
+    Ticket ||--|{ TicketSeatSegment : occupies
+    Trip ||--o{ TicketSeatSegment : locks
+    Seat ||--o{ TicketSeatSegment : locks
+
+    Trip ||--o{ SeatIssueReport : has
+    Seat ||--o{ SeatIssueReport : reported_for
+    Seat ||--o{ SeatIssueReport : proposed_as
+    Trip ||--o{ TripDelayReport : has
 ```
 
-### Ý Nghĩa Các Mối Quan Hệ (Crow's Foot Notation)
-- **`||--o{` (Một - Nhiều):** Một thực thể bên trái có thể liên kết với KHÔNG hoặc NHIỀU thực thể bên phải. Ví dụ: Một `User` có thể thực hiện nhiều `Transaction` hoặc chưa thực hiện `Transaction` nào.
-- **`||--|{` (Một - Một hoặc Nhiều):** Một thực thể bên trái phải liên kết với MỘT hoặc NHIỀU thực thể bên phải. Ví dụ: Một `Booking` (Đơn hàng) bắt buộc phải chứa ít nhất một `Ticket` (Vé lẻ).
-- **PK (Primary Key):** Khóa chính, định danh duy nhất cho thực thể.
-- **FK (Foreign Key):** Khóa ngoại, tham chiếu đến một thực thể khác để tạo mối quan hệ.
-- **PK,FK:** Thuộc tính vừa là khóa chính vừa là khóa ngoại (thường gặp trong các bảng trung gian như `RouteStation`).
+## Ghi Chu
 
-### Ghi Chú Tích Hợp
-- Biểu đồ này phản ánh chính xác cấu trúc CSDL từ `schema.prisma`.
-- Các trường tiền tệ được lưu bằng `Int` theo đơn vị VND để tránh sai số số thực.
-- Thực thể `TicketSeatSegment` là ràng buộc dữ liệu chống bán trùng ghế theo từng đoạn ga, với unique trên `tripId`, `seatId`, `segmentIndex`.
-- Thực thể `RailwayLine` lưu trữ tọa độ địa lý dạng GeoJSON và liên kết với `Network` để đảm bảo dữ liệu bản đồ, ga và tuyến thuộc cùng phiên bản mạng lưới.
-- Cấu trúc giá và đa tầng (tiers) của `Seat` phụ thuộc vào `CoachTemplate` và `PassengerGroup`.
+- `PK`: khoa chinh.
+- `FK`: khoa ngoai.
+- `UK`: unique key. Cac unique tong hop duoc viet thanh dong dai dien nhu `code_networkId`, `routeId_index`, `tripId_seatId_segmentIndex`.
+- `TicketSeatSegment` la bang chan trung ghe theo chang: mot ve di qua nhieu doan thi co nhieu dong segment.
+- Cac quan he `Train-Coach-Seat` va `Ticket-TicketSeatSegment` co `onDelete: Cascade` o database theo schema; cac quan he lich su/ve/chuyen dung restrict hoac association de giu toan ven du lieu.

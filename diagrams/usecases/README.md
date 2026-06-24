@@ -33,7 +33,7 @@ Tài liệu này cung cấp cái nhìn toàn cảnh về các Tác nhân (Actors
   - Quản lý tàu và toa xe (Danh mục Tàu chạy, Toa xe, thiết lập mẫu toa xe tự động sinh ghế).
   - Quản lý trạng thái hoạt động của ghế ngồi (khóa ghế, mở khóa, bảo trì).
   - Xử lý báo cáo ghế hỏng và báo cáo delay do lái tàu gửi.
-  - Quản lý chuyến tàu (Tạo chuyến chạy, cấu hình thời gian delay ga đi/đến, giám sát GPS).
+  - Quản lý chuyến tàu (Tạo chuyến chạy, phân công lái tàu, cập nhật route/driver khi chuyến còn SCHEDULED).
   - Quản lý dữ liệu mạng lưới đường sắt (nhà ga dừng đỗ, tuyến chạy, network version và mạng lưới đường ray GeoJSON).
   - Quản lý tài khoản người dùng (Khóa/mở khóa tài khoản, phân quyền hệ thống).
   - Giám sát các biểu đồ dashboard thống kê và doanh thu.
@@ -74,7 +74,7 @@ Tài liệu này cung cấp cái nhìn toàn cảnh về các Tác nhân (Actors
 - **UC-12:** Quản lý người dùng
 - **UC-13:** Quản lý trạng thái ghế
 - **UC-14:** Quản lý tàu và toa xe *(Tàu, Toa, CoachTemplate)*
-- **UC-19:** Quản lý chuyến tàu *(Lập lịch chuyến, delay, và giám sát bản đồ)*
+- **UC-19:** Quản lý chuyến tàu *(Tạo chuyến, phân công lái tàu, cập nhật route/driver khi chuyến còn SCHEDULED)*
 - **UC-20:** Quản lý dữ liệu mạng lưới đường sắt *(Ga dừng đỗ, tuyến lộ trình, network version và ray vẽ GeoJSON)*
 - **UC-21:** Xử lý sự cố ghế hỏng
 - **UC-22:** Xử lý báo cáo delay chuyến tàu

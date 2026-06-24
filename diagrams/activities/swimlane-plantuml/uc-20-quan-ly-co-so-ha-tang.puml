@@ -1,0 +1,38 @@
+@startuml
+title UC-20 Activity Swimlane - Quản lý cơ sở hạ tầng
+
+|Admin|
+start
+switch (Chọn nghiệp vụ hạ tầng?)
+case (Đồng bộ GeoJSON)
+  :Tải GeoJSON mạng lưới;
+  |Hệ thống|
+  :Kiểm tra file GeoJSON hợp lệ;
+  :Tạo Network version mới;
+  :Lưu Station và RailwayLine trong transaction;
+  |Admin|
+  :Nhận kết quả đồng bộ hạ tầng;
+case (Tạo hoặc cập nhật tuyến)
+  |Admin|
+  :Chọn danh sách ga và thông số tuyến;
+  |Hệ thống|
+  :Kiểm tra ga đủ số lượng và cùng network;
+  :Tính pathCoordinates và totalDistanceKm;
+  :Kiểm tra các ga nối được bằng RailwayLine;
+  :Clone version nếu sửa tuyến ACTIVE/INACTIVE;
+  :Commit thay đổi tuyến;
+  |Admin|
+  :Nhận thông báo lưu tuyến thành công;
+case (Quản lý ga trong tuyến)
+  |Admin|
+  :Thêm, xóa hoặc sắp xếp ga trong tuyến;
+  |Hệ thống|
+  :Kiểm tra ga hợp lệ và không trùng;
+  :Reindex và tính lại path;
+  :Commit thay đổi ga trong tuyến;
+  |Admin|
+  :Nhận thông báo cập nhật tuyến thành công;
+endswitch
+
+stop
+@enduml

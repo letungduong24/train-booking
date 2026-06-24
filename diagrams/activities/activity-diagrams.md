@@ -201,10 +201,7 @@ flowchart TD
 ### UC-13: Quản lý trạng thái ghế
 ```mermaid
 flowchart TD
-    Start([Bắt đầu]) --> ChooseAction{Admin chọn nghiệp vụ}
-    
-    %% Luồng 1: Chủ động quản lý
-    ChooseAction -- Chủ động cập nhật trạng thái --> SelectTrain[Chọn Tàu & Toa xe]
+    Start([Bắt đầu]) --> SelectTrain[Chọn Tàu & Toa xe]
     SelectTrain --> ShowLayout[Hiển thị sơ đồ ghế]
     ShowLayout --> ClickSeat[Click chọn một ghế]
     ClickSeat --> ShowDialog[Hiển thị dialog thông tin ghế]
@@ -213,147 +210,121 @@ flowchart TD
     ClickUpdate --> SaveDB[Hệ thống cập nhật trạng thái ghế]
     SaveDB --> ShowSuccess[Cập nhật màu sắc & thông báo thành công]
     ShowSuccess --> End([Kết thúc])
-    
-    %% Luồng 2: Xử lý sự cố từ Lái tàu
-    ChooseAction -- Xử lý báo cáo sự cố từ Lái tàu --> ViewIssues[Xem danh sách báo cáo PENDING]
+```
+
+### UC-21: Xử lý sự cố ghế hỏng
+```mermaid
+flowchart TD
+    Start([Bắt đầu]) --> ViewIssues[Xem danh sách báo cáo ghế hỏng PENDING]
     ViewIssues --> SelectIssue[Chọn 1 sự cố để xem chi tiết]
-    SelectIssue --> Decide{Quyết định của Admin}
-    
-    %% Nhánh từ chối
+    SelectIssue --> LoadDetail[Hiển thị chuyến, toa, ghế, mô tả, người báo cáo và vé bị ảnh hưởng]
+    LoadDetail --> CheckStatus{Báo cáo còn PENDING?}
+    CheckStatus -- Không --> ShowInvalid[Thông báo báo cáo đã được xử lý] --> End([Kết thúc])
+    CheckStatus -- Có --> Decide{Quyết định của Admin}
+
     Decide -- Từ chối --> RejectForm[Nhập lý do từ chối]
     RejectForm --> SubmitReject[Xác nhận từ chối]
-    SubmitReject --> UpdateReject[Cập nhật báo cáo thành REJECTED & Lưu lý do]
-    UpdateReject --> NotifyDriver[Gửi thông báo phản hồi cho Lái tàu]
-    NotifyDriver --> End
-    
-    %% Nhánh xác nhận
-    Decide -- Xác nhận sự cố --> ConfirmIssue[Xác nhận sự cố]
-    ConfirmIssue --> DisableIncidentSeat[Cập nhật trạng thái Ghế thành DISABLED]
-    DisableIncidentSeat --> ScanTickets[Quét các vé Ticket trạng thái PAID bị ảnh hưởng]
+    SubmitReject --> UpdateReject[Cập nhật SeatIssueReport thành REJECTED và lưu rejectReason]
+    UpdateReject --> EmitReject[Gửi realtime/event cập nhật trạng thái báo cáo]
+    EmitReject --> End
+
+    Decide -- Xác nhận sự cố --> ConfirmIssue[Xác nhận ghế bị hỏng]
+    ConfirmIssue --> DisableIncidentSeat[Cập nhật Seat.status = DISABLED]
+    DisableIncidentSeat --> ScanTickets[Quét Ticket PAID bị ảnh hưởng theo tripId, seatId và đoạn ghế]
     ScanTickets --> CheckTickets{Có vé bị ảnh hưởng?}
-    
-    CheckTickets -- Không --> ResolveNoTicket[Cập nhật báo cáo thành RESOLVED]
-    ResolveNoTicket --> End
-    
-    CheckTickets -- Có --> SearchReplacement[Thuật toán tìm kiếm ghế trống thay thế tương đương]
-    SearchReplacement --> CheckReplacement{Tìm thấy ghế trống?}
-    
-    %% Tìm thấy ghế
-    CheckReplacement -- Có --> LockNewSeat[Tạo token đổi ghế 24h & Lưu ghế đề xuất]
-    LockNewSeat --> SetWaitingConfirm[Cập nhật báo cáo thành WAITING_CUSTOMER_CONFIRMATION]
-    SetWaitingConfirm --> SendIncidentEmail[Email Service gửi email đổi ghế riêng với link /confirm-seat-replacement và đề xuất]
-    SendIncidentEmail --> CustomerAction{Hành khách phản hồi trong 24h?}
-    
-    CustomerAction -- Bấm link & Chọn vị trí (UC-04) --> CustomerConfirm[Xác nhận đổi ghế]
-    CustomerAction -- Không ưng ý ghế đề xuất --> CustomerRefund[Giải phóng đoạn ghế, hủy vé bị ảnh hưởng & hoàn tiền về ví]
-    CustomerAction -- Hết hạn 24 giờ (Timeout) --> CustomerRefund
-    
-    CustomerConfirm --> UpdateTicketSeat[Giải phóng đoạn ghế cũ, cập nhật Ticket và TicketSeatSegment sang ghế mới]
-    UpdateTicketSeat --> SetResolved[Cập nhật báo cáo thành RESOLVED]
-    SetResolved --> SendSuccessEmail[Gửi email xác nhận đổi ghế thành công]
+
+    CheckTickets -- Không --> ResolveNoTicket[Cập nhật SeatIssueReport thành RESOLVED]
+    ResolveNoTicket --> EmitNoTicket[Gửi realtime/event cập nhật ghế và báo cáo]
+    EmitNoTicket --> End
+
+    CheckTickets -- Có --> SearchReplacement[Tìm ghế thay thế còn trống trên cùng chuyến và cùng chặng]
+    SearchReplacement --> CheckReplacement{Có ghế thay thế phù hợp?}
+
+    CheckReplacement -- Có --> CreateToken[Tạo token xác nhận đổi ghế 24h và lưu proposedSeatId]
+    CreateToken --> SetWaiting[Cập nhật SeatIssueReport thành WAITING_CUSTOMER_CONFIRMATION]
+    SetWaiting --> SendReplacementEmail[Gửi email kèm link /confirm-seat-replacement]
+    SendReplacementEmail --> WaitCustomer{Hành khách phản hồi trong 24h?}
+
+    WaitCustomer -- Đồng ý đổi ghế --> ReplaceSeat[Giải phóng TicketSeatSegment cũ, cập nhật Ticket.seatId và tạo TicketSeatSegment mới]
+    ReplaceSeat --> ResolveReplacement[Cập nhật SeatIssueReport thành RESOLVED]
+    ResolveReplacement --> SendSuccessEmail[Gửi email xác nhận đổi ghế thành công]
     SendSuccessEmail --> End
-    CustomerRefund --> SetResolved
-    
-    %% Không tìm thấy ghế
-    CheckReplacement -- Không --> CancelRefund[Hệ thống tự động giải phóng đoạn ghế, hủy vé & hoàn tiền]
-    CancelRefund --> CancelBooking[Cập nhật Booking thành CANCELLED & hủy Ticket]
-    CancelBooking --> RefundMoney[Hoàn tiền 100% vào Ví điện tử nội bộ khách hàng]
-    RefundMoney --> SetResolvedFail[Cập nhật báo cáo thành RESOLVED]
-    SetResolvedFail --> SendApologyEmail[Gửi email xin lỗi & chi tiết giao dịch hoàn tiền]
-    SendApologyEmail --> End
+
+    WaitCustomer -- Từ chối đổi ghế --> RefundByChoice[Giải phóng TicketSeatSegment, hủy vé/booking bị ảnh hưởng và hoàn tiền vào ví]
+    WaitCustomer -- Hết hạn 24h --> RefundByChoice
+    RefundByChoice --> ResolveRefund[Cập nhật SeatIssueReport thành RESOLVED]
+    ResolveRefund --> SendRefundEmail[Gửi email hoàn tiền]
+    SendRefundEmail --> End
+
+    CheckReplacement -- Không --> AutoRefund[Giải phóng TicketSeatSegment và hoàn tiền 100% vào ví]
+    AutoRefund --> CancelAffectedBooking[Cập nhật booking/vé bị ảnh hưởng theo chính sách hủy]
+    CancelAffectedBooking --> ResolveNoSeat[Cập nhật SeatIssueReport thành RESOLVED]
+    ResolveNoSeat --> SendRefundNoSeatEmail[Gửi email thông báo không có ghế thay thế và chi tiết hoàn tiền]
+    SendRefundNoSeatEmail --> End
 ```
 
 ### UC-14: Quản lý tàu
 ```mermaid
 flowchart TD
-    Start([Bắt đầu]) --> ChooseOption{Chọn nghiệp vụ cấu trúc vật lý}
+    Start([Bắt đầu]) --> OpenTrainPage[Mở trang Quản lý tàu]
+    OpenTrainPage --> ChooseOption{Chọn thao tác quản lý}
+
+    ChooseOption -- Thêm tàu mới --> CreateTrain[Nhập mã tàu, tên, vận tốc trung bình và trạng thái]
+    CreateTrain --> CheckTrainDup{Mã tàu hợp lệ và chưa tồn tại?}
+    CheckTrainDup -- Không --> ShowTrainDupError[Báo lỗi dữ liệu tàu hoặc trùng mã] --> CreateTrain
+    CheckTrainDup -- Có --> SaveTrain[Tạo Train]
+    SaveTrain --> SuccessTrain[Thông báo 201 Created] --> End([Kết thúc])
     
-    %% Quản lý Tàu
-    ChooseOption -- Quản lý Tàu --> ManageTrain{Chọn thao tác với Tàu}
-    ManageTrain -- Thêm Tàu mới --> CreateTrain[Nhập thông tin Tàu: Mã, Tên, Vận tốc]
-    CreateTrain --> CheckTrainDup{Mã tàu trùng?}
-    CheckTrainDup -- Có --> ShowTrainDupError[Báo lỗi: Mã tàu đã tồn tại] --> CreateTrain
-    CheckTrainDup -- Không --> SaveTrain[Lưu thực thể Train]
-    SaveTrain --> SuccessTrain[Thông báo thêm tàu thành công] --> End([Kết thúc])
-    
-    ManageTrain -- Sửa thông tin Tàu --> EditTrain[Nhập thông tin chỉnh sửa]
-    EditTrain --> UpdateTrain[Hệ thống cập nhật thông tin tàu]
+    ChooseOption -- Cập nhật tàu --> EditTrain[Sửa tên, vận tốc hoặc trạng thái tàu]
+    EditTrain --> UpdateTrain[Cập nhật Train]
     UpdateTrain --> SuccessEdit[Thông báo cập nhật thành công] --> End
     
-    ManageTrain -- Xóa Tàu khỏi hệ thống --> DeleteTrain[Kiểm tra Trip của tàu có status SCHEDULED/IN_PROGRESS?]
-    DeleteTrain -- Có --> DeleteTrainError[Báo lỗi: Không thể xóa tàu đang có chuyến chạy] --> End
-    DeleteTrain -- Không --> ConfirmDelete[Hiển thị cảnh báo xác nhận xóa]
-    ConfirmDelete --> ProceedDelete[Xóa tàu cùng toa và ghế liên quan]
-    ProceedDelete --> SuccessDelete[Thông báo xóa tàu thành công] --> End
-    
-    %% Quản lý Toa xe
-    ChooseOption -- Thêm Toa & Sinh Ghế --> SelectTrain["Chọn một Tàu hỏa"]
-    SelectTrain --> SelectTemplate["Nhập Mã, Tên, Thứ tự toa & Chọn mẫu Toa (CoachTemplate)"]
-    SelectTemplate --> SaveCoach[Hệ thống tạo toa mới]
-    SaveCoach --> AutoGenSeats[Hệ thống tự động tạo ghế dựa trên mẫu toa]
-    AutoGenSeats --> SuccessCoach[Thông báo thêm toa xe và khởi tạo ghế thành công] --> End
-    
+    ChooseOption -- Thêm toa cho tàu --> SelectTrain["Chọn tàu, chọn template và trạng thái toa"]
+    SelectTrain --> ValidateCoachInput{Train và CoachTemplate tồn tại?}
+    ValidateCoachInput -- Không --> ShowCoachInputError[Báo lỗi dữ liệu toa không hợp lệ] --> SelectTrain
+    ValidateCoachInput -- Có --> GetCoachOrder[Lấy order lớn nhất của toa trong tàu]
+    GetCoachOrder --> SaveCoach[Tạo Coach với tên tự sinh Toa N]
+    SaveCoach --> AutoGenSeats[Sinh danh sách Seat/Bed theo layout, hàng, cột và tầng của template]
+    AutoGenSeats --> CreateSeats[createMany Seat cho Coach]
+    CreateSeats --> SuccessCoach[Trả Coach kèm template và seats] --> End
+
+    ChooseOption -- Sắp xếp lại thứ tự toa --> DragCoach[Kéo thả thứ tự toa]
+    DragCoach --> ReorderCoach[Cập nhật order và tự sinh lại tên Toa 1, Toa 2...]
+    ReorderCoach --> SuccessReorder[Hiển thị thứ tự toa mới] --> End
 ```
 
 ### UC-19: Quản lý chuyến tàu
 ```mermaid
 flowchart TD
-    Start([Bắt đầu]) --> ChooseAction{Chọn nghiệp vụ Chuyến tàu}
-    
-    %% Lập lịch Chuyến tàu
-    ChooseAction -->|Lập lịch chuyến tàu mới| CreateTrip[Chọn Tàu, Tuyến, Nhập thời gian đi/đến]
-    CreateTrip --> CheckConflict[Hệ thống kiểm tra xung đột lịch chạy của đầu tàu]
-    CheckConflict --> IsConflict{Trùng lịch chạy?}
-    
-    IsConflict -->|Có| ShowConflictError[Báo lỗi: Tàu đang bận chạy trong khoảng thời gian này]
-    ShowConflictError --> CreateTrip
-    
-    IsConflict -->|Không| CheckTime{Thời gian kết thúc > Thời gian bắt đầu?}
-    
-    CheckTime -->|Không| ShowTimeError[Báo lỗi: Thời gian kết thúc phải lớn hơn thời gian khởi hành]
-    ShowTimeError --> CreateTrip
-    
-    CheckTime -->|Có| SaveTrip[Lưu chuyến tàu trạng thái SCHEDULED]
-    SaveTrip --> SuccessTrip[Thông báo thêm chuyến tàu thành công]
+    Start([Bắt đầu]) --> ChooseAction{Chọn thao tác quản lý chuyến tàu}
+
+    ChooseAction -->|Thêm chuyến mới| CreateTrip[Chọn Route, Tàu, Driver và thời gian khởi hành]
+    CreateTrip --> PostTrip["POST /trip"]
+    PostTrip --> ValidateTrip[Kiểm tra Route, Train và Driver hợp lệ]
+    ValidateTrip --> CalcEndTime[Tính endTime theo route.totalDistanceKm, train.averageSpeedKmH và turnaroundMinutes]
+    CalcEndTime --> CheckConflict[Kiểm tra xung đột lịch của Train với Trip chưa CANCELLED]
+    CheckConflict --> SaveTrip[Tạo Trip trạng thái SCHEDULED]
+    SaveTrip --> SuccessTrip[Thêm chuyến thành công]
     SuccessTrip --> End([Kết thúc])
-    
-    %% Cập nhật / Duyệt Delay
-    ChooseAction -->|Quản lý Delay chuyến tàu| DelayMode{Nguồn delay}
-    DelayMode -->|Admin cập nhật trực tiếp| SelectTripDelay[Chọn chuyến và nhập số phút delay phù hợp trạng thái]
-    SelectTripDelay --> SaveDelay[Hệ thống lưu delay đã duyệt vào chuyến]
-    DelayMode -->|Duyệt báo cáo từ Lái tàu| ReviewDelayReport[Xem báo cáo delay đang chờ duyệt]
-    ReviewDelayReport --> DecideDelay{Quyết định}
-    DecideDelay -->|Duyệt| SaveDelay
-    DecideDelay -->|Từ chối| RejectDelay[Lưu lý do từ chối báo cáo delay]
-    RejectDelay --> End
-    SaveDelay --> SuccessDelay[Thông báo cập nhật delay thành công]
-    SuccessDelay --> End
-    
-    %% Giám sát GPS GIS
-    ChooseAction -->|Giám sát bản đồ chạy tàu| FetchLiveTrips[Lấy các chuyến tàu đang hoạt động IN_PROGRESS]
-    FetchLiveTrips --> CalcGPS[Hệ thống nội suy vị trí dựa trên ga đỗ, khoảng cách và delay]
-    CalcGPS --> RenderMap[Render đường ray GeoJSON, nhà ga & vẽ icon tàu trên MapLibre]
-    RenderMap --> RefreshInterval[Tự động làm mới dữ liệu sau mỗi 30 giây]
-    RefreshInterval --> CalcGPS
-    
-    %% Sửa đổi/Hủy/Xóa
-    ChooseAction -->|Sửa đổi / Hủy / Xóa chuyến| ManageTrip{Chọn thao tác}
-    
-    ManageTrip -->|Sửa đổi lịch chạy| EditTrip[Nhập lịch trình mới cho chuyến SCHEDULED]
-    EditTrip --> CheckConflict
-    
-    ManageTrip -->|Hủy chuyến tàu| CancelTrip[Cập nhật Trip.status = CANCELLED]
-    CancelTrip --> RefundTickets[Hoàn tiền 100% về Ví khách hàng & Gửi email xin lỗi]
-    RefundTickets --> SuccessCancel[Thông báo hủy chuyến thành công]
-    SuccessCancel --> End
-    
-    ManageTrip -->|Xóa chuyến tàu| CheckTicketsSold{Chuyến tàu đã bán vé?}
-    
-    CheckTicketsSold -->|Có| DeleteTripError[Báo lỗi: Không thể xóa chuyến tàu đã bán vé]
-    DeleteTripError --> End
-    
-    CheckTicketsSold -->|Không| ProceedDeleteTrip[Xóa chuyến tàu khỏi hệ thống]
-    ProceedDeleteTrip --> SuccessDeleteTrip[Thông báo xóa chuyến tàu thành công]
+
+    ChooseAction -->|Cập nhật chuyến| EditTrip[Chọn chuyến cần sửa Route hoặc Driver]
+    EditTrip --> PatchTrip["PATCH /trip/{id}"]
+    PatchTrip --> CheckTripExists[Kiểm tra Trip tồn tại]
+    CheckTripExists --> CheckScheduled{Trip còn SCHEDULED?}
+    CheckScheduled -->|Không| RejectUpdate[Báo lỗi chỉ được sửa chuyến chưa chạy]
+    RejectUpdate --> End
+    CheckScheduled -->|Có| ValidateUpdate[Kiểm tra Route và Driver nếu có thay đổi]
+    ValidateUpdate --> RecalcEndTime[Nếu đổi Route thì tính lại endTime]
+    RecalcEndTime --> CheckUpdateConflict[Nếu đổi Route thì kiểm tra trùng lịch, loại trừ chính Trip hiện tại]
+    CheckUpdateConflict --> SaveUpdate[Cập nhật routeId và/hoặc driverId]
+    SaveUpdate --> SuccessUpdate[Cập nhật chuyến thành công]
+    SuccessUpdate --> End
+
+    ChooseAction -->|Xóa chuyến| ConfirmDeleteTrip[Xác nhận xóa chuyến]
+    ConfirmDeleteTrip --> DeleteTrip["DELETE /trip/{id}"]
+    DeleteTrip --> CheckDeleteTrip[Kiểm tra Trip tồn tại]
+    CheckDeleteTrip --> ProceedDeleteTrip[Xóa Trip]
+    ProceedDeleteTrip --> SuccessDeleteTrip[Xóa chuyến thành công]
     SuccessDeleteTrip --> End
 ```
 
@@ -379,19 +350,31 @@ flowchart TD
     CheckSyncError -->|Không| RollbackSync[Rollback transaction, không lưu dữ liệu dở dang]
     RollbackSync --> ShowJSONError
     CheckSyncError -->|Có| SuccessSync[Commit transaction và phản hồi số lượng đã xử lý]
-    SuccessSync --> UpdateMap[Cập nhật bản vẽ vector ga và ray lên bản đồ GIS]
-    UpdateMap --> End([Kết thúc])
-    
-    %% Xem danh sách Network
-    ChooseOption -->|Xem danh sách mạng lưới| GetNetworks[Lấy danh sách mạng lưới đã đồng bộ]
-    GetNetworks --> RenderNetworkList[Hiển thị danh sách các Network đã đồng bộ]
-    RenderNetworkList --> End
-    
-    %% Chi tiết Network
-    ChooseOption -->|Xem chi tiết mạng lưới| SelectNetwork[Chọn một Network]
-    SelectNetwork --> FetchNetworkData[Lấy dữ liệu chi tiết của mạng lưới]
-    FetchNetworkData --> RenderMapGIS[Hiển thị chi tiết ga và uốn lượn đường ray lên bản đồ GIS]
-    RenderMapGIS --> End
+    SuccessSync --> End([Kết thúc])
+
+    %% Tạo / cập nhật Route
+    ChooseOption -->|Tạo hoặc cập nhật tuyến đường| EditRoute[Nhập mã tuyến, tên, network, cấu hình giá và danh sách ga]
+    EditRoute --> ValidateRoute{Route có đủ ga và ga thuộc đúng network?}
+    ValidateRoute -->|Không| ShowRouteError[Báo lỗi dữ liệu tuyến không hợp lệ] --> EditRoute
+    ValidateRoute -->|Có| CalcRoutePath[Tính pathCoordinates và totalDistanceKm từ RailwayLine cùng network]
+    CalcRoutePath --> PathValid{Các đoạn ga nối được bằng đường ray?}
+    PathValid -->|Không| RollbackRoute[Rollback, không lưu route/path sai] --> ShowRouteError
+    PathValid -->|Có| RouteVersion{Route đang ACTIVE/INACTIVE cần giữ lịch sử?}
+    RouteVersion -->|Có| CloneRouteVersion[Tạo version route mới và chuyển version song song sang INACTIVE]
+    RouteVersion -->|Không| SaveRouteInPlace[Cập nhật route hiện tại]
+    CloneRouteVersion --> SuccessRoute[Thông báo lưu tuyến thành công]
+    SaveRouteInPlace --> SuccessRoute
+    SuccessRoute --> End
+
+    %% Chỉnh ga trong tuyến
+    ChooseOption -->|Thêm, xóa hoặc sắp xếp ga trong tuyến| ModifyStations[Thao tác với RouteStation]
+    ModifyStations --> ValidateStationNetwork{Ga thuộc network của route và không trùng?}
+    ValidateStationNetwork -->|Không| ShowStationError[Báo lỗi danh sách ga không hợp lệ] --> ModifyStations
+    ValidateStationNetwork -->|Có| ReindexStations[Cập nhật thứ tự ga và distanceFromStart]
+    ReindexStations --> RecalculatePath[Tính lại pathCoordinates]
+    RecalculatePath --> PathAfterStationChange{Path hợp lệ?}
+    PathAfterStationChange -->|Không| RollbackStationChange[Rollback thay đổi ga] --> ShowStationError
+    PathAfterStationChange -->|Có| SuccessStationChange[Thông báo cập nhật lộ trình thành công] --> End
 ```
 
 

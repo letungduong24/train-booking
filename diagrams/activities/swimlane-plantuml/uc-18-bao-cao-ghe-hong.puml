@@ -1,0 +1,29 @@
+@startuml
+title UC-18 Activity Swimlane - Báo cáo ghế hỏng
+
+|Lái tàu|
+start
+:Chọn chuyến được phân công;
+
+|Hệ thống|
+if (Chuyến đang hoạt động và chưa kết thúc?) then (Không)
+  :Khóa thao tác báo cáo;
+  stop
+else (Có)
+endif
+
+|Lái tàu|
+:Chọn toa/ghế, loại sự cố và mô tả;
+:Gửi báo cáo ghế hỏng;
+
+|Hệ thống|
+if (Ghế đã có báo cáo đang mở?) then (Có)
+  :Báo lỗi không gửi trùng;
+else (Không)
+  :Lưu SeatIssueReport PENDING;
+  :Thông báo cho Admin xử lý UC-21;
+endif
+
+|Lái tàu|
+stop
+@enduml

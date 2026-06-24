@@ -69,11 +69,11 @@ graph TB
   - **Quản lý Toa xe (Coach):** Thêm toa vào tàu, cấu hình thứ tự toa xe, chọn mẫu thiết kế toa (Coach Template) giúp hệ thống tự động sinh ra số lượng ghế tương ứng (rows × cols × tiers).
 
 ### 5. UC-19: Quản lý chuyến tàu (Bám sát `/trip` của Backend)
-- **Mô tả:** Quản lý lịch trình vận tải và điều phối hành trình chạy tàu hàng ngày.
+- **Mô tả:** Quản lý lịch chạy chuyến tàu hàng ngày, gồm tạo chuyến mới, phân công lái tàu và điều chỉnh route/driver khi chuyến chưa bắt đầu.
 - **Nghiệp vụ chi tiết:**
-  - **Lập lịch chuyến tàu (Create/Update Trip):** Tạo mới các chuyến đi (`Trip`) bằng cách ghép nối Tàu chạy, Tuyến đường, thời gian xuất phát và kết thúc dự kiến. Hệ thống tự động kiểm tra xung đột trùng lịch của tàu.
-  - **Quản lý Delay hành trình:** Cập nhật hoặc duyệt số phút trễ của tàu tại ga đi hoặc ga đến. Hệ thống dùng thông tin trễ đã duyệt để hiển thị giờ dự kiến và tiến độ hành trình.
-  - **Giám sát GPS tàu chạy:** Xem trực quan bản đồ số giám sát vị trí giả lập của tất cả các tàu đang chạy trên tuyến Bắc - Nam thời gian thực.
+  - **Tạo chuyến tàu:** Chọn route, tàu, driver và thời gian khởi hành. Hệ thống tính `endTime` và kiểm tra trùng lịch của tàu.
+  - **Cập nhật chuyến chưa chạy:** Chỉ cho sửa `routeId` và/hoặc `driverId` khi Trip còn `SCHEDULED`. Không sửa thời gian khởi hành trong UC này.
+  - **Xóa chuyến:** Chỉ xóa cứng khi không vi phạm ràng buộc dữ liệu lịch sử. Delay được tách sang UC-17/UC-22.
 
 ### 6. UC-20: Quản lý dữ liệu mạng lưới đường sắt (Bám sát `/station`, `/route`, `/railway-network` của Backend)
 - **Mô tả:** Quản lý dữ liệu mạng lưới tuyến đường sắt phục vụ tìm kiếm chuyến, lập lịch chuyến và hiển thị bản đồ.

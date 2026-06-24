@@ -58,7 +58,7 @@ Use Case này được chọn để hoàn thiện luồng xử lý ghế hỏng 
 
 2.3.10 Đặc tả Use Case Quản lý chuyến tàu (UC-19)
 
-Use Case này được chọn làm đại diện cho nhóm chức năng quản trị vận hành, bao gồm tạo chuyến, cập nhật chuyến, phân công lái tàu, theo dõi trạng thái và quản lý delay.
+Use Case này được chọn làm đại diện cho nhóm chức năng quản trị vận hành, bao gồm tạo chuyến, phân công lái tàu, cập nhật route/driver khi chuyến còn SCHEDULED và xóa chuyến khi không vi phạm toàn vẹn dữ liệu. Nghiệp vụ delay được tách sang UC-17/UC-22.
 
 2.3.11 Đặc tả Use Case Quản lý dữ liệu mạng lưới đường sắt (UC-20)
 

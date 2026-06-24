@@ -1,0 +1,58 @@
+@startuml
+title UC-21 Activity Swimlane - Xử lý sự cố ghế hỏng
+
+|Admin|
+start
+:Xem báo cáo ghế hỏng PENDING;
+:Chọn báo cáo và xem vé bị ảnh hưởng;
+
+|Hệ thống|
+if (Báo cáo còn PENDING?) then (Không)
+  :Thông báo đã xử lý;
+  stop
+else (Có)
+endif
+
+|Admin|
+if (Admin xác nhận sự cố?) then (Không)
+  |Hệ thống|
+  :Cập nhật REJECTED và lưu lý do;
+  stop
+else (Có)
+  |Hệ thống|
+  :Khóa Seat.status = DISABLED;
+endif
+
+if (Có ticket bị ảnh hưởng?) then (Không)
+  :Cập nhật RESOLVED;
+  stop
+else (Có)
+endif
+
+if (Có ghế thay thế phù hợp?) then (Có)
+  :Lưu proposedSeatId và token 24h;
+  |Hành khách / Email / Ví|
+  :Gửi email link xác nhận đổi ghế;
+  if (Hành khách đồng ý đổi ghế?) then (Có)
+    |Hệ thống|
+    :Cập nhật Ticket và TicketSeatSegment mới;
+    :Cập nhật RESOLVED;
+  else (Không / Hết hạn)
+    |Hệ thống|
+    :Hủy vé/đoạn bị ảnh hưởng và hoàn tiền vào ví;
+    |Hành khách / Email / Ví|
+    :Gửi email hoàn tiền;
+    |Hệ thống|
+    :Cập nhật RESOLVED;
+  endif
+else (Không)
+  :Hủy vé/đoạn bị ảnh hưởng và hoàn tiền vào ví;
+  |Hành khách / Email / Ví|
+  :Gửi email thông báo không có ghế thay thế và hoàn tiền;
+  |Hệ thống|
+  :Cập nhật RESOLVED;
+endif
+
+|Admin|
+stop
+@enduml
