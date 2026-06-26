@@ -75,7 +75,7 @@ export function LoginForm({
                 <Button
                   variant="outline"
                   type="button"
-                  className="w-full h-12 rounded-2xl border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 font-semibold transition-all duration-300"
+                  className="w-full h-12 rounded-2xl border-gray-200 dark:border-zinc-800  dark:hover:bg-zinc-800 font-semibold transition-all duration-300"
                   onClick={() => { window.location.href = `${apiClient.defaults.baseURL}/auth/google`; }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" className="mr-2 h-5 w-5">

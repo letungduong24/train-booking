@@ -4,6 +4,8 @@ import {
   IsNumber,
   Min,
   IsPositive,
+  Length,
+  Matches,
 } from 'class-validator';
 
 export class WithdrawRequestDto {
@@ -23,4 +25,10 @@ export class WithdrawRequestDto {
   @IsString()
   @IsNotEmpty()
   accountName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Length(6, 6)
+  @Matches(/^[0-9]+$/, { message: 'PIN must contain only numbers' })
+  pin: string;
 }

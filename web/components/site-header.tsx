@@ -3,13 +3,9 @@ import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { ModeToggle } from "@/components/mode-toggle"
 import { GlobalChatbot } from "@/components/chatbot/global-chatbot"
 import { useAuth } from "@/hooks/use-auth"
 import { 
-  IconSearch, 
-  IconBell, 
-  IconCommand,
   IconUserCircle,
   IconLogout,
   IconHome,
@@ -57,10 +53,6 @@ export function SiteHeader() {
           {/* Action Icons */}
           <div className="flex items-center gap-2 mr-2">
             <GlobalChatbot />
-            <button className="size-9 flex items-center justify-center rounded-xl bg-zinc-50 dark:bg-zinc-900 text-muted-foreground/60 hover:text-[#802222] hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-all border border-transparent hover:border-rose-100 dark:hover:border-rose-900/20 relative">
-              <IconBell className="size-5" />
-              <span className="absolute top-2.5 right-2.5 size-2 bg-rose-500 rounded-full border-2 border-white dark:border-zinc-950"></span>
-            </button>
           </div>
 
           <Separator

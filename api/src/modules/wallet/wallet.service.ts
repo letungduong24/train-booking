@@ -117,11 +117,20 @@ export class WalletService {
   }
 
   async requestWithdraw(userId: string, dto: WithdrawRequestDto) {
-    const { bankName, bankAccount, accountName } = dto;
+    const { bankName, bankAccount, accountName, pin } = dto;
     const amount = this.normalizeAmount(dto.amount);
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new BadRequestException('User not found');
+
+    if (!user.walletPin) {
+      throw new BadRequestException('Wallet PIN not set');
+    }
+
+    const isPinValid = await bcrypt.compare(pin, user.walletPin);
+    if (!isPinValid) {
+      throw new UnauthorizedException('Mã PIN không chính xác');
+    }
 
     await this.prisma.$transaction(async (tx) => {
       const debit = await tx.user.updateMany({
