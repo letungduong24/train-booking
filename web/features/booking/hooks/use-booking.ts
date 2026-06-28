@@ -42,5 +42,8 @@ export const useBooking = (code: string | null, enabled: boolean = true) => {
         queryFn: () => fetchBooking(code!),
         enabled: enabled && !!code,
         retry: 1,
+        staleTime: 0,
+        refetchOnMount: 'always',
+        refetchOnWindowFocus: true,
     });
 };

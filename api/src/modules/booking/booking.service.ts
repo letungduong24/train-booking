@@ -536,6 +536,8 @@ export class BookingService {
       throw new BadRequestException('Không thể xác nhận đơn đặt chỗ');
     }
 
+    this.bookingGateway.emitBookingStatusUpdate(bookingCode, 'PAID');
+
     // Gửi email biên lai kèm vé PDF
     if (updatedBooking.user?.email) {
       try {

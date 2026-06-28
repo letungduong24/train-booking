@@ -14,9 +14,13 @@ export const usePayWallet = () => {
             const response = await apiClient.post('/wallet/pay', data);
             return response.data;
         },
-        onSuccess: () => {
+        onSuccess: (_data, variables) => {
             queryClient.invalidateQueries({ queryKey: ['wallet'] });
             queryClient.invalidateQueries({ queryKey: ['transactions'] });
+            queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
+            queryClient.invalidateQueries({ queryKey: ['my-active-trips'] });
+            queryClient.invalidateQueries({ queryKey: ['dashboard-overview'] });
+            queryClient.invalidateQueries({ queryKey: ['booking', variables.bookingCode] });
         },
     });
 };

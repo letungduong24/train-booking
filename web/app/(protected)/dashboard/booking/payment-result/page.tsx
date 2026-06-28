@@ -1,6 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, XCircle, Ticket, Home, ArrowRight, CreditCard } from 'lucide-react';
 import Link from 'next/link';
@@ -9,10 +11,21 @@ import { cn } from '@/lib/utils';
 export default function PaymentResultPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
+    const queryClient = useQueryClient();
 
     const success = searchParams.get('success') === 'true';
     const orderId = searchParams.get('orderId');
     const errorMessage = searchParams.get('error');
+
+    useEffect(() => {
+        if (!orderId) return;
+
+        queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
+        queryClient.invalidateQueries({ queryKey: ['my-active-trips'] });
+        queryClient.invalidateQueries({ queryKey: ['dashboard-overview'] });
+        queryClient.invalidateQueries({ queryKey: ['wallet'] });
+        queryClient.invalidateQueries({ queryKey: ['booking', orderId] });
+    }, [orderId, queryClient]);
 
     return (
         <div className="flex flex-col items-center justify-center p-6 animate-in fade-in duration-700 min-h-[60vh]">
