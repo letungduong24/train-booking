@@ -13,7 +13,12 @@ import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { format } from "date-fns"
 import { vi } from "date-fns/locale"
-import { getActualDepartureTime, getActualEndTime } from "@/lib/utils/trip-time"
+import {
+  getActualDepartureTime,
+  getActualEndTime,
+  hasArrivalImpactDelay,
+  hasDepartureDelay,
+} from "@/lib/utils/trip-time"
 
 import { BookingCoachNavigationBar } from "@/features/booking/components/booking-coach-navigation-bar"
 import { useCoachWithPrices } from "@/features/booking/hooks/use-coach-with-prices"
@@ -137,6 +142,12 @@ export default function TripDetailPage({ params }: PageProps) {
   const activeCoach = coaches.find((c: any) => c.id === activeCoachId)
   
   const actualEndTime = getActualEndTime(trip)
+  const isDepartureDelayed = hasDepartureDelay(trip)
+  const isArrivalDelayed = hasArrivalImpactDelay(trip)
+  const originalDepTimeStr = format(new Date(trip.departureTime), "HH:mm, dd/MM/yyyy", { locale: vi })
+  const originalArrTimeStr = trip.endTime
+    ? format(new Date(trip.endTime), "HH:mm, dd/MM/yyyy", { locale: vi })
+    : "N/A"
   const depTimeStr = format(getActualDepartureTime(trip), "HH:mm, dd/MM/yyyy", { locale: vi })
   const arrTimeStr = actualEndTime
     ? format(actualEndTime, "HH:mm, dd/MM/yyyy", { locale: vi })
@@ -284,14 +295,24 @@ export default function TripDetailPage({ params }: PageProps) {
                 <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Thời gian đi</span>
                 <p className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
                   <Clock className="size-4 text-[#802222]" />
-                  {depTimeStr}
+                  <span className="flex flex-col gap-0.5">
+                    {isDepartureDelayed && (
+                      <span className="text-xs font-medium text-muted-foreground line-through">Gốc: {originalDepTimeStr}</span>
+                    )}
+                    <span className={isDepartureDelayed ? "text-rose-600" : ""}>{depTimeStr}</span>
+                  </span>
                 </p>
               </div>
               <div className="space-y-1">
                 <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Thời gian đến</span>
                 <p className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
                   <Clock className="size-4 text-emerald-600" />
-                  {arrTimeStr}
+                  <span className="flex flex-col gap-0.5">
+                    {isArrivalDelayed && (
+                      <span className="text-xs font-medium text-muted-foreground line-through">Gốc: {originalArrTimeStr}</span>
+                    )}
+                    <span className={isArrivalDelayed ? "text-rose-600" : ""}>{arrTimeStr}</span>
+                  </span>
                 </p>
               </div>
             </div>

@@ -15,7 +15,12 @@ import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { getActualDepartureTime, getActualEndTime } from '@/lib/utils/trip-time';
+import {
+    getActualDepartureTime,
+    getActualEndTime,
+    hasArrivalImpactDelay,
+    hasDepartureDelay,
+} from '@/lib/utils/trip-time';
 
 export default function TripsPage() {
     const router = useRouter();
@@ -69,6 +74,10 @@ export default function TripsPage() {
                             const { trip } = booking;
                             const departure = getActualDepartureTime(trip);
                             const arrival = getActualEndTime(trip) ?? new Date(trip.endTime);
+                            const scheduledDeparture = new Date(trip.departureTime);
+                            const scheduledArrival = new Date(trip.endTime);
+                            const isDepartureDelayed = hasDepartureDelay(trip);
+                            const isArrivalDelayed = hasArrivalImpactDelay(trip);
                             const now = new Date();
                             
                             // Calculate progress
@@ -100,7 +109,12 @@ export default function TripsPage() {
                                                 <p className="text-[10px] font-medium text-muted-foreground mb-0.5 truncate opacity-60">
                                                     {trip.route?.name.split(' - ')[0]}
                                                 </p>
-                                                <p className="text-xl font-bold text-[#802222] dark:text-rose-400 leading-none tabular-nums">{format(departure, 'HH:mm')}</p>
+                                                {isDepartureDelayed && (
+                                                    <p className="text-[10px] font-medium text-muted-foreground line-through opacity-60 tabular-nums">
+                                                        Gốc: {format(scheduledDeparture, 'HH:mm')} {format(scheduledDeparture, 'dd/MM/yyyy')}
+                                                    </p>
+                                                )}
+                                                <p className={`text-xl font-bold leading-none tabular-nums ${isDepartureDelayed ? 'text-rose-600 dark:text-rose-400' : 'text-[#802222] dark:text-rose-400'}`}>{format(departure, 'HH:mm')}</p>
                                                 <p className="text-[10px] font-medium text-muted-foreground mt-1 opacity-60 tabular-nums">{format(departure, 'dd/MM/yyyy')}</p>
                                             </div>
      
@@ -123,7 +137,12 @@ export default function TripsPage() {
                                                 <p className="text-[10px] font-medium text-muted-foreground mb-0.5 truncate opacity-60">
                                                     {trip.route?.name.split(' - ')[1]}
                                                 </p>
-                                                <p className="text-xl font-bold text-[#802222] dark:text-rose-400 leading-none tabular-nums">{format(arrival, 'HH:mm')}</p>
+                                                {isArrivalDelayed && (
+                                                    <p className="text-[10px] font-medium text-muted-foreground line-through opacity-60 tabular-nums">
+                                                        Gốc: {format(scheduledArrival, 'HH:mm')} {format(scheduledArrival, 'dd/MM/yyyy')}
+                                                    </p>
+                                                )}
+                                                <p className={`text-xl font-bold leading-none tabular-nums ${isArrivalDelayed ? 'text-rose-600 dark:text-rose-400' : 'text-[#802222] dark:text-rose-400'}`}>{format(arrival, 'HH:mm')}</p>
                                                 <p className="text-[10px] font-medium text-muted-foreground mt-1 opacity-60 tabular-nums">{format(arrival, 'dd/MM/yyyy')}</p>
                                             </div>
                                         </div>

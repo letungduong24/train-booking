@@ -30,7 +30,12 @@ import { TableSkeleton } from "@/components/custom/table-skeleton"
 import { CreateTripDialog } from "./create-trip-dialog"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { getActualDepartureTime, getActualEndTime } from "@/lib/utils/trip-time"
+import {
+    getActualDepartureTime,
+    getActualEndTime,
+    hasArrivalImpactDelay,
+    hasDepartureDelay,
+} from "@/lib/utils/trip-time"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -153,10 +158,17 @@ export function TripsTable() {
             },
             cell: ({ row }) => {
                 const datetime = getActualDepartureTime(row.original);
+                const originalDateTime = new Date(row.getValue("departureTime"));
+                const isDelayed = hasDepartureDelay(row.original);
                 return (
                     <div>
+                        {isDelayed && (
+                            <div className="text-xs text-muted-foreground line-through">
+                                Gốc: {originalDateTime.toLocaleDateString('vi-VN')} {originalDateTime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                            </div>
+                        )}
                         <div className="font-medium">{datetime.toLocaleDateString('vi-VN')}</div>
-                        <div className="text-sm text-muted-foreground">{datetime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</div>
+                        <div className={`text-sm ${isDelayed ? 'text-rose-600 font-semibold' : 'text-muted-foreground'}`}>{datetime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</div>
                     </div>
                 )
             },
@@ -182,10 +194,17 @@ export function TripsTable() {
             },
             cell: ({ row }) => {
                 const datetime = getActualEndTime(row.original) ?? new Date(row.getValue("endTime"));
+                const originalDateTime = new Date(row.getValue("endTime"));
+                const isDelayed = hasArrivalImpactDelay(row.original);
                 return (
                     <div>
+                        {isDelayed && (
+                            <div className="text-xs text-muted-foreground line-through">
+                                Gốc: {originalDateTime.toLocaleDateString('vi-VN')} {originalDateTime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                            </div>
+                        )}
                         <div className="font-medium">{datetime.toLocaleDateString('vi-VN')}</div>
-                        <div className="text-sm text-muted-foreground">{datetime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</div>
+                        <div className={`text-sm ${isDelayed ? 'text-rose-600 font-semibold' : 'text-muted-foreground'}`}>{datetime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</div>
                     </div>
                 )
             },

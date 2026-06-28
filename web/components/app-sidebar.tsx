@@ -217,7 +217,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <div className="flex flex-col gap-0">
                 <span className="text-lg font-bold tracking-tight text-zinc-900 dark:text-white">Railflow</span>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#802222]/60 -mt-1">
-                    {isAdminView ? "Admin Panel" : isDriverView ? "Driver Panel" : "User Panel"}
+                    {isAdminView ? "Khu vực quản trị" : isDriverView ? "Khu vực lái tàu" : "Khu vực khách hàng"}
                 </span>
               </div>
             </div>

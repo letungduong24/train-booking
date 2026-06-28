@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { BookingTimer } from '@/features/booking/components/booking-timer';
 import Link from 'next/link';
-import { getActualDepartureTime } from '@/lib/utils/trip-time';
+import { getActualDepartureTime, hasDepartureDelay } from '@/lib/utils/trip-time';
 
 interface DashboardTripCardProps {
     booking: Booking;
@@ -60,6 +60,8 @@ export function DashboardTripCard({ booking, showStatus = true }: DashboardTripC
     const metadata = booking.metadata;
     const passengerCount = booking.tickets?.length || metadata?.passengers?.length || metadata?.seatIds?.length || 0;
     const actualDepartureTime = getActualDepartureTime(booking.trip);
+    const originalDepartureTime = new Date(booking.trip.departureTime);
+    const isDepartureDelayed = hasDepartureDelay(booking.trip);
 
     return (
         <div 
@@ -116,6 +118,11 @@ export function DashboardTripCard({ booking, showStatus = true }: DashboardTripC
                     <div className="flex gap-4">
                         <div className="flex flex-col">
                             <p className="text-[10px] font-medium text-muted-foreground opacity-70 leading-none">Khởi hành</p>
+                            {isDepartureDelayed && (
+                                <span className="text-[10px] font-medium text-muted-foreground line-through mt-1 leading-none">
+                                    Gốc: {format(originalDepartureTime, "HH:mm")} {format(originalDepartureTime, "dd/MM/yyyy")}
+                                </span>
+                            )}
                             <span className="text-base font-semibold text-[#802222] dark:text-rose-400 tabular-nums leading-none mt-1">
                                 {format(actualDepartureTime, "HH:mm")}
                             </span>

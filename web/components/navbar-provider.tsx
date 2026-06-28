@@ -31,19 +31,17 @@ export function NavbarProvider({ children }: NavbarProviderProps) {
         // { href: '/about', label: 'Giới thiệu', active: pathname === '/about' },
         // { href: '/services', label: 'Dịch vụ', active: pathname === '/services' },
         { href: '/booking', label: 'Đặt vé', active: pathname === '/booking' }, // Allow guests to see booking
-        { href: '/contact', label: 'Liên hệ', active: pathname === '/contact' },
     ];
 
     const userLinks: Navbar01NavLink[] = [
         { href: '/', label: 'Trang chủ', active: pathname === '/' },
-        { href: '/dashboard', label: 'Quản lý', active: pathname === '/dashboard' },
+        { href: '/dashboard', label: 'Khu vực khách hàng', active: pathname === '/dashboard' },
         { href: '/booking', label: 'Đặt vé', active: pathname === '/booking' },
-        { href: '/contact', label: 'Liên hệ', active: pathname === '/contact' },
     ];
 
     const adminLinks: Navbar01NavLink[] = [
         ...userLinks,
-        { href: '/admin', label: 'Admin Dashboard', active: pathname?.startsWith('/admin') },
+        { href: '/admin', label: 'Khu vực quản trị', active: pathname?.startsWith('/admin') },
     ];
 
     const navigationLinks = isMounted && user

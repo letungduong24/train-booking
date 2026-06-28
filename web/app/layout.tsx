@@ -7,8 +7,8 @@ import { SocketInitializer } from "@/components/providers/socket-initializer";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
-  title: "Quản lý Tuyến Đường | Railway Management System",
-  description: "Hệ thống quản lý tuyến đường, ga tàu và lịch trình tàu hỏa",
+  title: "Railflow | Đặt vé tàu trực tuyến",
+  description: "Nền tảng đặt vé tàu, thanh toán, quản lý chuyến đi và theo dõi hành trình trực tuyến",
 };
 
 export default function RootLayout({

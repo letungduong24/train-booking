@@ -10,7 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
 import { format, isPast, isToday, isThisWeek } from "date-fns"
 import { vi } from "date-fns/locale"
-import { getActualDepartureTime, getActualEndTime } from "@/lib/utils/trip-time"
+import {
+  getActualDepartureTime,
+  getActualEndTime,
+  hasArrivalImpactDelay,
+  hasDepartureDelay,
+} from "@/lib/utils/trip-time"
 
 export default function TripsPage() {
   const [trips, setTrips] = React.useState<any[]>([]);
@@ -62,6 +67,10 @@ export default function TripsPage() {
     const actualEndTime = getActualEndTime(trip);
     const timeStr = format(getActualDepartureTime(trip), "HH:mm - dd/MM/yyyy", { locale: vi });
     const endTimeStr = actualEndTime ? format(actualEndTime, "HH:mm - dd/MM/yyyy", { locale: vi }) : "N/A";
+    const originalTimeStr = format(new Date(trip.departureTime), "HH:mm - dd/MM/yyyy", { locale: vi });
+    const originalEndTimeStr = trip.endTime ? format(new Date(trip.endTime), "HH:mm - dd/MM/yyyy", { locale: vi }) : "N/A";
+    const isDepartureDelayed = hasDepartureDelay(trip);
+    const isArrivalDelayed = hasArrivalImpactDelay(trip);
 
     return (
       <Card
@@ -86,13 +95,19 @@ export default function TripsPage() {
                   {trip.route?.name || "Lộ trình di chuyển"}
                 </p>
                 <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[11px] text-muted-foreground font-medium">
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-start gap-1">
                     <Clock className="size-3" />
-                    Đi: {timeStr}
+                    <span className="flex flex-col gap-0.5">
+                      {isDepartureDelayed && <span className="line-through opacity-60">Đi gốc: {originalTimeStr}</span>}
+                      <span className={isDepartureDelayed ? "text-rose-600 font-bold" : ""}>Đi: {timeStr}</span>
+                    </span>
                   </span>
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-start gap-1">
                     <Clock className="size-3" />
-                    Đến: {endTimeStr}
+                    <span className="flex flex-col gap-0.5">
+                      {isArrivalDelayed && <span className="line-through opacity-60">Đến gốc: {originalEndTimeStr}</span>}
+                      <span className={isArrivalDelayed ? "text-rose-600 font-bold" : ""}>Đến: {endTimeStr}</span>
+                    </span>
                   </span>
                 </div>
               </div>

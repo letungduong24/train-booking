@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { format } from "date-fns"
 import { vi } from "date-fns/locale"
-import { getActualDepartureTime } from "@/lib/utils/trip-time"
+import { getActualDepartureTime, hasDepartureDelay } from "@/lib/utils/trip-time"
 
 export default function Page() {
   const [data, setData] = React.useState<any>(null);
@@ -139,6 +139,8 @@ export default function Page() {
                 <div className="space-y-3.5">
                   {recentTrips.map((trip: any) => {
                     const timeStr = format(getActualDepartureTime(trip), "HH:mm, dd/MM/yyyy", { locale: vi });
+                    const originalTimeStr = format(new Date(trip.departureTime), "HH:mm, dd/MM/yyyy", { locale: vi });
+                    const isDepartureDelayed = hasDepartureDelay(trip);
                     return (
                       <Link
                         key={trip.id}
@@ -156,6 +158,9 @@ export default function Page() {
                         </div>
                         <div className="text-right flex items-center gap-3">
                           <div>
+                            {isDepartureDelayed && (
+                              <p className="text-[10px] font-medium text-muted-foreground line-through">Gốc: {originalTimeStr}</p>
+                            )}
                             <p className="text-xs font-semibold text-gray-900 dark:text-white">{timeStr}</p>
                             <Badge className="text-[8px] px-2 py-0.5 rounded-full bg-orange-50 text-orange-600 dark:bg-orange-950/30 dark:text-orange-400 border-none font-semibold mt-0.5">
                               {trip.status === "SCHEDULED" ? "Sắp chạy" : trip.status === "IN_PROGRESS" ? "Đang chạy" : "Đã hoàn thành"}
