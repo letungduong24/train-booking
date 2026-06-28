@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as QRCode from 'qrcode';
 import { ConfigService } from '@nestjs/config';
+import * as fs from 'fs';
+import * as path from 'path';
 const PDFDocument = require('pdfkit');
 
 @Injectable()
@@ -8,6 +10,25 @@ export class TicketService {
   private readonly logger = new Logger(TicketService.name);
 
   constructor(private readonly configService: ConfigService) {}
+
+  private resolveFontPath(fileName: string, envKey: string) {
+    const configuredPath = this.configService.get<string>(envKey);
+    const candidates = [
+      configuredPath,
+      path.join(__dirname, '..', '..', 'assets', 'fonts', fileName),
+      path.join(process.cwd(), 'dist', 'src', 'assets', 'fonts', fileName),
+      path.join(process.cwd(), 'src', 'assets', 'fonts', fileName),
+    ].filter(Boolean) as string[];
+
+    const fontPath = candidates.find((candidate) => fs.existsSync(candidate));
+    if (!fontPath) {
+      throw new Error(
+        `Font ${fileName} not found. Checked: ${candidates.join(', ')}`,
+      );
+    }
+
+    return fontPath;
+  }
 
   async generateQRCode(text: string): Promise<Buffer> {
     try {
@@ -67,12 +88,14 @@ export class TicketService {
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', (err: Error) => reject(err));
 
-        // Load Vietnamese fonts
-        const fontPath = 'c:\\Study\\train-booking\\web\\public\\fonts\\Roboto\\static\\Roboto-Regular.ttf';
-        const fontBoldPath = 'c:\\Study\\train-booking\\web\\public\\fonts\\Roboto\\static\\Roboto-Bold.ttf';
-        
-        doc.registerFont('Roboto', fontPath);
-        doc.registerFont('Roboto-Bold', fontBoldPath);
+        doc.registerFont(
+          'Roboto',
+          this.resolveFontPath('Roboto-Regular.ttf', 'TICKET_FONT_REGULAR_PATH'),
+        );
+        doc.registerFont(
+          'Roboto-Bold',
+          this.resolveFontPath('Roboto-Bold.ttf', 'TICKET_FONT_BOLD_PATH'),
+        );
         doc.font('Roboto');
 
         tickets.forEach((ticket: any, index: number) => {
