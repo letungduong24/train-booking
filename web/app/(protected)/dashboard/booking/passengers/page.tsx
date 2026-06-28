@@ -49,12 +49,19 @@ function PassengersPageContent() {
         }
     }, [booking]);
 
-    // Redirect if not PENDING
-    // Redirect if not PENDING and not CANCELLED
     useEffect(() => {
-        if (booking && booking.status !== 'PENDING' && booking.status !== 'CANCELLED') {
-            router.push(`/dashboard/booking/payment-result?error=Đơn hàng đã hết hạn hoặc không hợp lệ.`);
+        if (!booking || booking.status === 'PENDING' || booking.status === 'CANCELLED') {
+            return;
         }
+
+        if (booking.status === 'PAID') {
+            router.push(`/dashboard/booking/payment-result?success=true&orderId=${booking.code}`);
+            return;
+        }
+
+        router.push(
+            `/dashboard/booking/payment-result?success=false&orderId=${booking.code}&error=${encodeURIComponent('Đơn hàng đã thanh toán thất bại. Vui lòng kiểm tra lịch sử đơn hàng hoặc đặt lại vé.')}`,
+        );
     }, [booking, bookingCode, router]);
 
     if (!bookingCode) {
@@ -174,9 +181,9 @@ function PassengersPageContent() {
                         bookingCode: data.bookingCode
                     });
                 },
-                onError: (error) => {
+                onError: (error: any) => {
                     console.error('Booking failed:', error);
-                    toast.error('Có lỗi xảy ra khi cập nhật thông tin hành khách');
+                    toast.error(error.response?.data?.message || 'Có lỗi xảy ra khi cập nhật thông tin hành khách');
                 }
             }
         );

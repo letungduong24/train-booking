@@ -79,7 +79,7 @@ export class TripDelayReportsService {
     });
 
     if (!trip) {
-      throw new NotFoundException(`Trip #${dto.tripId} không tồn tại`);
+      throw new NotFoundException(`Chuyến tàu #${dto.tripId} không tồn tại`);
     }
 
     if (trip.driverId !== driverId) {
@@ -87,7 +87,7 @@ export class TripDelayReportsService {
     }
 
     if (!this.isTripReportable(trip)) {
-      throw new BadRequestException('Chuyến tàu đã kết thúc hoặc không còn hoạt động. Không thể báo cáo delay.');
+      throw new BadRequestException('Chuyến tàu đã kết thúc hoặc không còn hoạt động. Không thể báo cáo trễ.');
     }
 
     this.validateDelayTypeForTrip(dto.type, trip.status);
@@ -102,7 +102,7 @@ export class TripDelayReportsService {
     });
 
     if (existingPending) {
-      throw new ConflictException('Chuyến này đã có báo cáo delay cùng loại đang chờ duyệt. Không thể gửi trùng.');
+      throw new ConflictException('Chuyến này đã có báo cáo trễ cùng loại đang chờ duyệt. Không thể gửi trùng.');
     }
 
     return this.prisma.tripDelayReport.create({
@@ -147,11 +147,11 @@ export class TripDelayReportsService {
     });
 
     if (!report) {
-      throw new NotFoundException('Không tìm thấy báo cáo delay');
+      throw new NotFoundException('Không tìm thấy báo cáo trễ');
     }
 
     if (report.status !== TripDelayReportStatus.PENDING) {
-      throw new BadRequestException('Báo cáo delay này đã được xử lý.');
+      throw new BadRequestException('Báo cáo trễ này đã được xử lý.');
     }
 
     this.validateDelayTypeForTrip(report.type, report.trip.status);
@@ -179,11 +179,11 @@ export class TripDelayReportsService {
     });
 
     if (!report) {
-      throw new NotFoundException('Không tìm thấy báo cáo delay');
+      throw new NotFoundException('Không tìm thấy báo cáo trễ');
     }
 
     if (report.status !== TripDelayReportStatus.PENDING) {
-      throw new BadRequestException('Báo cáo delay này đã được xử lý.');
+      throw new BadRequestException('Báo cáo trễ này đã được xử lý.');
     }
 
     return this.prisma.tripDelayReport.update({

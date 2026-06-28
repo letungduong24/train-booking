@@ -101,7 +101,7 @@ export class SeatIssuesService {
     });
 
     if (!trip) {
-      throw new NotFoundException(`Trip #${tripId} not found or not assigned to you`);
+      throw new NotFoundException('Không tìm thấy chuyến tàu hoặc bạn không được phân công chuyến này');
     }
 
     return {
@@ -152,7 +152,7 @@ export class SeatIssuesService {
     });
 
     if (!trip) {
-      throw new NotFoundException(`Trip #${tripId} not found`);
+      throw new NotFoundException('Không tìm thấy chuyến tàu');
     }
 
     if (trip.driverId !== driverId) {
@@ -174,11 +174,11 @@ export class SeatIssuesService {
     });
 
     if (!seat) {
-      throw new NotFoundException(`Seat #${seatId} not found`);
+      throw new NotFoundException('Không tìm thấy ghế');
     }
 
     if (seat.coach.trainId !== trip.trainId) {
-      throw new BadRequestException('Selected seat does not belong to this trip train.');
+      throw new BadRequestException('Ghế đã chọn không thuộc tàu của chuyến này.');
     }
 
     const existingOpenIssue = await this.prisma.seatIssueReport.findFirst({
@@ -326,7 +326,7 @@ export class SeatIssuesService {
     });
 
     if (!issue) {
-      throw new NotFoundException(`Issue report #${id} not found`);
+      throw new NotFoundException('Không tìm thấy báo cáo sự cố');
     }
 
     return issue;
@@ -339,7 +339,7 @@ export class SeatIssuesService {
     });
 
     if (!report) {
-      throw new NotFoundException(`Issue report #${id} not found`);
+      throw new NotFoundException('Không tìm thấy báo cáo sự cố');
     }
 
     if (report.status !== SeatIssueStatus.PENDING) {
@@ -375,7 +375,7 @@ export class SeatIssuesService {
     });
 
     if (!report) {
-      throw new NotFoundException(`Issue report #${id} not found`);
+      throw new NotFoundException('Không tìm thấy báo cáo sự cố');
     }
 
     if (report.status !== SeatIssueStatus.PENDING) {
@@ -561,7 +561,7 @@ export class SeatIssuesService {
     });
 
     if (!report) {
-      throw new NotFoundException(`Issue report #${id} not found`);
+      throw new NotFoundException('Không tìm thấy báo cáo sự cố');
     }
 
     // Find affected ticket
@@ -875,7 +875,7 @@ export class SeatIssuesService {
     });
 
     if (!newSeat) {
-      throw new NotFoundException(`Seat #${newSeatId} not found`);
+      throw new NotFoundException('Không tìm thấy ghế thay thế');
     }
 
     if (
@@ -884,7 +884,7 @@ export class SeatIssuesService {
       newSeat.tier !== report.seat.tier ||
       newSeat.coach.trainId !== report.trip.trainId
     ) {
-      throw new BadRequestException('Selected seat is not a valid replacement option.');
+      throw new BadRequestException('Ghế đã chọn không phải phương án thay thế hợp lệ.');
     }
 
     try {

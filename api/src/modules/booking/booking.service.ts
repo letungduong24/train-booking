@@ -1018,6 +1018,17 @@ export class BookingService {
 
     // Validate Passengers & Calculate Prices
     const seatIds = passengers.map((p) => p.seatId);
+    const reservedSeatIds = new Set<string>(metadata?.seatIds ?? []);
+    if (
+      reservedSeatIds.size > 0 &&
+      (seatIds.length !== reservedSeatIds.size ||
+        seatIds.some((seatId) => !reservedSeatIds.has(seatId)))
+    ) {
+      throw new BadRequestException(
+        'Danh sách ghế không khớp với đơn giữ chỗ ban đầu. Vui lòng đặt lại.',
+      );
+    }
+
     const seats = await this.prisma.seat.findMany({
       where: { id: { in: seatIds } },
       include: { coach: { include: { template: true } } },
@@ -1025,6 +1036,69 @@ export class BookingService {
 
     if (seats.length !== seatIds.length) {
       throw new BadRequestException('Ghế không hợp lệ');
+    }
+
+    const lockSegments = seatIds.map((seatId) => ({
+      seatId,
+      fromStationIndex: fromStation.index,
+      toStationIndex: toStation.index,
+    }));
+
+    const occupiedTickets = await this.prisma.ticket.findMany({
+      where: {
+        tripId: trip.id,
+        seatId: { in: seatIds },
+        booking: { status: 'PAID' },
+        fromStationIndex: { lt: toStation.index },
+        toStationIndex: { gt: fromStation.index },
+      },
+      select: {
+        seat: {
+          select: {
+            name: true,
+            coach: { select: { name: true } },
+          },
+        },
+      },
+    });
+
+    if (occupiedTickets.length > 0) {
+      const occupiedNames = occupiedTickets
+        .map((ticket) => `${ticket.seat.name} (${ticket.seat.coach.name})`)
+        .join(', ');
+      throw new BadRequestException(
+        `Ghế ${occupiedNames} đã được đặt trên chặng này. Vui lòng chọn ghế khác.`,
+      );
+    }
+
+    const lockedByOthers = await this.findOverlappingSeatLocks(
+      trip.id,
+      lockSegments,
+      code,
+    );
+
+    if (lockedByOthers.length > 0) {
+      throw new BadRequestException(
+        'Ghế đang được giữ bởi người khác trên chặng này. Vui lòng chọn ghế khác.',
+      );
+    }
+
+    const lockTimeMin =
+      this.configService.get<number>('BOOKING_LOCK_TIME_MINUTES') || 10;
+    const lockTimeSec = lockTimeMin * 60;
+    for (const segment of lockSegments) {
+      const isLocked = await this.acquireSeatSegmentLock(
+        trip.id,
+        segment,
+        code,
+        lockTimeSec,
+      );
+
+      if (!isLocked) {
+        throw new BadRequestException(
+          'Ghế đang được giữ bởi người khác trên chặng này. Vui lòng chọn ghế khác.',
+        );
+      }
     }
 
     const passengerGroups = await this.prisma.passengerGroup.findMany();
@@ -1412,6 +1486,12 @@ export class BookingService {
             return "LOCKED"
           end
         end
+      end
+
+      local current = redis.call("GET", KEYS[2])
+      if current and current == ARGV[1] then
+        redis.call("EXPIRE", KEYS[2], ARGV[4])
+        return "OK"
       end
 
       return redis.call("SET", KEYS[2], ARGV[1], "EX", ARGV[4], "NX")

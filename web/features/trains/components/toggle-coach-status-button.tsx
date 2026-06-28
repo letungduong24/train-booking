@@ -15,10 +15,10 @@ interface ToggleCoachStatusButtonProps {
 
 export function ToggleCoachStatusButton({ coach }: ToggleCoachStatusButtonProps) {
     const updateCoach = useUpdateCoach()
-    const isLocked = coach.status === 'LOCKED'
+    const isLocked = coach.status === 'MAINTENANCE' || coach.status === 'INACTIVE'
 
     const handleToggle = async () => {
-        const newStatus = isLocked ? 'ACTIVE' : 'LOCKED'
+        const newStatus = isLocked ? 'ACTIVE' : 'MAINTENANCE'
 
         try {
             await updateCoach.mutateAsync({

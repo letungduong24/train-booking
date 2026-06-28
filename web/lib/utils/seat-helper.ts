@@ -40,6 +40,8 @@ export function getSeatStatusColor(status: SeatStatus | BookingStatus, isAdmin: 
             return `bg-primary text-white font-bold ${cursorClass} border-primary`;
         case 'DISABLED':
             return `bg-gray-300 dark:bg-muted text-muted-foreground border-transparent ${isAdmin ? 'cursor-pointer' : 'cursor-not-allowed'}`; // Distinct gray in light, muted in dark
+        case 'MAINTENANCE':
+            return `bg-amber-100 text-amber-700 border-amber-200 ${isAdmin ? 'cursor-pointer' : 'cursor-not-allowed'}`;
         case 'HOLDING':
             return `bg-[#E5BA41] text-white border-[#E5BA41] ${cursorClass}`;
         default:
@@ -61,6 +63,8 @@ export function getSeatStatusLabel(status: SeatStatus | BookingStatus, isAdmin: 
             return 'Đã đặt';
         case 'DISABLED':
             return 'Đã vô hiệu hóa';
+        case 'MAINTENANCE':
+            return 'Đang bảo trì';
         case 'LOCKED': // Runtime locked
             return 'Đang giữ chỗ';
         case 'HOLDING':

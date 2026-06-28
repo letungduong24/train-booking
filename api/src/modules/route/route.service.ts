@@ -22,7 +22,7 @@ export class RouteService {
       let activeNetworkId = networkId;
       if (!activeNetworkId) {
         const latest = await tx.network.findFirst({ orderBy: { version: 'desc' } });
-        if (!latest) throw new BadRequestException('No network available');
+        if (!latest) throw new BadRequestException('Chưa có dữ liệu network để tạo tuyến đường');
         activeNetworkId = latest.id;
       }
 
@@ -48,7 +48,7 @@ export class RouteService {
         let cumulativeDistance = 0;
         for (let i = 0; i < stations.length; i++) {
           const st = stationMap.get(stations[i].id);
-          if (!st) throw new BadRequestException(`Station ${stations[i].id} not found`);
+          if (!st) throw new BadRequestException('Không tìm thấy ga trong network của tuyến đường');
 
           if (i > 0) {
             const prev = stationMap.get(stations[i - 1].id)!;
@@ -149,7 +149,7 @@ export class RouteService {
       });
 
       if (!currentRoute) {
-        throw new BadRequestException('Route not found');
+        throw new BadRequestException('Không tìm thấy tuyến đường');
       }
 
       const newStatus = status ? status.toUpperCase() as RouteStatus : currentRoute.status;
@@ -173,7 +173,7 @@ export class RouteService {
 
       // Ensure we cannot revert from ACTIVE/INACTIVE back to DRAFT
       if (currentRoute.status !== RouteStatus.DRAFT && newStatus === RouteStatus.DRAFT) {
-        throw new BadRequestException('Cannot revert an ACTIVE or INACTIVE route back to DRAFT.');
+        throw new BadRequestException('Không thể chuyển tuyến đã ACTIVE hoặc INACTIVE về DRAFT.');
       }
 
       // Find the latest version for this route code to ensure monotonic progression
@@ -221,7 +221,7 @@ export class RouteService {
         // If stations are not explicitly provided in DTO, copy them from the old route
         if (!stations) {
           if (targetNetworkId !== currentRoute.networkId) {
-            throw new BadRequestException('Must provide new stations when changing network.');
+            throw new BadRequestException('Cần cung cấp danh sách ga mới khi thay đổi network.');
           }
           const creates = currentRoute.stations.map((st) =>
             tx.routeStation.create({
@@ -277,7 +277,7 @@ export class RouteService {
           let cumulativeDistance = 0;
           for (let i = 0; i < stations.length; i++) {
             const st = stationMap.get(stations[i].id);
-            if (!st) throw new BadRequestException(`Station ${stations[i].id} not found`);
+            if (!st) throw new BadRequestException('Không tìm thấy ga trong network của tuyến đường');
 
             if (i > 0) {
               const prev = stationMap.get(stations[i - 1].id)!;
@@ -369,7 +369,7 @@ export class RouteService {
       });
 
       if (!stationToRemove) {
-        throw new Error('Station not found in this route');
+        throw new BadRequestException('Không tìm thấy ga trong tuyến đường này');
       }
 
       const removedIndex = stationToRemove.index;

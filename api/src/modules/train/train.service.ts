@@ -88,7 +88,7 @@ export class TrainService {
       },
     });
     if (!train) {
-      throw new NotFoundException(`Train #${id} not found`);
+      throw new NotFoundException('Không tìm thấy tàu');
     }
     return train;
   }

@@ -34,7 +34,7 @@ export class WalletService {
 
   async forgotPin(userId: string) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) throw new BadRequestException('User not found');
+    if (!user) throw new BadRequestException('Không tìm thấy người dùng');
 
     const token = randomBytes(32).toString('hex');
     const expires = new Date();
@@ -80,11 +80,11 @@ export class WalletService {
 
   async setupPin(userId: string, dto: SetupPinDto) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) throw new BadRequestException('User not found');
+    if (!user) throw new BadRequestException('Không tìm thấy người dùng');
 
     if (user.walletPin) {
       throw new BadRequestException(
-        'PIN already set. Use change-pin to update.',
+        'Mã PIN đã được thiết lập. Vui lòng dùng chức năng đổi mã PIN.',
       );
     }
 
@@ -94,7 +94,7 @@ export class WalletService {
       data: { walletPin: hashedPin },
     });
 
-    return { message: 'PIN setup successful' };
+    return { message: 'Thiết lập mã PIN thành công' };
   }
 
   async getWalletInfo(userId: string) {
@@ -121,10 +121,10 @@ export class WalletService {
     const amount = this.normalizeAmount(dto.amount);
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) throw new BadRequestException('User not found');
+    if (!user) throw new BadRequestException('Không tìm thấy người dùng');
 
     if (!user.walletPin) {
-      throw new BadRequestException('Wallet PIN not set');
+      throw new BadRequestException('Ví chưa thiết lập mã PIN');
     }
 
     const isPinValid = await bcrypt.compare(pin, user.walletPin);
@@ -138,7 +138,7 @@ export class WalletService {
         data: { balance: { decrement: amount } },
       });
       if (debit.count !== 1) {
-        throw new BadRequestException('Insufficient balance');
+        throw new BadRequestException('Số dư ví không đủ');
       }
 
       await tx.transaction.create({
@@ -155,17 +155,17 @@ export class WalletService {
       });
     });
 
-    return { message: 'Withdraw request submitted' };
+    return { message: 'Đã gửi yêu cầu rút tiền' };
   }
 
   async payBooking(userId: string, dto: PayBookingWalletDto) {
     const { bookingCode, pin } = dto;
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) throw new BadRequestException('User not found');
+    if (!user) throw new BadRequestException('Không tìm thấy người dùng');
 
     if (!user.walletPin) {
-      throw new BadRequestException('Wallet PIN not set');
+      throw new BadRequestException('Ví chưa thiết lập mã PIN');
     }
 
     const isPinValid = await bcrypt.compare(pin, user.walletPin);
@@ -177,11 +177,11 @@ export class WalletService {
     const booking = await this.prisma.booking.findUnique({
       where: { code: bookingCode },
     });
-    if (!booking) throw new BadRequestException('Booking not found');
+    if (!booking) throw new BadRequestException('Không tìm thấy đơn hàng');
     if (booking.status !== 'PENDING')
-      throw new BadRequestException('Booking is not pending');
+      throw new BadRequestException('Đơn hàng không ở trạng thái chờ thanh toán');
     if (booking.userId !== userId)
-      throw new BadRequestException('Booking does not belong to user');
+      throw new BadRequestException('Đơn hàng không thuộc về người dùng này');
 
     const amount = this.normalizeAmount(booking.totalPrice);
     const idempotencyKey = `PAYMENT:WALLET:${bookingCode}`;
@@ -217,7 +217,7 @@ export class WalletService {
           data: { balance: { decrement: amount } },
         });
         if (debit.count !== 1) {
-          throw new BadRequestException('Insufficient wallet balance');
+          throw new BadRequestException('Số dư ví không đủ');
         }
       });
 
@@ -249,7 +249,7 @@ export class WalletService {
       throw error;
     }
 
-    return { message: 'Payment successful', bookingCode };
+    return { message: 'Thanh toán thành công', bookingCode };
   }
 
   async refundToWallet(
@@ -294,41 +294,41 @@ export class WalletService {
     const transaction = await this.prisma.transaction.findUnique({
       where: { id: transactionId },
     });
-    if (!transaction) throw new BadRequestException('Transaction not found');
+    if (!transaction) throw new BadRequestException('Không tìm thấy giao dịch');
     if (transaction.type !== 'WITHDRAW')
-      throw new BadRequestException('Not a withdraw transaction');
+      throw new BadRequestException('Giao dịch không phải yêu cầu rút tiền');
     if (transaction.status !== 'PENDING')
-      throw new BadRequestException('Transaction already processed');
+      throw new BadRequestException('Giao dịch đã được xử lý');
 
     const result = await this.prisma.transaction.updateMany({
       where: { id: transactionId, status: 'PENDING' },
       data: { status: 'COMPLETED' },
     });
     if (result.count !== 1) {
-      throw new BadRequestException('Transaction already processed');
+      throw new BadRequestException('Giao dịch đã được xử lý');
     }
 
-    return { message: 'Withdraw approved' };
+    return { message: 'Đã duyệt yêu cầu rút tiền' };
   }
 
   async rejectWithdraw(transactionId: string) {
     const transaction = await this.prisma.transaction.findUnique({
       where: { id: transactionId },
     });
-    if (!transaction) throw new BadRequestException('Transaction not found');
+    if (!transaction) throw new BadRequestException('Không tìm thấy giao dịch');
     if (transaction.type !== 'WITHDRAW' || transaction.status !== 'PENDING')
-      throw new BadRequestException('Invalid transaction');
+      throw new BadRequestException('Giao dịch không hợp lệ');
 
     await this.prisma.$transaction(async (tx) => {
       const result = await tx.transaction.updateMany({
         where: { id: transactionId, status: 'PENDING' },
         data: {
           status: 'FAILED',
-          description: transaction.description + ' (Rejected)',
+          description: `${transaction.description} (Từ chối)`,
         },
       });
       if (result.count !== 1) {
-        throw new BadRequestException('Transaction already processed');
+        throw new BadRequestException('Giao dịch đã được xử lý');
       }
 
       await tx.user.update({
@@ -337,7 +337,7 @@ export class WalletService {
       });
     });
 
-    return { message: 'Withdraw rejected' };
+    return { message: 'Đã từ chối yêu cầu rút tiền' };
   }
   async getPendingWithdrawals() {
     return this.prisma.transaction.findMany({

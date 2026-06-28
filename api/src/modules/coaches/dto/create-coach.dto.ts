@@ -1,4 +1,5 @@
-import { IsUUID, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsUUID } from 'class-validator';
+import { CoachStatus } from '../../../generated/client';
 
 export class CreateCoachDto {
   @IsUUID()
@@ -8,6 +9,6 @@ export class CreateCoachDto {
   templateId: string;
 
   @IsOptional()
-  @IsString()
-  status?: string;
+  @IsEnum(CoachStatus, { message: 'Trạng thái toa không hợp lệ' })
+  status?: CoachStatus;
 }

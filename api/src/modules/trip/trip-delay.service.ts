@@ -19,12 +19,12 @@ export class TripDelayService {
     });
 
     if (!trip) {
-      throw new NotFoundException(`Trip #${tripId} không tồn tại`);
+      throw new NotFoundException(`Chuyến tàu #${tripId} không tồn tại`);
     }
 
     if (trip.status !== 'SCHEDULED') {
       throw new BadRequestException(
-        'Chỉ có thể set departure delay cho chuyến SCHEDULED',
+        'Chỉ có thể báo trễ khởi hành cho chuyến chưa khởi hành',
       );
     }
 
@@ -48,12 +48,12 @@ export class TripDelayService {
     });
 
     if (!trip) {
-      throw new NotFoundException(`Trip #${tripId} không tồn tại`);
+      throw new NotFoundException(`Chuyến tàu #${tripId} không tồn tại`);
     }
 
     if (trip.status !== 'IN_PROGRESS') {
       throw new BadRequestException(
-        'Chỉ có thể set arrival delay cho chuyến IN_PROGRESS',
+        'Chỉ có thể báo trễ đến nơi cho chuyến đang chạy',
       );
     }
 

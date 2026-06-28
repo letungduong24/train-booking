@@ -25,7 +25,7 @@ export class GeojsonController {
         },
     ) {
         if (!files.mapData) {
-            throw new BadRequestException('GeoJSON mapData file is required.');
+            throw new BadRequestException('Vui lòng tải lên file GeoJSON mapData.');
         }
 
         const mapFile = files.mapData[0];
@@ -35,18 +35,18 @@ export class GeojsonController {
 
             const result = await this.geojsonService.processGeojsonData(mapData);
             return {
-                message: 'Successfully synchronized Master Data from GeoJSON.',
+                message: 'Đã đồng bộ dữ liệu nền từ GeoJSON.',
                 data: result,
             };
         } catch (error) {
-            throw new BadRequestException(`Failed to process GeoJSON files: ${error.message}`);
+            throw new BadRequestException(`Không thể xử lý file GeoJSON: ${error.message}`);
         }
     }
     @Get('networks')
     async getNetworks() {
         const networks = await this.geojsonService.getNetworks();
         return {
-            message: 'Successfully retrieved networks list.',
+            message: 'Đã lấy danh sách network.',
             data: networks,
         };
     }
@@ -55,7 +55,7 @@ export class GeojsonController {
     async getNetwork(@Query('networkId') networkId?: string) {
         const network = await this.geojsonService.getNetworkData(networkId);
         return {
-            message: 'Successfully retrieved network data.',
+            message: 'Đã lấy dữ liệu network.',
             data: network,
         };
     }

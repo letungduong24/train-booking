@@ -46,9 +46,8 @@ import { translateRouteStatus, getRouteStatusColor } from "@/lib/utils/route-sta
 import { useQueryClient } from "@tanstack/react-query"
 import { RouteMap } from "@/features/routes/components/route-map"
 import { RouteDetailSkeleton } from "@/features/routes/components/route-detail-skeleton"
-import { EditRouteStationDialog } from "@/features/routes/components/edit-route-station-dialog"
 
-function SortableRow({ id, station, arrayIndex, onDelete, routeId, onSuccess }: any) {
+function SortableRow({ id, station, arrayIndex, onDelete }: any) {
     const {
         attributes,
         listeners,
@@ -97,11 +96,6 @@ function SortableRow({ id, station, arrayIndex, onDelete, routeId, onSuccess }: 
             </TableCell>
             <TableCell className="pr-6">
                 <div className="flex justify-end gap-1">
-                    <EditRouteStationDialog
-                        routeId={routeId}
-                        station={station}
-                        onSuccess={onSuccess}
-                    />
                     <Button
                         variant="ghost"
                         size="icon"
@@ -226,11 +220,6 @@ export default function RouteDetailPage() {
         setHasChanged(true)
     }
 
-    const handleEditStationLocally = (updatedStation: any) => {
-        setItems(prev => prev.map(s => s.stationId === updatedStation.stationId ? updatedStation : s))
-        setHasChanged(true)
-    }
-
     const handleSaveChanges = () => {
         if (!route) return;
         const payload = items.map(s => ({
@@ -258,7 +247,7 @@ export default function RouteDetailPage() {
     }
 
     if (isLoading) return <RouteDetailSkeleton />
-    if (isError || !route) return <div>Route not found</div>
+    if (isError || !route) return <div>Không tìm thấy tuyến đường</div>
 
     const routeName = items.length > 1 ? `${items[0].station?.name} - ${items[items.length - 1].station?.name}` : route.name;
 
@@ -389,7 +378,7 @@ export default function RouteDetailPage() {
                                     <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50">Tên ga dừng</TableHead>
                                     <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50">Tọa độ địa lý</TableHead>
                                     <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50">Cự ly từ ga đầu</TableHead>
-                                    <TableHead className="w-[120px] pr-6 text-right">Thao tác</TableHead>
+                                    <TableHead className="w-[80px] pr-6 text-right">Thao tác</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -405,8 +394,6 @@ export default function RouteDetailPage() {
                                                 station={item}
                                                 arrayIndex={index}
                                                 onDelete={handleRemoveStation}
-                                                routeId={routeId}
-                                                onSuccess={handleEditStationLocally}
                                             />
                                         ))
                                     ) : (

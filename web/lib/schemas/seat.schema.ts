@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Enums
-export const SeatStatusEnum = z.enum(['AVAILABLE', 'DISABLED']);
+export const SeatStatusEnum = z.enum(['AVAILABLE', 'DISABLED', 'MAINTENANCE']);
 export const BookingStatusEnum = z.enum(['AVAILABLE', 'BOOKED', 'LOCKED', 'HOLDING', 'DISABLED']);
 export const SeatTypeEnum = z.enum(['VIP', 'STANDARD', 'ECONOMY', 'OTHER']);
 

@@ -20,7 +20,7 @@ export class TripService {
       where: { id: createTripDto.routeId },
     });
     if (!route) {
-      throw new BadRequestException('Route không tồn tại');
+      throw new BadRequestException('Tuyến đường không tồn tại');
     }
 
     // Validate train exists
@@ -28,7 +28,7 @@ export class TripService {
       where: { id: createTripDto.trainId },
     });
     if (!train) {
-      throw new BadRequestException('Train không tồn tại');
+      throw new BadRequestException('Tàu không tồn tại');
     }
 
     // Validate driver if provided
@@ -267,7 +267,7 @@ export class TripService {
     });
 
     if (!trip) {
-      throw new NotFoundException(`Trip #${id} không tồn tại`);
+      throw new NotFoundException(`Chuyến tàu #${id} không tồn tại`);
     }
 
     let resolvedFrom: any = null;
@@ -299,7 +299,7 @@ export class TripService {
     );
     if (unsupportedKeys.length > 0) {
       throw new BadRequestException(
-        'Chỉ được cập nhật routeId hoặc driverId. Thời gian chạy dùng chức năng delay riêng.',
+        'Chỉ được cập nhật tuyến đường hoặc lái tàu. Thời gian chạy dùng chức năng báo trễ riêng.',
       );
     }
 
@@ -310,17 +310,17 @@ export class TripService {
     }
 
     if (hasRouteUpdate && updateTripDto.routeId?.trim() === '') {
-      throw new BadRequestException('Route không hợp lệ');
+      throw new BadRequestException('Tuyến đường không hợp lệ');
     }
 
     const trip = await this.prisma.trip.findUnique({ where: { id } });
     if (!trip) {
-      throw new NotFoundException(`Trip #${id} không tồn tại`);
+      throw new NotFoundException(`Chuyến tàu #${id} không tồn tại`);
     }
 
     if (trip.status !== TripStatus.SCHEDULED) {
       throw new BadRequestException(
-        'Chỉ có thể cập nhật route hoặc lái tàu khi chuyến còn SCHEDULED',
+        'Chỉ có thể cập nhật tuyến đường hoặc lái tàu khi chuyến chưa khởi hành',
       );
     }
 
@@ -330,7 +330,7 @@ export class TripService {
         where: { id: updateTripDto.routeId },
       });
       if (!route) {
-        throw new BadRequestException('Route không tồn tại');
+        throw new BadRequestException('Tuyến đường không tồn tại');
       }
     }
 
@@ -358,14 +358,14 @@ export class TripService {
       where: { id: routeId },
     });
     if (!route) {
-      throw new BadRequestException('Route không tồn tại');
+      throw new BadRequestException('Tuyến đường không tồn tại');
     }
 
     const train = await this.prisma.train.findUnique({
       where: { id: trainId },
     });
     if (!train) {
-      throw new BadRequestException('Train không tồn tại');
+      throw new BadRequestException('Tàu không tồn tại');
     }
 
     let durationMinutes = route.durationMinutes;
@@ -600,12 +600,12 @@ export class TripService {
     });
 
     if (!trip) {
-      throw new NotFoundException(`Trip #${tripId} không tồn tại`);
+      throw new NotFoundException(`Chuyến tàu #${tripId} không tồn tại`);
     }
 
     if (trip.status !== TripStatus.SCHEDULED) {
       throw new BadRequestException(
-        'Chỉ có thể set departure delay cho chuyến SCHEDULED',
+        'Chỉ có thể báo trễ khởi hành cho chuyến chưa khởi hành',
       );
     }
 
@@ -629,12 +629,12 @@ export class TripService {
     });
 
     if (!trip) {
-      throw new NotFoundException(`Trip #${tripId} không tồn tại`);
+      throw new NotFoundException(`Chuyến tàu #${tripId} không tồn tại`);
     }
 
     if (trip.status !== TripStatus.IN_PROGRESS) {
       throw new BadRequestException(
-        'Chỉ có thể set arrival delay cho chuyến IN_PROGRESS',
+        'Chỉ có thể báo trễ đến nơi cho chuyến đang chạy',
       );
     }
 
@@ -667,7 +667,7 @@ export class TripService {
       },
     });
 
-    if (!trip) throw new NotFoundException('Trip not found');
+    if (!trip) throw new NotFoundException('Không tìm thấy chuyến tàu');
 
     const totalSeats = trip.train.coaches.reduce(
       (sum, coach) => sum + (coach._count.seats || 0),
@@ -759,7 +759,7 @@ export class TripService {
     });
 
     if (!trip) {
-      throw new NotFoundException(`Trip #${tripId} không tồn tại`);
+      throw new NotFoundException(`Chuyến tàu #${tripId} không tồn tại`);
     }
 
     const snapshot = calculateLiveLocationSnapshot(trip, speedup);

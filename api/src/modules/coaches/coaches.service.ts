@@ -32,7 +32,14 @@ export class CoachesService {
       where: { id: createCoachDto.templateId },
     });
     if (!template) {
-      throw new NotFoundException(`Template không tồn tại`);
+      throw new NotFoundException('Mẫu toa không tồn tại');
+    }
+
+    if (
+      createCoachDto.status &&
+      !Object.values(CoachStatus).includes(createCoachDto.status as CoachStatus)
+    ) {
+      throw new BadRequestException('Trạng thái toa không hợp lệ');
     }
 
     // Auto-calculate order: get max order + 1
@@ -202,7 +209,7 @@ export class CoachesService {
     });
 
     if (!coach) {
-      throw new NotFoundException(`Coach #${id} not found`);
+      throw new NotFoundException('Không tìm thấy toa tàu');
     }
 
     return coach;
@@ -224,7 +231,7 @@ export class CoachesService {
     });
 
     if (!coach) {
-      throw new NotFoundException(`Coach #${id} not found`);
+      throw new NotFoundException('Không tìm thấy toa tàu');
     }
 
     // Get trip to find the route
@@ -245,7 +252,7 @@ export class CoachesService {
     });
 
     if (!trip || !trip.route) {
-      throw new NotFoundException(`Trip or route not found`);
+      throw new NotFoundException('Không tìm thấy chuyến tàu hoặc tuyến đường');
     }
 
     // Fetch requested stations to get their names (for cross-network version compatibility)
@@ -256,7 +263,7 @@ export class CoachesService {
     const toRequested = requestedStations.find(s => s.id === toStationId);
 
     if (!fromRequested || !toRequested) {
-      throw new BadRequestException('Invalid requested station IDs');
+      throw new BadRequestException('Ga đi hoặc ga đến không hợp lệ');
     }
 
     // Find from and to stations by NAME to support network versioning
@@ -268,7 +275,7 @@ export class CoachesService {
     );
 
     if (!fromStation || !toStation) {
-      throw new BadRequestException('Invalid station IDs for this route');
+      throw new BadRequestException('Ga đi hoặc ga đến không thuộc tuyến đường này');
     }
 
     // Query booked tickets that overlap this segment.
@@ -361,10 +368,25 @@ export class CoachesService {
       where: { id },
     });
     if (!existing) {
-      throw new NotFoundException(`Coach #${id} not found`);
+      throw new NotFoundException('Không tìm thấy toa tàu');
     }
 
     const { trainId, templateId, status, ...updateData } = updateCoachDto;
+    if (status && !Object.values(CoachStatus).includes(status as CoachStatus)) {
+      throw new BadRequestException('Trạng thái toa không hợp lệ');
+    }
+
+    if (
+      status &&
+      status !== CoachStatus.ACTIVE &&
+      status !== existing.status
+    ) {
+      await this.assertCoachHasNoActivePaidTickets(
+        id,
+        'Không thể khóa toa vì toa đang có vé đã thanh toán trên chuyến chưa kết thúc.',
+      );
+    }
+
     return this.prisma.coach.update({
       where: { id },
       data: {
@@ -384,12 +406,51 @@ export class CoachesService {
       where: { id },
     });
     if (!existing) {
-      throw new NotFoundException(`Coach #${id} not found`);
+      throw new NotFoundException('Không tìm thấy toa tàu');
     }
 
-    // Delete coach (seats will cascade automatically)
+    const [ticketCount, segmentCount, issueCount] = await Promise.all([
+      this.prisma.ticket.count({
+        where: { seat: { coachId: id } },
+      }),
+      this.prisma.ticketSeatSegment.count({
+        where: { seat: { coachId: id } },
+      }),
+      this.prisma.seatIssueReport.count({
+        where: {
+          OR: [
+            { seat: { coachId: id } },
+            { proposedSeat: { coachId: id } },
+          ],
+        },
+      }),
+    ]);
+
+    if (ticketCount > 0 || segmentCount > 0 || issueCount > 0) {
+      throw new ConflictException(
+        'Không thể xóa toa đã phát sinh vé hoặc báo cáo sự cố. Hãy chuyển toa sang trạng thái bảo trì/ngừng hoạt động nếu chưa có khách đang đi.',
+      );
+    }
+
     return this.prisma.coach.delete({
       where: { id },
     });
+  }
+
+  private async assertCoachHasNoActivePaidTickets(
+    coachId: string,
+    message: string,
+  ) {
+    const activePaidTickets = await this.prisma.ticket.count({
+      where: {
+        seat: { coachId },
+        booking: { status: 'PAID' },
+        trip: { status: { in: ['SCHEDULED', 'IN_PROGRESS'] } },
+      },
+    });
+
+    if (activePaidTickets > 0) {
+      throw new ConflictException(message);
+    }
   }
 }

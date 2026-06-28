@@ -95,16 +95,10 @@ export function SeatDetailDialog({
                                         <span>Còn trống</span>
                                     </div>
                                 </SelectItem>
-                                <SelectItem value="BOOKED">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 bg-red-500 rounded-full" />
-                                        <span>Đã đặt</span>
-                                    </div>
-                                </SelectItem>
-                                <SelectItem value="LOCKED">
+                                <SelectItem value="MAINTENANCE">
                                     <div className="flex items-center gap-2">
                                         <div className="w-3 h-3 bg-yellow-500 rounded-full" />
-                                        <span>Đã khóa</span>
+                                        <span>Bảo trì</span>
                                     </div>
                                 </SelectItem>
                                 <SelectItem value="DISABLED">

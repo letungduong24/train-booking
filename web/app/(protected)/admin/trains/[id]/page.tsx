@@ -145,13 +145,6 @@ export default function AdminTrainDetailPage({ params }: { params: Promise<{ id:
         setIsSeatDialogOpen(true)
     }
 
-    // Handler: Update Seat (Admin)
-    const handleUpdateSeat = (updatedSeat: Seat) => {
-        // Note: In a real implementation, this would call an API to update the seat
-        // For now, we rely on React Query's cache invalidation
-        toast.success(`Đã cập nhật ghế ${updatedSeat.name}`)
-    }
-
     if (isLoading) {
         return (
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
@@ -364,7 +357,6 @@ export default function AdminTrainDetailPage({ params }: { params: Promise<{ id:
                 open={isSeatDialogOpen}
                 onOpenChange={setIsSeatDialogOpen}
                 seat={selectedSeatForAdmin}
-                onUpdate={handleUpdateSeat}
             />
         </div>
 

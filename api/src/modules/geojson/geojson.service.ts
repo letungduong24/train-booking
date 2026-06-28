@@ -83,7 +83,7 @@ export class GeojsonService {
                 const latitude = typeof _latitude === 'string' ? parseFloat(_latitude) : Number(_latitude);
 
                 if (!Number.isFinite(longitude) || !Number.isFinite(latitude)) {
-                    throw new Error(`Invalid station coordinates for ${name}`);
+                    throw new Error(`Tọa độ ga ${name} không hợp lệ`);
                 }
 
                 await tx.station.create({
