@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { BookingTimer } from '@/features/booking/components/booking-timer';
 import Link from 'next/link';
+import { getActualDepartureTime } from '@/lib/utils/trip-time';
 
 interface DashboardTripCardProps {
     booking: Booking;
@@ -58,6 +59,7 @@ export function DashboardTripCard({ booking, showStatus = true }: DashboardTripC
 
     const metadata = booking.metadata;
     const passengerCount = booking.tickets?.length || metadata?.passengers?.length || metadata?.seatIds?.length || 0;
+    const actualDepartureTime = getActualDepartureTime(booking.trip);
 
     return (
         <div 
@@ -115,9 +117,9 @@ export function DashboardTripCard({ booking, showStatus = true }: DashboardTripC
                         <div className="flex flex-col">
                             <p className="text-[10px] font-medium text-muted-foreground opacity-70 leading-none">Khởi hành</p>
                             <span className="text-base font-semibold text-[#802222] dark:text-rose-400 tabular-nums leading-none mt-1">
-                                {format(new Date(booking.trip.departureTime), "HH:mm")}
+                                {format(actualDepartureTime, "HH:mm")}
                             </span>
-                            <span className="text-[10px] font-medium text-muted-foreground mt-1 leading-none">{format(new Date(booking.trip.departureTime), "dd/MM/yyyy")}</span>
+                            <span className="text-[10px] font-medium text-muted-foreground mt-1 leading-none">{format(actualDepartureTime, "dd/MM/yyyy")}</span>
                         </div>
                         <div className="flex flex-col">
                             <p className="text-[10px] font-medium text-muted-foreground opacity-70 leading-none">Hành khách</p>

@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { getActualDepartureTime, getActualEndTime } from '@/lib/utils/trip-time';
 
 export default function TripsPage() {
     const router = useRouter();
@@ -66,8 +67,8 @@ export default function TripsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                         {activeBookings.map((booking) => {
                             const { trip } = booking;
-                            const departure = new Date(trip.departureTime);
-                            const arrival = new Date(trip.endTime);
+                            const departure = getActualDepartureTime(trip);
+                            const arrival = getActualEndTime(trip) ?? new Date(trip.endTime);
                             const now = new Date();
                             
                             // Calculate progress

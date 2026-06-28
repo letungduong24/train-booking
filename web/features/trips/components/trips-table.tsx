@@ -30,6 +30,7 @@ import { TableSkeleton } from "@/components/custom/table-skeleton"
 import { CreateTripDialog } from "./create-trip-dialog"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
+import { getActualDepartureTime, getActualEndTime } from "@/lib/utils/trip-time"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -151,7 +152,7 @@ export function TripsTable() {
                 )
             },
             cell: ({ row }) => {
-                const datetime = new Date(row.getValue("departureTime"));
+                const datetime = getActualDepartureTime(row.original);
                 return (
                     <div>
                         <div className="font-medium">{datetime.toLocaleDateString('vi-VN')}</div>
@@ -180,7 +181,7 @@ export function TripsTable() {
                 )
             },
             cell: ({ row }) => {
-                const datetime = new Date(row.getValue("endTime"));
+                const datetime = getActualEndTime(row.original) ?? new Date(row.getValue("endTime"));
                 return (
                     <div>
                         <div className="font-medium">{datetime.toLocaleDateString('vi-VN')}</div>

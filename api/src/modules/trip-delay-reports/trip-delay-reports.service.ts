@@ -20,9 +20,21 @@ export class TripDelayReportsService {
     private readonly tripService: TripService,
   ) {}
 
-  private isTripReportable(trip: { status: string; endTime: Date }) {
+  private isTripReportable(trip: {
+    status: string;
+    endTime: Date;
+    departureDelayMinutes?: number | null;
+    arrivalDelayMinutes?: number | null;
+  }) {
+    const actualEndTime = new Date(trip.endTime);
+    actualEndTime.setMinutes(
+      actualEndTime.getMinutes()
+      + (trip.departureDelayMinutes ?? 0)
+      + (trip.arrivalDelayMinutes ?? 0),
+    );
+
     return (trip.status === TripStatus.SCHEDULED || trip.status === TripStatus.IN_PROGRESS)
-      && new Date() <= new Date(trip.endTime);
+      && new Date() <= actualEndTime;
   }
 
   private validateDelayTypeForTrip(type: TripDelayType, status: TripStatus) {
@@ -61,6 +73,8 @@ export class TripDelayReportsService {
         driverId: true,
         status: true,
         endTime: true,
+        departureDelayMinutes: true,
+        arrivalDelayMinutes: true,
       },
     });
 

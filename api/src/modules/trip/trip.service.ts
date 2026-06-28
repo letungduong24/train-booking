@@ -768,8 +768,6 @@ export class TripService {
         where: { id: tripId },
         data: {
           status: TripStatus.COMPLETED,
-          departureDelayMinutes: 0,
-          arrivalDelayMinutes: 0,
         },
       });
     }

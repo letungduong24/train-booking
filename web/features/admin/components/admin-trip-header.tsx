@@ -5,15 +5,21 @@ import { vi } from "date-fns/locale";
 import { Train, MapPin, Calendar, Clock, AlertTriangle, CheckCircle2, User } from "lucide-react";
 import { useTripStats } from "@/features/trips/hooks/use-trip-stats";
 import { TripStatusBadge } from "@/lib/utils/trip-status";
+import {
+    getActualArrivalTimeFromScheduled,
+    getActualDepartureTime,
+    getDepartureDelayMinutes,
+    getTotalArrivalDelayMinutes,
+} from "@/lib/utils/trip-time";
 
 interface AdminTripHeaderProps {
     trip: TripDetail;
 }
 
 export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
-    const effectiveDepartureTime = trip.departureDelayMinutes
-        ? addMinutes(new Date(trip.departureTime), trip.departureDelayMinutes)
-        : new Date(trip.departureTime);
+    const departureDelayMinutes = getDepartureDelayMinutes(trip);
+    const totalArrivalDelayMinutes = getTotalArrivalDelayMinutes(trip);
+    const effectiveDepartureTime = getActualDepartureTime(trip);
 
     // Tính toán thời gian cập bến thực sự của ga cuối (không gồm turnaround)
     const stations = [...(trip.route?.stations || [])].sort((a, b) => a.index - b.index);
@@ -30,9 +36,7 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
     }
 
     const scheduledArrival = addMinutes(new Date(trip.departureTime), durationMinutes);
-    const actualArrival = trip.arrivalDelayMinutes
-        ? addMinutes(scheduledArrival, trip.arrivalDelayMinutes)
-        : scheduledArrival;
+    const actualArrival = getActualArrivalTimeFromScheduled(scheduledArrival, trip);
 
     // Thời gian giải phóng tàu sau khi nghỉ quay đầu (bằng thời gian cập bến thực tế + turnaroundMinutes)
     const turnaroundMinutes = trip.route?.turnaroundMinutes ?? 60;
@@ -71,7 +75,7 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                     <div className="flex flex-col gap-0.5">
                         <span className="text-[10px] uppercase tracking-widest opacity-40 font-bold">Khởi hành</span>
                         <div className="flex items-center gap-2">
-                            {trip.departureDelayMinutes ? (
+                            {departureDelayMinutes > 0 ? (
                                 <>
                                     <span className="line-through opacity-30 text-xs">
                                         {format(new Date(trip.departureTime), 'HH:mm dd/MM/yyyy')}
@@ -80,7 +84,7 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                                         {format(effectiveDepartureTime, 'HH:mm dd/MM/yyyy')}
                                     </span>
                                     <Badge variant="destructive" className="h-4 px-1 text-[8px] rounded-full bg-rose-500 hover:bg-rose-600 border-none shadow-sm">
-                                        +{trip.departureDelayMinutes}m
+                                        +{departureDelayMinutes}m
                                     </Badge>
                                 </>
                             ) : (
@@ -97,7 +101,7 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                     <div className="flex flex-col gap-0.5">
                         <span className="text-[10px] uppercase tracking-widest opacity-40 font-bold">Dự kiến đến</span>
                         <div className="flex items-center gap-2 flex-wrap">
-                            {trip.arrivalDelayMinutes ? (
+                            {totalArrivalDelayMinutes > 0 ? (
                                 <>
                                     <span className="line-through opacity-30 text-xs">
                                         {format(scheduledArrival, 'HH:mm dd/MM/yyyy')}
@@ -105,6 +109,9 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                                     <span className="text-lg font-bold text-rose-600">
                                         {format(actualArrival, 'HH:mm dd/MM/yyyy')}
                                     </span>
+                                    <Badge variant="destructive" className="h-4 px-1 text-[8px] rounded-full bg-rose-500 hover:bg-rose-600 border-none shadow-sm">
+                                        +{totalArrivalDelayMinutes}m
+                                    </Badge>
                                 </>
                             ) : (
                                 <span className="text-lg font-bold text-zinc-800 dark:text-zinc-200">

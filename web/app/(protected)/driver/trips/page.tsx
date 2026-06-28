@@ -8,8 +8,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
-import { format, isPast, isToday, isThisWeek, parseISO } from "date-fns"
+import { format, isPast, isToday, isThisWeek } from "date-fns"
 import { vi } from "date-fns/locale"
+import { getActualDepartureTime, getActualEndTime } from "@/lib/utils/trip-time"
 
 export default function TripsPage() {
   const [trips, setTrips] = React.useState<any[]>([]);
@@ -39,16 +40,17 @@ export default function TripsPage() {
 
   // Filter logic
   const canReportTrip = (trip: any) => {
-    return Boolean(trip.canReportSeatIssue) && Boolean(trip.endTime) && !isPast(parseISO(trip.endTime));
+    const actualEndTime = getActualEndTime(trip);
+    return Boolean(trip.canReportSeatIssue) && actualEndTime !== null && !isPast(actualEndTime);
   };
 
   const todayTrips = trips.filter((t) => {
-    const depDate = parseISO(t.departureTime);
+    const depDate = getActualDepartureTime(t);
     return isToday(depDate) && canReportTrip(t);
   });
 
   const weekTrips = trips.filter((t) => {
-    const depDate = parseISO(t.departureTime);
+    const depDate = getActualDepartureTime(t);
     return isThisWeek(depDate) && !isToday(depDate) && canReportTrip(t);
   });
 
@@ -57,8 +59,9 @@ export default function TripsPage() {
   });
 
   const renderTripCard = (trip: any) => {
-    const timeStr = format(parseISO(trip.departureTime), "HH:mm - dd/MM/yyyy", { locale: vi });
-    const endTimeStr = format(parseISO(trip.endTime), "HH:mm - dd/MM/yyyy", { locale: vi });
+    const actualEndTime = getActualEndTime(trip);
+    const timeStr = format(getActualDepartureTime(trip), "HH:mm - dd/MM/yyyy", { locale: vi });
+    const endTimeStr = actualEndTime ? format(actualEndTime, "HH:mm - dd/MM/yyyy", { locale: vi }) : "N/A";
 
     return (
       <Card

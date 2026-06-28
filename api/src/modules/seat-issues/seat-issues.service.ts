@@ -14,8 +14,20 @@ export class SeatIssuesService {
     private readonly bookingGateway: BookingGateway,
   ) {}
 
-  private isTripReportable(trip: { status: string; endTime: Date }) {
-    return ['SCHEDULED', 'IN_PROGRESS'].includes(trip.status) && new Date() <= new Date(trip.endTime);
+  private isTripReportable(trip: {
+    status: string;
+    endTime: Date;
+    departureDelayMinutes?: number | null;
+    arrivalDelayMinutes?: number | null;
+  }) {
+    const actualEndTime = new Date(trip.endTime);
+    actualEndTime.setMinutes(
+      actualEndTime.getMinutes()
+      + (trip.departureDelayMinutes ?? 0)
+      + (trip.arrivalDelayMinutes ?? 0),
+    );
+
+    return ['SCHEDULED', 'IN_PROGRESS'].includes(trip.status) && new Date() <= actualEndTime;
   }
 
   // 1. Get driver assigned trips
@@ -236,6 +248,8 @@ export class SeatIssuesService {
             status: true,
             departureTime: true,
             endTime: true,
+            departureDelayMinutes: true,
+            arrivalDelayMinutes: true,
           },
         },
         reportedBy: {

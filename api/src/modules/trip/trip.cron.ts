@@ -58,7 +58,6 @@ export class TripCron {
             where: { id: trip.id },
             data: {
               status: TripStatus.IN_PROGRESS,
-              departureDelayMinutes: 0, // Reset departure delay
             },
           });
           startedCount++;
@@ -105,8 +104,6 @@ export class TripCron {
             where: { id: trip.id },
             data: {
               status: TripStatus.COMPLETED,
-              departureDelayMinutes: 0, // Reset all delays
-              arrivalDelayMinutes: 0,
             },
           });
           completedCount++;

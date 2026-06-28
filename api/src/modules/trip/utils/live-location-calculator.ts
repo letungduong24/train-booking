@@ -76,7 +76,7 @@ export function calculateLiveLocationSnapshot(
 
   const totalDurationMs = Math.max(
     60 * 1000,
-    (durationMinutes + arrivalDelayMinutes - departureDelayMinutes) * 60 * 1000,
+    (durationMinutes + arrivalDelayMinutes) * 60 * 1000,
   );
   const startMs = new Date(departureTime).getTime() + departureDelayMinutes * 60 * 1000;
   const elapsedMs = (nowMs - startMs) * (speedup && speedup > 0 ? speedup : 1);

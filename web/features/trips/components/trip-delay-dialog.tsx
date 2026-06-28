@@ -74,7 +74,7 @@ export function TripDelayDialog({ trip, onSuccess }: TripDelayDialogProps) {
     .format("HH:mm DD/MM/YYYY");
 
   const actualEnd = dayjs(trip.endTime)
-    .add(trip.departureDelayMinutes, "minute")
+    .add(isScheduled ? delayMinutes : trip.departureDelayMinutes, "minute")
     .add(isInProgress ? delayMinutes : trip.arrivalDelayMinutes, "minute")
     .format("HH:mm DD/MM/YYYY");
 

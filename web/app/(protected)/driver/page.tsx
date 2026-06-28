@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { format } from "date-fns"
 import { vi } from "date-fns/locale"
+import { getActualDepartureTime } from "@/lib/utils/trip-time"
 
 export default function Page() {
   const [data, setData] = React.useState<any>(null);
@@ -137,7 +138,7 @@ export default function Page() {
               {recentTrips.length > 0 ? (
                 <div className="space-y-3.5">
                   {recentTrips.map((trip: any) => {
-                    const timeStr = format(new Date(trip.departureTime), "HH:mm, dd/MM/yyyy", { locale: vi });
+                    const timeStr = format(getActualDepartureTime(trip), "HH:mm, dd/MM/yyyy", { locale: vi });
                     return (
                       <Link
                         key={trip.id}

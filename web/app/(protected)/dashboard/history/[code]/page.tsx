@@ -86,7 +86,9 @@ export default function BookingDetailPage() {
     const departureDelay = trip.departureDelayMinutes || 0;
 
     const scheduledArrival = dayjs(trip.departureTime).add(getDynamicDuration(toStation), 'minute');
-    const actualArrival = scheduledArrival.add(trip.arrivalDelayMinutes || 0, 'minute');
+    const actualArrival = scheduledArrival
+        .add(trip.departureDelayMinutes || 0, 'minute')
+        .add(trip.arrivalDelayMinutes || 0, 'minute');
     const arrivalDelay = trip.arrivalDelayMinutes || 0;
 
     const getStatusClasses = (status: string) => {

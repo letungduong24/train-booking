@@ -11,8 +11,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
-import { format, parseISO } from "date-fns"
+import { format } from "date-fns"
 import { vi } from "date-fns/locale"
+import { getActualDepartureTime, getActualEndTime } from "@/lib/utils/trip-time"
 
 import { BookingCoachNavigationBar } from "@/features/booking/components/booking-coach-navigation-bar"
 import { useCoachWithPrices } from "@/features/booking/hooks/use-coach-with-prices"
@@ -135,12 +136,16 @@ export default function TripDetailPage({ params }: PageProps) {
   const coaches = trip.train?.coaches || []
   const activeCoach = coaches.find((c: any) => c.id === activeCoachId)
   
-  const depTimeStr = format(parseISO(trip.departureTime), "HH:mm, dd/MM/yyyy", { locale: vi })
-  const arrTimeStr = format(parseISO(trip.endTime), "HH:mm, dd/MM/yyyy", { locale: vi })
+  const actualEndTime = getActualEndTime(trip)
+  const depTimeStr = format(getActualDepartureTime(trip), "HH:mm, dd/MM/yyyy", { locale: vi })
+  const arrTimeStr = actualEndTime
+    ? format(actualEndTime, "HH:mm, dd/MM/yyyy", { locale: vi })
+    : "N/A"
   const canReportSeatIssue =
     Boolean(trip.canReportSeatIssue) &&
     ["SCHEDULED", "IN_PROGRESS"].includes(trip.status) &&
-    new Date() <= new Date(trip.endTime)
+    actualEndTime !== null &&
+    new Date() <= actualEndTime
   const delayType = trip.status === "SCHEDULED" ? "DEPARTURE" : "ARRIVAL"
   const canReportDelay = canReportSeatIssue && ["SCHEDULED", "IN_PROGRESS"].includes(trip.status)
 

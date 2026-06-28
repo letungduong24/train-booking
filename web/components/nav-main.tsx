@@ -21,13 +21,14 @@ export function NavMain({
   }[]
 }) {
   const pathname = usePathname()
+  const exactOnlyUrls = new Set(['/', '/dashboard', '/admin', '/driver'])
 
   return (
     <SidebarGroup className="p-0">
       <SidebarGroupContent className="flex flex-col gap-1">
         <SidebarMenu className="gap-1.5 px-2">
           {items.map((item) => {
-            const isActive = pathname === item.url || (item.url !== '/' && item.url !== '/dashboard' && item.url !== '/admin' && pathname?.startsWith(item.url));
+            const isActive = pathname === item.url || (!exactOnlyUrls.has(item.url) && pathname?.startsWith(item.url));
             
             return (
               <SidebarMenuItem key={item.title} className="relative group/item">
