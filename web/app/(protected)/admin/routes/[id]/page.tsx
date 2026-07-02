@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { vi } from "date-fns/locale"
 import { toast } from "sonner"
-import { Trash2, Plus, GripVertical, Save, ArrowLeft, Map as MapIcon } from "lucide-react"
+import { Trash2, Plus, GripVertical, Save, ArrowLeft, RefreshCw, Map as MapIcon } from "lucide-react"
 import {
     DndContext,
     closestCenter,
