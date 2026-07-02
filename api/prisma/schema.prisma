@@ -142,7 +142,7 @@ enum RouteStatus {
 model Network {
   id        String   @id @default(uuid())
   version   Int      @unique
-  name      String // VD: "Bản đồ mạng lưới đường sắt T5/2026"
+  name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -181,16 +181,14 @@ model Route {
   stations          RouteStation[]
   trips             Trip[]
   status            RouteStatus    @default(DRAFT)
-  durationMinutes   Int            @default(0) // Thời gian chạy (phút)
-  turnaroundMinutes Int            @default(60) // Thời gian nghỉ quay đầu (phút)
-  totalDistanceKm   Float          @default(0) // Tổng chiều dài tuyến đường (do Turf.js tự đo)
+  durationMinutes   Int            @default(0)
+  turnaroundMinutes Int            @default(60)
+  totalDistanceKm   Float          @default(0) 
 
-  // Pricing configuration
-  basePricePerKm Int @default(1000) // Giá cơ bản mỗi km (VND)
-  stationFee     Int @default(0) // Phí ra vào bến (VND)
+  basePricePerKm Int @default(1000) 
+  stationFee     Int @default(0) 
 
-  // Geographic visual path
-  pathCoordinates Json? // Stores GeoJSON MultiLineString coordinates snapped from RailwayLine
+  pathCoordinates Json? 
 
   @@unique([code, version])
 }

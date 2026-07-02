@@ -68,15 +68,13 @@ export class RouteService {
         }
       }
 
-      // Calculate path coordinates INSIDE transaction to ensure validity
-      // If this throws, the entire route creation rolls back.
       if (stations && stations.length >= 2) {
         await this.calculatePathCoordinates(createdRouteId, tx);
       }
 
       return this.findOne(createdRouteId, tx);
     }, {
-      timeout: 30000 // Increase timeout to 30s for heavy BFS calculations
+      timeout: 30000
     });
   }
 
@@ -171,29 +169,22 @@ export class RouteService {
         }
       }
 
-      // Ensure we cannot revert from ACTIVE/INACTIVE back to DRAFT
       if (currentRoute.status !== RouteStatus.DRAFT && newStatus === RouteStatus.DRAFT) {
         throw new BadRequestException('Không thể chuyển tuyến đã ACTIVE hoặc INACTIVE về DRAFT.');
       }
 
-      // Find the latest version for this route code to ensure monotonic progression
       const latestRoute = await tx.route.findFirst({
         where: { code: currentRoute.code },
         orderBy: { version: 'desc' }
       });
       const maxVersion = latestRoute ? latestRoute.version : currentRoute.version;
 
-      // We must clone to a new version progression if:
-      // 1. The route is currently ACTIVE (any update preserves its published history)
-      // 2. OR an old INACTIVE route is being activated (newStatus === ACTIVE), ensuring pure monotonic progression.
-      // Exception: purely deactivating an ACTIVE route (newStatus === INACTIVE) does not clone.
       const requiresClone = (currentRoute.status === RouteStatus.ACTIVE && newStatus !== RouteStatus.INACTIVE) ||
                             (currentRoute.status === RouteStatus.INACTIVE && newStatus === RouteStatus.ACTIVE);
 
       let targetRouteId = id;
 
       if (requiresClone) {
-        // Clone to maxVersion + 1
         const clonedRoute = await tx.route.create({
           data: {
             ...rest,
@@ -210,7 +201,6 @@ export class RouteService {
           }
         });
 
-        // Ensure ALL other versions of this route code are transitioned to INACTIVE to guarantee unique active status
         await tx.route.updateMany({
           where: { code: currentRoute.code, id: { not: clonedRoute.id } },
           data: { status: RouteStatus.INACTIVE }
@@ -218,7 +208,6 @@ export class RouteService {
 
         targetRouteId = clonedRoute.id;
 
-        // If stations are not explicitly provided in DTO, copy them from the old route
         if (!stations) {
           if (targetNetworkId !== currentRoute.networkId) {
             throw new BadRequestException('Cần cung cấp danh sách ga mới khi thay đổi network.');
@@ -234,9 +223,9 @@ export class RouteService {
             }),
           );
           await Promise.all(creates);
+          await this.calculatePathCoordinates(targetRouteId, tx);
         }
       } else {
-        // Just update existing route in-place
         await tx.route.update({
           where: { id: targetRouteId },
           data: {
@@ -246,7 +235,6 @@ export class RouteService {
           },
         });
 
-        // If this route is becoming ACTIVE, automatically mark all parallel versions as INACTIVE
         if (newStatus === RouteStatus.ACTIVE) {
           await tx.route.updateMany({
             where: { code: currentRoute.code, id: { not: targetRouteId } },
@@ -255,9 +243,7 @@ export class RouteService {
         }
       }
 
-      // If stations were provided in DTO, we need to completely replace them
       if (stations) {
-        // If we didn't clone, we need to clear existing stations
         if (!requiresClone) {
           await tx.routeStation.deleteMany({
             where: { routeId: targetRouteId }
@@ -297,15 +283,9 @@ export class RouteService {
           }
         }
       }
-
-      // Recalculate path coordinates INSIDE transaction
-      // This ensures that any "invalid" path (e.g. straight line where no track exists)
-      // will trigger a rollback and prevent the update from being saved.
       if (stations && stations.length >= 2) {
         await this.calculatePathCoordinates(targetRouteId, tx);
       } else if (stations && stations.length < 2) {
-        // If someone updated to < 2 stations, it's invalid anyway but DTO should catch it.
-        // If it gets here, we clear the path.
         await tx.route.update({
           where: { id: targetRouteId },
           data: { pathCoordinates: [] }
@@ -314,9 +294,8 @@ export class RouteService {
 
       return targetRouteId;
     }, {
-      timeout: 30000 // Increase timeout to 30s
+      timeout: 30000
     }).then(async (finalRouteId) => {
-      // Return final route info (findOne will use this.prisma here as it's outside)
       return this.findOne(finalRouteId);
     });
   }
