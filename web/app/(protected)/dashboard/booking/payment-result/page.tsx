@@ -25,6 +25,8 @@ export default function PaymentResultPage() {
         queryClient.invalidateQueries({ queryKey: ['dashboard-overview'] });
         queryClient.invalidateQueries({ queryKey: ['wallet'] });
         queryClient.invalidateQueries({ queryKey: ['booking', orderId] });
+        queryClient.invalidateQueries({ queryKey: ['coaches'] });
+        queryClient.invalidateQueries({ queryKey: ['locked-seats'] });
     }, [orderId, queryClient]);
 
     return (

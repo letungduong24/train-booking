@@ -21,6 +21,8 @@ export const usePayWallet = () => {
             queryClient.invalidateQueries({ queryKey: ['my-active-trips'] });
             queryClient.invalidateQueries({ queryKey: ['dashboard-overview'] });
             queryClient.invalidateQueries({ queryKey: ['booking', variables.bookingCode] });
+            queryClient.invalidateQueries({ queryKey: ['coaches'] });
+            queryClient.invalidateQueries({ queryKey: ['locked-seats'] });
         },
     });
 };

@@ -22,5 +22,9 @@ export function useCoachWithPrices(params: CoachWithPricesParams, enabled = true
             return response.data;
         },
         enabled: enabled && !!params.coachId && !!params.tripId && !!params.fromStationId && !!params.toStationId,
+        staleTime: 0,
+        refetchOnMount: 'always',
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
     });
 }
