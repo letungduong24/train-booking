@@ -39,7 +39,7 @@ export default function DriverIssuesPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 animate-in fade-in duration-700">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Danh sách sự cố đã báo cáo</h2>
+ <h2 className="text-3xl font-bold text-[#802222] dark:text-rose-400">Danh sách sự cố đã báo cáo</h2>
         <p className="text-sm text-muted-foreground mt-1 font-medium opacity-65">
           Theo dõi và kiểm tra tình trạng phê duyệt/xử lý sự cố ghế hỏng từ Quản trị viên.
         </p>
@@ -50,7 +50,7 @@ export default function DriverIssuesPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs font-semibold">
               <thead>
-                <tr className="border-b border-gray-100 dark:border-zinc-800 text-[10px] text-muted-foreground uppercase tracking-wider">
+ <tr className="border-b border-gray-100 dark:border-zinc-800 text-[10px] text-muted-foreground uppercase ">
                   <th className="py-3 px-4">Thời gian</th>
                   <th className="py-3 px-4">Vị trí ghế</th>
                   <th className="py-3 px-4">Chuyến xe</th>

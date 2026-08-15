@@ -246,7 +246,7 @@ export default function BookingDetailPage() {
                                 <div className="flex flex-col justify-between bg-zinc-50 dark:bg-zinc-950/30 p-5 rounded-[1.5rem] border border-gray-100 dark:border-zinc-800/80">
                                     <div className="space-y-6">
                                         <div>
-                                            <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Trạng thái hành trình</h4>
+ <h4 className="text-xs font-bold text-muted-foreground uppercase mb-2">Trạng thái hành trình</h4>
                                             <div className="flex items-center justify-between">
                                                 <span className="text-sm font-bold text-gray-900 dark:text-white">Tàu {trip.train.code}</span>
                                                 <span className="text-xs font-medium bg-rose-50 dark:bg-rose-950/30 text-[#802222] dark:text-rose-400 px-2.5 py-1 rounded-full border border-rose-100 dark:border-rose-950/20">
@@ -262,10 +262,10 @@ export default function BookingDetailPage() {
                                             <div className="bg-white dark:bg-zinc-900 p-3.5 rounded-2xl border border-gray-100 dark:border-zinc-800/50 shadow-sm">
                                                 <div className="flex items-center gap-2 text-muted-foreground mb-1.5">
                                                     <Gauge className="w-4 h-4 text-[#802222] dark:text-rose-400" />
-                                                    <span className="text-[10px] font-semibold uppercase tracking-wider">Vận tốc</span>
+ <span className="text-[10px] font-semibold uppercase ">Vận tốc</span>
                                                 </div>
                                                 <div className="flex items-baseline gap-1">
-                                                    <span className="text-2xl font-black text-gray-900 dark:text-white leading-none tracking-tight tabular-nums">
+ <span className="text-2xl font-black text-gray-900 dark:text-white leading-none tabular-nums">
                                                         {liveLocation.speed}
                                                     </span>
                                                     <span className="text-[10px] font-bold text-muted-foreground">km/h</span>
@@ -275,10 +275,10 @@ export default function BookingDetailPage() {
                                             <div className="bg-white dark:bg-zinc-900 p-3.5 rounded-2xl border border-gray-100 dark:border-zinc-800/50 shadow-sm">
                                                 <div className="flex items-center gap-2 text-muted-foreground mb-1.5">
                                                     <Compass className="w-4 h-4 text-[#802222] dark:text-rose-400" />
-                                                    <span className="text-[10px] font-semibold uppercase tracking-wider">Hướng đi</span>
+ <span className="text-[10px] font-semibold uppercase ">Hướng đi</span>
                                                 </div>
                                                 <div className="flex items-baseline gap-1">
-                                                    <span className="text-2xl font-black text-gray-900 dark:text-white leading-none tracking-tight tabular-nums">
+ <span className="text-2xl font-black text-gray-900 dark:text-white leading-none tabular-nums">
                                                         {Math.round(liveLocation.bearing)}
                                                     </span>
                                                     <span className="text-[10px] font-bold text-muted-foreground">°</span>
@@ -422,7 +422,7 @@ export default function BookingDetailPage() {
                             {totalPrice === 0 ? (
                                 <span className="text-base font-normal italic opacity-60">Chưa định giá</span>
                             ) : (
-                                <span className="text-3xl font-bold tracking-tight">{formatCurrency(totalPrice)}</span>
+ <span className="text-3xl font-bold ">{formatCurrency(totalPrice)}</span>
                             )}
                         </div>
 

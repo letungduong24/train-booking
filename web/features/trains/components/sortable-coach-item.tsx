@@ -67,7 +67,7 @@ export function SortableCoachItem({ coach, isSelected, onSelect }: SortableCoach
                     </div>
 
                     {/* Coach Type - Full template name */}
-                    <div className="text-[10px] font-medium text-muted-foreground/50 whitespace-nowrap text-center uppercase tracking-wider">
+ <div className="text-[10px] font-medium text-muted-foreground/50 whitespace-nowrap text-center uppercase ">
                         {coach.template.name}
                     </div>
                 </div>

@@ -52,7 +52,7 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                         </div>
                         <div>
                             <div className="flex items-center gap-3">
-                                <h1 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">
+ <h1 className="text-3xl font-bold text-[#802222] dark:text-rose-400">
                                     {trip.train?.code}-{format(new Date(trip.departureTime), 'yyyyMMdd')}
                                 </h1>
                                 <TripStatusBadge status={trip.status} />
@@ -73,8 +73,7 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                         <Calendar className="w-6 h-6 opacity-70" />
                     </div>
                     <div className="flex flex-col gap-0.5">
-                        <span className="text-[10px] uppercase tracking-widest opacity-40 font-bold">Khởi hành</span>
-                        <div className="flex items-center gap-2">
+<span className="text-[10px] opacity-40 font-bold">Khởi hành</span>                         <div className="flex items-center gap-2">
                             {departureDelayMinutes > 0 ? (
                                 <>
                                     <span className="line-through opacity-30 text-xs">
@@ -99,8 +98,7 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                         <Clock className="w-6 h-6 opacity-70" />
                     </div>
                     <div className="flex flex-col gap-0.5">
-                        <span className="text-[10px] uppercase tracking-widest opacity-40 font-bold">Dự kiến đến</span>
-                        <div className="flex items-center gap-2 flex-wrap">
+<span className="text-[10px] opacity-40 font-bold">Dự kiến đến</span>                         <div className="flex items-center gap-2 flex-wrap">
                             {totalArrivalDelayMinutes > 0 ? (
                                 <>
                                     <span className="line-through opacity-30 text-xs">
@@ -133,8 +131,7 @@ export function AdminTripHeader({ trip }: AdminTripHeaderProps) {
                         <User className="w-6 h-6 opacity-70" />
                     </div>
                     <div className="flex flex-col gap-0.5">
-                        <span className="text-[10px] uppercase tracking-widest opacity-40 font-bold">Lái tàu phụ trách</span>
-                        {trip.driver ? (
+<span className="text-[10px] opacity-40 font-bold">Lái tàu phụ trách</span>                         {trip.driver ? (
                             <>
                                 <span className="text-lg font-bold text-zinc-800 dark:text-zinc-200">
                                     {trip.driver.name || "Lái tàu"}

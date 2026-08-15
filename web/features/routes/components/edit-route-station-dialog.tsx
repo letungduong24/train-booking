@@ -95,7 +95,7 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
             </DialogTrigger>
             <DialogContent className="max-w-[425px] rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
                 <DialogHeader className="p-8 pb-4">
-                    <DialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Sửa thông tin trạm</DialogTitle>
+ <DialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 ">Sửa thông tin trạm</DialogTitle>
                     <DialogDescription className="text-sm font-medium text-muted-foreground/50">
                         Cập nhật thông tin trạm trong tuyến đường này.
                     </DialogDescription>
@@ -107,7 +107,7 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Tên trạm</FormLabel>
+ <FormLabel className="text-xs font-bold uppercase text-muted-foreground/70">Tên trạm</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Tên trạm..." className="h-11 rounded-xl bg-gray-50/50 border-gray-100" {...field} />
                                     </FormControl>
@@ -121,7 +121,7 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
                                 name="latitude"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Vĩ độ</FormLabel>
+ <FormLabel className="text-xs font-bold uppercase text-muted-foreground/70">Vĩ độ</FormLabel>
                                         <FormControl>
                                             <Input type="number" step="any" className="h-11 rounded-xl bg-gray-50/50 border-gray-100" {...field} />
                                         </FormControl>
@@ -134,7 +134,7 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
                                 name="longitude"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Kinh độ</FormLabel>
+ <FormLabel className="text-xs font-bold uppercase text-muted-foreground/70">Kinh độ</FormLabel>
                                         <FormControl>
                                             <Input type="number" step="any" className="h-11 rounded-xl bg-gray-50/50 border-gray-100" {...field} />
                                         </FormControl>
@@ -148,7 +148,7 @@ export function EditRouteStationDialog({ routeId, station, onSuccess }: EditRout
                             name="distanceFromStart"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Khoảng cách từ trạm đầu (km)</FormLabel>
+ <FormLabel className="text-xs font-bold uppercase text-muted-foreground/70">Khoảng cách từ trạm đầu (km)</FormLabel>
                                     <FormControl>
                                         <Input type="number" step="0.1" className="h-11 rounded-xl bg-gray-50/50 border-gray-100" {...field} />
                                     </FormControl>

@@ -33,9 +33,8 @@ export function VerificationBanner() {
                     <AlertCircle className="w-4 h-4" />
                 </div>
                 <div>
-                    <p className="text-sm font-bold text-amber-900 dark:text-amber-200 tracking-tight">Email của bạn chưa được xác thực</p>
-                    <p className="text-[10px] font-medium text-amber-700 dark:text-amber-400/70 uppercase tracking-widest">Vui lòng kiểm tra hộp thư để bảo vệ tài khoản của bạn</p>
-                </div>
+ <p className="text-sm font-bold text-amber-900 dark:text-amber-200 ">Email của bạn chưa được xác thực</p>
+<p className="text-[10px] font-medium text-amber-700 dark:text-amber-400/70 ">Vui lòng kiểm tra hộp thư để bảo vệ tài khoản của bạn</p>                 </div>
             </div>
             <div className="flex items-center gap-3">
                 <Button 

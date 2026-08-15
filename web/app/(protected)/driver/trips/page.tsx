@@ -115,7 +115,7 @@ export default function TripsPage() {
 
             <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-none pt-4 sm:pt-0 border-gray-100 dark:border-zinc-800">
               <div className="text-left sm:text-right">
-                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider block">Trạng thái</span>
+ <span className="text-[10px] text-muted-foreground font-bold uppercase block">Trạng thái</span>
                 <Badge className={`text-[9px] px-2.5 py-0.5 rounded-full border-none font-bold mt-1 ${
                   trip.status === "SCHEDULED"
                     ? "bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400"
@@ -145,7 +145,7 @@ export default function TripsPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 animate-in fade-in duration-700">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Danh sách chuyến xe</h2>
+ <h2 className="text-3xl font-bold text-[#802222] dark:text-rose-400">Danh sách chuyến xe</h2>
         <p className="text-sm text-muted-foreground mt-1 font-medium opacity-65">
           Quản lý lịch trình di chuyển cá nhân và theo dõi lịch sử chuyến đi của bạn.
         </p>

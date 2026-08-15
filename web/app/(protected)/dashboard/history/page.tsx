@@ -59,7 +59,7 @@ export default function HistoryPage() {
         <div className="flex flex-1 flex-col gap-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-[#802222] dark:text-rose-400 mb-1 tracking-tight">Lịch sử đặt vé</h1>
+ <h1 className="text-3xl font-bold text-[#802222] dark:text-rose-400 mb-1 ">Lịch sử đặt vé</h1>
                     <p className="text-muted-foreground text-base font-medium opacity-80">Quản lý và theo dõi các chuyến đi của bạn</p>
                 </div>
 
@@ -109,9 +109,8 @@ export default function HistoryPage() {
                                 <Search className="h-10 w-10" />
                             </div>
                             <div className="text-center space-y-2 mb-8">
-                                <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Không tìm thấy đơn hàng</h3>
-                                <p className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-widest">
-                                    {search ? 'Thử thay đổi từ khóa tìm kiếm của bạn' : 'Bạn hiện chưa có đơn hàng nào'}
+ <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 leading-none">Không tìm thấy đơn hàng</h3>
+<p className="text-[11px] font-medium text-muted-foreground/50 ">                                     {search ? 'Thử thay đổi từ khóa tìm kiếm của bạn' : 'Bạn hiện chưa có đơn hàng nào'}
                                 </p>
                             </div>
                             <Button

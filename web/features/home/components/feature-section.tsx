@@ -28,7 +28,7 @@ export function FeatureSection() {
         <section className="bg-zinc-50 dark:bg-zinc-950 py-24">
             <div className="container mx-auto px-4">
                 <div className="mx-auto mb-16 max-w-3xl text-center">
-                    <h2 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 leading-tight">
+ <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-100 leading-tight">
                         Một nền tảng cho toàn bộ <span className="text-[#802222] italic">quy trình đặt vé</span>
                     </h2>
                     <p className="mt-4 text-base leading-relaxed text-zinc-500 dark:text-zinc-400 sm:text-lg">
@@ -42,7 +42,7 @@ export function FeatureSection() {
                             <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 dark:bg-rose-900/20 text-[#802222] dark:text-rose-400 mb-6 group-hover:scale-110 transition-transform">
                                 <feature.icon className="h-6 w-6" />
                             </div>
-                            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-3 tracking-tight">{feature.title}</h3>
+ <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-3 ">{feature.title}</h3>
                             <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium">
                                 {feature.description}
                             </p>

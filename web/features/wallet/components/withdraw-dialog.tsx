@@ -134,8 +134,7 @@ export function WithdrawDialog({ open, onOpenChange, maxAmount }: WithdrawDialog
                                             type="password" 
                                             maxLength={6} 
                                             placeholder="------" 
-                                            className="text-center text-xl tracking-[0.5em] font-mono" 
-                                            {...field} 
+ className="text-center text-xl font-mono"                                             {...field} 
                                         />
                                     </FormControl>
                                     <FormMessage />

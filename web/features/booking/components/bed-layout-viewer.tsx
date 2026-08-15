@@ -95,7 +95,7 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
             <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">
+ <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 leading-none">
                             {coachName}
                         </h3>
                         <p className="text-[13px] font-medium text-muted-foreground mt-1">
@@ -129,19 +129,19 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                 {!isAdmin && (
                 <div className="flex gap-4 text-sm bg-white dark:bg-zinc-900/50 rounded-2xl w-full p-4 px-6 border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.03]">
                     <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Tổng số giường</span>
+ <span className="text-[10px] font-bold text-muted-foreground/40 uppercase ">Tổng số giường</span>
                         <span className="font-bold text-rose-600 dark:text-rose-400">{seats.length}</span>
                     </div>
                     <div className="w-px bg-gray-100 dark:bg-zinc-800 mx-2" />
                     <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Còn trống</span>
+ <span className="text-[10px] font-bold text-muted-foreground/40 uppercase ">Còn trống</span>
                         <span className="font-bold text-emerald-600 dark:text-emerald-400">
                             {seats.filter(s => s.bookingStatus === 'AVAILABLE' && !lockedSeatIds.includes(s.id)).length}
                         </span>
                     </div>
                     <div className="w-px bg-gray-100 dark:bg-zinc-800 mx-2" />
                     <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Đã đặt</span>
+ <span className="text-[10px] font-bold text-muted-foreground/40 uppercase ">Đã đặt</span>
                         <span className="font-bold text-rose-600 dark:text-rose-400">
                             {seats.filter(s => s.bookingStatus === 'BOOKED').length}
                         </span>
@@ -185,8 +185,7 @@ export function BedLayoutViewer({ seats, template, onSeatClick, selectedSeats = 
                         return (
                             <div key={compartmentIndex} className="w-fit min-w-full p-2">
                                 {/* Compartment header */}
-                                <div className="text-[11px] font-bold mb-1 text-center text-muted-foreground uppercase tracking-widest opacity-50">
-                                    Khoang {compartmentIndex + 1}
+<div className="text-[11px] font-bold mb-1 text-center text-muted-foreground opacity-50">                                     Khoang {compartmentIndex + 1}
                                 </div>
 
                                 {/* Tiers (from top to bottom) */}

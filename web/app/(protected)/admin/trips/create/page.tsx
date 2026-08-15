@@ -81,7 +81,7 @@ export default function CreateTripPage() {
                         <ArrowLeft className="h-5 w-5" />
                     </Button>
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Tạo chuyến đi mới</h1>
+ <h1 className="text-3xl font-bold text-[#802222] dark:text-rose-400">Tạo chuyến đi mới</h1>
                         <p className="text-sm text-muted-foreground mt-1 font-medium italic opacity-60">Thiết lập lộ trình và thời gian vận hành cho đoàn tàu</p>
                     </div>
                 </div>
@@ -91,7 +91,7 @@ export default function CreateTripPage() {
                 <div>
                     <Card className="rounded-[2.5rem] border-none shadow-2xl shadow-rose-900/[0.03] bg-white dark:bg-zinc-950 overflow-hidden">
                         <CardHeader className="p-8 pb-4">
-                            <CardTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Chi tiết chuyến đi</CardTitle>
+ <CardTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 ">Chi tiết chuyến đi</CardTitle>
                             <CardDescription className="text-xs font-medium text-muted-foreground/50 italic">Cung cấp các thông tin cơ bản để bắt đầu hành trình</CardDescription>
                         </CardHeader>
                         <CardContent className="p-8 pt-2">
@@ -103,8 +103,7 @@ export default function CreateTripPage() {
                                             name="routeId"
                                             render={({ field }) => (
                                                 <FormItem className="space-y-3">
-                                                    <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Tuyến đường</FormLabel>
-                                                    <FormControl>
+<FormLabel className="text-xs font-bold text-[#802222]/60 ml-1">Tuyến đường</FormLabel>                                                     <FormControl>
                                                         <div className="relative group">
                                                             <Input
                                                                 value={selectedRoute?.name || ""}
@@ -132,8 +131,7 @@ export default function CreateTripPage() {
                                             name="trainId"
                                             render={({ field }) => (
                                                 <FormItem className="space-y-3">
-                                                    <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Đoàn tàu</FormLabel>
-                                                    <FormControl>
+<FormLabel className="text-xs font-bold text-[#802222]/60 ml-1">Đoàn tàu</FormLabel>                                                     <FormControl>
                                                         <div className="relative group">
                                                             <Input
                                                                 value={selectedTrain ? `${selectedTrain.code} - ${selectedTrain.name}` : ""}
@@ -164,8 +162,7 @@ export default function CreateTripPage() {
                                             name="departureTime"
                                             render={({ field }) => (
                                                 <FormItem className="space-y-3">
-                                                    <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Lịch khởi hành</FormLabel>
-                                                    <FormControl>
+<FormLabel className="text-xs font-bold text-[#802222]/60 ml-1">Lịch khởi hành</FormLabel>                                                     <FormControl>
                                                         <div className="relative">
                                                             <Input 
                                                                 type="datetime-local" 
@@ -184,8 +181,7 @@ export default function CreateTripPage() {
                                             name="driverId"
                                             render={({ field }) => (
                                                 <FormItem className="space-y-3">
-                                                    <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Lái tàu</FormLabel>
-                                                    <FormControl>
+<FormLabel className="text-xs font-bold text-[#802222]/60 ml-1">Lái tàu</FormLabel>                                                     <FormControl>
                                                         <div className="relative group">
                                                             <Input
                                                                 value={selectedDriver ? `${selectedDriver.name || "Chưa đặt tên"} - ${selectedDriver.email}` : ""}

@@ -128,8 +128,7 @@ export function PaymentMethodDialog({ open, onOpenChange, amount, paymentUrl, bo
                                                     type="password"
                                                     maxLength={6}
                                                     placeholder="• • • • • •"
-                                                    className="pl-9 tracking-widest"
-                                                    value={pin}
+className="pl-9 "                                                     value={pin}
                                                     onChange={(e) => setPin(e.target.value)}
                                                     autoFocus
                                                 />

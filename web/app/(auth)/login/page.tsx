@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-[#FDFCFB] dark:bg-zinc-950 flex flex-col items-center p-6 relative overflow-y-auto">
+    <div className="min-h-screen bg-[#FDFCFB] dark:bg-zinc-950 flex flex-col items-center justify-center p-6 relative overflow-y-auto">
       {/* Decorative background elements */}
       <div className="fixed top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_-20%,#80222215,transparent_50%),radial-gradient(circle_at_70%_120%,#80222210,transparent_50%)] z-0 pointer-events-none" />
       
@@ -14,7 +14,7 @@ export default function LoginPage() {
         <LoginForm />
         
         <div className="text-center">
-            <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-widest">
+            <p className="text-[10px] text-muted-foreground/40 font-bold">
                 &copy; {new Date().getFullYear()} Railflow
             </p>
         </div>

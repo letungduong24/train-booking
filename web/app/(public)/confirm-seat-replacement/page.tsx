@@ -158,9 +158,8 @@ export default function ConfirmSeatReplacementPage() {
       <div className="max-w-xl w-full space-y-6">
         {/* Brand logo header */}
         <div className="text-center">
-          <span className="text-2xl font-black italic tracking-tight text-gray-900">Railflow<span className="text-[#802222]">.</span></span>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-[#802222] mt-0.5">Xác nhận đổi ghế sự cố</p>
-        </div>
+ <span className="text-2xl font-black italic text-gray-900">Railflow<span className="text-[#802222]">.</span></span>
+<p className="text-[10px] font-bold text-[#802222] mt-0.5">Xác nhận đổi ghế sự cố</p>         </div>
 
         {successMsg ? (
           <Card className="rounded-[2.5rem] border border-gray-100 shadow-xl bg-white p-8 text-center space-y-6 animate-in zoom-in duration-500">
@@ -226,11 +225,11 @@ export default function ConfirmSeatReplacementPage() {
 
               <div className="grid grid-cols-2 gap-4 text-xs font-semibold">
                 <div>
-                  <span className="text-muted-foreground block text-[9px] uppercase tracking-wider mb-0.5">Mã đặt vé</span>
+ <span className="text-muted-foreground block text-[9px] uppercase mb-0.5">Mã đặt vé</span>
                   <span className="text-gray-900 font-bold">{ticket?.id?.substring(0, 8).toUpperCase()}</span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground block text-[9px] uppercase tracking-wider mb-0.5">Ghế bị sự cố</span>
+ <span className="text-muted-foreground block text-[9px] uppercase mb-0.5">Ghế bị sự cố</span>
                   <span className="text-rose-600 font-bold flex items-center gap-1">
                     Toa {oldCoach?.name || oldCoach?.order} - Ghế {oldSeat?.name} ⚠️
                   </span>

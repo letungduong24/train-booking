@@ -61,12 +61,12 @@ export function DelayControlDialog({ tripId, tripStatus, currentDepartureDelay =
                     className="h-12 px-6 rounded-xl border-gray-100 dark:border-zinc-800 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-[#802222] dark:hover:text-rose-400 transition-all flex items-center gap-2 group/btn"
                 >
                     <Clock className="w-4 h-4 opacity-40 group-hover/btn:opacity-100 group-hover/btn:scale-110 transition-all" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Quản lý Delay</span>
+ <span className="text-xs font-bold uppercase ">Quản lý Delay</span>
                 </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:hidden">
                 <DialogHeader className="p-6 pb-2">
-                    <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight flex items-center gap-2">
+ <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 flex items-center gap-2">
                         <Clock className="w-5 h-5 opacity-40" />
                         Quản lý Delay
                     </DialogTitle>
@@ -84,7 +84,7 @@ export function DelayControlDialog({ tripId, tripStatus, currentDepartureDelay =
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="departure-delay" className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider ml-1">Số phút delay (Khởi hành)</Label>
+ <Label htmlFor="departure-delay" className="text-xs font-bold text-muted-foreground/60 uppercase ml-1">Số phút delay (Khởi hành)</Label>
                                 <Input
                                     id="departure-delay"
                                     type="number"
@@ -117,7 +117,7 @@ export function DelayControlDialog({ tripId, tripStatus, currentDepartureDelay =
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="arrival-delay" className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider ml-1">Số phút delay (Về bến)</Label>
+ <Label htmlFor="arrival-delay" className="text-xs font-bold text-muted-foreground/60 uppercase ml-1">Số phút delay (Về bến)</Label>
                                 <Input
                                     id="arrival-delay"
                                     type="number"

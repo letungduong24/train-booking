@@ -73,7 +73,7 @@ export function EditCoachDialog({ coach }: EditCoachDialogProps) {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px] rounded-[2.5rem] border-none shadow-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl p-0 overflow-hidden">
                 <DialogHeader className="p-8 pb-4">
-                    <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Sửa thông tin toa</DialogTitle>
+ <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 ">Sửa thông tin toa</DialogTitle>
                     <DialogDescription className="text-xs font-medium text-muted-foreground/50">
                         Cập nhật tên hoặc thứ tự của toa. Template không thể thay đổi.
                     </DialogDescription>

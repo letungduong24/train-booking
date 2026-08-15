@@ -63,7 +63,7 @@ export function RegisterForm({
             <Card className="rounded-[2.5rem] border-gray-100 dark:border-zinc-800 shadow-2xl shadow-rose-900/5 overflow-hidden bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-6">
                 <CardHeader className="text-center">
                     <Link href="/" className="inline-block hover:opacity-80 transition-opacity mb-2">
-                        <h1 className="text-3xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase italic">
+ <h1 className="text-3xl font-black text-zinc-900 dark:text-white uppercase italic">
                             Railflow<span className="text-[#802222]">.</span>
                         </h1>
                     </Link>
@@ -92,8 +92,7 @@ export function RegisterForm({
                                 <div className="absolute inset-0 flex items-center">
                                     <span className="w-full border-t border-gray-100 dark:border-zinc-800" />
                                 </div>
-                                <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-widest">
-                                    <span className="bg-white dark:bg-zinc-900 px-3 text-muted-foreground/40">Hoặc đăng ký với email</span>
+<div className="relative flex justify-center text-[10px] font-bold ">                                     <span className="bg-white dark:bg-zinc-900 px-3 text-muted-foreground/40">Hoặc đăng ký với email</span>
                                 </div>
                             </div>
 
@@ -104,7 +103,7 @@ export function RegisterForm({
                             )}
 
                             <Field>
-                                <FieldLabel htmlFor="email" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70 ml-1">Địa chỉ Email</FieldLabel>
+ <FieldLabel htmlFor="email" className="text-[11px] font-bold uppercase text-muted-foreground/70 ml-1">Địa chỉ Email</FieldLabel>
                                 <Input
                                     id="email"
                                     type="email"
@@ -119,7 +118,7 @@ export function RegisterForm({
                             </Field>
 
                             <Field>
-                                <FieldLabel htmlFor="name" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70 ml-1">Họ và tên (Tùy chọn)</FieldLabel>
+ <FieldLabel htmlFor="name" className="text-[11px] font-bold uppercase text-muted-foreground/70 ml-1">Họ và tên (Tùy chọn)</FieldLabel>
                                 <Input
                                     id="name"
                                     type="text"
@@ -134,7 +133,7 @@ export function RegisterForm({
                             </Field>
 
                             <Field>
-                                <FieldLabel htmlFor="password" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70 ml-1">Mật khẩu</FieldLabel>
+ <FieldLabel htmlFor="password" className="text-[11px] font-bold uppercase text-muted-foreground/70 ml-1">Mật khẩu</FieldLabel>
                                 <Input
                                     id="password"
                                     type="password"

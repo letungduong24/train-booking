@@ -71,7 +71,7 @@ export default function AdminSeatIssuesPage() {
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs font-semibold">
           <thead>
-            <tr className="border-b border-gray-100 dark:border-zinc-800 text-[10px] text-muted-foreground uppercase tracking-wider">
+ <tr className="border-b border-gray-100 dark:border-zinc-800 text-[10px] text-muted-foreground uppercase ">
               <th className="py-3 px-4">Ngày báo</th>
               <th className="py-3 px-4">Tàu & Toa</th>
               <th className="py-3 px-4">Ghế ngồi</th>
@@ -147,7 +147,7 @@ export default function AdminSeatIssuesPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 animate-in fade-in duration-500">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Quản lý sự cố ghế hỏng</h2>
+ <h2 className="text-3xl font-bold text-[#802222] dark:text-rose-400">Quản lý sự cố ghế hỏng</h2>
         <p className="text-sm text-muted-foreground mt-1 font-medium opacity-65">
           Tiếp nhận báo cáo từ Lái tàu, xác nhận khóa ghế sự cố, tự động điều phối đổi ghế trống hoặc hoàn tiền cho khách.
         </p>
@@ -172,7 +172,7 @@ export default function AdminSeatIssuesPage() {
           </TabsTrigger>
         </TabsList>
 
-        <Card className="rounded-[2rem] border border-gray-100 dark:border-zinc-800 shadow-xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-6">
+        <Card className="rounded-xl border border-gray-100 dark:border-zinc-800 shadow-xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-6">
           <TabsContent value="pending" className="mt-0 focus-visible:outline-none">{renderIssueTable(pendingIssues)}</TabsContent>
           <TabsContent value="waiting" className="mt-0 focus-visible:outline-none">{renderIssueTable(waitingIssues)}</TabsContent>
           <TabsContent value="resolved" className="mt-0 focus-visible:outline-none">{renderIssueTable(resolvedIssues)}</TabsContent>

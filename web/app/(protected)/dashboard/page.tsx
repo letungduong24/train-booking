@@ -48,8 +48,7 @@ export default function DashboardPage() {
                 <div className="col-span-12 xl:col-span-8">
                     <div className="relative rounded-[2rem] overflow-hidden bg-gradient-to-br from-[#802222] to-rose-900 shadow-xl flex items-center p-8 text-white group border border-rose-800/20 h-full min-h-[220px]">
                         <div className="z-10 max-w-2xl relative">
-                            <p className="text-xs font-semibold mb-1.5 opacity-80 uppercase tracking-widest text-rose-200">Xin chào trở lại</p>
-                            <h1 className="text-2xl sm:text-3xl font-black mb-4 leading-tight tracking-tight">
+<p className="text-xs font-semibold mb-1.5 opacity-80 text-rose-200">Xin chào trở lại</p> <h1 className="text-2xl sm:text-3xl font-black mb-4 leading-tight ">
                                 Chúc {user?.name?.split(' ')[0] || 'bạn'} một ngày <br/>
                                 hành trình <span className="text-rose-200 underline decoration-rose-300 underline-offset-4">tuyệt vời!</span>
                             </h1>
@@ -105,7 +104,7 @@ export default function DashboardPage() {
                                 </div>
                                 <span className="text-xs font-semibold text-muted-foreground/60">Ví của tôi</span>
                             </div>
-                            <h3 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400 tabular-nums">
+ <h3 className="text-3xl font-bold text-[#802222] dark:text-rose-400 tabular-nums">
                                 {currencyFormatter.format(stats?.balance || 0)}
                             </h3>
                             <p className="text-xs text-muted-foreground mt-2 font-medium">Nạp hoặc thanh toán vé tàu cực kỳ nhanh chóng bằng ví điện tử Railflow.</p>
@@ -131,7 +130,7 @@ export default function DashboardPage() {
                         <div className="relative z-10">
                             <div className="flex flex-row items-center justify-between gap-4 pb-2 mb-6 relative z-10">
                                 <div className="space-y-1">
-                                    <h2 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Chuyến đi của bạn</h2>
+ <h2 className="text-lg font-bold text-[#802222] dark:text-rose-400 leading-none">Chuyến đi của bạn</h2>
                                     <p className="text-xs text-muted-foreground font-medium opacity-80">Theo dõi hành trình và đơn đặt vé</p>
                                 </div>
                                 <Button variant="outline" size="sm" asChild className="rounded-xl px-4 border-[#802222]/20 text-[#802222] dark:text-rose-400 dark:border-rose-900/30 font-bold text-xs h-8 hover:bg-[#802222] hover:text-white dark:hover:bg-rose-950/50 transition-all duration-300">
@@ -213,7 +212,7 @@ export default function DashboardPage() {
                         <div className="relative z-10">
                             <div className="flex flex-row items-center justify-between gap-4 pb-2 mb-6 relative z-10">
                                 <div className="space-y-1">
-                                    <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Hoạt động tài chính</h3>
+ <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 leading-none">Hoạt động tài chính</h3>
                                     <p className="text-xs text-muted-foreground font-medium opacity-80">Giao dịch ví gần đây</p>
                                 </div>
                                 <Button variant="ghost" size="sm" asChild className="h-8 px-3 text-xs font-bold text-[#802222] hover:bg-rose-50 rounded-xl">

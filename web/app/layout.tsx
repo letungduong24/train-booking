@@ -24,8 +24,9 @@ export default function RootLayout({
             <SocketInitializer />
             <ThemeProvider
               attribute="class"
-              defaultTheme="system"
-              enableSystem
+              forcedTheme="light"
+              defaultTheme="light"
+              enableSystem={false}
               disableTransitionOnChange
             >
               {children}

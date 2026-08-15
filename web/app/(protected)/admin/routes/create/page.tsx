@@ -63,7 +63,7 @@ export default function CreateRoutePage() {
                         <ArrowLeft className="h-5 w-5" />
                     </Button>
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Thiết lập tuyến đường mới</h1>
+ <h1 className="text-3xl font-bold text-[#802222] dark:text-rose-400">Thiết lập tuyến đường mới</h1>
                         <p className="text-sm text-muted-foreground mt-1 font-medium italic opacity-60">Xây dựng lộ trình và cấu hình chi phí vận hành hệ thống</p>
                     </div>
                 </div>
@@ -84,12 +84,12 @@ export default function CreateRoutePage() {
                     <div className="lg:col-span-7 xl:col-span-8 space-y-8 min-w-0">
                         <div className="space-y-4">
                             <div className="flex items-center justify-between px-2">
-                                <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight flex items-center gap-3">
+ <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 flex items-center gap-3">
                                     <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#802222] text-white text-sm font-black">1</span>
                                     Thiết lập lộ trình
                                 </h3>
                                 {(form.watch('stations')?.length ?? 0) > 0 && (
-                                    <span className="text-xs font-bold text-rose-500/60 uppercase tracking-widest bg-rose-50 px-3 py-1 rounded-full">
+                                    <span className="text-xs font-bold text-rose-500/60 bg-rose-50 px-3 py-1 rounded-full">
                                         {form.watch('stations')?.length} điểm dừng đã chọn
                                     </span>
                                 )}
@@ -158,7 +158,7 @@ export default function CreateRoutePage() {
                     {/* Right Side: Route Config */}
                     <div className="lg:col-span-5 xl:col-span-4 space-y-8 min-w-0">
                         <div className="space-y-4">
-                            <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight flex items-center gap-3 px-2">
+ <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 flex items-center gap-3 px-2">
                                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#802222] text-white text-sm font-black">2</span>
                                 Thông số vận hành
                             </h3>
@@ -171,7 +171,7 @@ export default function CreateRoutePage() {
                                             name="code"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold uppercase tracking-wide text-zinc-400 ml-1">Mã tuyến</FormLabel>
+ <FormLabel className="text-[10px] font-bold uppercase text-zinc-400 ml-1">Mã tuyến</FormLabel>
                                                     <FormControl>
                                                         <Input 
                                                             placeholder="VD: HN-HP" 
@@ -188,7 +188,7 @@ export default function CreateRoutePage() {
                                             name="name"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold uppercase tracking-wide text-zinc-400 ml-1">Tên hiển thị</FormLabel>
+ <FormLabel className="text-[10px] font-bold uppercase text-zinc-400 ml-1">Tên hiển thị</FormLabel>
                                                     <FormControl>
                                                         <Input 
                                                             placeholder="VD: Hà Nội - Hải Phòng" 
@@ -207,7 +207,7 @@ export default function CreateRoutePage() {
                                             name="durationMinutes"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold uppercase tracking-wide text-zinc-400 ml-1">Thời gian (phút)</FormLabel>
+ <FormLabel className="text-[10px] font-bold uppercase text-zinc-400 ml-1">Thời gian (phút)</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             type="number"
@@ -225,7 +225,7 @@ export default function CreateRoutePage() {
                                             name="turnaroundMinutes"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold uppercase tracking-wide text-zinc-400 ml-1">Nghỉ (phút)</FormLabel>
+ <FormLabel className="text-[10px] font-bold uppercase text-zinc-400 ml-1">Nghỉ (phút)</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             type="number"
@@ -246,7 +246,7 @@ export default function CreateRoutePage() {
                                             name="basePricePerKm"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold uppercase tracking-wide text-[#802222]/50 ml-1">Đơn giá VND/km</FormLabel>
+ <FormLabel className="text-[10px] font-bold uppercase text-[#802222]/50 ml-1">Đơn giá VND/km</FormLabel>
                                                     <FormControl>
                                                         <div className="relative">
                                                             <Input
@@ -267,7 +267,7 @@ export default function CreateRoutePage() {
                                             name="stationFee"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] font-bold uppercase tracking-wide text-[#802222]/50 ml-1">Phí bến bãi (mỗi ga)</FormLabel>
+ <FormLabel className="text-[10px] font-bold uppercase text-[#802222]/50 ml-1">Phí bến bãi (mỗi ga)</FormLabel>
                                                     <FormControl>
                                                         <div className="relative">
                                                             <Input

@@ -33,7 +33,7 @@ export const BookingSummary = React.memo(({
     return (
         <div className={`bg-white dark:bg-zinc-900 rounded-[2rem] p-6 shadow-2xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-zinc-800 h-fit ${className}`}>
             <div className="mb-6">
-                <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight">Chi tiết đặt chỗ</h3>
+ <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 ">Chi tiết đặt chỗ</h3>
             </div>
             
             <div className="space-y-5">

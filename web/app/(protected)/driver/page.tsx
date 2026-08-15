@@ -46,7 +46,7 @@ export default function Page() {
       {/* Header Block */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Khu vực Lái tàu</h2>
+ <h2 className="text-3xl font-bold text-[#802222] dark:text-rose-400">Khu vực Lái tàu</h2>
           <p className="text-sm text-muted-foreground mt-1 font-medium opacity-65">
             Xem lịch trình di chuyển cá nhân và quản lý/báo cáo sự cố thiết bị trên tàu.
           </p>

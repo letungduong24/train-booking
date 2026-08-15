@@ -69,7 +69,7 @@ export function DashboardTransactionItem({ transaction }: DashboardTransactionIt
                     </p>
                 </div>
             </div>
-            <div className={`font-semibold text-sm sm:text-base tabular-nums tracking-tighter shrink-0 text-right ${transaction.amount > 0 ? 'text-emerald-600' : 'text-[#802222]'}`}>
+ <div className={`font-semibold text-sm sm:text-base tabular-nums shrink-0 text-right ${transaction.amount > 0 ? 'text-emerald-600' : 'text-[#802222]'}`}>
                 {transaction.amount > 0 ? '+' : ''}
                 {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(transaction.amount)}
             </div>

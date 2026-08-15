@@ -72,7 +72,7 @@ export function SectionCards({ data }: SectionCardsProps) {
           <CardHeader className="flex flex-row items-center justify-between pb-2 p-6 relative z-10">
             <div className="space-y-1">
               <CardDescription className="text-[10px] font-semibold text-muted-foreground/70">{stat.title}</CardDescription>
-              <CardTitle className="text-2xl font-bold tracking-tight tabular-nums text-[#802222] dark:text-rose-400">
+ <CardTitle className="text-2xl font-bold tabular-nums text-[#802222] dark:text-rose-400">
                 {stat.value}
               </CardTitle>
             </div>

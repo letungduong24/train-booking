@@ -75,7 +75,7 @@ export function DashboardTripCard({ booking, showStatus = true }: DashboardTripC
                         </div>
                         <div>
                             <div className="flex items-center gap-2 mb-0.5">
-                                <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">{booking.trip.route.name}</h3>
+ <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 leading-none">{booking.trip.route.name}</h3>
                                 <Badge variant="outline" className="font-mono text-[8px] h-3.5 px-1 opacity-40 border-gray-300">
                                     {booking.code}
                                 </Badge>
@@ -139,7 +139,7 @@ export function DashboardTripCard({ booking, showStatus = true }: DashboardTripC
 
                     <div className="text-right">
                         <p className="text-[10px] font-medium text-muted-foreground opacity-70 leading-none mb-1">Tổng chi phí</p>
-                        <div className="text-lg font-bold text-[#802222] tracking-tight leading-none">
+ <div className="text-lg font-bold text-[#802222] leading-none">
                             {booking.totalPrice === 0
                                 ? <span className="text-[10px] font-normal italic opacity-40">Chưa định giá</span>
                                 : formatCurrency(booking.totalPrice)

@@ -84,7 +84,7 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                 <div className="flex-1 overflow-y-auto max-h-[90vh] bg-white dark:bg-zinc-950 text-foreground">
                     <div className="p-6 md:p-6">
                         <DialogHeader className="pb-6">
-                            <DialogTitle className="text-3xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Thêm tuyến đường mới</DialogTitle>
+ <DialogTitle className="text-3xl font-bold text-[#802222] dark:text-rose-400 ">Thêm tuyến đường mới</DialogTitle>
                             <DialogDescription className="text-base font-medium text-muted-foreground/50 mt-2 italic">
                                 Nhập thông tin chi tiết cho tuyến đường mới. Nhấn lưu để hoàn tất.
                             </DialogDescription>
@@ -98,8 +98,7 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                                         name="code"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Mã tuyến đường</FormLabel>
-                                                <FormControl>
+<FormLabel className="text-xs font-bold text-[#802222]/60 ml-1">Mã tuyến đường</FormLabel>                                                 <FormControl>
                                                     <Input placeholder="VD: HN-SG" className="h-14 rounded-2xl bg-rose-50/10 border-rose-100/50 focus-visible:ring-[#802222]/20 focus-visible:border-[#802222]/30 text-lg transition-all font-mono uppercase" {...field} />
                                                 </FormControl>
                                                 <FormMessage />
@@ -112,8 +111,7 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                                             name="name"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Tên tuyến đường</FormLabel>
-                                                    <FormControl>
+<FormLabel className="text-xs font-bold text-[#802222]/60 ml-1">Tên tuyến đường</FormLabel>                                                     <FormControl>
                                                         <Input placeholder="Ví dụ: Hà Nội - Sài Gòn" className="h-14 rounded-2xl bg-rose-50/10 border-rose-100/50 focus-visible:ring-[#802222]/20 focus-visible:border-[#802222]/30 text-lg transition-all" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
@@ -129,8 +127,7 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                                     name="stations"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Chọn lộ trình chi tiết</FormLabel>
-                                            <FormControl>
+<FormLabel className="text-xs font-bold text-[#802222]/60 ml-1">Chọn lộ trình chi tiết</FormLabel>                                             <FormControl>
                                                 <div className="rounded-[1.5rem] overflow-hidden border border-gray-100 bg-white">
                                                     <InteractiveRouteBuilder
                                                         value={(field.value || []).map(s => ({
@@ -183,8 +180,7 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                                         name="durationMinutes"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Thời gian chạy (phút)</FormLabel>
-                                                <FormControl>
+<FormLabel className="text-xs font-bold text-[#802222]/60 ml-1">Thời gian chạy (phút)</FormLabel>                                                 <FormControl>
                                                     <Input
                                                         type="number"
                                                         placeholder="Tự động tính..."
@@ -202,8 +198,7 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                                         name="turnaroundMinutes"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Nghỉ quay đầu (phút)</FormLabel>
-                                                <FormControl>
+<FormLabel className="text-xs font-bold text-[#802222]/60 ml-1">Nghỉ quay đầu (phút)</FormLabel>                                                 <FormControl>
                                                     <Input
                                                         type="number"
                                                         placeholder="VD: 240"
@@ -224,8 +219,7 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                                         name="basePricePerKm"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Giá cơ bản/km (VND)</FormLabel>
-                                                <FormControl>
+<FormLabel className="text-xs font-bold text-[#802222]/60 ml-1">Giá cơ bản/km (VND)</FormLabel>                                                 <FormControl>
                                                     <Input
                                                         type="number"
                                                         placeholder="VD: 1200"
@@ -243,8 +237,7 @@ export function CreateRouteDialog({ onSuccess }: CreateRouteDialogProps) {
                                         name="stationFee"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Phí bến (VND)</FormLabel>
-                                                <FormControl>
+<FormLabel className="text-xs font-bold text-[#802222]/60 ml-1">Phí bến (VND)</FormLabel>                                                 <FormControl>
                                                     <Input
                                                         type="number"
                                                         placeholder="VD: 10000"

@@ -73,8 +73,7 @@ export function NavUser({
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight ml-1">
                 <span className="truncate font-bold text-zinc-900 dark:text-zinc-100">{user.name}</span>
-                <span className="text-[11px] font-medium text-muted-foreground/60 truncate uppercase tracking-widest -mt-0.5">
-                  {user.email.split('@')[0]}
+<span className="text-[11px] font-medium text-muted-foreground/60 truncate -mt-0.5">                   {user.email.split('@')[0]}
                 </span>
               </div>
               <IconDotsVertical className="ml-auto size-4 text-muted-foreground/30 group-hover/user:text-muted-foreground/60" />

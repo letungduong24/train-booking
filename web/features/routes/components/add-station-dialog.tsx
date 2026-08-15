@@ -90,7 +90,7 @@ export function AddStationDialog({ routeId, currentStationCount, open, onOpenCha
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-[600px] max-h-[90vh] overflow-y-auto rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8 flex flex-col">
                 <DialogHeader className="p-8 pb-4">
-                    <DialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Thêm trạm vào tuyến</DialogTitle>
+ <DialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 ">Thêm trạm vào tuyến</DialogTitle>
                     <DialogDescription className="text-sm font-medium text-muted-foreground/50">
                         Chọn trạm từ danh sách các trạm khả dụng trong mạng lưới.
                     </DialogDescription>
@@ -114,8 +114,8 @@ export function AddStationDialog({ routeId, currentStationCount, open, onOpenCha
                             <Table>
                                 <TableHeader>
                                     <TableRow className="bg-rose-50/50 hover:bg-rose-50/50 border-gray-100">
-                                        <TableHead className="font-bold text-[#802222] uppercase tracking-wider text-[10px]">Tên trạm</TableHead>
-                                        <TableHead className="font-bold text-[#802222] uppercase tracking-wider text-[10px]">Vị trí</TableHead>
+ <TableHead className="font-bold text-[#802222] uppercase text-[10px]">Tên trạm</TableHead>
+ <TableHead className="font-bold text-[#802222] uppercase text-[10px]">Vị trí</TableHead>
                                         <TableHead className="w-[100px]"></TableHead>
                                     </TableRow>
                                 </TableHeader>

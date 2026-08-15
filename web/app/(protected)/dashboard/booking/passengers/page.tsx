@@ -121,7 +121,7 @@ function PassengersPageContent() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between gap-4 pb-2 p-6 relative z-10 text-center">
                         <div className="space-y-1 mx-auto">
-                            <CardTitle className="text-xl font-bold text-red-600 dark:text-red-400 tracking-tight leading-none">Đơn hàng đã bị hủy</CardTitle>
+ <CardTitle className="text-xl font-bold text-red-600 dark:text-red-400 leading-none">Đơn hàng đã bị hủy</CardTitle>
                             <CardDescription className="text-[10px] font-medium text-muted-foreground/50">Yêu cầu không còn hiệu lực</CardDescription>
                         </div>
                     </CardHeader>

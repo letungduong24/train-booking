@@ -24,6 +24,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { TableContainer } from "@/components/custom/table-container"
 import { TableSkeleton } from "@/components/custom/table-skeleton"
 
 import { Station } from "@/lib/schemas/station.schema"
@@ -217,15 +218,14 @@ export function StationsTable() {
                     />
                 </div>
             </div>
-            <div className="rounded-[2.5rem] bg-white dark:bg-zinc-900 overflow-hidden border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015]">
+            <TableContainer>
                 <Table>
                     <TableHeader className="bg-rose-50/20 dark:bg-zinc-800/20">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id} className="hover:bg-transparent border-none h-16">
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id} className="text-xs font-bold uppercase tracking-widest text-[#802222]/50 first:pl-8 last:pr-8">
-                                            {header.isPlaceholder
+<TableHead key={header.id} className="text-xs font-bold text-[#802222]/50 first:pl-8 last:pr-8">                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
                                                     header.column.columnDef.header,
@@ -273,7 +273,7 @@ export function StationsTable() {
                         )}
                     </TableBody>
                 </Table>
-            </div>
+            </TableContainer>
             <div className="flex items-center justify-end space-x-2 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">
                     Hiển thị {meta.total > 0 ? (meta.page - 1) * meta.limit + 1 : 0} - {Math.min(meta.page * meta.limit, meta.total)} trong tổng số {meta.total} trạm

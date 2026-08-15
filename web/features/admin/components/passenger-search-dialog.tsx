@@ -56,7 +56,7 @@ export function PassengerSearchDialog({
             <DialogContent className="w-[calc(100%-2rem)] max-w-2xl h-[80vh] p-0 flex flex-col gap-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 [&>button:last-child]:top-8 [&>button:last-child]:right-8">
                 <DialogHeader className="p-8 pb-4 shrink-0 relative overflow-hidden">
                     <div className="relative z-10">
-                        <DialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Danh sách hành khách</DialogTitle>
+ <DialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 ">Danh sách hành khách</DialogTitle>
                         <DialogDescription className="text-xs font-medium text-muted-foreground/50">
                             Hệ thống đã ghi nhận {passengers.length} hành khách trên chuyến tàu này
                         </DialogDescription>
@@ -104,14 +104,12 @@ export function PassengerSearchDialog({
                                                     <User className="h-6 w-6" />
                                                 </div>
                                                 <div className="space-y-1">
-                                                    <div className="font-bold text-[#802222] dark:text-rose-400 text-base tracking-tight leading-none transition-colors">
+ <div className="font-bold text-[#802222] dark:text-rose-400 text-base leading-none transition-colors">
                                                         {passenger.name}
                                                     </div>
                                                     <div className="flex flex-col gap-1">
                                                         <div className="text-[10px] font-medium text-muted-foreground flex items-center gap-1.5">
-                                                            <span className="opacity-40 uppercase tracking-widest text-[8px]">CCCD</span>
-                                                            <span className="font-mono tracking-widest opacity-80">{passenger.cccd}</span>
-                                                        </div>
+<span className="opacity-40 text-[8px]">CCCD</span> <span className="font-mono opacity-80">{passenger.cccd}</span>                                                         </div>
                                                         <div className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 flex items-center gap-2">
                                                             <span className="bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-md">{passenger.coachName}</span>
                                                             <span className="w-1 h-1 rounded-full bg-zinc-300" />

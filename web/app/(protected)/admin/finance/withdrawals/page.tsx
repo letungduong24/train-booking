@@ -66,12 +66,12 @@ export default function AdminWithdrawalsPage() {
         <div className="flex flex-1 flex-col gap-6 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Quản lý Tài chính</h2>
+ <h2 className="text-3xl font-bold text-[#802222] dark:text-rose-400">Quản lý Tài chính</h2>
                     <p className="text-sm text-muted-foreground mt-1 font-medium italic opacity-60">Duyệt các yêu cầu rút tiền và theo dõi dòng tiền hệ thống</p>
                 </div>
             </div>
 
-            <Card className="rounded-[2.5rem] border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015] bg-white dark:bg-zinc-900 overflow-hidden">
+            <Card className="rounded-xl border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015] bg-white dark:bg-zinc-900 overflow-hidden">
                 <CardHeader className="p-8 pb-0">
                     <div className="flex items-center justify-between">
                         <div>
@@ -92,12 +92,12 @@ export default function AdminWithdrawalsPage() {
                             <Table>
                                 <TableHeader className="bg-rose-50/20 dark:bg-zinc-800/20">
                                     <TableRow className="hover:bg-transparent border-none h-16">
-                                        <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50 pl-8">Người yêu cầu</TableHead>
-                                        <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50">Số tiền</TableHead>
-                                        <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50">Thông tin ngân hàng</TableHead>
-                                        <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50">Thời gian</TableHead>
-                                        <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50">Trạng thái</TableHead>
-                                        <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50 text-right pr-8">Hành động</TableHead>
+                                        <TableHead className="text-xs font-bold text-[#802222]/50 pl-8">Người yêu cầu</TableHead>
+                                        <TableHead className="text-xs font-bold text-[#802222]/50">Số tiền</TableHead>
+                                        <TableHead className="text-xs font-bold text-[#802222]/50">Thông tin ngân hàng</TableHead>
+                                        <TableHead className="text-xs font-bold text-[#802222]/50">Thời gian</TableHead>
+                                        <TableHead className="text-xs font-bold text-[#802222]/50">Trạng thái</TableHead>
+                                        <TableHead className="text-xs font-bold text-[#802222]/50 text-right pr-8">Hành động</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -112,7 +112,7 @@ export default function AdminWithdrawalsPage() {
                                             </TableCell>
                                             <TableCell>
                                                 <div className="space-y-1">
-                                                    <div className="text-xs font-bold uppercase tracking-wider text-[#802222]">{req.bankName}</div>
+ <div className="text-xs font-bold uppercase text-[#802222]">{req.bankName}</div>
                                                     <div className="font-bold text-sm text-zinc-800">{req.bankAccount}</div>
                                                     <div className="text-[10px] font-medium text-muted-foreground flex items-center gap-1">
                                                         <CreditCard className="w-3 h-3" />
@@ -124,7 +124,7 @@ export default function AdminWithdrawalsPage() {
                                                 {format(new Date(req.createdAt), 'HH:mm • dd/MM/yyyy', { locale: vi })}
                                             </TableCell>
                                             <TableCell>
-                                                <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 rounded-lg px-2 py-0.5 text-[10px] font-bold uppercase tracking-tighter">
+ <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 rounded-lg px-2 py-0.5 text-[10px] font-bold uppercase ">
                                                     Chờ duyệt
                                                 </Badge>
                                             </TableCell>

@@ -72,7 +72,7 @@ export function EditStationDialog({ routeId, station, open, onOpenChange, onSucc
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-[500px] rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
                 <DialogHeader className="p-8 pb-4">
-                    <DialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Sửa thông tin trạm</DialogTitle>
+ <DialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 ">Sửa thông tin trạm</DialogTitle>
                     <DialogDescription className="text-sm font-medium text-muted-foreground/50">
                         Cập nhật thông tin trạm và khoảng cách trong danh mục.
                     </DialogDescription>
@@ -80,7 +80,7 @@ export function EditStationDialog({ routeId, station, open, onOpenChange, onSucc
 
                 <div className="px-8 space-y-6">
                     <div className="space-y-2">
-                        <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Tên trạm</Label>
+ <Label className="text-xs font-bold uppercase text-muted-foreground/70">Tên trạm</Label>
                         <Input 
                             className="h-11 rounded-xl bg-gray-50/50 border-gray-100" 
                             value={name} 
@@ -89,17 +89,17 @@ export function EditStationDialog({ routeId, station, open, onOpenChange, onSucc
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Vĩ độ</Label>
+ <Label className="text-xs font-bold uppercase text-muted-foreground/70">Vĩ độ</Label>
                             <Input className="h-11 rounded-xl bg-gray-50/50 border-gray-100" type="number" step="any" value={lat} onChange={(e) => setLat(e.target.value)} />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Kinh độ</Label>
+ <Label className="text-xs font-bold uppercase text-muted-foreground/70">Kinh độ</Label>
                             <Input className="h-11 rounded-xl bg-gray-50/50 border-gray-100" type="number" step="any" value={long} onChange={(e) => setLong(e.target.value)} />
                         </div>
                     </div>
 
                     <div className="space-y-2">
-                        <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">Khoảng cách từ ga đầu (km)</Label>
+ <Label className="text-xs font-bold uppercase text-muted-foreground/70">Khoảng cách từ ga đầu (km)</Label>
                         <Input className="h-11 rounded-xl bg-gray-50/50 border-gray-100" type="number" step="0.1" value={distance} onChange={(e) => setDistance(e.target.value)} placeholder="0.0" />
                     </div>
                 </div>

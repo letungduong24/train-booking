@@ -88,7 +88,7 @@ export function TripDelayDialog({ trip, onSuccess }: TripDelayDialogProps) {
       </DialogTrigger>
       <DialogContent className="max-w-md rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
         <DialogHeader className="p-8 pb-4">
-          <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight flex items-center gap-2">
+ <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 flex items-center gap-2">
             <Clock className="w-5 h-5 opacity-40" />
             {isScheduled ? "Trễ khởi hành" : "Trễ đến nơi"}
           </DialogTitle>
@@ -101,7 +101,7 @@ export function TripDelayDialog({ trip, onSuccess }: TripDelayDialogProps) {
 
         <div className="px-8 pb-4 space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="delay" className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider ml-1">Số phút trễ</Label>
+ <Label htmlFor="delay" className="text-xs font-bold text-muted-foreground/60 uppercase ml-1">Số phút trễ</Label>
             <Input
               id="delay"
               type="number"
@@ -115,7 +115,7 @@ export function TripDelayDialog({ trip, onSuccess }: TripDelayDialogProps) {
 
           <div className="space-y-3 p-4 rounded-2xl bg-gray-50/50 dark:bg-zinc-900/10 border border-gray-100 dark:border-zinc-800/50">
             <div className="space-y-1">
-              <div className="flex justify-between text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">
+ <div className="flex justify-between text-[10px] font-bold text-muted-foreground/40 uppercase ">
                 <span>Khởi hành gốc</span>
                 <span className="text-zinc-400">{dayjs(trip.departureTime).format("HH:mm DD/MM/YYYY")}</span>
               </div>
@@ -128,7 +128,7 @@ export function TripDelayDialog({ trip, onSuccess }: TripDelayDialogProps) {
             <div className="h-px bg-zinc-200/50 dark:bg-zinc-800/50" />
 
             <div className="space-y-1">
-              <div className="flex justify-between text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">
+ <div className="flex justify-between text-[10px] font-bold text-muted-foreground/40 uppercase ">
                 <span>Kết thúc gốc</span>
                 <span className="text-zinc-400">{dayjs(trip.endTime).format("HH:mm DD/MM/YYYY")}</span>
               </div>

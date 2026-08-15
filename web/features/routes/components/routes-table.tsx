@@ -28,6 +28,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { TableContainer } from "@/components/custom/table-container"
 import { TableSkeleton } from "@/components/custom/table-skeleton"
 import {
     Select,
@@ -319,15 +320,14 @@ export function RoutesTable() {
                     </Button>
                 </div>
             </div>
-            <div className="rounded-[2.5rem] bg-white dark:bg-zinc-900 overflow-hidden border border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015]">
+            <TableContainer>
                 <Table>
                     <TableHeader className="bg-rose-50/20 dark:bg-zinc-800/20">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id} className="hover:bg-transparent border-none h-16">
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id} className="text-xs font-bold uppercase tracking-widest text-[#802222]/50 first:pl-8 last:pr-8">
-                                            {header.isPlaceholder
+<TableHead key={header.id} className="text-xs font-bold text-[#802222]/50 first:pl-8 last:pr-8">                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
                                                     header.column.columnDef.header,
@@ -367,7 +367,7 @@ export function RoutesTable() {
                         )}
                     </TableBody>
                 </Table>
-            </div>
+            </TableContainer>
             {/* Pagination controls */}
             <div className="flex items-center justify-end space-x-2 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">

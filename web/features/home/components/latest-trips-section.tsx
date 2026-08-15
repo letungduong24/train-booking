@@ -95,7 +95,7 @@ export function LatestTripsSection() {
                                                 <div className="size-1.5 bg-[#802222] dark:bg-rose-400 rounded-full animate-pulse" />
                                                 SẮP KHỞI HÀNH
                                             </div>
-                                            <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight mt-2">
+ <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-2">
                                                 {trip.route?.name || "Chuyến tàu"}
                                             </h3>
                                         </div>
@@ -108,7 +108,7 @@ export function LatestTripsSection() {
                                     <div className="flex flex-col gap-4 pt-4 border-t border-zinc-50 dark:border-zinc-800">
                                         <div className="flex items-center justify-between">
                                             <div className="flex flex-col">
-                                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-1">
+ <p className="text-[10px] font-bold uppercase text-zinc-400 mb-1">
                                                     Khởi hành
                                                 </p>
                                                 <p className="text-xl font-black text-[#802222] dark:text-rose-400 tabular-nums">

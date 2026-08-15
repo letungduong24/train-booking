@@ -79,7 +79,7 @@ export function WalletDashboard() {
                 <div className="relative rounded-[1.5rem] overflow-hidden bg-gradient-to-br from-[#802222] to-rose-900 shadow-xl p-8 text-white group border border-rose-800/20">
                     <div className="z-10 relative">
                         <p className="text-xs font-medium mb-2 opacity-80 text-rose-100">Số dư khả dụng</p>
-                        <div className="text-4xl font-bold mb-6 tracking-tight tabular-nums">
+ <div className="text-4xl font-bold mb-6 tabular-nums">
                             {formatCurrency(wallet.balance)}
                         </div>
                         <div className="flex flex-wrap gap-3 mt-auto">
@@ -143,8 +143,8 @@ export function WalletDashboard() {
             <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-[2rem] p-6 shadow-xl shadow-rose-900/[0.03] border border-gray-100 dark:border-zinc-800 overflow-hidden">
                 <div className="flex flex-row items-center justify-between gap-4 pb-2 mb-6 relative z-10">
                     <div className="space-y-1">
-                        <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Lịch sử giao dịch</h3>
-                        <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest">20 giao dịch gần đây của bạn</p>
+ <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 leading-none">Lịch sử giao dịch</h3>
+                        <p className="text-[10px] font-medium text-muted-foreground/50">20 giao dịch gần đây của bạn</p>
                     </div>
                 </div>
                 

@@ -25,13 +25,10 @@ export function HeroSection() {
             <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
                 <div className="mb-10 flex flex-col items-center gap-6">
                     <div className="flex items-center gap-3">
-                        <div className="flex size-10 items-center justify-center rounded-2xl bg-[#802222] text-white shadow-xl shadow-rose-900/30">
-                            <span className="text-2xl font-black italic">R</span>
-                        </div>
-                        <span className="text-2xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Railflow</span>
+ <span className="text-3xl font-bold text-[#802222] dark:text-rose-400">Railflow</span>
                     </div>
                     
-                    <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 max-w-5xl leading-[1.1]">
+ <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold text-zinc-900 dark:text-zinc-100 max-w-5xl leading-[1.1]">
                         Tìm chuyến tàu <span className="text-[#802222] dark:text-rose-400 italic">dễ dàng</span> cho mọi hành trình
                     </h1>
                     

@@ -59,11 +59,10 @@ export function DashboardActivityItem({ booking }: DashboardActivityItemProps) {
                 </div>
                 <div>
                     <div className="flex items-center gap-2">
-                        <p className="font-black text-sm text-gray-900 dark:text-gray-100 uppercase tracking-tight">{statusInfo.label}</p>
+ <p className="font-black text-sm text-gray-900 dark:text-gray-100 uppercase ">{statusInfo.label}</p>
                         <span className="text-[9px] font-bold text-muted-foreground opacity-40">#{booking.code}</span>
                     </div>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">
-                        {format(new Date(booking.createdAt), 'HH:mm dd/MM/yyyy', { locale: vi })}
+<p className="text-[10px] font-bold text-muted-foreground mt-0.5">                         {format(new Date(booking.createdAt), 'HH:mm dd/MM/yyyy', { locale: vi })}
                     </p>
                 </div>
             </div>

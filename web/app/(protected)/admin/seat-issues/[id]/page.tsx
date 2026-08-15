@@ -214,7 +214,7 @@ export default function AdminSeatIssueDetailPage({ params }: PageProps) {
           <Card className="rounded-[2rem] border border-gray-100 dark:border-zinc-800 shadow-xl bg-white dark:bg-zinc-900 p-6 space-y-4">
             <div className="pb-3 border-b border-gray-100 dark:border-zinc-800">
               <h3 className="text-base font-bold text-gray-900 dark:text-white">Thông tin ghế sự cố</h3>
-              <p className="text-[10px] text-muted-foreground font-semibold mt-0.5 uppercase tracking-wider">
+ <p className="text-[10px] text-muted-foreground font-semibold mt-0.5 uppercase ">
                 Chi tiết chặng & thời gian
               </p>
             </div>
@@ -222,17 +222,17 @@ export default function AdminSeatIssueDetailPage({ params }: PageProps) {
             {/* Info Badges Grid */}
             <div className="grid grid-cols-2 gap-4 text-xs font-semibold">
               <div className="p-3 bg-gray-50/50 dark:bg-zinc-800/30 rounded-2xl">
-                <span className="text-muted-foreground block font-bold text-[9px] uppercase tracking-wider mb-1">Số ghế</span>
+ <span className="text-muted-foreground block font-bold text-[9px] uppercase mb-1">Số ghế</span>
                 <span className="text-[#802222] text-lg font-black">Ghế {issue.seat?.name}</span>
               </div>
               <div className="p-3 bg-gray-50/50 dark:bg-zinc-800/30 rounded-2xl">
-                <span className="text-muted-foreground block font-bold text-[9px] uppercase tracking-wider mb-1">Tàu & Toa</span>
+ <span className="text-muted-foreground block font-bold text-[9px] uppercase mb-1">Tàu & Toa</span>
                 <span className="text-gray-900 dark:text-white text-xs font-bold block truncate">
                   {issue.seat?.coach?.train?.name} - Toa {issue.seat?.coach?.name || issue.seat?.coach?.order}
                 </span>
               </div>
               <div className="p-3 bg-gray-50/50 dark:bg-zinc-800/30 rounded-2xl col-span-2">
-                <span className="text-muted-foreground block font-bold text-[9px] uppercase tracking-wider mb-1">Thời gian báo cáo</span>
+ <span className="text-muted-foreground block font-bold text-[9px] uppercase mb-1">Thời gian báo cáo</span>
                 <span className="text-gray-900 dark:text-white text-xs font-bold block">
                   {format(parseISO(issue.createdAt), "HH:mm, dd MMMM yyyy", { locale: vi })}
                 </span>
@@ -241,7 +241,7 @@ export default function AdminSeatIssueDetailPage({ params }: PageProps) {
 
             {/* Reported By & Description */}
             <div className="space-y-3 bg-gray-50/20 dark:bg-zinc-800/10 p-4 rounded-2xl border border-gray-100/50 dark:border-zinc-800/50 font-semibold text-xs text-muted-foreground">
-              <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider flex items-center gap-1.5">
+ <span className="text-[10px] text-muted-foreground font-bold uppercase flex items-center gap-1.5">
                 <User className="size-4 text-[#802222]" />
                 Người báo cáo (Lái tàu)
               </span>
@@ -249,7 +249,7 @@ export default function AdminSeatIssueDetailPage({ params }: PageProps) {
                 {issue.reportedBy?.name} <span className="text-xs text-muted-foreground font-medium">({issue.reportedBy?.email})</span>
               </p>
               
-              <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider flex items-center gap-1.5 pt-2">
+ <span className="text-[10px] text-muted-foreground font-bold uppercase flex items-center gap-1.5 pt-2">
                 <MessageSquare className="size-4 text-[#802222]" />
                 Mô tả sự cố từ Lái tàu
               </span>
@@ -261,14 +261,14 @@ export default function AdminSeatIssueDetailPage({ params }: PageProps) {
             {/* Status alerts / Proposals */}
             {issue.status === "REJECTED" && (
               <div className="bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 p-4 rounded-2xl space-y-1 text-xs font-semibold animate-in fade-in duration-200">
-                <span className="font-bold text-[9px] uppercase tracking-wider">Lý do từ chối phê duyệt</span>
+ <span className="font-bold text-[9px] uppercase ">Lý do từ chối phê duyệt</span>
                 <p className="font-medium leading-relaxed">{issue.rejectReason}</p>
               </div>
             )}
 
             {issue.status === "WAITING_CUSTOMER_CONFIRMATION" && issue.proposedSeat && (
               <div className="bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 p-4 rounded-2xl space-y-1.5 text-xs font-semibold animate-in fade-in duration-200">
-                <span className="font-bold text-[9px] uppercase tracking-wider flex items-center gap-1">
+ <span className="font-bold text-[9px] uppercase flex items-center gap-1">
                   <ShieldCheck className="size-3.5 text-blue-600" />
                   Phương án đề xuất đã gửi khách
                 </span>
@@ -281,7 +281,7 @@ export default function AdminSeatIssueDetailPage({ params }: PageProps) {
 
             {issue.status === "RESOLVED" && (
               <div className="bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 p-4 rounded-2xl space-y-1.5 text-xs font-semibold animate-in fade-in duration-200">
-                <span className="font-bold text-[9px] uppercase tracking-wider flex items-center gap-1">
+ <span className="font-bold text-[9px] uppercase flex items-center gap-1">
                   <CheckCircle2 className="size-3.5 text-emerald-600" />
                   Sự cố đã được giải quyết
                 </span>
@@ -319,7 +319,7 @@ export default function AdminSeatIssueDetailPage({ params }: PageProps) {
             {/* Reject Form */}
             {rejectDialogOpen && (
               <div className="space-y-2.5 p-4 bg-gray-50 dark:bg-zinc-800/40 rounded-2xl border border-gray-200 dark:border-zinc-800 animate-in fade-in duration-200">
-                <label className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider block">Lý do từ chối phê duyệt</label>
+ <label className="text-[10px] text-muted-foreground font-bold uppercase block">Lý do từ chối phê duyệt</label>
                 <Textarea
                   placeholder="Nhập lý do từ chối cụ thể để Lái tàu được biết (tối thiểu 5 ký tự)..."
                   value={rejectReason}
@@ -364,7 +364,7 @@ export default function AdminSeatIssueDetailPage({ params }: PageProps) {
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-zinc-800 pb-3">
               <div>
                 <h3 className="text-base font-bold text-gray-900 dark:text-white">Sơ đồ Toa tàu thời gian thực</h3>
-                <p className="text-[10px] text-muted-foreground font-semibold mt-0.5 uppercase tracking-wider">
+ <p className="text-[10px] text-muted-foreground font-semibold mt-0.5 uppercase ">
                   Chuyến tàu phụ trách {issue.seat?.coach?.train?.code || "Tàu"}
                 </p>
               </div>
@@ -388,7 +388,7 @@ export default function AdminSeatIssueDetailPage({ params }: PageProps) {
               {isCoachLoading ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-2">
                   <Spinner className="w-10 h-10 text-[#802222]" />
-                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest animate-pulse">Đang tải sơ đồ...</span>
+                  <span className="text-[10px] font-black text-muted-foreground animate-pulse">Đang tải sơ đồ...</span>
                 </div>
               ) : coachWithPrices ? (
                 <div className="w-full">

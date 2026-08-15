@@ -62,7 +62,7 @@ export default function Page() {
         {/* Header Block */}
         <div className="flex items-center justify-between">
             <div>
-                <h2 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Bảng điều khiển</h2>
+ <h2 className="text-3xl font-bold text-[#802222] dark:text-rose-400">Bảng điều khiển</h2>
                 <p className="text-sm text-muted-foreground mt-1 font-medium opacity-65">
                   Tổng quan hiệu suất hệ thống, doanh thu và thống kê vận hành thời gian thực.
                 </p>
@@ -75,7 +75,7 @@ export default function Page() {
             <div className="col-span-12 xl:col-span-6">
                 <Card className="rounded-[2rem] border border-gray-100 dark:border-zinc-800 shadow-xl shadow-rose-900/[0.03] dark:shadow-none bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl group hover:scale-[1.01] transition-all duration-300 relative overflow-hidden h-full flex flex-col justify-between p-6">
                     <div className="relative z-10">
-                        <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none mb-1">
+ <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 leading-none mb-1">
                           Tổng quan tài chính
                         </h3>
                         <p className="text-xs text-muted-foreground font-medium opacity-70">Hiệu suất doanh thu và hoạt động đặt vé</p>
@@ -182,7 +182,7 @@ export default function Page() {
                     <div>
                         <div className="flex items-start justify-between mb-4">
                             <div className="space-y-1">
-                                <h3 className="text-base font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">
+ <h3 className="text-base font-bold text-[#802222] dark:text-rose-400 leading-none">
                                   Thao tác nhanh
                                 </h3>
                                 <p className="text-xs text-muted-foreground font-medium opacity-80">Phím tắt quản trị hệ thống</p>
@@ -253,7 +253,7 @@ export default function Page() {
 
         {/* Grid 3: Recent Bookings Table (Full Width) */}
         <div className="space-y-4">
-            <h3 className="text-sm font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none uppercase">Đơn hàng gần đây</h3>
+ <h3 className="text-sm font-bold text-[#802222] dark:text-rose-400 leading-none uppercase">Đơn hàng gần đây</h3>
             <RecentBookingsTable data={data?.recentBookings || []} />
         </div>
     </div>

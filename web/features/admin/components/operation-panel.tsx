@@ -103,7 +103,7 @@ export function OperationPanel({ trip }: OperationPanelProps) {
                     </DialogTrigger>
                     <DialogContent className="max-w-md rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
                         <DialogHeader className="p-8 pb-4">
-                            <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight flex items-center gap-2">
+ <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 flex items-center gap-2">
                                 <Clock className="w-5 h-5 opacity-40" />
                                 Thông báo trễ chuyến
                             </DialogTitle>
@@ -113,7 +113,7 @@ export function OperationPanel({ trip }: OperationPanelProps) {
                         </DialogHeader>
                         <div className="px-8 pb-4 space-y-4">
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider ml-1">Số phút trễ</Label>
+ <Label className="text-xs font-bold text-muted-foreground/60 uppercase ml-1">Số phút trễ</Label>
                                 <Input
                                     type="number"
                                     placeholder="Ví dụ: 30"
@@ -143,7 +143,7 @@ export function OperationPanel({ trip }: OperationPanelProps) {
                     </DialogTrigger>
                     <DialogContent className="max-w-md rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
                         <DialogHeader className="p-8 pb-4 text-center sm:text-left">
-                            <DialogTitle className="text-xl font-bold text-red-600 dark:text-red-400 tracking-tight flex items-center gap-2">
+ <DialogTitle className="text-xl font-bold text-red-600 dark:text-red-400 flex items-center gap-2">
                                 <AlertTriangle className="w-5 h-5 opacity-40" />
                                 Xác nhận hủy chuyến
                             </DialogTitle>
@@ -153,7 +153,7 @@ export function OperationPanel({ trip }: OperationPanelProps) {
                         </DialogHeader>
                         <div className="px-8 pb-4 space-y-4">
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider ml-1">Ghi chú nội bộ</Label>
+ <Label className="text-xs font-bold text-muted-foreground/60 uppercase ml-1">Ghi chú nội bộ</Label>
                                 <Textarea
                                     placeholder="Ví dụ: Sự cố kỹ thuật..."
                                     value={cancelReason}

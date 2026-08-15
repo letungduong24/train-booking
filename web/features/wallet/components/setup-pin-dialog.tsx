@@ -59,7 +59,7 @@ export function SetupPinDialog({ open, onOpenChange }: SetupPinDialogProps) {
                             type="password"
                             maxLength={6}
                             placeholder="------"
-                            className="text-center text-2xl tracking-[0.5em] font-mono"
+ className="text-center text-2xl font-mono"
                             value={pin}
                             onChange={(e) => setPin(e.target.value)}
                         />
@@ -71,7 +71,7 @@ export function SetupPinDialog({ open, onOpenChange }: SetupPinDialogProps) {
                             type="password"
                             maxLength={6}
                             placeholder="------"
-                            className="text-center text-2xl tracking-[0.5em] font-mono"
+ className="text-center text-2xl font-mono"
                             value={confirmPin}
                             onChange={(e) => setConfirmPin(e.target.value)}
                         />

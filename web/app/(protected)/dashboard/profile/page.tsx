@@ -77,9 +77,8 @@ export default function ProfilePage() {
         <div className="container mx-auto py-8 px-4 max-w-2xl">
             <div className="flex flex-row items-center justify-between gap-4 pb-2 mb-8 relative z-10 px-4">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Thông tin cá nhân</h1>
-                    <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest">Quản lý tài khoản của bạn</p>
-                </div>
+ <h1 className="text-3xl font-bold text-[#802222] dark:text-rose-400 leading-none">Thông tin cá nhân</h1>
+<p className="text-[10px] font-medium text-muted-foreground/50 ">Quản lý tài khoản của bạn</p>                 </div>
             </div>
 
             <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-xl shadow-rose-900/[0.03] border border-gray-100 dark:border-zinc-800 relative overflow-hidden group">

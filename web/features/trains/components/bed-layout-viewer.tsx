@@ -105,7 +105,7 @@ export function BedLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdmi
                         return (
                             <div key={compartmentIndex} className="p-4 lg:p-6 border-b border-gray-100 dark:border-zinc-800 last:border-0">
                                 {/* Compartment header */}
-                                <div className="text-[10px] font-bold mb-6 text-center text-muted-foreground/40 uppercase tracking-[0.2em]">
+ <div className="text-[10px] font-bold mb-6 text-center text-muted-foreground/40 uppercase ">
                                     Khoang {compartmentIndex + 1}
                                 </div>
 
@@ -150,8 +150,7 @@ export function BedLayoutViewer({ coach, onSeatClick, selectedSeats = [], isAdmi
                                                 )}
 
                                                 {/* Tier indicator */}
-                                                <div className="px-2 text-[10px] font-bold text-muted-foreground/30 uppercase tracking-widest whitespace-nowrap">
-                                                    Tầng {tierNumber}
+<div className="px-2 text-[10px] font-bold text-muted-foreground/30 whitespace-nowrap">                                                     Tầng {tierNumber}
                                                 </div>
 
                                                 {/* Right bed */}

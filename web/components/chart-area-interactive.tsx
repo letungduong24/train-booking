@@ -76,7 +76,7 @@ export function ChartAreaInteractive({ data = [] }: ChartAreaInteractiveProps) {
     <Card className="rounded-[2rem] border-gray-100 dark:border-zinc-800 shadow-xl shadow-rose-900/[0.03] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl relative overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between gap-4 pb-2 p-6 relative z-10">
         <div className="space-y-1">
-          <CardTitle className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">
+ <CardTitle className="text-lg font-bold text-[#802222] dark:text-rose-400 leading-none">
             Biểu đồ hoạt động
           </CardTitle>
           <CardDescription className="text-[10px] font-medium text-muted-foreground/50">

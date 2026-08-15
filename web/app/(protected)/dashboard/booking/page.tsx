@@ -157,7 +157,7 @@ function BookingPageContent() {
                                                             {/* Mid Segment Timeline */}
                                                             <div className="flex items-center gap-3 text-center xl:mx-4 shrink-0 w-full xl:w-auto justify-center">
                                                                 <div className="text-right flex-1 xl:flex-none">
-                                                                    <span className="text-[10px] font-bold text-muted-foreground/60 block mb-0.5 uppercase tracking-wider">Ga đi</span>
+ <span className="text-[10px] font-bold text-muted-foreground/60 block mb-0.5 uppercase ">Ga đi</span>
                                                                     <span className="text-sm font-bold text-gray-800 dark:text-zinc-200 block truncate xl:max-w-[120px]" title={fromStation?.station?.name}>{fromStation?.station?.name || 'Ga đi'}</span>
                                                                 </div>
                                                                 <div className="flex flex-col items-center flex-1 xl:flex-none min-w-[60px] xl:min-w-[80px]">
@@ -167,7 +167,7 @@ function BookingPageContent() {
                                                                     </div>
                                                                 </div>
                                                                 <div className="text-left flex-1 xl:flex-none">
-                                                                    <span className="text-[10px] font-bold text-muted-foreground/60 block mb-0.5 uppercase tracking-wider">Ga đến</span>
+ <span className="text-[10px] font-bold text-muted-foreground/60 block mb-0.5 uppercase ">Ga đến</span>
                                                                     <span className="text-sm font-bold text-gray-800 dark:text-zinc-200 block truncate xl:max-w-[120px]" title={toStation?.station?.name}>{toStation?.station?.name || 'Ga đến'}</span>
                                                                 </div>
                                                             </div>
@@ -175,7 +175,7 @@ function BookingPageContent() {
                                                             {/* Right column: Departure & CTA Button stacked vertically to optimize desktop horizontal space */}
                                                             <div className="flex flex-row xl:flex-col items-center xl:items-end justify-between xl:justify-center gap-4 w-full xl:w-auto border-t xl:border-t-0 pt-4 xl:pt-0 border-gray-100 dark:border-zinc-800/80 shrink-0">
                                                                 <div className="flex flex-col items-start xl:items-end">
-                                                                    <p className="text-[10px] font-bold text-muted-foreground/60 mb-0.5 uppercase tracking-wider">Khởi hành</p>
+ <p className="text-[10px] font-bold text-muted-foreground/60 mb-0.5 uppercase ">Khởi hành</p>
                                                                     <div className="flex items-baseline gap-1">
                                                                         <span className="text-2xl font-black text-[#802222] dark:text-rose-400 tabular-nums leading-none">
                                                                             {format(departureTime, 'HH:mm')}
@@ -221,7 +221,7 @@ function BookingPageContent() {
                                 <div className="w-20 h-20 rounded-[2.2rem] bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-[#802222] dark:text-rose-400 mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-md shadow-rose-900/5">
                                     <Train className="h-10 w-10" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-3">Lựa chọn hành trình của bạn</h3>
+ <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Lựa chọn hành trình của bạn</h3>
                                 <p className="text-muted-foreground text-sm font-medium opacity-80 leading-relaxed mb-8">
                                     Nhập ga đi, ga đến và ngày khởi hành ở bảng tìm kiếm để tìm các chuyến tàu phù hợp nhất với hành trình của bạn.
                                 </p>

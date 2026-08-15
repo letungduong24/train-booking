@@ -14,8 +14,7 @@ export default function ResetPinPage() {
         </Suspense>
         
          <div className="text-center mt-6">
-            <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-widest">
-                &copy; {new Date().getFullYear()} Railflow Premium Experience
+<p className="text-[10px] text-muted-foreground/40 font-bold ">                 &copy; {new Date().getFullYear()} Railflow Premium Experience
             </p>
         </div>
       </div>

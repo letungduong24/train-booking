@@ -104,7 +104,7 @@ export function ResetPasswordForm({
       <Card className="rounded-[2.5rem] border-gray-100 dark:border-zinc-800 shadow-2xl shadow-rose-900/5 overflow-hidden bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-6">
         <CardHeader className="text-center">
           <Link href="/" className="inline-block hover:opacity-80 transition-opacity mb-2">
-            <h1 className="text-3xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase italic">
+ <h1 className="text-3xl font-black text-zinc-900 dark:text-white uppercase italic">
               Railflow<span className="text-[#802222]">.</span>
             </h1>
           </Link>
@@ -121,7 +121,7 @@ export function ResetPasswordForm({
               )}
 
               <Field>
-                <FieldLabel htmlFor="password" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70 ml-1">Mật khẩu mới</FieldLabel>
+ <FieldLabel htmlFor="password" className="text-[11px] font-bold uppercase text-muted-foreground/70 ml-1">Mật khẩu mới</FieldLabel>
                 <Input
                   id="password"
                   type="password"
@@ -136,7 +136,7 @@ export function ResetPasswordForm({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="confirmPassword" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70 ml-1">Xác nhận mật khẩu</FieldLabel>
+ <FieldLabel htmlFor="confirmPassword" className="text-[11px] font-bold uppercase text-muted-foreground/70 ml-1">Xác nhận mật khẩu</FieldLabel>
                 <Input
                   id="confirmPassword"
                   type="password"

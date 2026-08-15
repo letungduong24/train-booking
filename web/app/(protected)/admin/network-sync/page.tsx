@@ -134,7 +134,7 @@ export default function NetworkSyncPage() {
         <div className="flex flex-col flex-1 gap-6 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Đồng bộ Mạng lưới</h2>
+ <h2 className="text-3xl font-bold text-[#802222] dark:text-rose-400">Đồng bộ Mạng lưới</h2>
                     <p className="text-sm text-muted-foreground mt-1 font-medium italic opacity-60">Quản lý cơ sở hạ tầng đường sắt và dữ liệu bản đồ lõi</p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -193,14 +193,14 @@ export default function NetworkSyncPage() {
                         </DialogTrigger>
                         <DialogContent className="max-w-md rounded-[2.5rem] border-none shadow-none bg-white dark:bg-zinc-950 p-6 [&>button:last-child]:hidden">
                             <DialogHeader>
-                                <DialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Cập nhật mạng lưới (GEOJSON)</DialogTitle>
+ <DialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 ">Cập nhật mạng lưới (GEOJSON)</DialogTitle>
                                 <DialogDescription className="text-sm font-medium text-muted-foreground/50">
                                     Thao tác này sẽ tải lên dữ liệu bản đồ không gian và cập nhật phiên bản mới.
                                 </DialogDescription>
                             </DialogHeader>
                             <form onSubmit={handleSync} className="space-y-6 mt-4">
                                 <div className="space-y-3">
-                                    <Label htmlFor="mapData" className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">File Bản đồ (.geojson)</Label>
+                                    <Label htmlFor="mapData" className="text-xs font-bold text-[#802222]/60 ml-1">File Bản đồ (.geojson)</Label>
                                     <Input
                                         id="mapData"
                                         type="file"
@@ -229,29 +229,29 @@ export default function NetworkSyncPage() {
                             <MapIcon className="w-5 h-5" />
                         </div>
                         <div>
-                            <h4 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Thống kê Mạng lưới</h4>
-                            <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest mt-1">Cơ sở hạ tầng đường sắt hiện tại</p>
+ <h4 className="text-lg font-bold text-[#802222] dark:text-rose-400 leading-none">Thống kê Mạng lưới</h4>
+                            <p className="text-[10px] font-medium text-muted-foreground/50 mt-1">Cơ sở hạ tầng đường sắt hiện tại</p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-16 flex-1 lg:justify-end">
                         <div className="space-y-0.5">
-                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Ga tàu hiện có</span>
+                            <span className="text-[10px] font-bold text-zinc-400 block">Ga tàu hiện có</span>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-2xl font-black text-[#802222] tabular-nums tracking-tighter">
+ <span className="text-2xl font-black text-[#802222] tabular-nums ">
                                     {network?.stations?.length || 0}
                                 </span>
-                                <span className="text-xs font-bold text-[#802222]/40 tracking-tighter uppercase">nhà ga</span>
+                                <span className="text-xs font-bold text-[#802222]/40 ">nhà ga</span>
                             </div>
                         </div>
 
                         <div className="space-y-0.5 lg:border-l lg:border-gray-50 lg:dark:border-zinc-800/50 lg:pl-16">
-                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Đường ray kết nối</span>
+                            <span className="text-[10px] font-bold text-zinc-400 block">Đường ray kết nối</span>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-2xl font-black text-[#802222] tabular-nums tracking-tighter">
+ <span className="text-2xl font-black text-[#802222] tabular-nums ">
                                     {network?.lines?.length || 0}
                                 </span>
-                                <span className="text-xs font-bold text-[#802222]/40 tracking-tighter uppercase">nhánh</span>
+ <span className="text-xs font-bold text-[#802222]/40 uppercase">nhánh</span>
                             </div>
                         </div>
                     </div>

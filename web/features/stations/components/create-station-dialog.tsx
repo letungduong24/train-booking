@@ -63,9 +63,8 @@ export function CreateStationDialog() {
             </DialogTrigger>
             <DialogContent className="max-w-[425px] rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:hidden">
                 <DialogHeader className="p-6 pb-2">
-                    <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Thêm Trạm mới</DialogTitle>
-                    <DialogDescription className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest pt-1">
-                        Nhập thông tin tọa độ và định danh cho trạm dừng mới
+ <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 ">Thêm Trạm mới</DialogTitle>
+<DialogDescription className="text-[10px] font-medium text-muted-foreground/50 pt-1">                         Nhập thông tin tọa độ và định danh cho trạm dừng mới
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -76,7 +75,7 @@ export function CreateStationDialog() {
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider ml-1">Tên trạm dừng</FormLabel>
+ <FormLabel className="text-[10px] font-bold text-muted-foreground/40 uppercase ml-1">Tên trạm dừng</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Ví dụ: Ga Hà Nội" className="h-11 rounded-xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800" {...field} />
                                         </FormControl>
@@ -91,7 +90,7 @@ export function CreateStationDialog() {
                                     name="latitude"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider ml-1">Vĩ độ</FormLabel>
+ <FormLabel className="text-[10px] font-bold text-muted-foreground/40 uppercase ml-1">Vĩ độ</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"
@@ -112,7 +111,7 @@ export function CreateStationDialog() {
                                     name="longitude"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider ml-1">Kinh độ</FormLabel>
+ <FormLabel className="text-[10px] font-bold text-muted-foreground/40 uppercase ml-1">Kinh độ</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"

@@ -180,7 +180,7 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
     return (
         <Card className="rounded-[2rem] border-gray-100 dark:border-zinc-800 shadow-lg shadow-rose-900/[0.015] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl relative group animate-in fade-in slide-in-from-bottom-4 duration-700">
             <CardHeader className="p-6 pb-2 relative z-10">
-                <CardTitle className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Sơ đồ & Quản lý ghế</CardTitle>
+ <CardTitle className="text-lg font-bold text-[#802222] dark:text-rose-400 leading-none">Sơ đồ & Quản lý ghế</CardTitle>
                 <CardDescription className="text-[10px] font-medium text-muted-foreground/60">
                     Xem trạng thái, khóa/mở ghế và quản lý bảo trì cho chuyến {trip.train?.code}
                 </CardDescription>
@@ -326,9 +326,8 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
             <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0 rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 [&>button:last-child]:hidden">
                     <DialogHeader className="p-6 pb-2">
-                        <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Thông tin Chi tiết</DialogTitle>
-                        <DialogDescription className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest pt-1">
-                            {trip.train?.code} • Toa {coachWithPrices?.name} • Ghế {selectedSeat?.name}
+ <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 ">Thông tin Chi tiết</DialogTitle>
+<DialogDescription className="text-[10px] font-medium text-muted-foreground/50 pt-1">                             {trip.train?.code} • Toa {coachWithPrices?.name} • Ghế {selectedSeat?.name}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -336,7 +335,7 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
                         <div className="px-6 pb-6 space-y-6">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5 p-4 rounded-2xl bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-800">
-                                    <div className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Trạng thái</div>
+ <div className="text-[10px] font-bold text-muted-foreground/40 uppercase ">Trạng thái</div>
                                     <Badge variant={selectedSeat.bookingStatus === 'BOOKED' ? 'default' : 'outline'} className={cn(
                                         "rounded-full px-3 py-0.5 text-[10px] font-bold border-none shadow-sm",
                                         selectedSeat.bookingStatus === 'BOOKED' ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/20" : "bg-zinc-200 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-400"
@@ -346,7 +345,7 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
                                     </Badge>
                                 </div>
                                 <div className="space-y-1.5 p-4 rounded-2xl bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-800">
-                                    <div className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Giá vé chặng này</div>
+ <div className="text-[10px] font-bold text-muted-foreground/40 uppercase ">Giá vé chặng này</div>
                                     <div className="font-bold text-sm text-emerald-600 dark:text-emerald-400">
                                         {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedSeat.price)}
                                     </div>
@@ -355,20 +354,19 @@ export function AdminSeatMap({ trip }: AdminSeatMapProps) {
 
                             {selectedSeat.passenger ? (
                                 <div className="rounded-2xl p-6 bg-rose-50/30 dark:bg-rose-900/10 border border-rose-100/50 dark:border-rose-900/20 space-y-4">
-                                    <div className="font-bold text-xs text-[#802222] dark:text-rose-400 flex items-center gap-2 uppercase tracking-tight">
+ <div className="font-bold text-xs text-[#802222] dark:text-rose-400 flex items-center gap-2 uppercase ">
                                         <Users className="w-4 h-4 opacity-40" />
                                         Thông tin hành khách
                                     </div>
                                     <div className="grid grid-cols-1 gap-4 text-sm">
                                         <div className="space-y-1">
-                                            <div className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Họ và tên</div>
+ <div className="text-[10px] font-bold text-muted-foreground/40 uppercase ">Họ và tên</div>
                                             <div className="font-bold text-base text-zinc-800 dark:text-zinc-200">{selectedSeat.passenger.name}</div>
                                         </div>
 
                                         <div className="space-y-1">
-                                            <div className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">CCCD/CMND</div>
-                                            <div className="font-bold text-zinc-600 dark:text-zinc-400 tracking-widest">{selectedSeat.passenger.id}</div>
-                                        </div>
+ <div className="text-[10px] font-bold text-muted-foreground/40 uppercase ">CCCD/CMND</div>
+<div className="font-bold text-zinc-600 dark:text-zinc-400 ">{selectedSeat.passenger.id}</div>                                         </div>
                                     </div>
                                 </div>
                             ) : (

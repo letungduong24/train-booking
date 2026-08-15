@@ -113,7 +113,7 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
                         <Train className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                        <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-tight mb-0.5 truncate">
+ <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 leading-tight mb-0.5 truncate">
                             {booking.trip.route.name}
                         </h3>
                         <p className="text-xs font-bold text-muted-foreground/80 leading-none">
@@ -149,7 +149,7 @@ export function BookingHistoryCard({ booking }: BookingHistoryCardProps) {
 
                     <div className="text-right">
                         <p className="text-[10px] font-medium text-muted-foreground opacity-70 leading-none mb-1">Tổng chi phí</p>
-                        <div className="text-lg font-bold text-[#802222] tracking-tight leading-none">
+ <div className="text-lg font-bold text-[#802222] leading-none">
                             {booking.totalPrice === 0
                                 ? <span className="text-[10px] font-normal italic opacity-40">Chưa định giá</span>
                                 : formatCurrency(booking.totalPrice)

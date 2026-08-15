@@ -259,7 +259,7 @@ export default function RouteDetailPage() {
                         <ArrowLeft className="h-5 w-5" />
                     </Button>
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">Chi tiết tuyến đường</h1>
+ <h1 className="text-3xl font-bold text-[#802222] dark:text-rose-400">Chi tiết tuyến đường</h1>
                         <p className="text-sm text-muted-foreground mt-1 font-medium italic opacity-60">{routeName}</p>
                     </div>
                 </div>
@@ -285,48 +285,48 @@ export default function RouteDetailPage() {
                             <MapIcon className="w-5 h-5" />
                         </div>
                         <div>
-                            <h4 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Thông số tuyến</h4>
-                            <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest mt-1">Thông tin vận hành thực tế</p>
+ <h4 className="text-lg font-bold text-[#802222] dark:text-rose-400 leading-none">Thông số tuyến</h4>
+                            <p className="text-[10px] font-medium text-muted-foreground/50 mt-1">Thông tin vận hành thực tế</p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8 flex-1 lg:justify-end">
                         <div className="space-y-1">
-                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Phiên bản</span>
+                            <span className="text-[10px] font-bold text-zinc-400 block">Phiên bản</span>
                             <Badge variant="outline" className="rounded-lg px-3 py-1 text-[10px] font-black bg-rose-50 dark:bg-rose-950/30 text-[#802222] dark:text-rose-400 border-rose-200/50 dark:border-rose-900/30">
                                 v{route.version || 1}
                             </Badge>
                         </div>
 
                         <div className="space-y-1 sm:border-l sm:border-gray-50 sm:dark:border-zinc-800/50 sm:pl-6 lg:pl-8">
-                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Trạng thái</span>
+                            <span className="text-[10px] font-bold text-zinc-400 block">Trạng thái</span>
                             <Badge variant={getRouteStatusColor(route.status)} className="rounded-lg px-3 py-1 text-[10px] font-bold">
                                 {translateRouteStatus(route.status)}
                             </Badge>
                         </div>
                         
                         <div className="space-y-0.5 sm:border-l sm:border-gray-50 sm:dark:border-zinc-800/50 sm:pl-6 lg:pl-8">
-                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Thời gian chạy</span>
+                            <span className="text-[10px] font-bold text-zinc-400 block">Thời gian chạy</span>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-2xl font-black text-[#802222] tabular-nums tracking-tighter">
+ <span className="text-2xl font-black text-[#802222] tabular-nums ">
                                     {Math.floor(route.durationMinutes / 60)}<span className="text-xs font-bold opacity-40 ml-0.5">h</span> {route.durationMinutes % 60}
                                 </span>
-                                <span className="text-xs font-bold text-[#802222]/40 tracking-tighter uppercase">phút</span>
+ <span className="text-xs font-bold text-[#802222]/40 uppercase">phút</span>
                             </div>
                         </div>
 
                         <div className="space-y-0.5 sm:border-l sm:border-gray-50 sm:dark:border-zinc-800/50 sm:pl-6 lg:pl-8">
-                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block">Cự ly ước tính</span>
+                            <span className="text-[10px] font-bold text-zinc-400 block">Cự ly ước tính</span>
                             <div className="flex items-baseline gap-1">
                                 {items.length > 0 && items[items.length - 1].distanceFromStart !== -1 ? (
                                     <>
-                                        <span className="text-2xl font-black text-[#802222] tabular-nums tracking-tighter">
+ <span className="text-2xl font-black text-[#802222] tabular-nums ">
                                             {items[items.length - 1].distanceFromStart}
                                         </span>
-                                        <span className="text-xs font-bold text-[#802222]/40 tracking-tighter uppercase">km</span>
+ <span className="text-xs font-bold text-[#802222]/40 uppercase">km</span>
                                     </>
                                 ) : (
-                                    <span className="text-2xl font-black text-muted-foreground tabular-nums tracking-tighter">
+ <span className="text-2xl font-black text-muted-foreground tabular-nums ">
                                         -
                                     </span>
                                 )}
@@ -347,7 +347,7 @@ export default function RouteDetailPage() {
                 <div className="absolute top-6 left-6 z-10">
                     <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-100 dark:border-zinc-800 shadow-sm flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-[#802222] animate-pulse" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#802222]/80">Trực quan lộ trình</span>
+                        <span className="text-[10px] font-bold text-[#802222]/80">Trực quan lộ trình</span>
                     </div>
                 </div>
                 <div className="absolute top-6 right-6 z-10 pointer-events-none">
@@ -360,7 +360,7 @@ export default function RouteDetailPage() {
             {/* Full-width Stations Table */}
             <div className="space-y-4">
                 <div className="flex items-center justify-between px-2">
-                    <h3 className="text-2xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Hành trình chi tiết</h3>
+ <h3 className="text-2xl font-bold text-[#802222] dark:text-rose-400 ">Hành trình chi tiết</h3>
                     <span className="text-xs text-muted-foreground/60 italic">Kéo thả để sắp xếp lại thứ tự ga dừng</span>
                 </div>
 
@@ -374,10 +374,10 @@ export default function RouteDetailPage() {
                             <TableHeader className="bg-rose-50/20 dark:bg-zinc-800/20">
                                 <TableRow className="hover:bg-transparent border-none h-16">
                                     <TableHead className="w-[60px]"></TableHead>
-                                    <TableHead className="w-[80px] text-xs font-bold uppercase tracking-widest text-[#802222]/50 pl-6">TT</TableHead>
-                                    <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50">Tên ga dừng</TableHead>
-                                    <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50">Tọa độ địa lý</TableHead>
-                                    <TableHead className="text-xs font-bold uppercase tracking-widest text-[#802222]/50">Cự ly từ ga đầu</TableHead>
+                                    <TableHead className="w-[80px] text-xs font-bold text-[#802222]/50 pl-6">TT</TableHead>
+                                    <TableHead className="text-xs font-bold text-[#802222]/50">Tên ga dừng</TableHead>
+                                    <TableHead className="text-xs font-bold text-[#802222]/50">Tọa độ địa lý</TableHead>
+                                    <TableHead className="text-xs font-bold text-[#802222]/50">Cự ly từ ga đầu</TableHead>
                                     <TableHead className="w-[80px] pr-6 text-right">Thao tác</TableHead>
                                 </TableRow>
                             </TableHeader>

@@ -59,7 +59,7 @@ export function SeatDetailDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-md rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
                 <DialogHeader className="p-8 pb-4">
-                    <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight flex items-center gap-2">
+ <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 flex items-center gap-2">
                         <div className="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center text-[#802222] dark:text-rose-400">
                             {seat.name}
                         </div>
@@ -74,18 +74,18 @@ export function SeatDetailDialog({
                     {/* Position info */}
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5 p-4 rounded-2xl bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-800">
-                            <div className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Hàng</div>
+ <div className="text-[10px] font-bold text-muted-foreground/40 uppercase ">Hàng</div>
                             <div className="font-bold text-zinc-900 dark:text-zinc-100">{seat.rowIndex + 1}</div>
                         </div>
                         <div className="space-y-1.5 p-4 rounded-2xl bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-800">
-                            <div className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-wider">Cột</div>
+ <div className="text-[10px] font-bold text-muted-foreground/40 uppercase ">Cột</div>
                             <div className="font-bold text-zinc-900 dark:text-zinc-100">{seat.colIndex + 1}</div>
                         </div>
                     </div>
 
                     {/* Status */}
                     <div className="space-y-2">
-                        <Label htmlFor="status" className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider ml-1">Trạng thái vận hành</Label>
+ <Label htmlFor="status" className="text-xs font-bold text-muted-foreground/60 uppercase ml-1">Trạng thái vận hành</Label>
                         <Select value={status} onValueChange={(value: any) => setStatus(value)}>
                             <SelectTrigger id="status" className="h-12 rounded-xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-100 dark:border-zinc-800">
                                 <SelectValue />
@@ -115,7 +115,7 @@ export function SeatDetailDialog({
 
                     {/* Type display */}
                     <div className="p-4 rounded-2xl bg-rose-50/30 dark:bg-rose-900/10 border border-rose-100/50 dark:border-rose-900/20">
-                        <div className="text-[10px] font-bold text-rose-800/40 dark:text-rose-400/40 uppercase tracking-wider mb-1">Loại chỗ hiện tại</div>
+ <div className="text-[10px] font-bold text-rose-800/40 dark:text-rose-400/40 uppercase mb-1">Loại chỗ hiện tại</div>
                         <div className="font-bold text-sm text-[#802222] dark:text-rose-400">{getSeatStatusLabel(seat.status)}</div>
                     </div>
                 </div>

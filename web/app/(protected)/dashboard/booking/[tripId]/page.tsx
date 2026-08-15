@@ -316,7 +316,7 @@ export default function TripDetailPage() {
                     </div>
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                         <div className="space-y-1.5">
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50">Ga đi</p>
+ <p className="text-[10px] font-bold uppercase text-muted-foreground/50">Ga đi</p>
                             <Select value={currentFromStationId} onValueChange={handleFromStationChange}>
                                 <SelectTrigger className="h-11 w-full rounded-xl border-rose-100 bg-white text-sm font-semibold shadow-none hover:border-[#802222]/30 dark:border-zinc-800 dark:bg-zinc-950">
                                     <SelectValue placeholder="Chọn ga đi" />
@@ -335,7 +335,7 @@ export default function TripDetailPage() {
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/50">Ga đến</p>
+ <p className="text-[10px] font-bold uppercase text-muted-foreground/50">Ga đến</p>
                             <Select value={currentToStationId} onValueChange={handleToStationChange}>
                                 <SelectTrigger className="h-11 w-full rounded-xl border-rose-100 bg-white text-sm font-semibold shadow-none hover:border-[#802222]/30 dark:border-zinc-800 dark:bg-zinc-950">
                                     <SelectValue placeholder="Chọn ga đến" />
@@ -416,7 +416,7 @@ export default function TripDetailPage() {
                             <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-[2.5rem] p-6 shadow-xl shadow-rose-900/[0.03] border border-gray-100 dark:border-zinc-800">
                                 <div className="flex flex-row items-center justify-between gap-4 pb-2 mb-6 relative z-10">
                                     <div className="space-y-1">
-                                        <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Chọn chỗ</h3>
+ <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 leading-none">Chọn chỗ</h3>
                                         <p className="text-[10px] font-medium text-muted-foreground/50">Chọn toa và chỗ ngồi/giường của bạn</p>
                                     </div>
                                 </div>
@@ -433,8 +433,7 @@ export default function TripDetailPage() {
 
                                     {!selectedCoachId ? (
                                         <div className="py-24 text-center text-muted-foreground border-2 border-dashed border-gray-100 rounded-[1.5rem] bg-gray-50/30">
-                                            <p className="text-sm font-medium opacity-50 uppercase tracking-widest">Vui lòng chọn toa để xem sơ đồ chỗ ngồi</p>
-                                        </div>
+<p className="text-sm font-medium opacity-50 ">Vui lòng chọn toa để xem sơ đồ chỗ ngồi</p>                                         </div>
                                     ) : isCoachLoading ? (
                                         <div className="space-y-6">
                                             <div className="flex justify-center gap-4">
@@ -492,7 +491,7 @@ export default function TripDetailPage() {
                                     <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-[2rem] p-5 shadow-xl shadow-rose-900/[0.03] border border-gray-100 dark:border-zinc-800 overflow-hidden group">
                                         <div className="flex flex-row items-center justify-between gap-3 mb-5 relative z-10">
                                             <div className="space-y-1">
-                                                <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Lộ trình</h3>
+ <h3 className="text-lg font-bold text-[#802222] dark:text-rose-400 leading-none">Lộ trình</h3>
                                                 <p className="text-[10px] font-medium text-muted-foreground/50">Hành trình chi tiết</p>
                                             </div>
                                             <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-[#802222] dark:text-rose-400">

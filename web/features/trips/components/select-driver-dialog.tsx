@@ -75,7 +75,7 @@ export function SelectDriverDialog({ open, onOpenChange, onSelect, selectedDrive
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[600px] max-h-[90vh] rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden flex flex-col">
                 <DialogHeader className="p-8 pb-4">
-                    <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Chọn Lái tàu</DialogTitle>
+ <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 ">Chọn Lái tàu</DialogTitle>
                     <DialogDescription className="text-xs font-medium text-muted-foreground/50">
                         Tìm kiếm và phân công nhân sự lái tàu chịu trách nhiệm vận hành chuyến đi
                     </DialogDescription>
@@ -98,9 +98,7 @@ export function SelectDriverDialog({ open, onOpenChange, onSelect, selectedDrive
                         <Table>
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent border-none">
-                                    <TableHead className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest pl-6">Thông tin Lái tàu</TableHead>
-                                    <TableHead className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">SĐT</TableHead>
-                                    <TableHead className="w-[100px]"></TableHead>
+<TableHead className="text-[10px] font-bold text-muted-foreground/40 pl-6">Thông tin Lái tàu</TableHead> <TableHead className="text-[10px] font-bold text-muted-foreground/40 ">SĐT</TableHead>                                     <TableHead className="w-[100px]"></TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -153,8 +151,7 @@ export function SelectDriverDialog({ open, onOpenChange, onSelect, selectedDrive
 
                     {/* Pagination */}
                     <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 pt-2">
-                        <div className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest px-2">
-                            {paginatedDrivers.length} / {total} nhân sự
+<div className="text-[10px] font-bold text-muted-foreground/40 px-2">                             {paginatedDrivers.length} / {total} nhân sự
                         </div>
                         <div className="flex gap-2">
                             <Button

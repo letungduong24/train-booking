@@ -29,7 +29,7 @@ export function AdminSeatDetailDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-md rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:hidden">
                 <DialogHeader className="p-6 pb-2">
-                    <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">
+ <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 ">
                         Thông tin ghế {seat.name}
                     </DialogTitle>
                     <DialogDescription className="text-xs font-medium text-muted-foreground/50">
@@ -39,7 +39,7 @@ export function AdminSeatDetailDialog({
 
                 <div className="px-6 pb-6 space-y-6">
                     <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50/50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-800 shadow-sm">
-                        <Label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider ml-1">
+ <Label className="text-xs font-bold text-muted-foreground/60 uppercase ml-1">
                             Trạng thái hiện tại
                         </Label>
                         <Badge

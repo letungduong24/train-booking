@@ -130,16 +130,15 @@ function BookingPageContent() {
                                                     <Train className="h-6 w-6" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-0.5">Mã tàu</p>
-                                                    <h3 className="text-xl font-black text-[#802222] dark:text-rose-400 tracking-tight leading-none uppercase">{trip.train.code}</h3>
+ <p className="text-[9px] font-bold text-muted-foreground uppercase mb-0.5">Mã tàu</p>
+ <h3 className="text-xl font-black text-[#802222] dark:text-rose-400 leading-none uppercase">{trip.train.code}</h3>
                                                 </div>
                                             </div>
 
                                             {/* Timing & Route */}
                                             <div className="flex-1 flex items-center justify-between px-2">
                                                 <div className="flex flex-col">
-                                                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5 leading-none">Khởi hành</p>
-                                                    <span className="text-2xl font-black text-[#802222] dark:text-rose-400 tabular-nums">
+<p className="text-[9px] font-bold text-muted-foreground mb-1.5 leading-none">Khởi hành</p>                                                     <span className="text-2xl font-black text-[#802222] dark:text-rose-400 tabular-nums">
                                                         {format(departureDate, 'HH:mm')}
                                                     </span>
                                                     <span className="text-[9px] font-bold text-muted-foreground uppercase mt-0.5">{format(departureDate, 'dd/MM/yyyy')}</span>
@@ -151,17 +150,16 @@ function BookingPageContent() {
                                                         <div className="w-2 h-2 rounded-full bg-primary z-10 shadow-[0_0_8px_rgba(var(--primary),0.3)]" />
                                                         <ArrowRight className="absolute -right-1 h-3 w-3 text-gray-300" />
                                                     </div>
-                                                    <p className="text-[8px] font-black text-muted-foreground/30 uppercase tracking-[0.4em] mt-5 truncate max-w-[150px]">
+ <p className="text-[8px] font-black text-muted-foreground/30 uppercase mt-5 truncate max-w-[150px]">
                                                         {trip.route.name}
                                                     </p>
                                                 </div>
 
                                                 <div className="flex flex-col text-right">
-                                                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mb-1.5 leading-none">Lộ trình</p>
-                                                    <div className="flex flex-col items-end">
+<p className="text-[9px] font-bold text-muted-foreground mb-1.5 leading-none">Lộ trình</p>                                                     <div className="flex flex-col items-end">
                                                         <div className="flex items-center gap-1.5 text-[#802222] dark:text-rose-400 mb-0.5">
                                                             <MapPin className="h-3.5 w-3.5 opacity-40" />
-                                                            <span className="text-base font-black uppercase tracking-tighter">Ga đi</span>
+ <span className="text-base font-black uppercase ">Ga đi</span>
                                                         </div>
                                                         <p className="text-[9px] font-bold text-muted-foreground/60 max-w-[100px] truncate leading-none">
                                                             {trip.route.name.split('-')[0].trim()}
@@ -172,12 +170,10 @@ function BookingPageContent() {
 
                                             {/* Action */}
                                             <div className="md:w-1/5 flex flex-col justify-center items-end border-l border-dashed border-gray-100 pl-6">
-                                                <div className="flex items-center gap-2 mb-3 text-[9px] font-bold text-muted-foreground uppercase tracking-widest bg-gray-50 dark:bg-zinc-800 px-2.5 py-1 rounded-full">
-                                                    <Wifi className="h-3 w-3 opacity-50" />
+<div className="flex items-center gap-2 mb-3 text-[9px] font-bold text-muted-foreground bg-gray-50 dark:bg-zinc-800 px-2.5 py-1 rounded-full">                                                     <Wifi className="h-3 w-3 opacity-50" />
                                                     <span>WIFI FREE</span>
                                                 </div>
-                                                <Button className="w-full bg-[#802222] hover:bg-[#902222] text-white font-black h-10 rounded-full uppercase tracking-widest text-[9px] shadow-lg shadow-rose-900/20 transition-all hover:scale-105 active:scale-95 border-none">
-                                                    CHỌN VÉ
+<Button className="w-full bg-[#802222] hover:bg-[#902222] text-white font-black h-10 rounded-full text-[9px] shadow-lg shadow-rose-900/20 transition-all hover:scale-105 active:scale-95 border-none">                                                     CHỌN VÉ
                                                 </Button>
                                             </div>
                                         </div>

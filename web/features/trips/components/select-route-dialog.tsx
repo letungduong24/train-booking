@@ -56,7 +56,7 @@ export function SelectRouteDialog({ open, onOpenChange, onSelect, selectedRouteI
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[600px] max-h-[90vh] rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden flex flex-col">
                 <DialogHeader className="p-8 pb-4">
-                    <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Chọn tuyến đường</DialogTitle>
+ <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 ">Chọn tuyến đường</DialogTitle>
                     <DialogDescription className="text-xs font-medium text-muted-foreground/50">
                         Tìm kiếm và chọn tuyến đường cho chuyến tàu
                     </DialogDescription>
@@ -82,8 +82,7 @@ export function SelectRouteDialog({ open, onOpenChange, onSelect, selectedRouteI
                         <Table>
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent border-none">
-                                    <TableHead className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest pl-6">Tên tuyến</TableHead>
-                                    <TableHead className="w-[100px]"></TableHead>
+<TableHead className="text-[10px] font-bold text-muted-foreground/40 pl-6">Tên tuyến</TableHead>                                     <TableHead className="w-[100px]"></TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -124,8 +123,7 @@ export function SelectRouteDialog({ open, onOpenChange, onSelect, selectedRouteI
 
                     {/* Pagination */}
                     <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 pt-2">
-                        <div className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest px-2">
-                            {routes.length} / {meta.total} tuyến
+<div className="text-[10px] font-bold text-muted-foreground/40 px-2">                             {routes.length} / {meta.total} tuyến
                         </div>
                         <div className="flex gap-2">
                             <Button

@@ -185,7 +185,7 @@ export default function AdminTrainDetailPage({ params }: { params: Promise<{ id:
                     </Button>
                     <div>
                         <div className="flex items-center gap-2">
-                            <h1 className="text-3xl font-bold tracking-tight text-[#802222] dark:text-rose-400">
+ <h1 className="text-3xl font-bold text-[#802222] dark:text-rose-400">
                                 {train.code}
                             </h1>
                             <Badge variant={train.status === 'ACTIVE' ? 'default' : 'secondary'} className={cn(
@@ -212,8 +212,8 @@ export default function AdminTrainDetailPage({ params }: { params: Promise<{ id:
                 <CardHeader className="p-6 pb-2 relative z-10">
                     <div className="flex items-center justify-between">
                         <div>
-                            <CardTitle className="text-lg font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">Quản lý Toa & Ghế</CardTitle>
-                            <CardDescription className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest mt-1">
+ <CardTitle className="text-lg font-bold text-[#802222] dark:text-rose-400 leading-none">Quản lý Toa & Ghế</CardTitle>
+                            <CardDescription className="text-[10px] font-medium text-muted-foreground/50 mt-1">
                                 Thiết lập thứ tự toa và điều chỉnh trạng thái ghế/giường
                             </CardDescription>
                         </div>
@@ -285,8 +285,8 @@ export default function AdminTrainDetailPage({ params }: { params: Promise<{ id:
                                                 <Settings className="w-5 h-5" />
                                             </div>
                                             <div>
-                                                <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight leading-none">{selectedCoach.name}</h3>
-                                                <p className="text-[10px] font-medium text-muted-foreground/50 uppercase tracking-widest mt-1">
+ <h3 className="text-xl font-bold text-[#802222] dark:text-rose-400 leading-none">{selectedCoach.name}</h3>
+                                                <p className="text-[10px] font-medium text-muted-foreground/50 mt-1">
                                                     Loại: {selectedCoach.template.name} ({selectedCoach.template.code})
                                                 </p>
                                             </div>
@@ -295,7 +295,7 @@ export default function AdminTrainDetailPage({ params }: { params: Promise<{ id:
                                         <div className="flex items-center gap-3">
                                             <div className="flex flex-col items-end mr-2">
                                                 {selectedCoachDetail && (
-                                                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest leading-none mb-1">
+                                                    <span className="text-[10px] font-bold text-zinc-400 leading-none mb-1">
                                                         {selectedCoachDetail.seats.length} {selectedCoachDetail.template.layout === 'SEAT' ? 'ghế' : 'giường'}
                                                     </span>
                                                 )}
@@ -341,7 +341,7 @@ export default function AdminTrainDetailPage({ params }: { params: Promise<{ id:
                                     <div className="p-4 rounded-full bg-gray-50 dark:bg-zinc-900 text-zinc-300 dark:text-zinc-700 mb-4">
                                         <Settings className="w-8 h-8" />
                                     </div>
-                                    <p className="text-sm font-bold text-zinc-400 uppercase tracking-widest">Vui lòng chọn toa để xem sơ đồ</p>
+                                    <p className="text-sm font-bold text-zinc-400">Vui lòng chọn toa để xem sơ đồ</p>
                                 </div>
                             )}
                         </div>

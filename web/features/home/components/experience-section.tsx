@@ -57,7 +57,7 @@ export function ExperienceSection() {
                             </div>
                             {/* Overlay */}
                             <div className="absolute inset-0 bg-linear-to-t from-background via-background/95 to-background/5 p-6 flex flex-col justify-end">
-                                <span className="mb-2 text-xs font-bold uppercase tracking-wider text-primary">
+ <span className="mb-2 text-xs font-bold uppercase text-primary">
                                     {item.description}
                                 </span>
                                 <h3 className="text-2xl font-bold text-foreground transition-colors group-hover:text-primary">

@@ -133,7 +133,7 @@ export function InteractiveRouteBuilder({ value = [], onChange }: InteractiveRou
 
             {/* Selected Route summary */}
             <div className="p-6 bg-gray-50/20 dark:bg-zinc-900/20 rounded-[1.5rem] border border-gray-100 dark:border-zinc-800 space-y-4 min-h-[80px]">
-                <div className="flex items-center gap-3 text-[#802222] dark:text-rose-400 font-bold tracking-wider opacity-80">
+ <div className="flex items-center gap-3 text-[#802222] dark:text-rose-400 font-bold opacity-80">
                     <IconMapPin className="w-4 h-4" />
                     Lộ trình đã chọn ({value.length} trạm)
                 </div>

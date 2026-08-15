@@ -30,7 +30,7 @@ export function ConflictDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent className="rounded-[2.5rem] border-none shadow-2xl p-8">
                 <AlertDialogHeader>
-                    <AlertDialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 uppercase tracking-tight flex items-center gap-3">
+ <AlertDialogTitle className="text-2xl font-bold text-[#802222] dark:text-rose-400 uppercase flex items-center gap-3">
                         <AlertCircle className="h-6 w-6" />
                         {title}
                     </AlertDialogTitle>
@@ -39,8 +39,7 @@ export function ConflictDialog({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="mt-8">
-                    <AlertDialogAction onClick={onConfirm} className="bg-[#802222] hover:bg-rose-900 text-white rounded-2xl h-12 px-8 font-bold uppercase tracking-widest text-[10px] border-none shadow-xl shadow-rose-900/20">
-                        Đã hiểu
+<AlertDialogAction onClick={onConfirm} className="bg-[#802222] hover:bg-rose-900 text-white rounded-2xl h-12 px-8 font-bold text-[10px] border-none shadow-xl shadow-rose-900/20">                         Đã hiểu
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

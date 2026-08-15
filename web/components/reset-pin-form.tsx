@@ -110,13 +110,13 @@ export function ResetPinForm({
               )}
 
               <Field>
-                <FieldLabel htmlFor="pin" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70 ml-1">Mã PIN mới</FieldLabel>
+ <FieldLabel htmlFor="pin" className="text-[11px] font-bold uppercase text-muted-foreground/70 ml-1">Mã PIN mới</FieldLabel>
                 <Input
                   id="pin"
                   type="password"
                   maxLength={6}
                   placeholder="_ _ _ _ _ _"
-                  className="h-14 rounded-2xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-200/50 dark:border-zinc-800/50 focus-visible:ring-rose-500/20 focus-visible:border-rose-500/50 transition-all text-center tracking-[0.5em] text-xl font-black placeholder:tracking-normal placeholder:font-normal placeholder:opacity-30"
+ className="h-14 rounded-2xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-200/50 dark:border-zinc-800/50 focus-visible:ring-rose-500/20 focus-visible:border-rose-500/50 transition-all text-center text-xl font-black placeholder: placeholder:font-normal placeholder:opacity-30"
                   {...register("pin")}
                   disabled={isLoading}
                 />
@@ -126,13 +126,13 @@ export function ResetPinForm({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="confirmPin" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70 ml-1">Xác nhận mã PIN</FieldLabel>
+ <FieldLabel htmlFor="confirmPin" className="text-[11px] font-bold uppercase text-muted-foreground/70 ml-1">Xác nhận mã PIN</FieldLabel>
                 <Input
                   id="confirmPin"
                   type="password"
                   maxLength={6}
                   placeholder="_ _ _ _ _ _"
-                  className="h-14 rounded-2xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-200/50 dark:border-zinc-800/50 focus-visible:ring-rose-500/20 focus-visible:border-rose-500/50 transition-all text-center tracking-[0.5em] text-xl font-black placeholder:tracking-normal placeholder:font-normal placeholder:opacity-30"
+ className="h-14 rounded-2xl bg-gray-50/50 dark:bg-zinc-800/50 border-gray-200/50 dark:border-zinc-800/50 focus-visible:ring-rose-500/20 focus-visible:border-rose-500/50 transition-all text-center text-xl font-black placeholder: placeholder:font-normal placeholder:opacity-30"
                   {...register("confirmPin")}
                   disabled={isLoading}
                 />

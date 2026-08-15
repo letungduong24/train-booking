@@ -37,7 +37,7 @@ export function VerificationRequired() {
                                 <Mail className="w-10 h-10" />
                             </div>
                         </div>
-                        <CardTitle className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">Xác thực tài khoản</CardTitle>
+ <CardTitle className="text-2xl font-bold text-zinc-900 dark:text-white">Xác thực tài khoản</CardTitle>
                         <CardDescription className="text-zinc-600 dark:text-zinc-400 mt-2 font-medium">
                             Tài khoản <span className="text-[#802222] font-bold">{user?.email}</span> của bạn cần được xác thực để tiếp tục sử dụng dịch vụ.
                         </CardDescription>
@@ -71,8 +71,7 @@ export function VerificationRequired() {
                 </Card>
                 
                 <div className="text-center">
-                    <p className="text-[10px] text-muted-foreground/30 font-bold uppercase tracking-widest italic">
-                        &copy; {new Date().getFullYear()} Railflow Premium Experience
+<p className="text-[10px] text-muted-foreground/30 font-bold italic">                         &copy; {new Date().getFullYear()} Railflow Premium Experience
                     </p>
                 </div>
             </div>

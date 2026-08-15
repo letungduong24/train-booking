@@ -43,7 +43,7 @@ export default function PaymentResultPage() {
                     </div>
                     
                     <div className="space-y-1">
-                        <h1 className="text-2xl font-bold tracking-tight">
+ <h1 className="text-2xl font-bold ">
                             {success ? 'Thành công!' : 'Thất bại'}
                         </h1>
                         <p className={cn(

@@ -292,7 +292,7 @@ export default function TripDetailPage({ params }: PageProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 py-2">
               <div className="space-y-1">
-                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Thời gian đi</span>
+ <span className="text-[10px] text-muted-foreground font-bold uppercase ">Thời gian đi</span>
                 <p className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
                   <Clock className="size-4 text-[#802222]" />
                   <span className="flex flex-col gap-0.5">
@@ -304,7 +304,7 @@ export default function TripDetailPage({ params }: PageProps) {
                 </p>
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Thời gian đến</span>
+ <span className="text-[10px] text-muted-foreground font-bold uppercase ">Thời gian đến</span>
                 <p className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
                   <Clock className="size-4 text-emerald-600" />
                   <span className="flex flex-col gap-0.5">
@@ -395,7 +395,7 @@ export default function TripDetailPage({ params }: PageProps) {
         {/* Right side information (4 cols) */}
         <div className="col-span-12 lg:col-span-4 space-y-6">
           <Card className="rounded-[2rem] border border-gray-100 dark:border-zinc-800 shadow-xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-6">
-            <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase mb-4 tracking-wider flex items-center gap-1.5">
+ <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase mb-4 flex items-center gap-1.5">
               <Timer className="size-4 text-[#802222]" />
               Báo cáo delay
             </h4>
@@ -428,7 +428,7 @@ export default function TripDetailPage({ params }: PageProps) {
           </Card>
 
           <Card className="rounded-[2rem] border border-gray-100 dark:border-zinc-800 shadow-xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-6">
-            <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase mb-4 tracking-wider flex items-center gap-1.5">
+ <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase mb-4 flex items-center gap-1.5">
               <Info className="size-4 text-[#802222]" />
               Hướng dẫn báo hỏng
             </h4>
@@ -477,11 +477,11 @@ export default function TripDetailPage({ params }: PageProps) {
               {/* Seat Details row */}
               <div className="grid grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-2xl text-xs font-semibold">
                 <div>
-                  <span className="text-muted-foreground block font-bold text-[9px] uppercase tracking-wider mb-0.5">Số ghế</span>
+ <span className="text-muted-foreground block font-bold text-[9px] uppercase mb-0.5">Số ghế</span>
                   <span className="text-gray-900 text-sm font-black">{selectedSeat?.name}</span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground block font-bold text-[9px] uppercase tracking-wider mb-0.5">Toa số</span>
+ <span className="text-muted-foreground block font-bold text-[9px] uppercase mb-0.5">Toa số</span>
                   <span className="text-gray-900 text-sm font-black">{activeCoach?.name || activeCoach?.order}</span>
                 </div>
               </div>
@@ -496,7 +496,7 @@ export default function TripDetailPage({ params }: PageProps) {
                 <>
                   {/* Select issue type */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Loại sự cố</label>
+ <label className="text-[10px] text-muted-foreground font-bold uppercase ">Loại sự cố</label>
                     <Select value={issueType} onValueChange={setIssueType}>
                       <SelectTrigger className="rounded-xl h-11 text-xs font-bold border-gray-200">
                         <SelectValue placeholder="Chọn loại sự cố" />
@@ -513,7 +513,7 @@ export default function TripDetailPage({ params }: PageProps) {
 
                   {/* Input description text */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Mô tả tình trạng sự cố</label>
+ <label className="text-[10px] text-muted-foreground font-bold uppercase ">Mô tả tình trạng sự cố</label>
                     <Textarea
                       placeholder="Mô tả cụ thể hư hỏng để Admin dễ kiểm duyệt và kỹ thuật viên sửa chữa (tối thiểu 10 ký tự)..."
                       value={description}
@@ -581,13 +581,13 @@ export default function TripDetailPage({ params }: PageProps) {
             <div className="space-y-4 py-2">
               <div className="grid grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-2xl text-xs font-semibold">
                 <div>
-                  <span className="text-muted-foreground block font-bold text-[9px] uppercase tracking-wider mb-0.5">Loại delay</span>
+ <span className="text-muted-foreground block font-bold text-[9px] uppercase mb-0.5">Loại delay</span>
                   <span className="text-gray-900 text-sm font-black">
                     {delayType === "DEPARTURE" ? "Trễ khởi hành" : "Trễ đến ga"}
                   </span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground block font-bold text-[9px] uppercase tracking-wider mb-0.5">Trạng thái</span>
+ <span className="text-muted-foreground block font-bold text-[9px] uppercase mb-0.5">Trạng thái</span>
                   <span className="text-gray-900 text-sm font-black">
                     {trip.status === "SCHEDULED" ? "Sắp chạy" : "Đang chạy"}
                   </span>
@@ -595,7 +595,7 @@ export default function TripDetailPage({ params }: PageProps) {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Số phút delay</label>
+ <label className="text-[10px] text-muted-foreground font-bold uppercase ">Số phút delay</label>
                 <Input
                   type="number"
                   min={1}
@@ -608,7 +608,7 @@ export default function TripDetailPage({ params }: PageProps) {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Lý do delay</label>
+ <label className="text-[10px] text-muted-foreground font-bold uppercase ">Lý do delay</label>
                 <Textarea
                   placeholder="Nhập nguyên nhân delay thực tế để Admin kiểm duyệt..."
                   value={delayReason}

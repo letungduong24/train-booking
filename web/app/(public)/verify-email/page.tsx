@@ -55,7 +55,7 @@ function VerifyEmailContent() {
       <CardHeader>
         <div className="flex justify-center mb-6">
            <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
-            <h1 className="text-3xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase italic">
+ <h1 className="text-3xl font-black text-zinc-900 dark:text-white uppercase italic">
               Railflow<span className="text-[#802222]">.</span>
             </h1>
           </Link>
@@ -107,8 +107,7 @@ export default function VerifyEmailPage() {
         </Suspense>
         
         <div className="text-center mt-4">
-            <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-widest">
-                &copy; {new Date().getFullYear()} Railflow
+<p className="text-[10px] text-muted-foreground/40 font-bold ">                 &copy; {new Date().getFullYear()} Railflow
             </p>
         </div>
       </div>

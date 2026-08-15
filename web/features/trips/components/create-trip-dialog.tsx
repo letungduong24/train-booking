@@ -94,7 +94,7 @@ export function CreateTripDialog() {
                 </DialogTrigger>
                 <DialogContent className="max-w-xl rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
                     <DialogHeader className="p-8 pb-4">
-                        <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight">Thêm chuyến đi mới</DialogTitle>
+ <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 ">Thêm chuyến đi mới</DialogTitle>
                         <DialogDescription className="text-xs font-medium text-muted-foreground/50">
                             Nhập thông tin cho chuyến đi mới.
                         </DialogDescription>

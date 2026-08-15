@@ -185,7 +185,7 @@ const SalesByCountryWidget = ({
                     <h5 className="text-base font-medium text-foreground">
                       {item.rank}
                     </h5>
-                    <p className="text-sm font-normal tracking-wide text-muted-foreground">
+ <p className="text-sm font-normal text-muted-foreground">
                       {item.country}
                     </p>
                   </div>

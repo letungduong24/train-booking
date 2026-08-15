@@ -76,12 +76,12 @@ export function AssignDriverDialog({ tripId, currentDriverId, tripStatus }: Assi
                     className="h-12 px-6 rounded-xl border-gray-100 dark:border-zinc-800 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-[#802222] dark:hover:text-rose-400 transition-all flex items-center gap-2 group/btn"
                 >
                     <UserCheck className="w-4 h-4 opacity-40 group-hover/btn:opacity-100 group-hover/btn:scale-110 transition-all" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Phân công Lái tàu</span>
+ <span className="text-xs font-bold uppercase ">Phân công Lái tàu</span>
                 </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md rounded-[2.5rem] border-none shadow-2xl bg-white dark:bg-zinc-950 p-0 overflow-hidden [&>button:last-child]:top-8 [&>button:last-child]:right-8">
                 <DialogHeader className="p-8 pb-4">
-                    <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 tracking-tight flex items-center gap-2">
+ <DialogTitle className="text-xl font-bold text-[#802222] dark:text-rose-400 flex items-center gap-2">
                         <UserCheck className="w-5 h-5 opacity-40 text-[#802222] dark:text-rose-400" />
                         Phân công Lái tàu điều hành
                     </DialogTitle>
@@ -92,8 +92,7 @@ export function AssignDriverDialog({ tripId, currentDriverId, tripStatus }: Assi
 
                 <div className="px-8 py-4 space-y-4">
                     <div className="space-y-2">
-                        <label className="text-xs font-bold uppercase tracking-widest text-[#802222]/60 ml-1">Danh sách Lái tàu</label>
-                        {isLoadingDrivers ? (
+<label className="text-xs font-bold text-[#802222]/60 ml-1">Danh sách Lái tàu</label>                         {isLoadingDrivers ? (
                             <div className="h-12 flex items-center justify-center bg-rose-50/10 dark:bg-zinc-900/10 border border-dashed border-rose-100/50 dark:border-zinc-800 rounded-xl">
                                 <Loader2 className="w-5 h-5 animate-spin text-[#802222] dark:text-rose-400" />
                             </div>

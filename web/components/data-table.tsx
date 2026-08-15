@@ -560,7 +560,7 @@ export function DataTable({
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex w-fit items-center justify-center text-[11px] font-medium text-zinc-500 dark:text-zinc-500 tracking-tight">
+ <div className="flex w-fit items-center justify-center text-[11px] font-medium text-zinc-500 dark:text-zinc-500 ">
               Trang <span className="mx-1 text-zinc-900 dark:text-white font-bold">{table.getState().pagination.pageIndex + 1}</span> /{" "}
               <span className="ml-1 text-zinc-900 dark:text-white font-bold">{table.getPageCount()}</span>
             </div>
