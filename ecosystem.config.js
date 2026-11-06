@@ -11,11 +11,11 @@ module.exports = {
       max_memory_restart: '1G',
       env: {
         NODE_ENV: 'production',
-        PORT: 3000,
+        PORT: 9000,
       },
       env_development: {
         NODE_ENV: 'development',
-        PORT: 3000,
+        PORT: 9000,
       },
       error_file: '../logs/api-error.log',
       out_file: '../logs/api-out.log',
@@ -27,7 +27,7 @@ module.exports = {
       cwd: './web',
       script: 'node_modules/next/dist/bin/next',
       args: 'start -p 4000',
-      instances: 1, // hoặc 'max' nếu muốn chạy cluster mode cho Next.js
+      instances: 1,
       exec_mode: 'fork',
       autorestart: true,
       watch: false,
